@@ -3,8 +3,12 @@ from . import metrics as mtx
 from enum import Enum
 
 
-class METHODS(Enum):
+class PREFIX(Enum):
+    mapping = "map"
+    pred = "prd"
 
+
+class METHODS(Enum):
     _MAP_METHODS = dict(
         random=met.RandomMap,
         max_corr=met.ArgMaxCorrMap,
@@ -12,20 +16,33 @@ class METHODS(Enum):
         tangram_v2=met.TangramV2Map,
     )
 
-    _PRD_METHODS = dict()
+    MAP_METHODS = {
+        PREFIX.mapping.value + "_" + key: val for key, val in _MAP_METHODS.items()
+    }
 
-    METHODS = dict(mapping = _MAP_METHODS,
-                   pred = _PRD_METHODS,
-                   )
+    _PRD_METHODS = {}
+
+    PRD_METHODS = {
+        PREFIX.pred.value + "_" + key: val for key, val in _PRD_METHODS.items()
+    }
+
+    METHODS = MAP_METHODS | PRD_METHODS
+
 
 class METRICS(Enum):
+    _MAP_METRICS = dict(
+        jaccard=mtx.MapJaccardDist,
+        accuracy=mtx.MapAccuracy,
+    )
 
-    _MAP_METRICS = dict(jaccard = mtx.MapJaccardDist,
-                        accuracy = mtx.MapAccuracy,
-                        )
+    MAP_METRICS = {
+        PREFIX.mapping.value + "_" + key: val for key, val in _MAP_METRICS.items()
+    }
 
     _PRD_METRICS = dict()
 
-    METRICS = dict(mapping = _MAP_METRICS,
-                   pred = _PRD_METRICS,
-                   )
+    PRD_METRICS = {
+        PREFIX.pred.value + "_" + key: val for key, val in _PRD_METRICS.items()
+    }
+
+    METRICS = MAP_METRICS | PRD_METRICS

@@ -13,6 +13,34 @@ from abc import ABC, abstractmethod
 from . import utils as ut
 
 
+def ad2np(func):
+    def wrapper(
+        cls,
+        ad_to: ad.AnnData,
+        ad_from: ad.AnnData,
+        to_spatial_key: str = "spatial",
+        from_spatial_key: str | None = None,
+        *args,
+        **kwargs,
+    ):
+        X_to = ad_to.X
+        if isinstance(X_to, spmatrix):
+            X_to = X_to.toarray()
+        X_from = ad_from.X
+        if isinstance(X_from, spmatrix):
+            X_from = X_from.toarray()
+
+        S_to = ad_to.obsm[to_spatial_key]
+        if from_spatial_key is not None:
+            S_from = ad_to.obsm[from_spatial_key]
+        else:
+            S_from = None
+
+        return func(cls, X_to, X_from, S_to=S_to, S_from=S_from, *args, **kwargs)
+
+    return wrapper
+
+
 class MapMethodClass(ABC):
     def __init__(
         self,
@@ -29,31 +57,36 @@ class MapMethodClass(ABC):
         n_rows: int,
         n_cols: int,
         return_sparse: bool,
-        return_dense: bool,
     ) -> None:
         ordr = np.argsort(col_idx)
         row_idx = row_idx[ordr]
         col_idx = col_idx[ordr]
 
-        if return_sparse or return_dense:
-            T_sparse = coo_matrix(
-                (np.ones(n_cols), (row_idx, col_idx)), shape=(n_rows, n_cols)
-            )
-            if return_sparse:
-                out_dict["T_sparse"] = T_sparse
-            if return_dense:
-                out_dict["T_dense"] = T_sparse.toarray()
+        T_sparse = coo_matrix(
+            (np.ones(n_cols), (row_idx, col_idx)), shape=(n_rows, n_cols)
+        )
+        if return_sparse:
+            out_dict["pred"] = T_sparse
+        else:
+            out_dict["pred"] = T_sparse.toarray()
 
-        return None
+        return out_dict
+
+    @staticmethod
+    def get_kwargs(*args, **kwargs):
+        return dict()
 
     @classmethod
     @abstractmethod
-    def map(
+    def run(
         self,
         X_to: np.ndarray,
         X_from: np.ndarray,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
         return_sparse: bool = True,
-        return_dense: bool = False,
+        **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         pass
 
@@ -65,13 +98,16 @@ class RandomMap(MapMethodClass):
         super().__init__()
 
     @classmethod
-    def map(
+    @ad2np
+    def run(
         cls,
         X_to: np.ndarray,
         X_from: np.ndarray,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
         seed: int = 1,
         return_sparse: bool = True,
-        return_dense: bool = False,
         **kwargs,
     ):
         rng = np.random.default_rng(seed)
@@ -85,7 +121,7 @@ class RandomMap(MapMethodClass):
         out = dict()
 
         cls.standard_update_out_dict(
-            out, row_idx, col_idx, n_rows, n_cols, return_sparse, return_dense
+            out, row_idx, col_idx, n_rows, n_cols, return_sparse,
         )
 
         return out
@@ -100,12 +136,15 @@ class ArgMaxCorrMap(ABC):
         pass
 
     @classmethod
-    def map(
+    @ad2np
+    def run(
         cls,
         X_to: np.ndarray,
         X_from: np.ndarray,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
         return_sparse: bool = True,
-        return_dense: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         n_cols = X_from.shape[0]
@@ -120,45 +159,60 @@ class ArgMaxCorrMap(ABC):
         out = dict()
 
         cls.standard_update_out_dict(
-            out, row_idx, col_idx, n_rows, n_cols, return_sparse, return_dense
+            out, row_idx, col_idx, n_rows, n_cols, return_sparse,
         )
 
         return out
 
 
 class TangramMap(MapMethodClass):
-    tg  = None
+    tg = None
 
     def __init__(
         self,
         *args,
         **kwargs,
     ):
-        super().__init__(*args,**kwargs)
+        super().__init__(*args, **kwargs)
         pass
 
-    def _array_to_adata(X: np.ndarray) -> ad.AnnData:
-        n_rows, n_cols = X.shape
-        obs_names = [f"{x}" for x in range(n_rows)]
-        var_names = [f"{x}" for x in range(n_cols)]
+    @staticmethod
+    def get_kwargs(*args, **kwargs):
+        out_kwargs = dict()
 
-        obs = pd.DataFrame([], index=obs_names)
-        var = pd.DataFrame([], index=var_names)
+        markers_path = kwargs.get("marker_path", None)
 
-        adata = ad.AnnData(X, obs=obs, var=var)
+        if markers_path is not None:
+            if markers_path.endswith(".csv"):
+                markers = pd.read_csv(markers_path, index_col=0)
+                markers = np.reshape(markers.values, -1)
+            elif markers_path.endswith(".txt"):
+                with open(markers_path, "r") as f:
+                    markers = f.readlines()
+                    markers = [x.rstrip("\n") for x in markers]
+            else:
+                raise NotImplementedError
 
-        return adata
+        else:
+            markers = None
+
+            out_kwargs["genes"] = markers
+
+            return out_kwargs
 
     @classmethod
-    def map(
+    def run(
         cls,
-        X_to: np.ndarray,
-        X_from: np.ndarray,
-        S_to: np.ndarray,
+        X_to: ad.AnnData,
+        X_from: ad.AnnData,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
         version: Literal["v1", "v2"] = "v2",
         train_genes: List[str] | None = None,
+        to_spatial_key: str = "spatial",
+        from_spatial_key: str = "spatial",
         return_sparse: bool = True,
-        return_dense: bool = False,
         pos_by_argmax: bool = True,
         pos_by_weight: bool = False,
         num_epochs: int = 1000,
@@ -167,19 +221,17 @@ class TangramMap(MapMethodClass):
         n_cols = X_from.shape[0]
         n_rows = X_to.shape[0]
 
-        ad_from = cls._array_to_adata(X_from)
-        ad_to = cls._array_to_adata(X_to)
+        ad_from = X_from
+        ad_to = X_to
+        S_to = ad_to.obsm[to_spatial_key]
 
-        if train_genes is None:
-            train_genes = ad_to.var.index.tolist()
-
-        cls.tg.pp_adatas(ad_from, ad_to, genes=train_genes)
+        cls.tg.pp_adatas(ad_from, ad_to, genes=kwargs.get("genes", None))
 
         ad_map = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
             adata_sp=ad_to,
-            mode="cells",
-            device=("cuda:0" if is_available() else 'cpu'),
+            mode=kwargs.get('mode',"cells"),
+            device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
         )
 
@@ -201,27 +253,31 @@ class TangramMap(MapMethodClass):
         out = dict()
 
         cls.standard_update_out_dict(
-            out, row_idx, col_idx, n_rows, n_cols, return_sparse, return_dense
+            out, row_idx, col_idx, n_rows, n_cols, return_sparse,
         )
 
         return out
 
+
 class TangramV1Map(TangramMap):
     tg = tg1
+
     def __init__(
         self,
         *args,
         **kwargs,
     ):
-        super().__init__(*args,**kwargs)
+        super().__init__(*args, **kwargs)
         pass
+
 
 class TangramV2Map(TangramMap):
     tg = tg2
+
     def __init__(
         self,
         *args,
         **kwargs,
     ):
-        super().__init__(*args,**kwargs)
+        super().__init__(*args, **kwargs)
         pass
