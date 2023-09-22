@@ -40,7 +40,7 @@ class MapJaccardDist(MapMetricClass):
         return jc
 
 
-class MapAccary(MapMetricClass):
+class MapAccuracy(MapMetricClass):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

@@ -6,6 +6,7 @@ import tangram as tg1
 import tangram2 as tg2
 import pandas as pd
 from scipy.spatial import cKDTree
+from torch.cuda import is_available
 
 from abc import ABC, abstractmethod
 
@@ -126,13 +127,14 @@ class ArgMaxCorrMap(ABC):
 
 
 class TangramMap(MapMethodClass):
-    tangram_version = {"v1": tg1, "v2": tg2}
+    tg  = None
 
     def __init__(
         self,
         *args,
         **kwargs,
     ):
+        super().__init__(*args,**kwargs)
         pass
 
     def _array_to_adata(X: np.ndarray) -> ad.AnnData:
@@ -168,18 +170,16 @@ class TangramMap(MapMethodClass):
         ad_from = cls._array_to_adata(X_from)
         ad_to = cls._array_to_adata(X_to)
 
-        tg = cls.tangram_version[version]
-
         if train_genes is None:
             train_genes = ad_to.var.index.tolist()
 
-        tg.pp_adatas(ad_from, ad_to, genes=train_genes)
+        cls.tg.pp_adatas(ad_from, ad_to, genes=train_genes)
 
-        ad_map = tg.map_cells_to_space(
+        ad_map = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
             adata_sp=ad_to,
             mode="cells",
-            device="cuda:0",
+            device=("cuda:0" if is_available() else 'cpu'),
             num_epochs=num_epochs,
         )
 
@@ -205,3 +205,23 @@ class TangramMap(MapMethodClass):
         )
 
         return out
+
+class TangramV1Map(TangramMap):
+    tg = tg1
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args,**kwargs)
+        pass
+
+class TangramV2Map(TangramMap):
+    tg = tg2
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args,**kwargs)
+        pass
