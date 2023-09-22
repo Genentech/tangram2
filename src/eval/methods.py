@@ -1,0 +1,207 @@
+import numpy as np
+import anndata as ad
+from scipy.sparse import coo_matrix, spmatrix
+from typing import Dict, Literal, List
+import tangram as tg1
+import tangram2 as tg2
+import pandas as pd
+from scipy.spatial import cKDTree
+
+from abc import ABC, abstractmethod
+
+from . import utils as ut
+
+
+class MapMethodClass(ABC):
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        pass
+
+    @staticmethod
+    def standard_update_out_dict(
+        out_dict: Dict[str, spmatrix | np.ndarray],
+        row_idx: np.ndarray,
+        col_idx: np.ndarray,
+        n_rows: int,
+        n_cols: int,
+        return_sparse: bool,
+        return_dense: bool,
+    ) -> None:
+        ordr = np.argsort(col_idx)
+        row_idx = row_idx[ordr]
+        col_idx = col_idx[ordr]
+
+        if return_sparse or return_dense:
+            T_sparse = coo_matrix(
+                (np.ones(n_cols), (row_idx, col_idx)), shape=(n_rows, n_cols)
+            )
+            if return_sparse:
+                out_dict["T_sparse"] = T_sparse
+            if return_dense:
+                out_dict["T_dense"] = T_sparse.toarray()
+
+        return None
+
+    @classmethod
+    @abstractmethod
+    def map(
+        self,
+        X_to: np.ndarray,
+        X_from: np.ndarray,
+        return_sparse: bool = True,
+        return_dense: bool = False,
+    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        pass
+
+
+class RandomMap(MapMethodClass):
+    def __init__(
+        self,
+    ):
+        super().__init__()
+
+    @classmethod
+    def map(
+        cls,
+        X_to: np.ndarray,
+        X_from: np.ndarray,
+        seed: int = 1,
+        return_sparse: bool = True,
+        return_dense: bool = False,
+        **kwargs,
+    ):
+        rng = np.random.default_rng(seed)
+
+        n_rows = X_to.shape[0]
+        n_cols = X_from.shape[0]
+
+        col_idx = np.arange(n_cols).astype(int)
+        row_idx = rng.choice(n_rows, replace=True, size=n_cols).astype(int)
+
+        out = dict()
+
+        cls.standard_update_out_dict(
+            out, row_idx, col_idx, n_rows, n_cols, return_sparse, return_dense
+        )
+
+        return out
+
+
+class ArgMaxCorrMap(ABC):
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        pass
+
+    @classmethod
+    def map(
+        cls,
+        X_to: np.ndarray,
+        X_from: np.ndarray,
+        return_sparse: bool = True,
+        return_dense: bool = False,
+        **kwargs,
+    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        n_cols = X_from.shape[0]
+        n_rows = X_to.shape[0]
+
+        col_idx = np.arange(n_cols).astype(int)
+
+        sim = ut.matrix_correlation(X_to.T, X_from.T)
+        sim[np.isnan(sim)] = -np.inf
+        row_idx = np.argmax(sim, axis=1).astype(int)
+
+        out = dict()
+
+        cls.standard_update_out_dict(
+            out, row_idx, col_idx, n_rows, n_cols, return_sparse, return_dense
+        )
+
+        return out
+
+
+class TangramMap(MapMethodClass):
+    tangram_version = {"v1": tg1, "v2": tg2}
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        pass
+
+    def _array_to_adata(X: np.ndarray) -> ad.AnnData:
+        n_rows, n_cols = X.shape
+        obs_names = [f"{x}" for x in range(n_rows)]
+        var_names = [f"{x}" for x in range(n_cols)]
+
+        obs = pd.DataFrame([], index=obs_names)
+        var = pd.DataFrame([], index=var_names)
+
+        adata = ad.AnnData(X, obs=obs, var=var)
+
+        return adata
+
+    @classmethod
+    def map(
+        cls,
+        X_to: np.ndarray,
+        X_from: np.ndarray,
+        S_to: np.ndarray,
+        version: Literal["v1", "v2"] = "v2",
+        train_genes: List[str] | None = None,
+        return_sparse: bool = True,
+        return_dense: bool = False,
+        pos_by_argmax: bool = True,
+        pos_by_weight: bool = False,
+        num_epochs: int = 1000,
+        **kwargs,
+    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        n_cols = X_from.shape[0]
+        n_rows = X_to.shape[0]
+
+        ad_from = cls._array_to_adata(X_from)
+        ad_to = cls._array_to_adata(X_to)
+
+        tg = cls.tangram_version[version]
+
+        if train_genes is None:
+            train_genes = ad_to.var.index.tolist()
+
+        tg.pp_adatas(ad_from, ad_to, genes=train_genes)
+
+        ad_map = tg.map_cells_to_space(
+            adata_sc=ad_from,
+            adata_sp=ad_to,
+            mode="cells",
+            device="cuda:0",
+            num_epochs=num_epochs,
+        )
+
+        T_soft = ad_map.X
+
+        col_idx = np.arange(n_cols)
+
+        if pos_by_argmax:
+            S_from = T_soft @ S_to
+
+            kd = cKDTree(S_to)
+            _, idxs = kd.query(S_from, k=2)
+
+            row_idx = idxs[:, 1::].flatten()
+
+        if pos_by_weight:
+            row_idx = np.argmax(T_soft, axis=0).flatten()
+
+        out = dict()
+
+        cls.standard_update_out_dict(
+            out, row_idx, col_idx, n_rows, n_cols, return_sparse, return_dense
+        )
+
+        return out
