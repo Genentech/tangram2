@@ -19,9 +19,18 @@ method_params:
 
 preprocess:
   exp1:
-
+    all:
+      sp:
+        standard_scanpy:
+          target_sum: 1e4
+      sc:
+        total_normalize:
+          target_sum: 1e4
 metrics:
   exp1:
-    - [map_jaccard,visify_cell_map]
-    - [map_accuracy,visify_cell_map]
-
+    map_tangram_v1:
+      map_jaccard: visify_cell_map
+      map_accuracy: visify_cell_map
+    map_random:
+      map_jaccard: visify_cell_map
+      map_accuracy: visify_cell_map

@@ -1,53 +1,35 @@
-import numpy as np
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Literal
+
 import anndata as ad
-from scipy.sparse import coo_matrix, spmatrix
-from typing import Dict, Literal, List
+import numpy as np
+import pandas as pd
 import tangram as tg1
 import tangram2 as tg2
-import pandas as pd
+from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from torch.cuda import is_available
-
-from abc import ABC, abstractmethod
 
 from . import utils as ut
 
 
-def ad2np(func):
-    def wrapper(
-        cls,
-        ad_to: ad.AnnData,
-        ad_from: ad.AnnData,
-        to_spatial_key: str = "spatial",
-        from_spatial_key: str | None = None,
-        *args,
-        **kwargs,
-    ):
-        X_to = ad_to.X
-        if isinstance(X_to, spmatrix):
-            X_to = X_to.toarray()
-        X_from = ad_from.X
-        if isinstance(X_from, spmatrix):
-            X_from = X_from.toarray()
-
-        S_to = ad_to.obsm[to_spatial_key]
-        if from_spatial_key is not None:
-            S_from = ad_to.obsm[from_spatial_key]
-        else:
-            S_from = None
-
-        return func(cls, X_to, X_from, S_to=S_to, S_from=S_from, *args, **kwargs)
-
-    return wrapper
-
-
-class MapMethodClass(ABC):
+class MethodClass(ABC):
     def __init__(
-        self,
-        *args,
-        **kwargs,
+        self, *args, **kwargs,
     ):
         pass
+
+    @classmethod
+    @abstractmethod
+    def run(self, *args, **kwargs,) -> Any:
+        pass
+
+
+class MapMethodClass(MethodClass):
+    def __init__(
+        self, *args, **kwargs,
+    ):
+        super().__init__()
 
     @staticmethod
     def standard_update_out_dict(
@@ -92,13 +74,11 @@ class MapMethodClass(ABC):
 
 
 class RandomMap(MapMethodClass):
-    def __init__(
-        self,
-    ):
+    def __init__(self,):
         super().__init__()
 
     @classmethod
-    @ad2np
+    @ut.ad2np
     def run(
         cls,
         X_to: np.ndarray,
@@ -129,14 +109,12 @@ class RandomMap(MapMethodClass):
 
 class ArgMaxCorrMap(ABC):
     def __init__(
-        self,
-        *args,
-        **kwargs,
+        self, *args, **kwargs,
     ):
         pass
 
     @classmethod
-    @ad2np
+    @ut.ad2np
     def run(
         cls,
         X_to: np.ndarray,
@@ -169,9 +147,7 @@ class TangramMap(MapMethodClass):
     tg = None
 
     def __init__(
-        self,
-        *args,
-        **kwargs,
+        self, *args, **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -230,7 +206,7 @@ class TangramMap(MapMethodClass):
         ad_map = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
             adata_sp=ad_to,
-            mode=kwargs.get('mode',"cells"),
+            mode=kwargs.get("mode", "cells"),
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
         )
@@ -263,9 +239,7 @@ class TangramV1Map(TangramMap):
     tg = tg1
 
     def __init__(
-        self,
-        *args,
-        **kwargs,
+        self, *args, **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -275,9 +249,7 @@ class TangramV2Map(TangramMap):
     tg = tg2
 
     def __init__(
-        self,
-        *args,
-        **kwargs,
+        self, *args, **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass

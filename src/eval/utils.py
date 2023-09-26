@@ -1,18 +1,38 @@
+from functools import reduce
+from typing import Any, Dict, List
+
+import anndata as ad
 import numpy as np
 from numba import njit
-import anndata as ad
-from typing import Dict, Any, List
-from functools import reduce
+from scipy.sparse import spmatrix
 
-# @njit(nopython=True)
-# def matrix_correlation(x: np.ndarray, y: np.ndarray, axis: int = 1):
-#     mx = np.mean(x, axis=axis, keepdims=True)
-#     my = np.mean(y, axis=axis, keepdims=True)
-#     xm, ym = x - mx, y - my
-#     r_num = np.add.reduce(xm * ym, axis=axis)
-#     r_den = np.sqrt((xm * xm).sum(axis=axis) * (ym * ym).sum(axis=axis))
-#     r = r_num / r_den
-#     return r
+
+def ad2np(func):
+    def wrapper(
+        cls,
+        ad_to: ad.AnnData,
+        ad_from: ad.AnnData,
+        to_spatial_key: str = "spatial",
+        from_spatial_key: str | None = None,
+        *args,
+        **kwargs,
+    ):
+        X_to = ad_to.X
+        if isinstance(X_to, spmatrix):
+            X_to = X_to.toarray()
+        X_from = ad_from.X
+        if isinstance(X_from, spmatrix):
+            X_from = X_from.toarray()
+
+        S_to = ad_to.obsm[to_spatial_key]
+        if from_spatial_key is not None:
+            S_from = ad_to.obsm[from_spatial_key]
+        else:
+            S_from = None
+
+        return func(cls, X_to, X_from, S_to=S_to, S_from=S_from, *args, **kwargs)
+
+    return wrapper
 
 
 @njit
@@ -64,9 +84,7 @@ def get_ad_value(adata: ad.AnnData, key: str):
 
 
 def expand_key(
-    d: Dict[Any, Any],
-    fill_keys: List[str],
-    expand_key: str = "all",
+    d: Dict[Any, Any], fill_keys: List[str], expand_key: str = "all",
 ) -> Dict[Any, Any]:
     if expand_key in d:
         exp_d = {x: d[expand_key] for x in fill_keys}
