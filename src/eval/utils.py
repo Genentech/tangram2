@@ -1,6 +1,8 @@
 import numpy as np
 from numba import njit
 import anndata as ad
+from typing import Dict, Any, List
+from functools import reduce
 
 # @njit(nopython=True)
 # def matrix_correlation(x: np.ndarray, y: np.ndarray, axis: int = 1):
@@ -59,3 +61,19 @@ def get_ad_value(adata: ad.AnnData, key: str):
         out = None
 
     return out
+
+
+def expand_key(
+    d: Dict[Any, Any],
+    fill_keys: List[str],
+    expand_key: str = "all",
+) -> Dict[Any, Any]:
+    if expand_key in d:
+        exp_d = {x: d[expand_key] for x in fill_keys}
+        return exp_d
+    else:
+        return d
+
+
+def recursive_get(d, *keys):
+    return reduce(lambda c, k: c.get(k, {}), keys, d)

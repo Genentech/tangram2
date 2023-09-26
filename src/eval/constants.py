@@ -1,5 +1,6 @@
 from . import methods as met
 from . import metrics as mtx
+from . import preprocess as pp
 from enum import Enum
 
 
@@ -46,3 +47,11 @@ class METRICS(Enum):
     }
 
     METRICS = MAP_METRICS | PRD_METRICS
+
+
+class PreProcess(Enum):
+    RECIPES = dict(
+        standard_scanpy=pp.StandardScanpy,
+        normalize_totaly=pp.NormalizeTotal,
+    )
+

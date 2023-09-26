@@ -1,4 +1,5 @@
 from . import constants as C
+from . import utils as ut
 import os.path as osp
 from typing import Any, Dict
 import anndata as ad
@@ -9,17 +10,20 @@ def run(config: Dict[str, Any], out_dir: str = "."):
     data = config.pop("data")
     exps = list(data.keys())
 
-    for key, exp_conf in config.items():
-        if "all" in exp_conf:
-            new_exp_conf = {x: exp_conf["all"] for x in exps}
-            config[key] = new_exp_conf
+    # for key, exp_conf in config.items():
+    # if "all" in exp_conf:
+    # new_exp_conf = {x: exp_conf["all"] for x in exps}
+    # config[key] = new_exp_conf
 
-    methods = config["methods"]
-    method_params = config["method_params"]
-    metrics = config["metrics"]
-    pp = config["preprocess"]
+    methods = ut.expand_key(config["methods"], exps)
+    method_params = ut.expand_key(config["method_params"], exps)
+    metrics = ut.expand_key(config["metrics"], exps)
+    pp = ut.expand_key(config.get("preprocess", {}), exps)
 
     for exp in exps:
+        met_names = methods[exp]
+        pp[exp] = ut.expand_key(pp[exp], met_names)
+
         ad_sc_pth = data[exp]["sc"]["path"]
         ad_sp_pth = data[exp]["sp"]["path"]
         ad_sc = ad.read_h5ad(ad_sc_pth)
@@ -40,12 +44,16 @@ def run(config: Dict[str, Any], out_dir: str = "."):
 
             for ad_type, ad_i in zip(["sc", "sp"], [ad_sc, ad_sp]):
                 if "_old" in ad_i.layers:
-                    ad_i.X = ad_i.layers["_old"]
+                    ad_i.X = ad_i.layers["_old"].copy()
                 else:
                     ad_i.layers["_old"] = ad_i.X.copy()
 
-                # TODO: add preprocessing here
-                # pp_met = pp[exp][met_name][ad_type]
+                pp_met_dict = ut.recursive_get(pp, exp, met_name, ad_type)
+
+                for pp_met_name, pp_met_kwargs in pp_met_dict.items():
+                    if pp_met_name in C.PreProcess["RECIPES"].value:
+                        pp_met = C.PreProcess["RECIPES"].value[pp_met_name]
+                        pp_met.pp(ad_i, **pp_met_kwargs)
 
             met_kwargs = method.get_kwargs()
             inp_kwargs = dict(
@@ -55,7 +63,7 @@ def run(config: Dict[str, Any], out_dir: str = "."):
             kwargs = met_kwargs | inp_kwargs | method_params[exp].get(met_name, {})
             met_val = method.run(ad_sp, ad_sc, **kwargs)
 
-            for metric_name, gt_name in metrics[exp]:
+            for metric_name, gt_name in metrics[exp][met_name].items():
                 if metric_name in C.METRICS["METRICS"].value:
                     metric = C.METRICS["METRICS"].value[metric_name]
                 else:
