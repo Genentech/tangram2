@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Literal
+from tempfile import TemporaryDirectory
+from typing import Any, Dict, List, Literal, Tuple
 
 import anndata as ad
+import CeLEry as cel
 import numpy as np
 import pandas as pd
 import tangram as tg1
@@ -11,6 +13,10 @@ from scipy.spatial import cKDTree
 from torch.cuda import is_available
 
 from . import utils as ut
+
+# from . import constants as C
+# import eval.constants as C
+
 
 
 class MethodClass(ABC):
@@ -25,7 +31,7 @@ class MethodClass(ABC):
         pass
 
 
-class MapMethodClass(MethodClass):
+class HardMapMethodClass(MethodClass):
     def __init__(
         self, *args, **kwargs,
     ):
@@ -62,8 +68,8 @@ class MapMethodClass(MethodClass):
     @abstractmethod
     def run(
         self,
-        X_to: np.ndarray,
-        X_from: np.ndarray,
+        X_to: Any,
+        X_from: Any,
         *args,
         S_to: np.ndarray | None = None,
         S_from: np.ndarray | None = None,
@@ -73,7 +79,32 @@ class MapMethodClass(MethodClass):
         pass
 
 
-class RandomMap(MapMethodClass):
+class SoftMapMethodClass(MethodClass):
+    def __init__(
+        self, *args, **kwargs,
+    ):
+        super().__init__()
+
+    @staticmethod
+    def get_kwargs(*args, **kwargs):
+        return dict()
+
+    @classmethod
+    @abstractmethod
+    def run(
+        self,
+        X_to: Any,
+        X_from: Any,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
+        return_sparse: bool = True,
+        **kwargs,
+    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        pass
+
+
+class RandomMap(HardMapMethodClass):
     def __init__(self,):
         super().__init__()
 
@@ -107,7 +138,7 @@ class RandomMap(MapMethodClass):
         return out
 
 
-class ArgMaxCorrMap(ABC):
+class ArgMaxCorrMap(HardMapMethodClass):
     def __init__(
         self, *args, **kwargs,
     ):
@@ -143,7 +174,7 @@ class ArgMaxCorrMap(ABC):
         return out
 
 
-class TangramMap(MapMethodClass):
+class TangramMap(HardMapMethodClass):
     tg = None
 
     def __init__(
@@ -253,3 +284,43 @@ class TangramV2Map(TangramMap):
     ):
         super().__init__(*args, **kwargs)
         pass
+
+
+class CeLEryMap(SoftMapMethodClass):
+    def __init__(
+        self, *args, **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    def run(
+        self,
+        X_to: ad.AnnData,
+        X_from: ad.AnnData,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
+        return_sparse: bool = True,
+        hidden_dims: Tuple[int, int, int] = [30, 25, 15],
+        num_epochs_max: int = 500,
+        **kwargs,
+    ) -> Dict[str, np.ndarray]:
+
+        X_to.obs[['x_pixel', 'y_pixel']] = X_to.obsm[
+            kwargs.get("spatial_key", 'spatial')
+        ]
+
+        with TemporaryDirectory() as tmpdir:
+            _ = cel.Fit_cord(
+                data_train=X_to,
+                hidden_dims=hidden_dims,
+                num_epochs_max=num_epochs_max,
+                path=tmpdir,
+                filename='model',
+            )
+
+            pred_cord = cel.Predict_cord(
+                data_test=X_from, path=tmpdir, filename='model',
+            )
+
+        return dict(pred=pred_cord)

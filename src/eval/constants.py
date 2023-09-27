@@ -1,7 +1,10 @@
-from . import methods as met
+from enum import Enum
+
+# from . import methods as met
+import eval.methods as met
+
 from . import metrics as mtx
 from . import preprocess as pp
-from enum import Enum
 
 
 class PREFIX(Enum):
@@ -15,6 +18,7 @@ class METHODS(Enum):
         max_corr=met.ArgMaxCorrMap,
         tangram_v1=met.TangramV1Map,
         tangram_v2=met.TangramV2Map,
+        CeLEry = met.CeLEryMap,
     )
 
     MAP_METHODS = {
@@ -34,6 +38,8 @@ class METRICS(Enum):
     _MAP_METRICS = dict(
         jaccard=mtx.MapJaccardDist,
         accuracy=mtx.MapAccuracy,
+        rmse = mtx.MapRMSE,
+
     )
 
     MAP_METRICS = {
@@ -53,5 +59,12 @@ class PreProcess(Enum):
     RECIPES = dict(
         standard_scanpy=pp.StandardScanpy,
         normalize_totaly=pp.NormalizeTotal,
+        CeLEry=pp.CeLEryPP,
     )
 
+
+class CeLEry(Enum):
+    x_coord = 'x_pixel'
+    y_coord = 'y_pixel'
+    filename = 'model'
+    spatial_key = 'spatial'

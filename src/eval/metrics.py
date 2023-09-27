@@ -1,32 +1,25 @@
-import numpy as np
 from abc import ABC, abstractmethod
-from scipy.sparse import coo_matrix
+from typing import Any, Dict
+
 import anndata as ad
-from typing import Dict, Any
+import numpy as np
+from scipy.sparse import coo_matrix
 
 from . import utils as ut
 
 
-class MapMetricClass(ABC):
+class MetricClass(ABC):
     def __init__(self, *args, **kwargs):
         pass
 
     @classmethod
-    def get_gt(cls,ad_to: ad.AnnData, ad_from: ad.AnnData,gt_key: str,*args,**kwargs):
-        obj_map = ut.get_ad_value(ad_from, gt_key)
-        row_idx = obj_map['row_self']
-        col_idx = obj_map['row_target']
-        n_rows,n_cols = obj_map['shape']
-
-
-        T = coo_matrix((np.ones(n_rows), (row_idx, col_idx)), shape=(n_rows, n_cols))
-
-        return dict(true = T.T)
-
+    @abstractmethod
+    def get_gt(cls, *args, **kwargs):
+        pass
 
     @classmethod
     @abstractmethod
-    def score(cls, res: Dict[str,Any], *args, **kwargs) -> float:
+    def score(cls, res: Dict[str, Any], *args, **kwargs) -> float:
         pass
 
     @classmethod
@@ -35,17 +28,43 @@ class MapMetricClass(ABC):
             f.writelines(str(value))
 
 
-class MapJaccardDist(MapMetricClass):
+class HardMapMetricClass(MetricClass):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def get_gt(cls, ad_to: ad.AnnData, ad_from: ad.AnnData, gt_key: str, **kwargs):
+        obj_map = ut.get_ad_value(ad_from, gt_key)
+        row_idx = obj_map["row_self"]
+        col_idx = obj_map["row_target"]
+        n_rows, n_cols = obj_map["shape"]
+
+        T = coo_matrix((np.ones(n_rows), (row_idx, col_idx)), shape=(n_rows, n_cols))
+
+        return dict(true=T.T)
+
+
+class SoftMapMetricClass(MetricClass):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def get_gt(cls, ad_to: ad.AnnData, ad_from: ad.AnnData, gt_key: str, **kwargs):
+        S = ut.get_ad_value(ad_from, gt_key)
+
+        return dict(true=S)
+
+
+class MapJaccardDist(HardMapMetricClass):
     name = "jaccard"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-
     @classmethod
-    def score(cls,res: Dict[str,coo_matrix], *args, **kwargs) -> float:
-        T_true = res['true']
-        T_pred = res['pred']
+    def score(cls, res: Dict[str, coo_matrix], *args, **kwargs) -> float:
+        T_true = res["true"]
+        T_pred = res["pred"]
 
         n_rows = T_pred.shape[0]
 
@@ -68,17 +87,16 @@ class MapJaccardDist(MapMetricClass):
         return jc
 
 
-class MapAccuracy(MapMetricClass):
+class MapAccuracy(HardMapMetricClass):
     name = "accuracy"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str,coo_matrix], *args, **kwargs) -> float:
-        T_true = res['true']
-        T_pred = res['pred']
-
+    def score(cls, res: Dict[str, coo_matrix], *args, **kwargs) -> float:
+        T_true = res["true"]
+        T_pred = res["pred"]
 
         # sparse matrices do not work with A * B
         inter = T_pred.multiply(T_true)
@@ -87,3 +105,16 @@ class MapAccuracy(MapMetricClass):
         acc = inter / full
 
         return acc
+
+
+class MapRMSE(SoftMapMetricClass):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
+        S_true = res["true"]
+        S_pred = res["pred"]
+
+        rmse = np.mean(np.sum(np.power(S_true - S_pred, 2), axis=1))
+        return rmse

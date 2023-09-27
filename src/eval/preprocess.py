@@ -1,8 +1,10 @@
-import scanpy as sc
-import anndata as ad
 from abc import ABC, abstractmethod
-from scipy.sparse import spmatrix
+
+import anndata as ad
+import CeLEry as cel
 import numpy as np
+import scanpy as sc
+from scipy.sparse import spmatrix
 
 
 class PPClass(ABC):
@@ -26,3 +28,10 @@ class StandardScanpy(PPClass):
         adata.X = adata.X.astype(np.float32)
         sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)))
         sc.pp.log1p(adata)
+
+
+class CeLEryPP(PPClass):
+
+    @staticmethod
+    def pp(adata: ad.AnnData, *args, **kwargs):
+        cel.get_zscore(adata)
