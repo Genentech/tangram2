@@ -30,8 +30,6 @@ class StandardScanpy(PPClass):
         sc.pp.log1p(adata)
 
 
+#TODO: define this class
 class CeLEryPP(PPClass):
-
-    @staticmethod
-    def pp(adata: ad.AnnData, *args, **kwargs):
-        cel.get_zscore(adata)
+    pass

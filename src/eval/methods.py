@@ -14,10 +14,6 @@ from torch.cuda import is_available
 
 from . import utils as ut
 
-# from . import constants as C
-# import eval.constants as C
-
-
 
 class MethodClass(ABC):
     def __init__(
@@ -286,41 +282,6 @@ class TangramV2Map(TangramMap):
         pass
 
 
+# TODO : define this class
 class CeLEryMap(SoftMapMethodClass):
-    def __init__(
-        self, *args, **kwargs,
-    ):
-        super().__init__()
-
-    @classmethod
-    def run(
-        self,
-        X_to: ad.AnnData,
-        X_from: ad.AnnData,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
-        return_sparse: bool = True,
-        hidden_dims: Tuple[int, int, int] = [30, 25, 15],
-        num_epochs_max: int = 500,
-        **kwargs,
-    ) -> Dict[str, np.ndarray]:
-
-        X_to.obs[['x_pixel', 'y_pixel']] = X_to.obsm[
-            kwargs.get("spatial_key", 'spatial')
-        ]
-
-        with TemporaryDirectory() as tmpdir:
-            _ = cel.Fit_cord(
-                data_train=X_to,
-                hidden_dims=hidden_dims,
-                num_epochs_max=num_epochs_max,
-                path=tmpdir,
-                filename='model',
-            )
-
-            pred_cord = cel.Predict_cord(
-                data_test=X_from, path=tmpdir, filename='model',
-            )
-
-        return dict(pred=pred_cord)
+    pass
