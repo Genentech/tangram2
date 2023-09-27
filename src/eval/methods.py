@@ -88,7 +88,7 @@ class SoftMapMethodClass(MethodClass):
     @classmethod
     @abstractmethod
     def run(
-        self,
+        cls,
         X_to: Any,
         X_from: Any,
         *args,
@@ -282,6 +282,38 @@ class TangramV2Map(TangramMap):
         pass
 
 
-# TODO : define this class
 class CeLEryMap(SoftMapMethodClass):
-    pass
+    def __init__(
+            self, *args, **kwargs,
+    ):
+        super().__init__()
+
+    @staticmethod
+    def get_kwargs(*args, **kwargs):
+        return dict()
+
+    @classmethod
+    def run(
+            cls,
+            X_to: ad.AnnData,
+            X_from: ad.AnnData,
+            *args,
+            S_to: np.ndarray | None = None,
+            S_from: np.ndarray | None = None,
+            return_sparse: bool = True,
+            hidden_dims: List[int] = [50, 25, 15],
+            num_epochs_max: int = 100,
+            spatial_key: str = 'spatial',
+            **kwargs,
+    ) -> Dict[str, np.ndarray]:
+
+        X_to.obs[['x_pixel', 'y_pixel']] = X_to.obsm[spatial_key]
+        with TemporaryDirectory() as tmpdir:
+            model_train = cel.Fit_cord(data_train=X_to, hidden_dims=hidden_dims, num_epochs_max=num_epochs_max,
+                                       path=tmpdir, filename="celery_model")
+            pred_cord = cel.Predict_cord(data_test=X_from, path=tmpdir, filename="celery_model")
+
+        out = dict(pred=pred_cord, model=model_train)
+
+        return out
+

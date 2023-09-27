@@ -12,13 +12,13 @@ class PREFIX(Enum):
     pred = "prd"
 
 
-# TODO: update methods with CeLEry pointing to met.CeLEryMap
 class METHODS(Enum):
     _MAP_METHODS = dict(
         random=met.RandomMap,
         max_corr=met.ArgMaxCorrMap,
         tangram_v1=met.TangramV1Map,
         tangram_v2=met.TangramV2Map,
+        CeLEry=met.CeLEryMap,
     )
 
     MAP_METHODS = {
@@ -34,11 +34,11 @@ class METHODS(Enum):
     METHODS = MAP_METHODS | PRD_METHODS
 
 
-#TODO: update metrics with rmse pointing to mtx.MapRMSE
 class METRICS(Enum):
     _MAP_METRICS = dict(
         jaccard=mtx.MapJaccardDist,
         accuracy=mtx.MapAccuracy,
+        rmse=mtx.MapRMSE,
 
     )
 
@@ -55,10 +55,10 @@ class METRICS(Enum):
     METRICS = MAP_METRICS | PRD_METRICS
 
 
-#TODO: update with CeLERry
 class PreProcess(Enum):
     RECIPES = dict(
         standard_scanpy=pp.StandardScanpy,
         normalize_totaly=pp.NormalizeTotal,
+        CeLERy=pp.CeLEryPP,
     )
 

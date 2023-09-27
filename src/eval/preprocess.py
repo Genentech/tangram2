@@ -30,6 +30,11 @@ class StandardScanpy(PPClass):
         sc.pp.log1p(adata)
 
 
-#TODO: define this class
 class CeLEryPP(PPClass):
-    pass
+    @staticmethod
+    def pp(adata: ad.AnnData, **kwargs):
+        if isinstance(adata.X, spmatrix):
+            adata.X = adata.X.toarray()
+        adata.X = adata.X.astype(np.float32)
+        cel.get_zscore(adata)
+

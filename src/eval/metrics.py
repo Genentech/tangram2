@@ -107,6 +107,18 @@ class MapAccuracy(HardMapMetricClass):
         return acc
 
 
-# TODO: Create this class
 class MapRMSE(SoftMapMetricClass):
-    pass
+    name = "rmse"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
+        S_true = res["true"]
+        S_pred = res["pred"]
+
+        # rmse - S_true is a nx2 matrix
+        rmse = np.sqrt(np.sum((S_true - S_pred)**2, axis=1).mean())
+
+        return rmse
