@@ -314,7 +314,7 @@ class CeLEryMap(MapMethodClass):
         S_to: np.ndarray | None = None,
         S_from: np.ndarray | None = None,
         return_sparse: bool = True,
-        hidden_dims: List[int] = [50, 25, 15],
+        hidden_dims: List[int] = [30, 25, 15],
         num_epochs_max: int = 100,
         spatial_key: str = "spatial",
         **kwargs,
