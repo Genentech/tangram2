@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, List, Literal, Tuple
+from typing import Any, Dict, List, Literal
 
 import anndata as ad
 import CeLEry as cel
@@ -17,24 +17,49 @@ from . import utils as ut
 
 class MethodClass(ABC):
     def __init__(
-        self, *args, **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         pass
 
     @classmethod
     @abstractmethod
-    def run(self, *args, **kwargs,) -> Any:
+    def run(
+        self,
+        *args,
+        **kwargs,
+    ) -> Any:
         pass
 
+    @staticmethod
+    def get_kwargs(*args, **kwargs):
+        return dict()
 
-class HardMapMethodClass(MethodClass):
+
+class MapMethodClass(MethodClass):
     def __init__(
-        self, *args, **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__()
 
+    @classmethod
+    @abstractmethod
+    def run(
+        cls,
+        X_to: Any,
+        X_from: Any,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
+        **kwargs,
+    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        pass
+
     @staticmethod
-    def standard_update_out_dict(
+    def hard_update_out_dict(
         out_dict: Dict[str, spmatrix | np.ndarray],
         row_idx: np.ndarray,
         col_idx: np.ndarray,
@@ -56,52 +81,11 @@ class HardMapMethodClass(MethodClass):
 
         return out_dict
 
-    @staticmethod
-    def get_kwargs(*args, **kwargs):
-        return dict()
 
-    @classmethod
-    @abstractmethod
-    def run(
-        self,
-        X_to: Any,
-        X_from: Any,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
-        return_sparse: bool = True,
-        **kwargs,
-    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
-        pass
-
-
-class SoftMapMethodClass(MethodClass):
+class RandomMap(MapMethodClass):
     def __init__(
-        self, *args, **kwargs,
+        self,
     ):
-        super().__init__()
-
-    @staticmethod
-    def get_kwargs(*args, **kwargs):
-        return dict()
-
-    @classmethod
-    @abstractmethod
-    def run(
-        cls,
-        X_to: Any,
-        X_from: Any,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
-        return_sparse: bool = True,
-        **kwargs,
-    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
-        pass
-
-
-class RandomMap(HardMapMethodClass):
-    def __init__(self,):
         super().__init__()
 
     @classmethod
@@ -127,16 +111,23 @@ class RandomMap(HardMapMethodClass):
 
         out = dict()
 
-        cls.standard_update_out_dict(
-            out, row_idx, col_idx, n_rows, n_cols, return_sparse,
+        cls.hard_update_out_dict(
+            out,
+            row_idx,
+            col_idx,
+            n_rows,
+            n_cols,
+            return_sparse,
         )
 
         return out
 
 
-class ArgMaxCorrMap(HardMapMethodClass):
+class ArgMaxCorrMap(MapMethodClass):
     def __init__(
-        self, *args, **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         pass
 
@@ -163,18 +154,25 @@ class ArgMaxCorrMap(HardMapMethodClass):
 
         out = dict()
 
-        cls.standard_update_out_dict(
-            out, row_idx, col_idx, n_rows, n_cols, return_sparse,
+        cls.hard_update_out_dict(
+            out,
+            row_idx,
+            col_idx,
+            n_rows,
+            n_cols,
+            return_sparse,
         )
 
         return out
 
 
-class TangramMap(HardMapMethodClass):
+class TangramMap(MapMethodClass):
     tg = None
 
     def __init__(
-        self, *args, **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -199,9 +197,9 @@ class TangramMap(HardMapMethodClass):
         else:
             markers = None
 
-            out_kwargs["genes"] = markers
+        out_kwargs["genes"] = markers
 
-            return out_kwargs
+        return out_kwargs
 
     @classmethod
     def run(
@@ -219,6 +217,7 @@ class TangramMap(HardMapMethodClass):
         pos_by_argmax: bool = True,
         pos_by_weight: bool = False,
         num_epochs: int = 1000,
+        hard_map: bool = True,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         n_cols = X_from.shape[0]
@@ -240,24 +239,32 @@ class TangramMap(HardMapMethodClass):
 
         T_soft = ad_map.X
 
-        col_idx = np.arange(n_cols)
+        if hard_map:
+            col_idx = np.arange(n_cols)
 
-        if pos_by_argmax:
-            S_from = T_soft @ S_to
+            if pos_by_argmax:
+                S_from = T_soft @ S_to
 
-            kd = cKDTree(S_to)
-            _, idxs = kd.query(S_from, k=2)
+                kd = cKDTree(S_to)
+                _, idxs = kd.query(S_from, k=2)
 
-            row_idx = idxs[:, 1::].flatten()
+                row_idx = idxs[:, 1::].flatten()
 
-        if pos_by_weight:
-            row_idx = np.argmax(T_soft, axis=0).flatten()
+            if pos_by_weight:
+                row_idx = np.argmax(T_soft, axis=0).flatten()
 
-        out = dict()
+            out = dict()
 
-        cls.standard_update_out_dict(
-            out, row_idx, col_idx, n_rows, n_cols, return_sparse,
-        )
+            cls.hard_update_out_dict(
+                out,
+                row_idx,
+                col_idx,
+                n_rows,
+                n_cols,
+                return_sparse,
+            )
+        else:
+            out = dict(pred=T_soft)
 
         return out
 
@@ -266,7 +273,9 @@ class TangramV1Map(TangramMap):
     tg = tg1
 
     def __init__(
-        self, *args, **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -276,15 +285,19 @@ class TangramV2Map(TangramMap):
     tg = tg2
 
     def __init__(
-        self, *args, **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
 
 
-class CeLEryMap(SoftMapMethodClass):
+class CeLEryMap(MapMethodClass):
     def __init__(
-            self, *args, **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__()
 
@@ -294,26 +307,31 @@ class CeLEryMap(SoftMapMethodClass):
 
     @classmethod
     def run(
-            cls,
-            X_to: ad.AnnData,
-            X_from: ad.AnnData,
-            *args,
-            S_to: np.ndarray | None = None,
-            S_from: np.ndarray | None = None,
-            return_sparse: bool = True,
-            hidden_dims: List[int] = [50, 25, 15],
-            num_epochs_max: int = 100,
-            spatial_key: str = 'spatial',
-            **kwargs,
+        cls,
+        X_to: ad.AnnData,
+        X_from: ad.AnnData,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
+        return_sparse: bool = True,
+        hidden_dims: List[int] = [50, 25, 15],
+        num_epochs_max: int = 100,
+        spatial_key: str = "spatial",
+        **kwargs,
     ) -> Dict[str, np.ndarray]:
-
-        X_to.obs[['x_pixel', 'y_pixel']] = X_to.obsm[spatial_key]
+        X_to.obs[["x_pixel", "y_pixel"]] = X_to.obsm[spatial_key]
         with TemporaryDirectory() as tmpdir:
-            model_train = cel.Fit_cord(data_train=X_to, hidden_dims=hidden_dims, num_epochs_max=num_epochs_max,
-                                       path=tmpdir, filename="celery_model")
-            pred_cord = cel.Predict_cord(data_test=X_from, path=tmpdir, filename="celery_model")
+            model_train = cel.Fit_cord(
+                data_train=X_to,
+                hidden_dims=hidden_dims,
+                num_epochs_max=num_epochs_max,
+                path=tmpdir,
+                filename="celery_model",
+            )
+            pred_cord = cel.Predict_cord(
+                data_test=X_from, path=tmpdir, filename="celery_model"
+            )
 
         out = dict(pred=pred_cord, model=model_train)
 
         return out
-

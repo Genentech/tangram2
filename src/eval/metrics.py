@@ -4,11 +4,15 @@ from typing import Any, Dict
 import anndata as ad
 import numpy as np
 from scipy.sparse import coo_matrix
+import os.path as osp
 
 from . import utils as ut
 
 
 class MetricClass(ABC):
+    metric_type: str = ""
+    metric_name: str = ""
+
     def __init__(self, *args, **kwargs):
         pass
 
@@ -18,17 +22,31 @@ class MetricClass(ABC):
         pass
 
     @classmethod
+    def make_standard_out(cls, value: float) -> Dict[str, float]:
+        name = cls.metric_type + "_" + cls.metric_name
+        return {name: value}
+
+    @classmethod
     @abstractmethod
-    def score(cls, res: Dict[str, Any], *args, **kwargs) -> float:
+    def score(cls, res: Dict[str, Any], *args, **kwargs) -> Dict[str, float]:
         pass
 
     @classmethod
-    def save(cls, value: float, out_path: str) -> None:
-        with open(out_path, "w+") as f:
-            f.writelines(str(value))
+    def save(cls, values: Dict[str, float], out_dir: str) -> None:
+        for metric_name, value in values.items():
+            metric_out_path = osp.join(out_dir, metric_name + '.txt')
+            with open(metric_out_path, "w+") as f:
+                f.writelines(str(value))
 
 
-class HardMapMetricClass(MetricClass):
+class MapMetricClass(MetricClass):
+    metric_type = "map"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class HardMapMetricClass(MapMetricClass):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -44,7 +62,7 @@ class HardMapMetricClass(MetricClass):
         return dict(true=T.T)
 
 
-class SoftMapMetricClass(MetricClass):
+class SoftMapMetricClass(MapMetricClass):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -56,7 +74,7 @@ class SoftMapMetricClass(MetricClass):
 
 
 class MapJaccardDist(HardMapMetricClass):
-    name = "jaccard"
+    metric_name = "jaccard"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -84,11 +102,13 @@ class MapJaccardDist(HardMapMetricClass):
 
         jc /= n_rows
 
-        return jc
+        out = cls.make_standard_out(jc)
+
+        return out
 
 
 class MapAccuracy(HardMapMetricClass):
-    name = "accuracy"
+    metric_name = "accuracy"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -104,11 +124,13 @@ class MapAccuracy(HardMapMetricClass):
         full = np.sum(T_true)
         acc = inter / full
 
-        return acc
+        out = cls.make_standard_out(acc)
+
+        return out
 
 
 class MapRMSE(SoftMapMetricClass):
-    name = "rmse"
+    metric_name = "rmse"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -119,6 +141,8 @@ class MapRMSE(SoftMapMetricClass):
         S_pred = res["pred"]
 
         # rmse - S_true is a nx2 matrix
-        rmse = np.sqrt(np.sum((S_true - S_pred)**2, axis=1).mean())
+        rmse = np.sqrt(np.sum((S_true - S_pred) ** 2, axis=1).mean())
 
-        return rmse
+        out = cls.make_standard_out(rmse)
+
+        return out
