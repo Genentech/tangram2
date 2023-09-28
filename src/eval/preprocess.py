@@ -5,6 +5,8 @@ import CeLEry as cel
 import numpy as np
 import scanpy as sc
 from scipy.sparse import spmatrix
+import tangram2 as tg2
+import tangram as tg
 
 
 class PPClass(ABC):
@@ -31,7 +33,23 @@ class StandardScanpy(PPClass):
 
 
 class CeLEryPP(PPClass):
-
     @staticmethod
-    def pp(adata: ad.AnnData, *args, **kwargs):
+    def pp(adata: ad.AnnData, **kwargs):
+        if isinstance(adata.X, spmatrix):
+            adata.X = adata.X.toarray()
+        adata.X = adata.X.astype(np.float32)
         cel.get_zscore(adata)
+
+
+class StandardTangramV1(PPClass):
+    @staticmethod
+    def pp(adata: ad.AnnData, **kwargs):
+        # TODO: Add Tangram V1 standard pp
+        pass
+
+
+class StandardTangramV2(PPClass):
+    @staticmethod
+    def pp(adata: ad.AnnData, **kwargs):
+        # TODO: add Tangram V2 standard pp
+        pass
