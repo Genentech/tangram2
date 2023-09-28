@@ -2,3 +2,4 @@ notebooks/
 data/
 Tangram/
 Tangram
+*.pyc
