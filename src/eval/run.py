@@ -6,14 +6,9 @@ import anndata as ad
 import os
 
 
-def run(config: Dict[str, Any], out_dir: str = "."):
+def run(config: Dict[str, Any], root_out_dir: str = "."):
     data = config.pop("data")
     exps = list(data.keys())
-
-    # for key, exp_conf in config.items():
-    # if "all" in exp_conf:
-    # new_exp_conf = {x: exp_conf["all"] for x in exps}
-    # config[key] = new_exp_conf
 
     methods = ut.expand_key(config["methods"], exps)
     method_params = ut.expand_key(config["method_params"], exps)
@@ -72,8 +67,7 @@ def run(config: Dict[str, Any], out_dir: str = "."):
                 gt_val = metric.get_gt(ad_sp, ad_sc, gt_name)
                 vals = gt_val | met_val
                 score = metric.score(vals)
-                out_pth = osp.join(out_dir, exp, met_name, metric_name + ".txt")
+                out_dir = osp.join(root_out_dir, exp, met_name)
+                os.makedirs(out_dir, exist_ok=True)
 
-                os.makedirs(osp.dirname(out_pth), exist_ok=True)
-
-                metric.save(score, out_pth)
+                metric.save(score, out_dir)
