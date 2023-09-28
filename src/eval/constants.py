@@ -12,13 +12,19 @@ class PREFIX(Enum):
     pred = "prd"
 
 
-class METHODS(Enum):
+class EnumCustom(Enum):
+    @classmethod
+    def get_options(cls) -> None:
+        return [x for x in cls.OPTIONS.value]
+
+
+class METHODS(EnumCustom):
     _MAP_METHODS = dict(
         random=met.RandomMap,
         max_corr=met.ArgMaxCorrMap,
         tangram_v1=met.TangramV1Map,
         tangram_v2=met.TangramV2Map,
-        CeLEry = met.CeLEryMap,
+        CeLEry=met.CeLEryMap,
     )
 
     MAP_METHODS = {
@@ -31,15 +37,14 @@ class METHODS(Enum):
         PREFIX.pred.value + "_" + key: val for key, val in _PRD_METHODS.items()
     }
 
-    METHODS = MAP_METHODS | PRD_METHODS
+    OPTIONS = MAP_METHODS | PRD_METHODS
 
 
-class METRICS(Enum):
+class METRICS(EnumCustom):
     _MAP_METRICS = dict(
         jaccard=mtx.MapJaccardDist,
         accuracy=mtx.MapAccuracy,
-        rmse = mtx.MapRMSE,
-
+        rmse=mtx.MapRMSE,
     )
 
     MAP_METRICS = {
@@ -52,11 +57,11 @@ class METRICS(Enum):
         PREFIX.pred.value + "_" + key: val for key, val in _PRD_METRICS.items()
     }
 
-    METRICS = MAP_METRICS | PRD_METRICS
+    OPTIONS = MAP_METRICS | PRD_METRICS
 
 
-class PreProcess(Enum):
-    RECIPES = dict(
+class PREPROCESS(EnumCustom):
+    OPTIONS = dict(
         standard_scanpy=pp.StandardScanpy,
         normalize_totaly=pp.NormalizeTotal,
         CeLEry=pp.CeLEryPP,
@@ -64,7 +69,7 @@ class PreProcess(Enum):
 
 
 class CeLEry(Enum):
-    x_coord = 'x_pixel'
-    y_coord = 'y_pixel'
-    filename = 'model'
-    spatial_key = 'spatial'
+    x_coord = "x_pixel"
+    y_coord = "y_pixel"
+    filename = "model"
+    spatial_key = "spatial"

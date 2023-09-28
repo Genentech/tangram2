@@ -37,8 +37,8 @@ def run(config: Dict[str, Any], out_dir: str = "."):
             ad_sp.X = ad_sp.layers[sc_layer]
 
         for met_name in methods[exp]:
-            if met_name in C.METHODS["METHODS"].value:
-                method = C.METHODS["METHODS"].value[met_name]
+            if met_name in C.METHODS["OPTIONS"].value:
+                method = C.METHODS["OPTIONS"].value[met_name]
             else:
                 continue
 
@@ -51,8 +51,8 @@ def run(config: Dict[str, Any], out_dir: str = "."):
                 pp_met_dict = ut.recursive_get(pp, exp, met_name, ad_type)
 
                 for pp_met_name, pp_met_kwargs in pp_met_dict.items():
-                    if pp_met_name in C.PreProcess["RECIPES"].value:
-                        pp_met = C.PreProcess["RECIPES"].value[pp_met_name]
+                    if pp_met_name in C.PREPROCESS["OPTIONS"].value:
+                        pp_met = C.PREPROCESS["OPTIONS"].value[pp_met_name]
                         pp_met.pp(ad_i, **pp_met_kwargs)
 
             met_kwargs = method.get_kwargs()
@@ -64,8 +64,8 @@ def run(config: Dict[str, Any], out_dir: str = "."):
             met_val = method.run(ad_sp, ad_sc, **kwargs)
 
             for metric_name, gt_name in metrics[exp][met_name].items():
-                if metric_name in C.METRICS["METRICS"].value:
-                    metric = C.METRICS["METRICS"].value[metric_name]
+                if metric_name in C.METRICS["OPTIONS"].value:
+                    metric = C.METRICS["OPTIONS"].value[metric_name]
                 else:
                     continue
 
