@@ -66,10 +66,3 @@ class PREPROCESS(EnumCustom):
         normalize_totaly=pp.NormalizeTotal,
         CeLEry=pp.CeLEryPP,
     )
-
-
-class CeLEry(Enum):
-    x_coord = "x_pixel"
-    y_coord = "y_pixel"
-    filename = "model"
-    spatial_key = "spatial"
