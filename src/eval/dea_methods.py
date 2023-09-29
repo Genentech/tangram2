@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Literal
 
 import anndata as ad
 import numpy as np
@@ -41,8 +41,10 @@ class ScanpyDEA(DEAMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        *args,
         method: str = "wilcoxon",
+        sort_by: str = "pvals_adj",
+        pval_cutoff: float = 0.01,
+        mode: Literal["pos", "neg", "both"] = "both",
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
         X_to_pred = input_dict["X_to_pred"]
@@ -73,6 +75,19 @@ class ScanpyDEA(DEAMethodClass):
         out = dict()
 
         for lab in uni_labels:
-            out[lab] = sc.get.rank_genes_groups_df(adata, group=lab)
+            dedf = sc.get.rank_genes_groups_df(
+                adata,
+                group=lab,
+                pval_cutoff=pval_cutoff,
+            )
+
+            if mode == "both":
+                out[lab] = dedf
+            elif mode == "pos":
+                out[lab] = dedf[dedf["scores"].values > 0]
+            elif mode == "neg":
+                out[lab] = dedf[dedf["scores"].values < 0]
+            else:
+                raise NotImplementedError
 
         return dict(pred=out, DEA=out)

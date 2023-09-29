@@ -9,7 +9,10 @@ from . import utils as ut
 
 
 def run(config: Dict[str, Any], root_dir: str = "."):
-    argmap = dict(sc = 'X_from',sp = 'X_to')
+    argmap = dict(
+        sc="X_from",
+        sp="X_to",
+    )
 
     data = config.pop("data")
     exps = list(data.keys())
@@ -25,12 +28,11 @@ def run(config: Dict[str, Any], root_dir: str = "."):
 
         input_dict = ut.read_data(data[exp])
 
-
         for met_name in methods[exp]:
             if met_name in C.METHODS["OPTIONS"].value:
                 method = C.METHODS["OPTIONS"].value[met_name]
-            elif met_name in C.WORKFLOWS['OPTIONS'].value:
-                method = C.WORKFLOWS['OPTIONS'].value[met_name]
+            elif met_name in C.WORKFLOWS["OPTIONS"].value:
+                method = C.WORKFLOWS["OPTIONS"].value[met_name]
             else:
                 continue
 
@@ -51,7 +53,6 @@ def run(config: Dict[str, Any], root_dir: str = "."):
                 # TODO: maybe this is unnecessary
                 input_dict[ad_type] = ad_i
 
-
             met_kwargs = method.get_kwargs()
             inp_kwargs = dict(
                 to_spatial_key=data[exp]["sp"].get("spatial_key", "spatial"),
@@ -59,17 +60,33 @@ def run(config: Dict[str, Any], root_dir: str = "."):
             )
             met_input = met_kwargs | inp_kwargs | method_params[exp].get(met_name, {})
 
-            met_val = method.run(input_dict,**met_input)
+            met_val = method.run(input_dict, **met_input)
 
-            for metric_name, gt_name in metrics[exp][met_name].items():
+            method_metrics = ut.recursive_get(metrics, exp, met_name)
+
+            for metric_name, metric_props in method_metrics.items():
                 if metric_name in C.METRICS["OPTIONS"].value:
                     metric = C.METRICS["OPTIONS"].value[metric_name]
                 else:
                     continue
 
-                gt_val = metric.get_gt(input_dict, gt_key = gt_name)
-                vals = gt_val | met_val
-                score = metric.score(vals)
+                if metric_props is not None and "ground_truth" in metric_props:
+                    name = metric_props["ground_truth"].pop("name")
+                    name = argmap.get(name, name)
+                    if osp.isfile(name):
+                        ground_truth = ut.read_input_object(
+                            name, **metric_props["ground_truth"]
+                        )
+                        ground_truth = dict(true=ground_truth)
+                    else:
+                        ground_truth = metric.get_gt(
+                            input_dict, **metric_props["ground_truth"]
+                        )
+                else:
+                    ground_truth = {}
+
+                score_vals = ground_truth | met_val
+                score = metric.score(score_vals)
                 out_dir = osp.join(root_dir, exp, met_name)
 
                 os.makedirs(out_dir, exist_ok=True)

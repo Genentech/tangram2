@@ -14,7 +14,7 @@ def identity_fun(x: W, *args, **kwargs) -> W:
     return x
 
 
-def _read_input_object(path: str, return_array: bool = False, layer=None):
+def read_input_object(path: str, return_array: bool = False, layer=None):
     if path.endswith(".h5ad"):
         obj = ad.read_h5ad(path)
         if layer is not None:
@@ -45,7 +45,7 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
         pth = data_dict[name]["path"]
         layer = data_dict[name].get("layer", None)
         return_array = data_dict[name].get("asarray", False)
-        obj = _read_input_object(pth, return_array=return_array, layer=layer)
+        obj = read_input_object(pth, return_array=return_array, layer=layer)
 
         input_dict[name] = obj
 
@@ -57,6 +57,10 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
 
 
 def ad2np(func):
+    # this is ugly af; remnant from when @andera29
+    # thought it would be a good idea to make the
+    # methods agnostic to the anndata package
+
     def wrapper(
         cls,
         input_dict: Dict[str, Any],
@@ -65,12 +69,12 @@ def ad2np(func):
         *args,
         **kwargs,
     ):
-        X_to = input_dict["X_to"].X
-        if isinstance(X_to, spmatrix):
-            X_to = X_to.toarray()
-        X_from = input_dict["X_from"].X
-        if isinstance(X_from, spmatrix):
-            X_from = X_from.toarray()
+        arr_X_to = input_dict["X_to"].X
+        if isinstance(arr_X_to, spmatrix):
+            arr_X_to = arr_X_to.toarray()
+        arr_X_from = input_dict["X_from"].X
+        if isinstance(arr_X_from, spmatrix):
+            arr_X_from = arr_X_from.toarray()
 
         S_to = input_dict["X_to"].obsm[to_spatial_key]
         if from_spatial_key is not None:
@@ -78,12 +82,23 @@ def ad2np(func):
         else:
             S_from = None
 
-        input_dict["X_to"] = X_to
-        input_dict["X_from"] = X_from
+        input_dict["__X_to"] = input_dict.pop("X_to").copy()
+        input_dict["__X_from"] = input_dict.pop("X_from").copy()
+
+        input_dict["X_to"] = arr_X_to
+        input_dict["X_from"] = arr_X_from
         input_dict["S_from"] = S_from
         input_dict["S_to"] = S_to
 
-        return func(cls, input_dict, *args, **kwargs)
+        out = func(cls, input_dict, *args, **kwargs)
+
+        del input_dict["X_to"]
+        del input_dict["X_from"]
+
+        input_dict["X_to"] = input_dict.pop("__X_to")
+        input_dict["X_from"] = input_dict.pop("__X_from")
+
+        return out
 
     return wrapper
 

@@ -27,5 +27,7 @@ preprocess:
 metrics:
   exp1:
     map_CeLEry:
-      map_rmse: spatial
-
+      map_rmse:
+        ground_truth:
+          name: 'sc'
+          key: spatial
