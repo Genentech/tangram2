@@ -1,10 +1,10 @@
+import os.path as osp
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 import anndata as ad
 import numpy as np
 from scipy.sparse import coo_matrix
-import os.path as osp
 
 from . import utils as ut
 
@@ -39,6 +39,26 @@ class MetricClass(ABC):
                 f.writelines(str(value))
 
 
+class PrintMetric(MetricClass):
+
+    metric_type = 'dev'
+    metric_name = 'print'
+
+    @classmethod
+    def get_gt(cls,*args,**kwargs):
+        return {}
+
+    @classmethod
+    def score(cls,res,*args,**kwargs):
+        print(res)
+
+    @classmethod
+    def save(cls,values,out_dir):
+        pass
+
+
+
+
 class MapMetricClass(MetricClass):
     metric_type = "map"
 
@@ -51,8 +71,8 @@ class HardMapMetricClass(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def get_gt(cls, ad_to: ad.AnnData, ad_from: ad.AnnData, gt_key: str | None = None, **kwargs):
-        obj_map = ut.get_ad_value(ad_from, gt_key)
+    def get_gt(cls, X_to: ad.AnnData, X_from: ad.AnnData, gt_key: str | None = None, **kwargs):
+        obj_map = ut.get_ad_value(X_from, gt_key)
         row_idx = obj_map["row_self"]
         col_idx = obj_map["row_target"]
         n_rows, n_cols = obj_map["shape"]
@@ -67,8 +87,8 @@ class SoftMapMetricClass(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def get_gt(cls, ad_to: ad.AnnData, ad_from: ad.AnnData, gt_key: str | None = None, **kwargs):
-        S = ut.get_ad_value(ad_from, gt_key)
+    def get_gt(cls, X_to: ad.AnnData, X_from: ad.AnnData, gt_key: str | None = None, **kwargs):
+        S = ut.get_ad_value(X_from, gt_key)
 
         return dict(true=S)
 

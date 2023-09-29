@@ -16,3 +16,6 @@ def list_metrics():
 
 def list_pp():
     _list_options('preprocess')
+
+def list_workflows():
+    _list_options('workflows')

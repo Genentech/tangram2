@@ -1,11 +1,19 @@
 from functools import reduce
-from typing import Any, Dict, List
-import pandas as pd
+from typing import Any, Dict, List, TypeVar
 
 import anndata as ad
 import numpy as np
+import pandas as pd
 from numba import njit
 from scipy.sparse import spmatrix
+
+W = TypeVar("W")
+
+
+
+
+def identity_fun(x: W,*args,**kwargs) -> W:
+    return x
 
 
 def _read_input_object(path: str, return_array: bool = False, layer=None):
@@ -45,7 +53,7 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
 
     for old_name, new_name in rename_map.items():
         if old_name in input_dict:
-            input_dict[new_name] = input_dict[old_name].pop()
+            input_dict[new_name] = input_dict.pop(old_name)
 
     return input_dict
 

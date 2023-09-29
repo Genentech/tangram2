@@ -12,8 +12,9 @@ from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from torch.cuda import is_available
 
-from . import utils as ut
 from eval._methods import MethodClass
+
+from . import utils as ut
 
 
 class MapMethodClass(MethodClass):
@@ -250,7 +251,7 @@ class TangramMap(MapMethodClass):
         else:
             out = dict(pred=T_soft)
 
-        out["T"] = T_soft
+        out["T"] = T_soft.T
         out["S_from"] = S_from
 
         return out

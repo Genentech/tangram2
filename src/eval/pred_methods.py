@@ -1,16 +1,18 @@
-from . import utils as ut
-from eval._methods import MethodClass
+from abc import abstractmethod
+from typing import Any, Dict
+
 import anndata as ad
+import numpy as np
+import pandas as pd
 import tangram as tg1
 import tangram2 as tg2
 from scipy.sparse import spmatrix
-from typing import Any, Dict
-from abs import abstractmethod
-import numpy as np
-import pandas as pd
+
+import eval.utils as ut
+from eval._methods import MethodClass
 
 
-class PredMethod(MethodClass):
+class PredMethodClass(MethodClass):
     def __init__(
         self,
         *args,
@@ -32,7 +34,7 @@ class PredMethod(MethodClass):
         pass
 
 
-class TangramPred(PredMethod):
+class TangramPred(PredMethodClass):
     tg = None
 
     def __init__(
@@ -60,16 +62,33 @@ class TangramPred(PredMethod):
             T_soft = T.copy()
 
         ad_map = ad.AnnData(
-            T_soft,
-            obs=X_to.obs,
-            var=X_from.obs,
+            T_soft.T,
+            var=X_to.obs,
+            obs=X_from.obs,
         )
+
+        if "training_genes" in X_to.uns:
+            training_genes = X_to.uns["training_genes"]
+        elif "training_genes" in X_from.uns:
+            training_genes = X_from.uns["training_genes"]
+        elif "training_genes" in kwargs:
+            training_genes = kwargs["training_genes"]
+        elif "markers" in kwargs:
+            training_genes = kwargs["markers"]
+        else:
+            training_genes = X_to.var.index.intersection(X_from.var.index).tolist()
+
+        ad_map.uns["train_genes_df"] = pd.DataFrame([], index=training_genes)
 
         ad_ge = cls.tg.project_genes(adata_map=ad_map, adata_sc=X_from)
 
         X_pred = ad_ge.to_df()
 
-        return dict(X_to_pred=X_pred)
+        return dict(
+            pred=X_pred,
+            X_to_pred=X_pred,
+            X_from_pred=None,
+        )
 
 
 class TangramV1Pred(TangramPred):
