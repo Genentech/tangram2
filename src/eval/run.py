@@ -23,7 +23,7 @@ def run(config: Dict[str, Any], root_dir: str = "."):
         met_names = methods[exp]
         pp[exp] = ut.expand_key(pp[exp], met_names)
 
-        input_data = ut.read_data(data[exp])
+        input_dict = ut.read_data(data[exp])
 
 
         for met_name in methods[exp]:
@@ -35,7 +35,7 @@ def run(config: Dict[str, Any], root_dir: str = "."):
                 continue
 
             for ad_type in ["sc", "sp"]:
-                ad_i = input_data[argmap[ad_type]]
+                ad_i = input_dict[argmap[ad_type]]
                 if "_old" in ad_i.layers:
                     ad_i.X = ad_i.layers["_old"].copy()
                 else:
@@ -49,7 +49,7 @@ def run(config: Dict[str, Any], root_dir: str = "."):
                         pp_met.pp(ad_i, **pp_met_kwargs)
 
                 # TODO: maybe this is unnecessary
-                input_data[ad_type] = ad_i
+                input_dict[ad_type] = ad_i
 
 
             met_kwargs = method.get_kwargs()
@@ -59,7 +59,7 @@ def run(config: Dict[str, Any], root_dir: str = "."):
             )
             met_input = met_kwargs | inp_kwargs | method_params[exp].get(met_name, {})
 
-            met_val = method.run(**input_data,**met_input)
+            met_val = method.run(input_dict,**met_input)
 
             for metric_name, gt_name in metrics[exp][met_name].items():
                 if metric_name in C.METRICS["OPTIONS"].value:
@@ -67,7 +67,7 @@ def run(config: Dict[str, Any], root_dir: str = "."):
                 else:
                     continue
 
-                gt_val = metric.get_gt(**input_data, gt_key = gt_name)
+                gt_val = metric.get_gt(input_dict, gt_key = gt_name)
                 vals = gt_val | met_val
                 score = metric.score(vals)
                 out_dir = osp.join(root_dir, exp, met_name)

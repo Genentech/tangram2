@@ -10,9 +10,7 @@ from scipy.sparse import spmatrix
 W = TypeVar("W")
 
 
-
-
-def identity_fun(x: W,*args,**kwargs) -> W:
+def identity_fun(x: W, *args, **kwargs) -> W:
     return x
 
 
@@ -46,7 +44,7 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
     for name in data_dict.keys():
         pth = data_dict[name]["path"]
         layer = data_dict[name].get("layer", None)
-        return_array = data_dict[name].get('asarray',False)
+        return_array = data_dict[name].get("asarray", False)
         obj = _read_input_object(pth, return_array=return_array, layer=layer)
 
         input_dict[name] = obj
@@ -61,27 +59,31 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
 def ad2np(func):
     def wrapper(
         cls,
-        ad_to: ad.AnnData,
-        ad_from: ad.AnnData,
+        input_dict: Dict[str, Any],
         to_spatial_key: str = "spatial",
         from_spatial_key: str | None = None,
         *args,
         **kwargs,
     ):
-        X_to = ad_to.X
+        X_to = input_dict["X_to"].X
         if isinstance(X_to, spmatrix):
             X_to = X_to.toarray()
-        X_from = ad_from.X
+        X_from = input_dict["X_from"].X
         if isinstance(X_from, spmatrix):
             X_from = X_from.toarray()
 
-        S_to = ad_to.obsm[to_spatial_key]
+        S_to = input_dict["X_to"].obsm[to_spatial_key]
         if from_spatial_key is not None:
-            S_from = ad_to.obsm[from_spatial_key]
+            S_from = input_dict["X_from"].obsm[from_spatial_key]
         else:
             S_from = None
 
-        return func(cls, X_to, X_from, S_to=S_to, S_from=S_from, *args, **kwargs)
+        input_dict["X_to"] = X_to
+        input_dict["X_from"] = X_from
+        input_dict["S_from"] = S_from
+        input_dict["S_to"] = S_to
+
+        return func(cls, input_dict, *args, **kwargs)
 
     return wrapper
 

@@ -47,15 +47,18 @@ class TangramPred(PredMethodClass):
     @classmethod
     def run(
         cls,
-        X_to: ad.AnnData,
-        X_from: ad.AnnData,
-        S_from: np.ndarray | None,
-        T: np.ndarray | spmatrix | None,
+            input_dict: Dict[str,Any],
         *args,
         spatial_key_to: str = "spatial",
         spatial_key_from: str = "spatial",
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
+
+        X_to = input_dict['X_to']
+        X_from = input_dict['X_from']
+        T = input_dict['T']
+
+
         if isinstance(T, spmatrix):
             T_soft = T.todense()
         else:

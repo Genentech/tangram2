@@ -18,6 +18,13 @@ class Composite:
         group_method: str | None = None,
         dea_method: str | None = None,
     ):
+
+        self.methods = dict(map = map_method,
+                            pred = pred_method,
+                            group = group_method,
+                            dea = dea_method,
+                            )
+
         self.map = (
             C.METHODS["OPTIONS"].value[map_method]
             if map_method is not None
@@ -46,14 +53,15 @@ class Composite:
         pred_args: Dict[str, Any],
         group_args: Dict[str, Any],
         dea_args: Dict[str, Any],
+        **kwargs,
     ):
-        out = self.map.run(**input_dict, **map_args)
+        out = self.map.run(input_dict, **map_args)
         input_dict.update(out)
-        out = self.pred.run(**input_dict, **pred_args)
+        out = self.pred.run(input_dict, **pred_args)
         input_dict.update(out)
-        out = self.group.run(**input_dict, **group_args)
+        out = self.group.run(input_dict, **group_args)
         input_dict.update(out)
-        out = self.dea.run(**input_dict, **dea_args)
+        out = self.dea.run(input_dict, **dea_args)
 
         return out
 

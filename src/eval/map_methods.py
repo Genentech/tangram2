@@ -72,16 +72,15 @@ class RandomMap(MapMethodClass):
     @ut.ad2np
     def run(
         cls,
-        X_to: np.ndarray,
-        X_from: np.ndarray,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
+        input_dict: Dict[str, Any],
         seed: int = 1,
         return_sparse: bool = True,
         **kwargs,
     ):
         rng = np.random.default_rng(seed)
+
+        X_to = input_dict["X_to"]
+        X_from = input_dict["X_from"]
 
         n_rows = X_to.shape[0]
         n_cols = X_from.shape[0]
@@ -101,7 +100,7 @@ class RandomMap(MapMethodClass):
         )
 
         out["T"] = out["pred"]
-        out["S_from"] = S_to[row_idx]
+        out["S_from"] = input_dict["S_to"][row_idx]
 
         return out
 
@@ -118,14 +117,13 @@ class ArgMaxCorrMap(MapMethodClass):
     @ut.ad2np
     def run(
         cls,
-        X_to: np.ndarray,
-        X_from: np.ndarray,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
+        input_dict: Dict[str, Any],
         return_sparse: bool = True,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        X_to = input_dict["X_to"]
+        X_from = input_dict["X_from"]
+
         n_cols = X_from.shape[0]
         n_rows = X_to.shape[0]
 
@@ -147,7 +145,7 @@ class ArgMaxCorrMap(MapMethodClass):
         )
 
         out["T"] = out["pred"]
-        out["S_from"] = S_to[row_idx]
+        out["S_from"] = input_dict["S_to"][row_idx]
 
         return out
 
@@ -190,12 +188,7 @@ class TangramMap(MapMethodClass):
     @classmethod
     def run(
         cls,
-        X_to: ad.AnnData,
-        X_from: ad.AnnData,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
-        version: Literal["v1", "v2"] = "v2",
+        input_dict: Dict[str, Any],
         train_genes: List[str] | None = None,
         to_spatial_key: str = "spatial",
         from_spatial_key: str = "spatial",
@@ -206,11 +199,11 @@ class TangramMap(MapMethodClass):
         hard_map: bool = True,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
-        n_cols = X_from.shape[0]
-        n_rows = X_to.shape[0]
+        n_cols = input_dict["X_from"].shape[0]
+        n_rows = input_dict["X_to"].shape[0]
 
-        ad_from = X_from
-        ad_to = X_to
+        ad_from = input_dict["X_from"]
+        ad_to = input_dict["X_to"]
         S_to = ad_to.obsm[to_spatial_key]
 
         cls.tg.pp_adatas(ad_from, ad_to, genes=kwargs.get("genes", None))

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Dict
 
 
 class MethodClass(ABC):
@@ -13,8 +13,8 @@ class MethodClass(ABC):
     @classmethod
     @abstractmethod
     def run(
-        self,
-        *args,
+        cls,
+        input_dict: Dict[str, Any],
         **kwargs,
     ) -> Any:
         pass

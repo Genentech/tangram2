@@ -22,9 +22,7 @@ class GroupMethodClass(MethodClass):
     @abstractmethod
     def run(
         cls,
-        X_to: ad.AnnData,
-        X_from: ad.AnnData,
-        X_to_pred: pd.DataFrame,
+            input_dict: Dict[str,Any],
         *args,
         **kwargs,
     ) -> Dict[str,pd.DataFrame]:
@@ -42,15 +40,19 @@ class ThresholdGroup(GroupMethodClass):
     @classmethod
     def run(
         cls,
-        X_to: ad.AnnData,
-        X_from: ad.AnnData,
-        X_to_pred: pd.DataFrame,
-        T: np.ndarray,
+            input_dict: Dict[str,Any],
         feature_name: List[str] | str,
         thres_t: float | Tuple[float, float] = 0.5,
         thres_x: float | Tuple[float, float] = 0.5,
         **kwargs,
     ) -> pd.DataFrame:
+
+        X_to = input_dict['X_to']
+        X_from = input_dict['X_from']
+        X_to_pred = input_dict['X_to_pred']
+        T = input_dict['T']
+
+
         if isinstance(feature_name, str):
             feature_name = [feature_name]
 
