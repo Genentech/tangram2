@@ -19,17 +19,8 @@ def run(config: Dict[str, Any], root_dir: str = "."):
         met_names = methods[exp]
         pp[exp] = ut.expand_key(pp[exp], met_names)
 
-        ad_sc_pth = data[exp]["sc"]["path"]
-        ad_sp_pth = data[exp]["sp"]["path"]
-        ad_sc = ad.read_h5ad(ad_sc_pth)
-        ad_sp = ad.read_h5ad(ad_sp_pth)
+        input_data = ut.read_data(data[exp])
 
-        sc_layer = data[exp]["sc"].get("layer", None)
-        if sc_layer is not None:
-            ad_sc.X = ad_sc.layers[sc_layer]
-        sp_layer = data[exp]["sp"].get("layer", None)
-        if sp_layer is not None:
-            ad_sp.X = ad_sp.layers[sc_layer]
 
         for met_name in methods[exp]:
             if met_name in C.METHODS["OPTIONS"].value:
@@ -37,7 +28,8 @@ def run(config: Dict[str, Any], root_dir: str = "."):
             else:
                 continue
 
-            for ad_type, ad_i in zip(["sc", "sp"], [ad_sc, ad_sp]):
+            for ad_type ["sc", "sp"]:
+                ad_i = input_dict[ad_type]
                 if "_old" in ad_i.layers:
                     ad_i.X = ad_i.layers["_old"].copy()
                 else:
@@ -50,13 +42,18 @@ def run(config: Dict[str, Any], root_dir: str = "."):
                         pp_met = C.PREPROCESS["OPTIONS"].value[pp_met_name]
                         pp_met.pp(ad_i, **pp_met_kwargs)
 
+                # TODO: maybe this is unnecessary
+                input_dict[ad_type] = ad_i
+
+
             met_kwargs = method.get_kwargs()
             inp_kwargs = dict(
                 to_spatial_key=data[exp]["sp"].get("spatial_key", "spatial"),
                 from_spatial_key=data[exp]["sc"].get("spatial_key", None),
             )
-            kwargs = met_kwargs | inp_kwargs | method_params[exp].get(met_name, {})
-            met_val = method.run(ad_sp, ad_sc, **kwargs)
+            met_input = input_data | met_kwargs | inp_kwargs | method_params[exp].get(met_name, {})
+
+            met_val = method.run(**met_input)
 
             for metric_name, gt_name in metrics[exp][met_name].items():
                 if metric_name in C.METRICS["OPTIONS"].value:
@@ -64,7 +61,7 @@ def run(config: Dict[str, Any], root_dir: str = "."):
                 else:
                     continue
 
-                gt_val = metric.get_gt(ad_sp, ad_sc, gt_name)
+                gt_val = metric.get_gt(**input_kwargs, gt_key = gt_name)
                 vals = gt_val | met_val
                 score = metric.score(vals)
                 out_dir = osp.join(root_dir, exp, met_name)

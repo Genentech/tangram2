@@ -1,4 +1,4 @@
-from . import methods
+from . import _methods
 from . import utils
 from . import metrics
 from . import constants as C

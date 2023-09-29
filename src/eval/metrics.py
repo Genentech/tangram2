@@ -51,7 +51,7 @@ class HardMapMetricClass(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def get_gt(cls, ad_to: ad.AnnData, ad_from: ad.AnnData, gt_key: str, **kwargs):
+    def get_gt(cls, ad_to: ad.AnnData, ad_from: ad.AnnData, gt_key: str | None = None, **kwargs):
         obj_map = ut.get_ad_value(ad_from, gt_key)
         row_idx = obj_map["row_self"]
         col_idx = obj_map["row_target"]
@@ -67,7 +67,7 @@ class SoftMapMetricClass(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def get_gt(cls, ad_to: ad.AnnData, ad_from: ad.AnnData, gt_key: str, **kwargs):
+    def get_gt(cls, ad_to: ad.AnnData, ad_from: ad.AnnData, gt_key: str | None = None, **kwargs):
         S = ut.get_ad_value(ad_from, gt_key)
 
         return dict(true=S)

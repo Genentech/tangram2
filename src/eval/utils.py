@@ -1,10 +1,53 @@
 from functools import reduce
 from typing import Any, Dict, List
+import pandas as pd
 
 import anndata as ad
 import numpy as np
 from numba import njit
 from scipy.sparse import spmatrix
+
+
+def _read_input_object(path: str, return_array: bool = False, layer=None):
+    if path.endswith(".h5ad"):
+        obj = ad.read_h5ad(path)
+        if layer is not None:
+            obj.X = obj.layers[layer]
+
+        if return_array:
+            obj = obj.X
+            if isinstance(obj, spmatrix):
+                obj = obj.todense()
+
+    elif path.endswith((".csv", ".tsv")):
+        obj = pd.read_csv(path, header=0, index_col=0)
+        if return_array:
+            obj = obj.values
+    elif path.endswith(".npy"):
+        obj = np.load(path)
+    else:
+        raise NotImplementedError
+
+    return obj
+
+
+def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
+    input_dict = dict()
+    rename_map = dict(sp="X_to", sc="X_from")
+
+    for name in data_dict.keys():
+        pth = data_dict[name]["path"]
+        layer = data_dict[name].get("layer", None)
+        return_array = data_dict[name].get('asarray',False)
+        obj = _read_input_object(pth, return_array=return_array, layer=layer)
+
+        input_dict[name] = obj
+
+    for old_name, new_name in rename_map.items():
+        if old_name in input_dict:
+            input_dict[new_name] = input_dict[old_name].pop()
+
+    return input_dict
 
 
 def ad2np(func):
@@ -84,7 +127,9 @@ def get_ad_value(adata: ad.AnnData, key: str):
 
 
 def expand_key(
-    d: Dict[Any, Any], fill_keys: List[str], expand_key: str = "all",
+    d: Dict[Any, Any],
+    fill_keys: List[str],
+    expand_key: str = "all",
 ) -> Dict[Any, Any]:
     if expand_key in d:
         exp_d = {x: d[expand_key] for x in fill_keys}

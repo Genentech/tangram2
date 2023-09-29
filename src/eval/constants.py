@@ -1,7 +1,10 @@
 from enum import Enum
 
 # from . import methods as met
-import eval.methods as met
+
+import eval.map_methods as mmet
+import eval.pred_methods as pmet
+import eval.dea_methods as dmet
 
 from . import metrics as mtx
 from . import preprocess as pp
@@ -20,11 +23,11 @@ class EnumCustom(Enum):
 
 class METHODS(EnumCustom):
     _MAP_METHODS = dict(
-        random=met.RandomMap,
-        max_corr=met.ArgMaxCorrMap,
-        tangram_v1=met.TangramV1Map,
-        tangram_v2=met.TangramV2Map,
-        CeLEry=met.CeLEryMap,
+        random=mmet.RandomMap,
+        max_corr=mmet.ArgMaxCorrMap,
+        tangram_v1=mmet.TangramV1Map,
+        tangram_v2=mmet.TangramV2Map,
+        CeLEry=mmet.CeLEryMap,
     )
 
     MAP_METHODS = {
@@ -66,3 +69,4 @@ class PREPROCESS(EnumCustom):
         normalize_totaly=pp.NormalizeTotal,
         CeLEry=pp.CeLEryPP,
     )
+
