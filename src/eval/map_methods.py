@@ -289,17 +289,15 @@ class CeLEryMap(MapMethodClass):
     @classmethod
     def run(
         cls,
-        X_to: ad.AnnData,
-        X_from: ad.AnnData,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
+        input_dict: Dict[str, Any],
         return_sparse: bool = True,
         hidden_dims: List[int] = [30, 25, 15],
         num_epochs_max: int = 100,
         spatial_key: str = "spatial",
         **kwargs,
     ) -> Dict[str, np.ndarray]:
+        X_to = input_dict["X_to"]
+        X_from = input_dict["X_from"]
         X_to.obs[["x_pixel", "y_pixel"]] = X_to.obsm[spatial_key]
         with TemporaryDirectory() as tmpdir:
             model_train = cel.Fit_cord(

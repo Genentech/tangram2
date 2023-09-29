@@ -34,29 +34,27 @@ class MetricClass(ABC):
     @classmethod
     def save(cls, values: Dict[str, float], out_dir: str) -> None:
         for metric_name, value in values.items():
-            metric_out_path = osp.join(out_dir, metric_name + '.txt')
+            metric_out_path = osp.join(out_dir, metric_name + ".txt")
             with open(metric_out_path, "w+") as f:
                 f.writelines(str(value))
 
 
 class PrintMetric(MetricClass):
 
-    metric_type = 'dev'
-    metric_name = 'print'
+    metric_type = "dev"
+    metric_name = "print"
 
     @classmethod
-    def get_gt(cls,*args,**kwargs):
+    def get_gt(cls, *args, **kwargs):
         return {}
 
     @classmethod
-    def score(cls,res,*args,**kwargs):
+    def score(cls, res, *args, **kwargs):
         print(res)
 
     @classmethod
-    def save(cls,values,out_dir):
+    def save(cls, values, out_dir):
         pass
-
-
 
 
 class MapMetricClass(MetricClass):
@@ -71,8 +69,9 @@ class HardMapMetricClass(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def get_gt(cls, X_to: ad.AnnData, X_from: ad.AnnData, gt_key: str | None = None, **kwargs):
-        obj_map = ut.get_ad_value(X_from, gt_key)
+    def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
+        X_from = input_dict["X_from"]
+        obj_map = ut.get_ad_value(X_from, key)
         row_idx = obj_map["row_self"]
         col_idx = obj_map["row_target"]
         n_rows, n_cols = obj_map["shape"]
@@ -87,8 +86,9 @@ class SoftMapMetricClass(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def get_gt(cls, X_to: ad.AnnData, X_from: ad.AnnData, gt_key: str | None = None, **kwargs):
-        S = ut.get_ad_value(X_from, gt_key)
+    def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
+        X_from = input_dict["X_from"]
+        S = ut.get_ad_value(X_from, key)
 
         return dict(true=S)
 

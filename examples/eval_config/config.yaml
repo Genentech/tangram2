@@ -10,12 +10,11 @@ data:
 methods:
   exp1:
     - map_random
-    - map_tangram_v1
 
 method_params:
   all:
-    map_tangram_v1:
-      num_epochs: 10
+    map_random:
+      seed: 1
 
 preprocess:
   exp1:
@@ -28,9 +27,12 @@ preprocess:
           target_sum: 1e4
 metrics:
   exp1:
-    map_tangram_v1:
-      map_jaccard: visify_cell_map
-      map_accuracy: visify_cell_map
     map_random:
-      map_jaccard: visify_cell_map
-      map_accuracy: visify_cell_map
+      map_jaccard:
+        ground_truth:
+          name: 'sp'
+          key: 'visify_cell_map'
+      map_accuracy:
+        ground_truth:
+          name: 'sp'
+          key: 'visify_cell_map'
