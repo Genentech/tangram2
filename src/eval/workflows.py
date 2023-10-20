@@ -18,12 +18,12 @@ class Composite:
         group_method: str | None = None,
         dea_method: str | None = None,
     ):
-
-        self.methods = dict(map = map_method,
-                            pred = pred_method,
-                            group = group_method,
-                            dea = dea_method,
-                            )
+        self.methods = dict(
+            map=map_method,
+            pred=pred_method,
+            group=group_method,
+            dea=dea_method,
+        )
 
         self.map = (
             C.METHODS["OPTIONS"].value[map_method]
@@ -53,17 +53,39 @@ class Composite:
         pred_args: Dict[str, Any],
         group_args: Dict[str, Any],
         dea_args: Dict[str, Any],
+        out_dir: str | None = None,
         **kwargs,
     ):
+        # map
         out = self.map.run(input_dict, **map_args)
         input_dict.update(out)
+
+        # predict
         out = self.pred.run(input_dict, **pred_args)
         input_dict.update(out)
+
+        # group
         out = self.group.run(input_dict, **group_args)
         input_dict.update(out)
-        out = self.dea.run(input_dict, **dea_args)
 
-        return out
+        # dea
+        out = self.dea.run(input_dict, **dea_args)
+        input_dict.update(out)
+
+        return input_dict
+
+    def save(self, res_dict: Dict[str, Any], out_dir: str, **kwargs):
+        # map
+        self.map.save(res_dict, out_dir, **kwargs)
+
+        # predict
+        self.pred.save(res_dict, out_dir, **kwargs)
+
+        # group
+        self.group.save(res_dict, out_dir, **kwargs)
+
+        # dea
+        self.dea.save(res_dict, out_dir, **kwargs)
 
 
 class WorkFlowClass(MethodClass):
@@ -91,6 +113,15 @@ class WorkFlowClass(MethodClass):
             **kwargs,
         )
         return out
+
+    @classmethod
+    def save(
+        cls,
+        res_dict: Dict[str, Any],
+        out_dir: str,
+        **kwargs,
+    ) -> None:
+        cls.flow.save(res_dict, out_dir, **kwargs)
 
 
 class HejinWorkflow(WorkFlowClass):

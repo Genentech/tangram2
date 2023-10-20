@@ -1,3 +1,4 @@
+import os.path as osp
 from abc import abstractmethod
 from typing import Any, Dict, List, Tuple
 
@@ -22,11 +23,19 @@ class GroupMethodClass(MethodClass):
     @abstractmethod
     def run(
         cls,
-            input_dict: Dict[str,Any],
+        input_dict: Dict[str, Any],
         *args,
         **kwargs,
-    ) -> Dict[str,pd.DataFrame]:
+    ) -> Dict[str, pd.DataFrame]:
         pass
+
+    @classmethod
+    def save(cls, res_dict: Dict[str, pd.DataFrame], out_dir: str, **kwargs):
+
+        for key in ["D_to", "D_from"]:
+            df = res_dict[key]
+            out_pth = osp.join(out_dir, key + ".csv")
+            df.to_csv(out_pth)
 
 
 class ThresholdGroup(GroupMethodClass):
@@ -40,18 +49,17 @@ class ThresholdGroup(GroupMethodClass):
     @classmethod
     def run(
         cls,
-            input_dict: Dict[str,Any],
+        input_dict: Dict[str, Any],
         feature_name: List[str] | str,
         thres_t: float | Tuple[float, float] = 0.5,
         thres_x: float | Tuple[float, float] = 0.5,
         **kwargs,
     ) -> pd.DataFrame:
 
-        X_to = input_dict['X_to']
-        X_from = input_dict['X_from']
-        X_to_pred = input_dict['X_to_pred']
-        T = input_dict['T']
-
+        X_to = input_dict["X_to"]
+        X_from = input_dict["X_from"]
+        X_to_pred = input_dict["X_to_pred"]
+        T = input_dict["T"]
 
         if isinstance(feature_name, str):
             feature_name = [feature_name]
@@ -59,13 +67,12 @@ class ThresholdGroup(GroupMethodClass):
         if isinstance(thres_x, (list, tuple)):
             thres_x_low, thres_x_high = thres_x
         else:
-            thres_x_low, thres_x_high = thres_x,thres_x
+            thres_x_low, thres_x_high = thres_x, thres_x
 
-        if isinstance(thres_x, (list, tuple)):
+        if isinstance(thres_t, (list, tuple)):
             thres_t_low, thres_t_high = thres_t
         else:
-            thres_t_low, thres_t_high = thres_t,thres_t
-
+            thres_t_low, thres_t_high = thres_t, thres_t
 
         Ds_from, Ds_to = [], []
 
@@ -77,18 +84,17 @@ class ThresholdGroup(GroupMethodClass):
             x_high = val > thres_x_high
             x_low = val < thres_x_low
 
-
             D_to = np.zeros((X_to.shape[0], 2))
             D_to[x_high, 1] = 1
             D_to[x_low, 0] = 1
 
             D_to = pd.DataFrame(
-                D_to,
+                D_to.astype(int),
                 columns=[f"low_{feature}", f"high_{feature}"],
                 index=X_to.obs.index,
             )
 
-            D_from = np.zeros(( X_from.shape[0], 2 ))
+            D_from = np.zeros((X_from.shape[0], 2))
 
             if np.sum(x_high) > 0:
                 t_high = T[x_high, :].sum(axis=0) > thres_t_high
@@ -104,7 +110,7 @@ class ThresholdGroup(GroupMethodClass):
             D_from[t_low, 0] = 1
 
             D_from = pd.DataFrame(
-                D_from,
+                D_from.astype(int),
                 columns=[f"low_{feature}", f"high_{feature}"],
                 index=X_from.obs.index,
             )

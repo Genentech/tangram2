@@ -16,8 +16,17 @@ class MethodClass(ABC):
         cls,
         input_dict: Dict[str, Any],
         **kwargs,
-    ) -> Any:
+    ) -> Dict[str, Any]:
         pass
+
+    @classmethod
+    def save(
+        cls,
+        res_dict: Dict[str, Any],
+        out_dir: str,
+        **kwargs,
+    ) -> None:
+        return None
 
     @staticmethod
     def get_kwargs(*args, **kwargs):

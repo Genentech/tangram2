@@ -1,3 +1,4 @@
+import os.path as osp
 from abc import abstractmethod
 from typing import Any, Dict
 
@@ -33,6 +34,23 @@ class PredMethodClass(MethodClass):
     ) -> Dict[str, Any]:
         pass
 
+    @classmethod
+    def save(
+        cls,
+        res_dict: Dict[str, Any],
+        out_dir: str,
+        **kwargs,
+    ) -> None:
+
+        X_to_pred_df = pd.DataFrame(
+            res_dict["X_to_pred"],
+            index=res_dict["to_names"],
+            columns=res_dict["to_var"],
+        )
+
+        out_pth = osp.join(out_dir, "X_to_pred.csv")
+        X_to_pred_df.to_csv(out_pth)
+
 
 class TangramPred(PredMethodClass):
     tg = None
@@ -47,17 +65,16 @@ class TangramPred(PredMethodClass):
     @classmethod
     def run(
         cls,
-            input_dict: Dict[str,Any],
+        input_dict: Dict[str, Any],
         *args,
         spatial_key_to: str = "spatial",
         spatial_key_from: str = "spatial",
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
 
-        X_to = input_dict['X_to']
-        X_from = input_dict['X_from']
-        T = input_dict['T']
-
+        X_to = input_dict["X_to"]
+        X_from = input_dict["X_from"]
+        T = input_dict["T"]
 
         if isinstance(T, spmatrix):
             T_soft = T.todense()
@@ -87,10 +104,15 @@ class TangramPred(PredMethodClass):
 
         X_pred = ad_ge.to_df()
 
+        to_names = X_to.obs.index.values.tolist()
+        to_var = X_to.var.index.values.tolist()
+
         return dict(
             pred=X_pred,
             X_to_pred=X_pred,
             X_from_pred=None,
+            to_names=to_names,
+            to_var=to_var,
         )
 
 

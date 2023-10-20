@@ -1,3 +1,4 @@
+import os.path as osp
 from abc import ABC, abstractmethod
 from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Literal
@@ -60,6 +61,42 @@ class MapMethodClass(MethodClass):
             out_dict["pred"] = T_sparse.toarray()
 
         return out_dict
+
+    @classmethod
+    def save(
+        cls,
+        res_dict: Dict[str, Any],
+        out_dir: str,
+        save_keys: Literal["T", "S_from", "S_to"] | str | None = None,
+        **kwargs,
+    ) -> None:
+
+        from_names = res_dict["from_names"]
+        to_names = res_dict["to_names"]
+
+        save_items = dict(
+            T=(to_names, from_names),
+            S_from=(from_names, ["x", "y"]),
+            S_to=(to_names, ["x", "y"]),
+        )
+
+        if save_keys is not None:
+            if isinstance(save_keys, str):
+                save_keys = [save_keys]
+            save_items = {
+                key: val for key, val in save_items.items() if key in save_keys
+            }
+
+        for key, (index, columns) in save_items.items():
+            if key in res_dict:
+                df = pd.DataFrame(
+                    res_dict[key],
+                    index=index,
+                    columns=columns,
+                )
+
+                out_pth = osp.join(out_dir, key + ".csv")
+                df.to_csv(out_pth)
 
 
 class RandomMap(MapMethodClass):
@@ -246,6 +283,9 @@ class TangramMap(MapMethodClass):
 
         out["T"] = T_soft.T
         out["S_from"] = S_from
+
+        out["to_names"] = ad_to.obs.index.values.tolist()
+        out["from_names"] = ad_from.obs.index.values.tolist()
 
         return out
 

@@ -98,6 +98,9 @@ def ad2np(func):
         input_dict["X_to"] = input_dict.pop("__X_to")
         input_dict["X_from"] = input_dict.pop("__X_from")
 
+        out["to_names"] = indput_dict["X_to"].obs.index.values.tolist()
+        out["from_names"] = indput_dict["X_from"].obs.index.values.tolist()
+
         return out
 
     return wrapper
