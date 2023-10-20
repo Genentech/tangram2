@@ -4,9 +4,9 @@ import anndata as ad
 import CeLEry as cel
 import numpy as np
 import scanpy as sc
-from scipy.sparse import spmatrix
-import tangram2 as tg2
 import tangram as tg
+import tangram2 as tg2
+from scipy.sparse import spmatrix
 
 
 class PPClass(ABC):
@@ -14,6 +14,12 @@ class PPClass(ABC):
     @abstractmethod
     def pp(adata: ad.AnnData, *args, **kwargs):
         pass
+
+
+class IdentityPP(PPClass):
+    @staticmethod
+    def pp(adata: ad.AnnData, *args, **kwargs):
+        return adata
 
 
 class NormalizeTotal(PPClass):
@@ -50,6 +56,12 @@ class StandardTangramV1(PPClass):
 
 class StandardTangramV2(PPClass):
     @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
-        # TODO: add Tangram V2 standard pp
-        pass
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+        # redunant rn but might change in future
+        match input_type:
+            case "X_from" | "sc":
+                IdentityPP.pp(adata)
+            case "X_to" | "sp":
+                IdentityPP.pp(adata)
+            case _:
+                IdentityPP.pp(adata)
