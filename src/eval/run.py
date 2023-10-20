@@ -8,7 +8,8 @@ from . import constants as C
 from . import utils as ut
 
 
-def run(config: Dict[str, Any], root_dir: str = "."):
+def run(config: Dict[str, Any], root_dir: str = ".", save_mode: bool = False):
+
     argmap = dict(
         sc="X_from",
         sp="X_to",
@@ -36,6 +37,9 @@ def run(config: Dict[str, Any], root_dir: str = "."):
             else:
                 continue
 
+            out_dir = osp.join(root_dir, exp, met_name)
+            os.makedirs(out_dir, exist_ok=True)
+
             for ad_type in ["sc", "sp"]:
                 ad_i = input_dict[argmap[ad_type]]
                 if "_old" in ad_i.layers:
@@ -59,8 +63,12 @@ def run(config: Dict[str, Any], root_dir: str = "."):
                 from_spatial_key=data[exp]["sc"].get("spatial_key", None),
             )
             met_input = met_kwargs | inp_kwargs | method_params[exp].get(met_name, {})
+            met_input["out_dir"] = out_dir
 
             met_val = method.run(input_dict, **met_input)
+
+            if save_mode:
+                method.save(met_val, out_dir)
 
             method_metrics = ut.recursive_get(metrics, exp, met_name)
 
@@ -87,8 +95,5 @@ def run(config: Dict[str, Any], root_dir: str = "."):
 
                 score_vals = ground_truth | met_val
                 score = metric.score(score_vals)
-                out_dir = osp.join(root_dir, exp, met_name)
-
-                os.makedirs(out_dir, exist_ok=True)
 
                 metric.save(score, out_dir)

@@ -1,3 +1,4 @@
+import os.path as osp
 from abc import abstractmethod
 from typing import Any, Dict, Literal
 
@@ -25,8 +26,20 @@ class DEAMethodClass(MethodClass):
         cls,
         input_dict: Dict[str, Any],
         **kwargs,
-    ) -> Dict[str, Any]:
+    ) -> Dict[str, Dict[str, pd.DataFrame]]:
         pass
+
+    @classmethod
+    def save(
+        cls,
+        res_dict: Dict[str, Any],
+        out_dir: str,
+        **kwargs,
+    ) -> None:
+        dea = res_dict["DEA"]
+        for key, df in dea.items():
+            out_pth = osp.join(out_dir, f"{key}_vs_rest_dea.csv")
+            df.to_csv(out_pth)
 
 
 class ScanpyDEA(DEAMethodClass):
@@ -46,7 +59,8 @@ class ScanpyDEA(DEAMethodClass):
         pval_cutoff: float = 0.01,
         mode: Literal["pos", "neg", "both"] = "both",
         **kwargs,
-    ) -> Dict[str, pd.DataFrame]:
+    ) -> Dict[str, Dict[str, pd.DataFrame]]:
+
         X_to_pred = input_dict["X_to_pred"]
         D_to = input_dict["D_to"]
         D_from = input_dict["D_from"]
