@@ -49,9 +49,15 @@ class CeLEryPP(PPClass):
 
 class StandardTangramV1(PPClass):
     @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
-        # TODO: Add Tangram V1 standard pp
-        pass
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+        # redunant rn but might change in future
+        match input_type:
+            case "X_from" | "sc":
+                NormalizeTotal.pp(adata, **kwargs)
+            case "X_to" | "sp":
+                NormalizeTotal.pp(adata, **kwargs)
+            case _:
+                NormalizeTotal.pp(adata, **kwargs)
 
 
 class StandardTangramV2(PPClass):
