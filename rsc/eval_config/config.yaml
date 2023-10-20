@@ -1,0 +1,30 @@
+---
+
+data:
+  exp1:
+    sp:
+      path: '/gstore/scratch/u/andera29/dump/visify_test/qx_bc_rep_1_visified.h5ad'
+    sc:
+      path: '/gstore/scratch/u/andera29/dump/visify_test/qx_bc_rep_1_mappable.h5ad'
+
+methods:
+  exp1:
+    - map_random
+    - map_tangram_v1
+
+method_params:
+  all:
+    map_tangram_v1:
+      num_epochs: 10
+
+preprocess:
+  exp1:
+
+metrics:
+  exp1:
+    map_tangram_v1:
+      map_jaccard: visify_cell_map
+      map_accuracy: visify_cell_map
+    map_random:
+      map_jaccard: visify_cell_map
+      map_accuracy: visify_cell_map
