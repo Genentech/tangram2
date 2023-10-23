@@ -8,6 +8,7 @@ import pandas as pd
 
 from eval._methods import MethodClass
 
+from . import _grp_utils as gut
 from . import utils as ut
 
 
@@ -31,7 +32,6 @@ class GroupMethodClass(MethodClass):
 
     @classmethod
     def save(cls, res_dict: Dict[str, pd.DataFrame], out_dir: str, **kwargs):
-
         for key in ["D_to", "D_from"]:
             df = res_dict[key]
             out_pth = osp.join(out_dir, key + ".csv")
@@ -47,6 +47,7 @@ class ThresholdGroup(GroupMethodClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
+    @gut.add_covariates
     def run(
         cls,
         input_dict: Dict[str, Any],
@@ -55,7 +56,6 @@ class ThresholdGroup(GroupMethodClass):
         thres_x: float | Tuple[float, float] = 0.5,
         **kwargs,
     ) -> pd.DataFrame:
-
         X_to = input_dict["X_to"]
         X_from = input_dict["X_from"]
         X_to_pred = input_dict["X_to_pred"]
@@ -84,7 +84,7 @@ class ThresholdGroup(GroupMethodClass):
             x_high = val > thres_x_high
             x_low = val < thres_x_low
 
-            D_to = np.zeros((X_to.shape[0], 2))
+            D_to = np.zeros((X_to_pred.shape[0], 2))
             D_to[x_high, 1] = 1
             D_to[x_low, 0] = 1
 
@@ -102,7 +102,7 @@ class ThresholdGroup(GroupMethodClass):
                 t_high = np.zeros(T.shape[1]).astype(bool)
 
             if np.sum(x_low) > 0:
-                t_low = T[x_low, :].sum(axis=0) < thres_t_low
+                t_low = T[x_low, :].sum(axis=0) > thres_t_low
             else:
                 t_low = np.zeros(T.shape[1]).astype(bool)
 
