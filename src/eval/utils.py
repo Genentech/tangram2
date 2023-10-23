@@ -137,15 +137,17 @@ def matrix_correlation(O, P):
     return cov / np.sqrt(tmp)
 
 
-def get_ad_value(adata: ad.AnnData, key: str):
+def get_ad_value(adata: ad.AnnData, key: str, to_np: bool = True):
     if key in adata.obs:
-        out = adata.obs[key].values
+        out = adata.obs[key]
+        out = out.values if to_np else out
     elif key in adata.obsm:
         out = adata.obsm[key]
     elif key in adata.obsp:
         out = adata.obsp[key]
     elif key in adata.var:
-        out = adata.var[key].values
+        out = adata.var[key]
+        out = out.values if to_np else out
     elif key in adata.uns:
         out = adata.uns[key]
     else:
@@ -168,3 +170,9 @@ def expand_key(
 
 def recursive_get(d, *keys):
     return reduce(lambda c, k: c.get(k, {}), keys, d)
+
+
+def listify(obj: W) -> List[W]:
+    if not isinstance(obj, (tuple, list)):
+        return [obj]
+    return obj
