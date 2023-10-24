@@ -1,3 +1,4 @@
+import gzip
 from functools import reduce
 from typing import Any, Dict, List, TypeVar
 
@@ -8,6 +9,14 @@ from numba import njit
 from scipy.sparse import spmatrix
 
 W = TypeVar("W")
+
+
+def to_csv_gzip(df: pd.DataFrame, filename, **kwargs):
+    with gzip.open(
+        filename,
+        mode="wb",
+    ) as f:
+        df.to_csv(f, **kwargs)
 
 
 def identity_fun(x: W, *args, **kwargs) -> W:

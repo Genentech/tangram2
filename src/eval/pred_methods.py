@@ -39,17 +39,26 @@ class PredMethodClass(MethodClass):
         cls,
         res_dict: Dict[str, Any],
         out_dir: str,
+        compress: bool = False,
         **kwargs,
     ) -> None:
+        for obj_name in ["X_to_pred", "X_from_pred"]:
+            obj = res_dict.get(obj_name, None)
 
-        X_to_pred_df = pd.DataFrame(
-            res_dict["X_to_pred"],
-            index=res_dict["to_names"],
-            columns=res_dict["to_var"],
-        )
+            if obj is not None:
+                obj_df = pd.DataFrame(
+                    obj,
+                    index=res_dict["to_names"],
+                    columns=res_dict["to_var"],
+                )
 
-        out_pth = osp.join(out_dir, "X_to_pred.csv")
-        X_to_pred_df.to_csv(out_pth)
+                out_pth = osp.join(out_dir, f"{obj_name}.csv")
+
+                if compress:
+                    out_pth = out_pth + ".gz"
+                    ut.to_csv_gzip(obj_df, out_pth)
+                else:
+                    obj_df.to_csv(out_pth)
 
 
 class TangramPred(PredMethodClass):
@@ -71,7 +80,6 @@ class TangramPred(PredMethodClass):
         spatial_key_from: str = "spatial",
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
-
         X_to = input_dict["X_to"]
         X_from = input_dict["X_from"]
         T = input_dict["T"]

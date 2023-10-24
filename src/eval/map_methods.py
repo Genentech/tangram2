@@ -68,6 +68,8 @@ class MapMethodClass(MethodClass):
         res_dict: Dict[str, Any],
         out_dir: str,
         save_keys: Literal["T", "S_from", "S_to"] | str | None = None,
+        compress: bool = False,
+        verbose: bool = False,
         **kwargs,
     ) -> None:
 
@@ -88,6 +90,8 @@ class MapMethodClass(MethodClass):
             }
 
         for key, (index, columns) in save_items.items():
+            if verbose:
+                print(f"Saving object: {key}")
             if key in res_dict:
                 df = pd.DataFrame(
                     res_dict[key],
@@ -96,7 +100,11 @@ class MapMethodClass(MethodClass):
                 )
 
                 out_pth = osp.join(out_dir, key + ".csv")
-                df.to_csv(out_pth)
+                if compress:
+                    out_pth = out_pth + ".gz"
+                    ut.to_csv_gzip(df, out_pth)
+                else:
+                    df.to_csv(out_pth)
 
 
 class RandomMap(MapMethodClass):
@@ -260,6 +268,7 @@ class TangramMap(MapMethodClass):
             col_idx = np.arange(n_cols)
 
             if pos_by_argmax:
+
                 kd = cKDTree(S_to)
                 _, idxs = kd.query(S_from, k=2)
 
