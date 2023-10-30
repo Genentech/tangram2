@@ -8,6 +8,7 @@ import eval.pred_methods as pmet
 from . import metrics as mtx
 from . import preprocess as pp
 
+
 # from . import methods as met
 
 
@@ -87,9 +88,18 @@ class METRICS(EnumCustom):
         PREFIX.pred.value + "_" + key: val for key, val in _PRD_METRICS.items()
     }
 
+    _DEA_METRICS = dict(
+        hypergeom=mtx.DEAHyperGeom,
+        auc=mtx.DEAAuc,
+    )
+
+    DEA_METRICS = {
+        PREFIX.dea.value + "_" + key: val for key, val in _DEA_METRICS.items()
+    }
+
     DEV_METRICS = dict(dev_print=mtx.PrintMetric)
 
-    OPTIONS = MAP_METRICS | PRD_METRICS | DEV_METRICS
+    OPTIONS = MAP_METRICS | PRD_METRICS | DEV_METRICS | DEA_METRICS
 
 
 class PREPROCESS(EnumCustom):

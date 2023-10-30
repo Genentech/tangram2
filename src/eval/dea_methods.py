@@ -65,13 +65,16 @@ class ScanpyDEA(DEAMethodClass):
         D_to = input_dict["D_to"]
         D_from = input_dict["D_from"]
 
-        labels = np.apply_along_axis(
-            lambda x: "_".join(D_to.columns.values[x].tolist()),
-            arr=D_to.values == 1,
-            axis=1,
-        )
+        # np.apply_along_axis was truncating label names based on dtype of input.
 
-        labels = np.array(labels)
+        # labels = np.apply_along_axis(
+        #     lambda x: "_".join(D_to.columns.values[x].tolist()),
+        #     arr=D_to.values == 1,
+        #     axis=1,
+        # )
+        # labels = np.array(labels)
+
+        labels = np.array(list(map(lambda x: "_".join(D_to.columns.values[x].tolist()), D_to.values == 1)))
         labels[labels == ""] = "background"
 
         adata = ad.AnnData(
