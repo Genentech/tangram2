@@ -259,6 +259,8 @@ class TangramMap(MapMethodClass):
             mode=kwargs.get("mode", "cells"),
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
+            cluster_label=kwargs.get("cluster_label"),
+            random_state=kwargs.get("random_state", 42),
         )
 
         T_soft = ad_map.X

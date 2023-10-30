@@ -42,14 +42,16 @@ class PredMethodClass(MethodClass):
         compress: bool = False,
         **kwargs,
     ) -> None:
-        for obj_name in ["X_to_pred", "X_from_pred"]:
+        for obj_ind in ["to_pred", "from_pred"]:
+            obj_name = f"X_{obj_ind}"
+
             obj = res_dict.get(obj_name, None)
 
             if obj is not None:
                 obj_df = pd.DataFrame(
                     obj,
-                    index=res_dict["to_names"],
-                    columns=res_dict["to_var"],
+                    index=res_dict[f"{obj_ind}_names"],
+                    columns=res_dict[f"{obj_ind}_var"],
                 )
 
                 out_pth = osp.join(out_dir, f"{obj_name}.csv")
@@ -110,17 +112,17 @@ class TangramPred(PredMethodClass):
 
         ad_ge = cls.tg.project_genes(adata_map=ad_map, adata_sc=X_from)
 
-        X_pred = ad_ge.to_df()
+        X_to_pred = ad_ge.to_df()
 
-        to_names = X_to.obs.index.values.tolist()
-        to_var = X_to.var.index.values.tolist()
+        to_pred_names = X_to_pred.index.values.tolist()
+        to_pred_var = X_to_pred.columns.values.tolist()
 
         return dict(
-            pred=X_pred,
-            X_to_pred=X_pred,
+            pred=X_to_pred,
+            X_to_pred=X_to_pred,
             X_from_pred=None,
-            to_names=to_names,
-            to_var=to_var,
+            to_pred_names=to_pred_names,
+            to_pred_var=to_pred_var,
         )
 
 
