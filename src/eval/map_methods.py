@@ -234,14 +234,14 @@ class TangramMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        train_genes: List[str] | None = None,
         to_spatial_key: str = "spatial",
         from_spatial_key: str = "spatial",
         return_sparse: bool = True,
         pos_by_argmax: bool = True,
         pos_by_weight: bool = False,
         num_epochs: int = 1000,
-        hard_map: bool = True,
+        hard_map: bool = False,
+        genes: List[str] | str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         n_cols = input_dict["X_from"].shape[0]
@@ -251,7 +251,9 @@ class TangramMap(MapMethodClass):
         ad_to = input_dict["X_to"]
         S_to = ad_to.obsm[to_spatial_key]
 
-        cls.tg.pp_adatas(ad_from, ad_to, genes=kwargs.get("genes", None))
+        genes = ut.list_or_path_get(genes)
+
+        cls.tg.pp_adatas(ad_from, ad_to, genes=genes)
 
         ad_map = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
@@ -266,7 +268,7 @@ class TangramMap(MapMethodClass):
         T_soft = ad_map.X
         S_from = T_soft @ S_to
 
-        if hard_map:
+        if hard_map and (pos_by_argmax or pos_by_weight):
             col_idx = np.arange(n_cols)
 
             if pos_by_argmax:

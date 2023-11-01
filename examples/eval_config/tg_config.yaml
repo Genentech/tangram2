@@ -24,18 +24,20 @@ data:
 
 methods:
   all:
-    - wf_hejin
-
-method_params:
-  all:
     wf_hejin:
-      map_args:
-        num_epochs: 1000
-        marker_path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/markers/markers.txt'
-      group_args:
-        feature_name: 'cd274'
-        thres_x: 1
-        thres_t: 0.5
+      compose:
+        map: map_tangramv2
+        pred: prd_tangramv2
+        group: grp_threshold
+        dea: dea_scanpy
+      params:
+        map_args:
+          num_epochs: 1000
+          marker_path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/markers/markers.txt'
+        group_args:
+          feature_name: 'cd274'
+          thres_x: 1
+          thres_t: 0.5
 
 metrics:
   all:

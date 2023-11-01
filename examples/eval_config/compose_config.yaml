@@ -9,13 +9,18 @@ data:
 
 methods:
   exp1:
-    map_random:
+    wf_test:
       params:
-        seed: 1
+        map_args:
+          random_state: 1
+          num_epochs: 10
+      compose:
+        map: map_tangram_v2
+        pred: prd_tangram_v2
+
 
 preprocess:
   exp1:
-    all:
       sp:
         standard_scanpy:
           target_sum: 1e4
@@ -24,12 +29,5 @@ preprocess:
           target_sum: 1e4
 metrics:
   exp1:
-    map_random:
-      map_jaccard:
-        ground_truth:
-          name: 'sp'
-          key: 'visify_cell_map'
-      map_accuracy:
-        ground_truth:
-          name: 'sp'
-          key: 'visify_cell_map'
+    wf_test:
+      dev_print:

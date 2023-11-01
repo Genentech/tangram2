@@ -10,6 +10,32 @@ import eval.utils as ut
 from eval._methods import MethodClass
 
 
+def compose_workflow_from_input(source_d: Dict[str, str], target_d: Dict[str, str]):
+    map_method = source_d.get("map")
+    pred_method = source_d.get("pred")
+    group_method = source_d.get("group")
+    dea_method = source_d.get("dea")
+
+    workflow = Composite(
+        map_method=map_method,
+        pred_method=pred_method,
+        group_method=group_method,
+        dea_method=dea_method,
+    )
+
+    return workflow
+
+
+class IdentityFun:
+    @classmethod
+    def run(cls, *args, **kwargs):
+        return {}
+
+    @classmethod
+    def save(cls, *args, **kwargs):
+        return None
+
+
 class Composite:
     def __init__(
         self,
@@ -28,31 +54,31 @@ class Composite:
         self.map = (
             C.METHODS["OPTIONS"].value[map_method]
             if map_method is not None
-            else ut.identity_fun
+            else IdentityFun
         )
         self.pred = (
             C.METHODS["OPTIONS"].value[pred_method]
             if pred_method is not None
-            else ut.identity_fun
+            else IdentityFun
         )
         self.group = (
             C.METHODS["OPTIONS"].value[group_method]
             if group_method is not None
-            else ut.identity_fun
+            else IdentityFun
         )
         self.dea = (
             C.METHODS["OPTIONS"].value[dea_method]
             if dea_method is not None
-            else ut.identity_fun
+            else IdentityFun
         )
 
     def run(
         self,
         input_dict: Dict[str, Any],
-        map_args: Dict[str, Any],
-        pred_args: Dict[str, Any],
-        group_args: Dict[str, Any],
-        dea_args: Dict[str, Any],
+        map_args: Dict[str, Any] = dict(),
+        pred_args: Dict[str, Any] = dict(),
+        group_args: Dict[str, Any] = dict(),
+        dea_args: Dict[str, Any] = dict(),
         out_dir: str | None = None,
         **kwargs,
     ):
@@ -73,6 +99,9 @@ class Composite:
         input_dict.update(out)
 
         return input_dict
+
+    def get_kwargs(*args, **kwargs):
+        return {}
 
     def save(self, res_dict: Dict[str, Any], out_dir: str, **kwargs):
         # map
