@@ -26,8 +26,17 @@ def run(
     exps = list(data.keys())
 
     methods = ut.expand_key(config["methods"], exps)
-    metrics = ut.expand_key(config["metrics"], exps)
-    pp = ut.expand_key(config.get("preprocess", {}), exps)
+    metrics = config.get("metrics", None)
+    if metrics is not None:
+        metrics = ut.expand_key(metrics, exps)
+    else:
+        metrics = {}
+
+    pp = config.get("preprocess", None)
+    if pp is not None:
+        pp = ut.expand_key(pp, exps)
+    else:
+        pp = {}
 
     methods_dict = C.METHODS["OPTIONS"].value
     metrics_dict = C.METRICS["OPTIONS"].value
@@ -35,7 +44,8 @@ def run(
 
     for exp in exps:
         met_names = methods[exp]
-        pp[exp] = ut.expand_key(pp[exp], met_names)
+
+        pp[exp] = ut.expand_key(pp.get(exp, {}), met_names)
 
         input_dict = ut.read_data(data[exp])
 

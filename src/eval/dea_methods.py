@@ -66,29 +66,32 @@ class ScanpyDEA(DEAMethodClass):
         adata = input_dict["X_from"]
         D_to = input_dict["D_to"]
         D_from = input_dict["D_from"]
+        print(D_from.sum(axis=0))
 
-        labels = np.array(
-            list(
-                map(
-                    lambda x: "_".join(D_from.columns.values[x].tolist()),
-                    D_from.values == 1,
-                )
-            )
-        )
+        labels = ut.design_matrix_to_labels(D_from)
 
         labels[labels == ""] = "background"
 
         adata.obs["label"] = labels
+        groups = ut.listify(groups)
 
-        if groups is None:
-            uni_labels = np.unique(adata.obs["label"].values)
+        if groups is not None:
+            if groups[0] == "all":
+                uni_labels = groups
+            else:
+                uni_labels = np.unique(adata.obs["label"].values)
+                uni_groups = np.unique(groups)
+                uni_labels = [lab for lab in uni_labels if lab in uni_groups]
+                if len(uni_labels) < 2:
+                    return dict(pred=pd.DataFrame([]), DEA=pd.DataFrame([]))
+
         else:
-            uni_labels = np.unique(groups)
+            uni_labels = "all"
 
         sc.tl.rank_genes_groups(
             adata,
             groupby="label",
-            groups=groups,
+            groups=uni_labels,
             method=method,
             **method_kwargs,
         )
@@ -110,5 +113,4 @@ class ScanpyDEA(DEAMethodClass):
                 out[lab] = dedf[dedf["scores"].values < 0]
             else:
                 raise NotImplementedError
-
         return dict(pred=out, DEA=out)
