@@ -12,6 +12,18 @@ from thefuzz import fuzz
 W = TypeVar("W")
 
 
+def design_matrix_to_labels(design_matrix: pd.DataFrame):
+    labels = np.array(
+        list(
+            map(
+                lambda x: "_".join(design_matrix.columns.values[x].tolist()),
+                design_matrix.values == 1,
+            )
+        )
+    )
+    return labels
+
+
 def list_or_path_get(obj: str | None | List[str] = None):
 
     if obj is not None:
@@ -215,10 +227,14 @@ def get_ad_value(adata: ad.AnnData, key: str, to_np: bool = True):
 
 
 def expand_key(
-    d: Dict[Any, Any],
+    d: Dict[Any, Any] | None,
     fill_keys: List[str],
     expand_key: str = "all",
 ) -> Dict[Any, Any]:
+
+    if not d:
+        return d
+
     if expand_key in d:
         exp_d = {x: d[expand_key] for x in fill_keys}
         return exp_d
@@ -227,7 +243,10 @@ def expand_key(
 
 
 def recursive_get(d, *keys):
-    return reduce(lambda c, k: c.get(k, {}), keys, d)
+    if not d:
+        return d
+    else:
+        return reduce(lambda c, k: c.get(k, {}), keys, d)
 
 
 def listify(obj: W) -> List[W]:
