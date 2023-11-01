@@ -7,8 +7,57 @@ import numpy as np
 import pandas as pd
 from numba import njit
 from scipy.sparse import spmatrix
+from thefuzz import fuzz
 
 W = TypeVar("W")
+
+
+def list_or_path_get(obj: str | None | List[str] = None):
+
+    if obj is not None:
+        if isinstance(obj, str):
+            if obj.endswith(".csv"):
+                obj = pd.read_csv(obj, index_col=0)
+                obj = np.reshape(obj.values, -1)
+            elif obj.endswith(".txt"):
+                with open(obj, "r") as f:
+                    obj = f.readlines()
+                    obj = [x.rstrip("\n") for x in obj]
+            else:
+                NotImplementedError
+
+            return obj
+
+        elif isinstance(obj, (list, tuple, pd.Series)):
+            return obj
+
+        else:
+            raise NotImplementedError
+
+    else:
+        return None
+
+
+def get_fuzzy_key(
+    fuzzy_key: str,
+    d: Dict[str, Any],
+    allow_fuzzy_ratio: int = 75,
+    verbose: bool = False,
+):
+    true_keys = list(d.keys())
+    fuzzy_rank = [(key, fuzz.ratio(fuzzy_key, key)) for key in true_keys]
+    fuzzy_rank.sort(key=lambda x: -x[1])
+    top_rank = fuzzy_rank[0]
+    if top_rank[0] == fuzzy_key:
+        return fuzzy_key
+    elif top_rank[1] >= allow_fuzzy_ratio:
+        if verbose:
+            print("Using {} instead of {}".format(top_rank[0], fuzzy_key))
+        return top_rank[0]
+    else:
+        if verbose:
+            print("No match for key")
+        return fuzzy_key
 
 
 def to_csv_gzip(df: pd.DataFrame, filename, **kwargs):

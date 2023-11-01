@@ -9,7 +9,7 @@ data:
 
 methods:
   exp1:
-    wf_hejin:
+    wi_hejin:
       params:
         map_args:
           num_epochs: 2
@@ -24,5 +24,5 @@ preprocess:
         target_sum: 1e4
 metrics:
   exp1:
-    wf_hejin:
-      dev_print:
+    wi_hejin:
+      dev_prnt:
