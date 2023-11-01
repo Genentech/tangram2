@@ -47,7 +47,7 @@ def add_covariates(func, *args, **kwargs):
                 if labels is None:
                     pass
 
-                if labels.dtype == object:
+                if isinstance(labels.values[0], str):
                     D_add = pd.get_dummies(labels).astype(int)
                     if subset is not None:
                         keep = [c for c in D_add.columns if c in subset]

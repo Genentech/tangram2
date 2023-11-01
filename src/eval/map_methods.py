@@ -197,6 +197,7 @@ class ArgMaxCorrMap(MapMethodClass):
 
 class TangramMap(MapMethodClass):
     tg = None
+    version = None
 
     def __init__(
         self,
@@ -251,22 +252,41 @@ class TangramMap(MapMethodClass):
         ad_to = input_dict["X_to"]
         S_to = ad_to.obsm[to_spatial_key]
 
+        mode = kwargs.get("mode", "cells")
         genes = ut.list_or_path_get(genes)
 
         cls.tg.pp_adatas(ad_from, ad_to, genes=genes)
 
-        ad_map = cls.tg.map_cells_to_space(
+        tg_out = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
             adata_sp=ad_to,
-            mode=kwargs.get("mode", "cells"),
+            mode=mode,
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
             cluster_label=kwargs.get("cluster_label"),
             random_state=kwargs.get("random_state", 42),
         )
 
+        if (cls.version == "2") and (mode == "hejin_workflow"):
+            ad_map, X_from_scaled = tg_out
+            X_from_scaled = X_from_scaled
+        elif (cls.version == "1") or (cls.version == "2"):
+            ad_map = tg_out
+            X_from_scaled = None
+        else:
+            NotImplementedError
+
         T_soft = ad_map.X
         S_from = T_soft @ S_to
+
+        out = dict()
+
+        out["T"] = T_soft.T
+        out["S_from"] = S_from
+        out["X_from_scaled"] = X_from_scaled
+
+        out["to_names"] = ad_to.obs.index.values.tolist()
+        out["from_names"] = ad_from.obs.index.values.tolist()
 
         if hard_map and (pos_by_argmax or pos_by_weight):
             col_idx = np.arange(n_cols)
@@ -281,8 +301,6 @@ class TangramMap(MapMethodClass):
             if pos_by_weight:
                 row_idx = np.argmax(T_soft, axis=0).flatten()
 
-            out = dict()
-
             cls.hard_update_out_dict(
                 out,
                 row_idx,
@@ -292,19 +310,14 @@ class TangramMap(MapMethodClass):
                 return_sparse,
             )
         else:
-            out = dict(pred=T_soft)
-
-        out["T"] = T_soft.T
-        out["S_from"] = S_from
-
-        out["to_names"] = ad_to.obs.index.values.tolist()
-        out["from_names"] = ad_from.obs.index.values.tolist()
+            out["pred"] = T_soft
 
         return out
 
 
 class TangramV1Map(TangramMap):
     tg = tg1
+    version = "1"
 
     def __init__(
         self,
@@ -317,6 +330,7 @@ class TangramV1Map(TangramMap):
 
 class TangramV2Map(TangramMap):
     tg = tg2
+    version = "2"
 
     def __init__(
         self,

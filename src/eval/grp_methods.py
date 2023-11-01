@@ -101,17 +101,12 @@ class ThresholdGroup(GroupMethodClass):
             else:
                 t_high = np.zeros(T.shape[1]).astype(bool)
 
-            if np.sum(x_low) > 0:
-                t_low = T[x_low, :].sum(axis=0) > thres_t_low
-            else:
-                t_low = np.zeros(T.shape[1]).astype(bool)
-
             D_from[t_high, 1] = 1
-            D_from[t_low, 0] = 1
+            D_from[~t_high, 0] = 1
 
             D_from = pd.DataFrame(
                 D_from.astype(int),
-                columns=[f"low_{feature}", f"high_{feature}"],
+                columns=[f"nadj_{feature}", f"adj_{feature}"],
                 index=X_from.obs.index,
             )
 
