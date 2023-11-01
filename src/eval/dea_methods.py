@@ -60,13 +60,14 @@ class ScanpyDEA(DEAMethodClass):
         mode: Literal["pos", "neg", "both"] = "both",
         groups: List[str] | str = "all",
         method_kwargs: Dict[str, Any] = {},
+        normalize: bool = False,
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
+
         X_to_pred = input_dict["X_to_pred"]
         adata = input_dict["X_from"]
         D_to = input_dict["D_to"]
         D_from = input_dict["D_from"]
-        print(D_from.sum(axis=0))
 
         labels = ut.design_matrix_to_labels(D_from)
 
@@ -88,11 +89,20 @@ class ScanpyDEA(DEAMethodClass):
         else:
             uni_labels = "all"
 
+        if normalize:
+            X_old = adata.X.copy()
+            sc.pp.normalize_total(adata)
+            sc.pp.log1p(adata)
+            use_raw = False
+        else:
+            use_raw = None
+
         sc.tl.rank_genes_groups(
             adata,
             groupby="label",
             groups=uni_labels,
             method=method,
+            use_raw=use_raw,
             **method_kwargs,
         )
 
@@ -113,4 +123,8 @@ class ScanpyDEA(DEAMethodClass):
                 out[lab] = dedf[dedf["scores"].values < 0]
             else:
                 raise NotImplementedError
+
+        if normalize:
+            adata.X = X_old
+
         return dict(pred=out, DEA=out)
