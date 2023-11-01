@@ -1,6 +1,6 @@
 import os.path as osp
 from abc import abstractmethod
-from typing import Any, Dict, Literal
+from typing import Any, Dict, List, Literal
 
 import anndata as ad
 import numpy as np
@@ -58,36 +58,40 @@ class ScanpyDEA(DEAMethodClass):
         sort_by: str = "pvals_adj",
         pval_cutoff: float = 0.01,
         mode: Literal["pos", "neg", "both"] = "both",
+        groups: List[str] | str = "all",
+        method_kwargs: Dict[str, Any] = {},
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
-
         X_to_pred = input_dict["X_to_pred"]
+        adata = input_dict["X_from"]
         D_to = input_dict["D_to"]
         D_from = input_dict["D_from"]
 
-        # np.apply_along_axis was truncating label names based on dtype of input.
-
-        # labels = np.apply_along_axis(
-        #     lambda x: "_".join(D_to.columns.values[x].tolist()),
-        #     arr=D_to.values == 1,
-        #     axis=1,
-        # )
-        # labels = np.array(labels)
-
-        labels = np.array(list(map(lambda x: "_".join(D_to.columns.values[x].tolist()), D_to.values == 1)))
-        labels[labels == ""] = "background"
-
-        adata = ad.AnnData(
-            X_to_pred.values,
-            obs=pd.DataFrame([], index=X_to_pred.index),
-            var=pd.DataFrame([], index=X_to_pred.columns),
+        labels = np.array(
+            list(
+                map(
+                    lambda x: "_".join(D_from.columns.values[x].tolist()),
+                    D_from.values == 1,
+                )
+            )
         )
+
+        labels[labels == ""] = "background"
 
         adata.obs["label"] = labels
 
-        uni_labels = np.unique(adata.obs["label"].values)
+        if groups is None:
+            uni_labels = np.unique(adata.obs["label"].values)
+        else:
+            uni_labels = np.unique(groups)
 
-        sc.tl.rank_genes_groups(adata, groupby="label", method=method)
+        sc.tl.rank_genes_groups(
+            adata,
+            groupby="label",
+            groups=groups,
+            method=method,
+            **method_kwargs,
+        )
 
         out = dict()
 

@@ -65,6 +65,7 @@ class PredMethodClass(MethodClass):
 
 class TangramPred(PredMethodClass):
     tg = None
+    version = None
 
     def __init__(
         self,
@@ -84,6 +85,7 @@ class TangramPred(PredMethodClass):
     ) -> Dict[str, pd.DataFrame]:
         X_to = input_dict["X_to"]
         X_from = input_dict["X_from"]
+        X_from_scaled = input_dict["X_from_scaled"]
         T = input_dict["T"]
 
         if isinstance(T, spmatrix):
@@ -110,7 +112,14 @@ class TangramPred(PredMethodClass):
 
         ad_map.uns["train_genes_df"] = pd.DataFrame([], index=training_genes)
 
-        ad_ge = cls.tg.project_genes(adata_map=ad_map, adata_sc=X_from)
+        if (cls.version == "2") and (X_from_scaled is not None):
+            ad_sc = X_from_scaled
+        elif (cls.version == "1") or (cls.version == "2"):
+            ad_sc = X_from
+        else:
+            NotImplementedError
+
+        ad_ge = cls.tg.project_genes(adata_map=ad_map, adata_sc=ad_sc)
 
         X_to_pred = ad_ge.to_df()
 
@@ -128,6 +137,7 @@ class TangramPred(PredMethodClass):
 
 class TangramV1Pred(TangramPred):
     tg = tg1
+    version = "1"
 
     def __init__(
         self,
@@ -140,6 +150,7 @@ class TangramV1Pred(TangramPred):
 
 class TangramV2Pred(TangramPred):
     tg = tg2
+    version = "2"
 
     def __init__(
         self,
