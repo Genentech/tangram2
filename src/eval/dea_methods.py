@@ -56,7 +56,7 @@ class ScanpyDEA(DEAMethodClass):
         input_dict: Dict[str, Any],
         method: str = "wilcoxon",
         sort_by: str = "pvals_adj",
-        pval_cutoff: float = 0.01,
+        pval_cutoff: float | None = None,
         mode: Literal["pos", "neg", "both"] = "both",
         groups: List[str] | str = "all",
         method_kwargs: Dict[str, Any] = {},
@@ -91,24 +91,22 @@ class ScanpyDEA(DEAMethodClass):
 
         if normalize:
             X_old = adata.X.copy()
-            sc.pp.normalize_total(adata)
+            sc.pp.normalize_total(adata, 1e4)
             sc.pp.log1p(adata)
-            use_raw = False
-        else:
-            use_raw = None
 
         sc.tl.rank_genes_groups(
             adata,
             groupby="label",
-            groups=uni_labels,
+            groups=[uni_labels[0]],
+            reference=uni_labels[1],
             method=method,
-            use_raw=use_raw,
             **method_kwargs,
         )
 
         out = dict()
 
-        for lab in uni_labels:
+        # for lab in uni_labels:
+        for lab in [uni_labels[0]]:
             dedf = sc.get.rank_genes_groups_df(
                 adata,
                 group=lab,
