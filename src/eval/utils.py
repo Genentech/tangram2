@@ -1,4 +1,5 @@
 import gzip
+import os.path as osp
 from functools import reduce
 from typing import Any, Dict, List, TypeVar
 
@@ -12,7 +13,9 @@ from thefuzz import fuzz
 W = TypeVar("W")
 
 
-def design_matrix_to_labels(design_matrix: pd.DataFrame):
+def design_matrix_to_labels(design_matrix: pd.DataFrame) -> np.ndarray:
+    # design matrix is output from any group method : [n_obs] x [n_covariates]
+    # creates an array of length [n_obs], each observation has one label
     labels = np.array(
         list(
             map(
@@ -25,12 +28,19 @@ def design_matrix_to_labels(design_matrix: pd.DataFrame):
 
 
 def list_or_path_get(obj: str | None | List[str] = None):
+    # checks if an object is a list or a path to a file
+    # that holds a list. If path, we read the file
+    # and returns it as a list. If already a list, tuple, or
+    # pandas series we return the object (unmodified)
 
     if obj is not None:
-        if isinstance(obj, str):
+        # if a string and a path read
+        if isinstance(obj, str) and osp.isfile(obj):
+            # read csv file
             if obj.endswith(".csv"):
                 obj = pd.read_csv(obj, index_col=0)
                 obj = np.reshape(obj.values, -1)
+            # read text file
             elif obj.endswith(".txt"):
                 with open(obj, "r") as f:
                     obj = f.readlines()
@@ -39,7 +49,7 @@ def list_or_path_get(obj: str | None | List[str] = None):
                 NotImplementedError
 
             return obj
-
+        # return list-like objects
         elif isinstance(obj, (list, tuple, pd.Series)):
             return obj
 
@@ -55,24 +65,39 @@ def get_fuzzy_key(
     d: Dict[str, Any],
     allow_fuzzy_ratio: int = 75,
     verbose: bool = False,
-):
-    true_keys = list(d.keys())
-    fuzzy_rank = [(key, fuzz.ratio(fuzzy_key, key)) for key in true_keys]
-    fuzzy_rank.sort(key=lambda x: -x[1])
-    top_rank = fuzzy_rank[0]
-    if top_rank[0] == fuzzy_key:
+) -> str:
+    # function to support fuzzy dictionary matching
+
+    if fuzzy_key in d:
         return fuzzy_key
-    elif top_rank[1] >= allow_fuzzy_ratio:
+
+    # get keys in dictionary
+    true_keys = list(d.keys())
+    # compute fuzzy score for each key in dictionary and the
+    # specified key
+    fuzzy_rank = [(key, fuzz.ratio(fuzzy_key, key)) for key in true_keys]
+    # sort key w.r.t. fuzzy score, highest first
+    fuzzy_rank.sort(key=lambda x: -x[1])
+    # get highest scoring key and its score
+    top_key, top_score = fuzzy_rank[0]
+
+    # if key match fuzzy_key then no correction
+    if top_key == fuzzy_key:
+        return fuzzy_key
+    # if score is higher than required ratio
+    elif top_score >= allow_fuzzy_ratio:
         if verbose:
-            print("Using {} instead of {}".format(top_rank[0], fuzzy_key))
-        return top_rank[0]
+            print("Using {} instead of {}".format(top_key, fuzzy_key))
+        return top_key
+    # if no exact or fuzzy match
     else:
         if verbose:
             print("No match for key")
         return fuzzy_key
 
 
-def to_csv_gzip(df: pd.DataFrame, filename, **kwargs):
+def to_csv_gzip(df: pd.DataFrame, filename, **kwargs) -> None:
+    # function to support saving data frames in compressed format
     with gzip.open(
         filename,
         mode="wb",
@@ -81,24 +106,42 @@ def to_csv_gzip(df: pd.DataFrame, filename, **kwargs):
 
 
 def identity_fun(x: W, *args, **kwargs) -> W:
+    # dummy function, leaves input unchanged
     return x
 
 
-def read_input_object(path: str, return_array: bool = False, layer=None):
+def read_input_object(
+    path: str, return_array: bool = False, layer=None, return_df: bool = True
+):
+    # function to read a single file of multiple different types
+
+    # if anndata object
     if path.endswith(".h5ad"):
+        # read
         obj = ad.read_h5ad(path)
+        # adjust for layer
         if layer is not None:
             obj.X = obj.layers[layer]
 
+        # return np.ndarry if specified
         if return_array:
             obj = obj.X
+            # check if sparse
             if isinstance(obj, spmatrix):
                 obj = obj.todense()
+        elif return_df:
+            obj = obj.to_df()
+        else:
+            pass
 
+    # if path to csv or tsv file
     elif path.endswith((".csv", ".tsv")):
         obj = pd.read_csv(path, header=0, index_col=0)
+        # return np.ndarray if specified
         if return_array:
             obj = obj.values
+
+    # if path to numpy object
     elif path.endswith(".npy"):
         obj = np.load(path)
     else:
@@ -108,17 +151,39 @@ def read_input_object(path: str, return_array: bool = False, layer=None):
 
 
 def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
+    # read files specified in a dictionary (data_dict)
+
+    # instantiate dictionary to hold read objects
     input_dict = dict()
+    # map to rename objects when necessary
     rename_map = dict(sp="X_to", sc="X_from")
+    rename_map["map"] = "T"
 
+    # iterate over objects in dictionary
     for name in data_dict.keys():
+        # get path
         pth = data_dict[name]["path"]
+        # get layer
         layer = data_dict[name].get("layer", None)
+        # check if should be returned as np.ndarray
         return_array = data_dict[name].get("asarray", False)
-        obj = read_input_object(pth, return_array=return_array, layer=layer)
+        # if return as data frame
+        return_df = data_dict[name].get("asdf", False)
+        # get object
+        obj = read_input_object(
+            pth, return_array=return_array, layer=layer, return_df=return_df
+        )
 
+        # add option to transpose
+        transpose = data_dict[name].get("transpose", False)
+        # transpose if specified
+        if transpose:
+            obj = obj.T
+
+        # store object
         input_dict[name] = obj
 
+    # correct names
     for old_name, new_name in rename_map.items():
         if old_name in input_dict:
             input_dict[new_name] = input_dict.pop(old_name)
@@ -178,6 +243,7 @@ def ad2np(func):
 
 @njit
 def mat_cosine_similarity(V1, V2, axis=0):
+    # efficient implementation of cosine similarity
     n_1 = np.sum(V1 * V1, axis=axis) ** 0.5
     n_2 = np.sum(V2 * V2, axis=axis) ** 0.5
     norms_sq = n_1 * n_2
@@ -187,7 +253,11 @@ def mat_cosine_similarity(V1, V2, axis=0):
     return cs
 
 
-def matrix_correlation(O, P):
+def matrix_correlation(O: np.ndarray, P: np.ndarray) -> np.ndarray:
+    # efficient implementation of columnwise
+    # correlation between two input matrices
+    # shamelessly stolen from: https://github.com/ikizhvatov/efficient-columnwise-correlation/blob/master/columnwise_corrcoef_perf.py
+
     (n, t) = O.shape  # n traces of t samples
     (n_bis, m) = P.shape  # n predictions for each of m candidates
 
@@ -198,8 +268,10 @@ def matrix_correlation(O, P):
         np.einsum("nm->m", P, optimize="optimal") / np.double(n)
     )  # compute P - mean(P)
 
+    # compute covariance
     cov = np.einsum("nm,nt->mt", DP, DO, optimize="optimal")
 
+    # compute variance
     varP = np.einsum("nm,nm->m", DP, DP, optimize="optimal")
     varO = np.einsum("nt,nt->t", DO, DO, optimize="optimal")
     tmp = np.einsum("m,t->mt", varP, varO, optimize="optimal")
@@ -208,18 +280,30 @@ def matrix_correlation(O, P):
 
 
 def get_ad_value(adata: ad.AnnData, key: str, to_np: bool = True):
+    # helper function to grab information
+    # from anndata objects. Check if the key is
+    # present in any of multiple different slots
+
+    # is in .obs?
     if key in adata.obs:
         out = adata.obs[key]
         out = out.values if to_np else out
+    # is in .obsm?
     elif key in adata.obsm:
         out = adata.obsm[key]
+
+    # is in .obsp?
     elif key in adata.obsp:
         out = adata.obsp[key]
+    # is in .var (features)
     elif key in adata.var:
         out = adata.var[key]
         out = out.values if to_np else out
+    # is in .uns?
     elif key in adata.uns:
         out = adata.uns[key]
+
+    # return None if no match
     else:
         out = None
 
@@ -231,18 +315,33 @@ def expand_key(
     fill_keys: List[str],
     expand_key: str = "all",
 ) -> Dict[Any, Any]:
+    # expands a key in a dictionary
+    # will update 'd', all keys in 'fill_keys'
+    # will be added to 'd' with same value as "expand_key"
 
+    # if d is empty dictionary
     if not d:
         return d
 
+    # make sure 'expand_key' is in 'd'
     if expand_key in d:
-        exp_d = {x: d[expand_key] for x in fill_keys}
+        # get value of the expanded key
+        val = d.pop(expand_key)
+        # update the dictionary
+        exp_d = {x: val for x in fill_keys}
         return exp_d
     else:
         return d
 
 
 def recursive_get(d, *keys):
+    # allows you to provide a set of keys
+    # and get the leaf object in a dictionary
+    # for example: if keys = [a,b,c,d] then
+    # we return d[a][b][c][d], also corrects
+    # for missing keys
+
+    # if empty dictionary
     if not d:
         return d
     else:
@@ -250,6 +349,9 @@ def recursive_get(d, *keys):
 
 
 def listify(obj: W) -> List[W]:
+    # check if object is list
+    # if yes return unchanged object
+    # if no return object in a list format
     if not isinstance(obj, (tuple, list)):
         return [obj]
     return obj

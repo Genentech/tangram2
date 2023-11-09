@@ -1,19 +1,23 @@
 import os.path as osp
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Union
-import pandas as pd
+
 import anndata as ad
 import numpy as np
+import pandas as pd
 from scipy.sparse import coo_matrix
 from scipy.stats import hypergeom
-from sklearn.metrics import roc_auc_score, precision_recall_curve, auc
-
+from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
 from . import utils as ut
 
 
 class MetricClass(ABC):
+    # Metrics Base Class
+
+    # indicate what kind of result this is a metric for: {map,pred,grp,dea}
     metric_type: str = ""
+    # indicate name of metric
     metric_name: str = ""
 
     def __init__(self, *args, **kwargs):
@@ -21,14 +25,27 @@ class MetricClass(ABC):
 
     @classmethod
     @abstractmethod
-    def get_gt(cls, *args, **kwargs):
+    def get_gt(cls, *args, **kwargs) -> Dict[str, Any]:
+        # method to obtain ground truth
+        # should return dictionary with ground truth
         pass
 
     @classmethod
     def make_standard_out(cls, value: float | Dict[str, float]) -> Dict[str, float]:
+        # method to generate standard output
+        # the output of each metric class should adhere
+        # to the same format, that easily can be saved using
+        # the save method. Returns a dictionary with the names of
+        # the metric and the value of the metric.
+
+        # check if value is dictionary, used for multivalue metric classes
         if isinstance(value, dict):
-            name = [cls.metric_type + "_" + cls.metric_name + "_" + k for k in value.keys()]
+            # expand name with value indicator
+            name = [
+                cls.metric_type + "_" + cls.metric_name + "_" + k for k in value.keys()
+            ]
             return dict(zip(name, value.values()))
+        # if not multivalue, then just use standard name
         else:
             name = cls.metric_type + "_" + cls.metric_name
             return {name: value}
@@ -36,31 +53,55 @@ class MetricClass(ABC):
     @classmethod
     @abstractmethod
     def score(cls, res: Dict[str, Any], *args, **kwargs) -> Dict[str, float]:
+        # method to _calculate_ the associated metric(s)
         pass
 
     @classmethod
     def save(cls, values: Dict[str, float], out_dir: str) -> None:
+        # standard save function
+        # will save each metric in a text file named
+        # metric_name.txt in the indicated output directory
+        # `out_dir`
+
+        assert isinstance(
+            values, dict
+        ), "input to save must be a Dictionary on the format metric_name:metric_value"
+
+        # iterate over all metrics
         for metric_name, value in values.items():
+            # define file path to write metric value to
             metric_out_path = osp.join(out_dir, metric_name + ".txt")
+            # save metric value
             with open(metric_out_path, "w+") as f:
                 f.writelines(str(value))
 
 
 class PrintMetric(MetricClass):
+    """Print Metric
+
+    Simply prints the results,
+    no metric is calculated.
+    Intended for development
+    purposes
+
+    """
 
     metric_type = "dev"
     metric_name = "print"
 
     @classmethod
     def get_gt(cls, *args, **kwargs):
+        # return empty dictionary for compatibility
         return {}
 
     @classmethod
     def score(cls, res, *args, **kwargs):
+        # print results
         print(res)
 
     @classmethod
     def save(cls, values, out_dir):
+        # do not save anything
         pass
 
 
@@ -72,31 +113,60 @@ class MapMetricClass(MetricClass):
 
 
 class DEAMetricClass(MetricClass):
+    """DEA Metric Baseclass"""
+
     # remember DEA methods return a dict
-    # containing the DE analysis of each group vs bg
+    # containing the DE analysis of each one group vs bg|alt_group
+
+    # set type to be dea
     metric_type = "dea"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def get_gt(cls, input_dict: Dict[Any, str], **kwargs):
+    def get_gt(cls, input_dict: Dict[Any, str], to_lower: bool = True, **kwargs):
+
+        # ground truth should be a data frame in csv
+        # two columns are required signal and effect
+        # the signal column holds the feature we condition on
+        # the effect column hold the list of associated genes
+        # to the given signal
+
+        # get path to ground truth
         gt_path = kwargs["gt_path"]
-        feature_name = kwargs["feature_name"]
+        # which feature should we look at
+        signal_name = kwargs["signal"]
+        # group of interest
         group = kwargs["group"]
+        # data frame listing signal name and effects
         signal_effect_df = pd.read_csv(gt_path, index_col=0)
-        gt_genes = signal_effect_df[signal_effect_df['signal'] == feature_name.upper()]['effect'].values[0]
+        # get effect features for the associated
+        gt_genes = signal_effect_df[
+            signal_effect_df["signal"].str.upper() == signal_name.upper()
+        ]["effect"].values[0]
+        # from "[e_1,...,e_k]" to [e_1,...,e_k]
         gt_genes = gt_genes.split(",")
-        gt_genes = [gtg.lower() for gtg in gt_genes]
+        # convert effect features to lowercase
+        if to_lower:
+            gt_genes = [gtg.lower() for gtg in gt_genes]
+
         return dict(true=gt_genes, group_name=group)
 
 
 class HardMapMetricClass(MapMetricClass):
+    """Metric class for hard maps (T)"""
+
+    # hard maps is when each cell is assigned
+    # completely to one spot, no spread across all spots
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     @classmethod
     def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
+        # we get the ground truth from the original
+        # data (X_from)
         X_from = input_dict["X_from"]
         obj_map = ut.get_ad_value(X_from, key)
         row_idx = obj_map["row_self"]
@@ -108,18 +178,6 @@ class HardMapMetricClass(MapMetricClass):
         return dict(true=T.T)
 
 
-class SoftMapMetricClass(MapMetricClass):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    @classmethod
-    def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
-        X_from = input_dict["X_from"]
-        S = ut.get_ad_value(X_from, key)
-
-        return dict(true=S)
-
-
 class MapJaccardDist(HardMapMetricClass):
     metric_name = "jaccard"
 
@@ -128,11 +186,16 @@ class MapJaccardDist(HardMapMetricClass):
 
     @classmethod
     def score(cls, res: Dict[str, coo_matrix], *args, **kwargs) -> float:
+
+        # get predicted map
         T_true = res["true"]
+        # get true map
         T_pred = res["pred"]
 
+        # number of rows
         n_rows = T_pred.shape[0]
 
+        # jaccard helper function
         def _jaccard(u, v):
             inter = np.sum(u * v)
             union = np.sum((u + v) > 0)
@@ -143,12 +206,17 @@ class MapJaccardDist(HardMapMetricClass):
         jc = 0
         # we do it like this to keep down memory usage
         for ii in range(n_rows):
+            # get value for row ("to") i in predicted map
             u_a = T_pred.getrow(ii).toarray().flatten()
+            # get value for row i ("to") in true map
             v_a = T_true.getrow(ii).toarray().flatten()
+            # compute jaccard distance between true and pred
             jc += _jaccard(u_a, v_a)
 
+        # mean
         jc /= n_rows
 
+        # create output object
         out = cls.make_standard_out(jc)
 
         return out
@@ -176,26 +244,50 @@ class MapAccuracy(HardMapMetricClass):
         return out
 
 
-class MapRMSE(SoftMapMetricClass):
+class MapRMSE(MapMetricClass):
+    """RMSE for spatial coordinates
+
+    calculates the RMSE between the true
+    and the predicted spatial
+    coordinates of 'from'.
+
+    """
+
     metric_name = "rmse"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def get_gt(
+        cls, input_dict: Dict[Any, str], spatial_key: str = "spatial_key", **kwargs
+    ):
+        # get "from" anndata object
+        X_from = input_dict["X_from"]
+        # get true spatial coordinates of "from"
+        S_from = ut.get_ad_value(X_from, spatial_key)
+
+        return {"S_from": S_from}
+
     @classmethod
     def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
-        S_true = res["true"]
-        S_pred = res["pred"]
+        # get true spatial coordinates for "from"
+        S_from = res["S_from"]
+        # get predicted spatial coordinates for "from"
+        S_from_pred = res["S_from_pred"]
 
-        # rmse - S_true is a nx2 matrix
-        rmse = np.sqrt(np.sum((S_true - S_pred) ** 2, axis=1).mean())
+        # rmse : https://en.wikipedia.org/wiki/Root-mean-square_deviation
+        rmse = np.sqrt(np.sum((S_from - S_from_pred) ** 2, axis=1).mean())
 
+        # create standard output
         out = cls.make_standard_out(rmse)
 
         return out
 
 
 class DEAHyperGeom(DEAMetricClass):
+    """Hypergeometric Test for DEA result"""
+
+    # define name
     metric_name = "hypergeom"
 
     def __init__(self, *args, **kwargs):
@@ -204,6 +296,7 @@ class DEAHyperGeom(DEAMetricClass):
     @classmethod
     def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
 
+        # get group name
         group_name = res["group_name"]
         # total number of genes in the dataset
         population = res["X_from"].var.index.values
@@ -211,11 +304,13 @@ class DEAHyperGeom(DEAMetricClass):
         # number of genes in ground truth
         tot_success = len(set(population).intersection(res["true"]))
         # number of genes predicted in DEA
-        sample_size = len(res["pred"][group_name]['names'].values)
+        sample_size = len(res["pred"][group_name]["names"].values)
         # number of drawn successes
-        drawn_success = len(set(res["true"]).intersection(res["pred"][group_name]['names'].values))
+        drawn_success = len(
+            set(res["true"]).intersection(res["pred"][group_name]["names"].values)
+        )
         # cdf = hypergeom.cdf(drawn_success, pop_size, tot_success, sample_size)
-        sf = hypergeom.sf(drawn_success-1, pop_size, tot_success, sample_size)
+        sf = hypergeom.sf(drawn_success - 1, pop_size, tot_success, sample_size)
 
         out = cls.make_standard_out(sf)
 
@@ -223,6 +318,8 @@ class DEAHyperGeom(DEAMetricClass):
 
 
 class DEAAuc(DEAMetricClass):
+    """AUC for DEA result"""
+
     metric_name = "AU"
 
     def __init__(self, *args, **kwargs):
