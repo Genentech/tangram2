@@ -14,7 +14,8 @@ methods:
 method_params:
   exp1:
     map_CeLEry:
-      num_epochs_max: 5
+      params:
+        num_epochs_max: 5
 
 preprocess:
   exp1:

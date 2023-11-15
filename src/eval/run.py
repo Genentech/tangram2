@@ -125,9 +125,6 @@ def run(
 
                 input_dict[ad_type] = ad_i
 
-            # TODO: remove this
-            met_kwargs = method.get_kwargs()
-
             # get spatial coordinates from data
             inp_kwargs = dict(
                 to_spatial_key=(
@@ -145,7 +142,7 @@ def run(
             # get method parameters for experiment
             method_params = methods[exp][_met_name].get("params", {})
             # define input to method for experiment
-            met_input = met_kwargs | inp_kwargs | method_params
+            met_input = inp_kwargs | method_params
             met_input["out_dir"] = out_dir
 
             # run method

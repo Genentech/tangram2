@@ -257,31 +257,6 @@ class TangramMap(MapMethodClass):
         super().__init__(*args, **kwargs)
         pass
 
-    @staticmethod
-    def get_kwargs(*args, **kwargs):
-        # TODO: discontinue this
-        out_kwargs = dict()
-
-        markers_path = kwargs.get("marker_path", None)
-
-        if markers_path is not None:
-            if markers_path.endswith(".csv"):
-                markers = pd.read_csv(markers_path, index_col=0)
-                markers = np.reshape(markers.values, -1)
-            elif markers_path.endswith(".txt"):
-                with open(markers_path, "r") as f:
-                    markers = f.readlines()
-                    markers = [x.rstrip("\n") for x in markers]
-            else:
-                raise NotImplementedError
-
-        else:
-            markers = None
-
-        out_kwargs["genes"] = markers
-
-        return out_kwargs
-
     @classmethod
     def run(
         cls,
@@ -432,11 +407,6 @@ class CeLEryMap(MapMethodClass):
         **kwargs,
     ):
         super().__init__()
-
-    @staticmethod
-    def get_kwargs(*args, **kwargs):
-        # TODO: discontinue this
-        return dict()
 
     @classmethod
     def run(
