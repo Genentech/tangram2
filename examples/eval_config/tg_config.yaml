@@ -33,10 +33,10 @@ methods:
       params:
         map_args:
           num_epochs: 1000
-          marker_path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/markers/markers.txt'
+          genes: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/markers/markers.txt'
         group_args:
           feature_name: 'cd274'
-          thres_x: 1
+          thres_x: 0.5
           thres_t: 0.5
 
 metrics:

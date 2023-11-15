@@ -133,10 +133,6 @@ class Composite:
 
         return input_dict
 
-    def get_kwargs(*args, **kwargs):
-        # TODO: discontinue this
-        return {}
-
     def save(self, res_dict: Dict[str, Any], out_dir: str, **kwargs):
         # save each of the outputs from
         # every element

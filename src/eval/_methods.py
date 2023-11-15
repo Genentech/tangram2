@@ -34,8 +34,3 @@ class MethodClass(ABC):
         # or a dictionary which the run method output is a subset of.
         # the save method should save the output as file
         return None
-
-    @staticmethod
-    def get_kwargs(*args, **kwargs):
-        # TODO: discontinue this
-        return dict()
