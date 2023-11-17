@@ -1,4 +1,5 @@
 from abc import ABC
+from collections import OrderedDict
 from typing import Any, Dict
 
 import eval.constants as C
@@ -8,33 +9,6 @@ import eval.map_methods as mmet
 import eval.pred_methods as pmet
 import eval.utils as ut
 from eval._methods import MethodClass
-
-
-def compose_workflow_from_input(source_d: Dict[str, str]):
-    """compose workflow from a dictionary
-
-    get {map,pred,group,dea} methods from the dictionary
-
-    """
-
-    # get map method, default None
-    map_method = source_d.get("map")
-    # get pred method, default None
-    pred_method = source_d.get("pred")
-    # get grouping method, default None
-    group_method = source_d.get("group")
-    # get dea method, default None
-    dea_method = source_d.get("dea")
-
-    # compose workflow
-    workflow = Composite(
-        map_method=map_method,
-        pred_method=pred_method,
-        group_method=group_method,
-        dea_method=dea_method,
-    )
-
-    return workflow
 
 
 class IdentityFun:
@@ -61,75 +35,71 @@ class IdentityFun:
 class Composite:
     def __init__(
         self,
-        map_method: str | None = None,
-        pred_method: str | None = None,
-        group_method: str | None = None,
-        dea_method: str | None = None,
+        methods: Dict[str, str],
+        use_fuzzy_match: bool = False,
     ):
-
         # list method names, for 'info' support
-        self.methods = dict(
-            map=map_method,
-            pred=pred_method,
-            group=group_method,
-            dea=dea_method,
-        )
+        self.methods = []
 
-        # set map function to choice, if None then IdentifyFun
-        self.map = (
-            C.METHODS["OPTIONS"].value[map_method]
-            if map_method is not None
-            else IdentityFun
-        )
-        # set pred function to choice, if None then IdentifyFun
-        self.pred = (
-            C.METHODS["OPTIONS"].value[pred_method]
-            if pred_method is not None
-            else IdentityFun
-        )
+        # Ordered Dictionary for method objects
+        self._methods = OrderedDict()
 
-        # set group function to choice, if None then IdentifyFun
-        self.group = (
-            C.METHODS["OPTIONS"].value[group_method]
-            if group_method is not None
-            else IdentityFun
-        )
-        # set dea function to choice, if None then IdentifyFun
-        self.dea = (
-            C.METHODS["OPTIONS"].value[dea_method]
-            if dea_method is not None
-            else IdentityFun
-        )
+        # variables that will be available as input to a method in the chain
+        available_vars = []
+
+        # iterate over all methods in the specified workflow
+        for k, (method_key, _method_name) in enumerate(methods.items()):
+            # use fuzzy match for method classes if enabled
+            if use_fuzzy_match:
+                method_name = ut.get_fuzzy_key(_method_name, C.METHODS["OPTIONS"].value)
+            else:
+                method_name = _method_name
+
+            # add method to list of methods in workflow
+            self.methods.append(method_name)
+
+            # get method object, return None if not implemented
+            method_fun = C.METHODS["OPTIONS"].value.get(method_name)
+
+            # if method is implemented
+            if method_fun is not None:
+                # if first method to be added to workflow
+                if not self._methods:
+                    # add method to dictionary of methods
+                    self._methods[method_key] = method_fun
+                    # update available variables
+                    available_vars += method_fun.ins
+                    available_vars += method_fun.outs
+
+                # if not first method to be added
+                else:
+                    # check if the method to add is compatible with chain
+                    is_comp = all([x in available_vars for x in method_fun.ins])
+                    # if not compatible raise error
+                    assert is_comp, "{} is not compatible with {}".format(
+                        method_name, self.methods[k - 1]
+                    )
+
+                    # if compatible, add to list of methods
+                    self._methods[method_key] = method_fun
+                    # update set of available variables
+                    available_vars += method_fun.outs
+            else:
+                raise NotImplementedError
 
     def run(
         self,
         input_dict: Dict[str, Any],
-        map_args: Dict[str, Any] = dict(),
-        pred_args: Dict[str, Any] = dict(),
-        group_args: Dict[str, Any] = dict(),
-        dea_args: Dict[str, Any] = dict(),
-        out_dir: str | None = None,
         **kwargs,
     ):
-        # map
-        out = self.map.run(input_dict, **map_args)
-        # update input dictionary
-        input_dict.update(out)
 
-        # predict
-        out = self.pred.run(input_dict, **pred_args)
-        # update input dictionary
-        input_dict.update(out)
-
-        # group
-        out = self.group.run(input_dict, **group_args)
-        # update input dictionary
-        input_dict.update(out)
-
-        # dea
-        out = self.dea.run(input_dict, **dea_args)
-        # update input dictionary
-        input_dict.update(out)
+        # execute chain of methods in workflow
+        for method_key in self._methods.keys():
+            out = self._methods[method_key].run(
+                input_dict, **kwargs.get(method_key, {})
+            )
+            # update input dict
+            input_dict.update(out)
 
         return input_dict
 
@@ -137,17 +107,9 @@ class Composite:
         # save each of the outputs from
         # every element
 
-        # map
-        self.map.save(res_dict, out_dir, **kwargs)
-
-        # predict
-        self.pred.save(res_dict, out_dir, **kwargs)
-
-        # group
-        self.group.save(res_dict, out_dir, **kwargs)
-
-        # dea
-        self.dea.save(res_dict, out_dir, **kwargs)
+        # iterate over methods in workflow
+        for method_key in self._methods.keys():
+            out = self._methods[method_key].save(res_dict, out_dir, **kwargs)
 
 
 class WorkFlowClass(MethodClass):
@@ -168,22 +130,14 @@ class WorkFlowClass(MethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        map_args: Dict[str, Any] = {},
-        pred_args: Dict[str, Any] = {},
-        group_args: Dict[str, Any] = {},
-        dea_args: Dict[str, Any] = {},
         **kwargs,
     ):
-
         # run function equates to running the composition in "flow"
         out = cls.flow.run(
             input_dict=input_dict,
-            map_args=map_args,
-            pred_args=pred_args,
-            group_args=group_args,
-            dea_args=dea_args,
             **kwargs,
         )
+
         return out
 
     @classmethod
@@ -201,8 +155,10 @@ class HejinWorkflow(WorkFlowClass):
     """Implementation of Hejin's workflow"""
 
     flow = Composite(
-        map_method="map_tangram_v2",
-        pred_method="prd_tangram_v2",
-        group_method="grp_threshold",
-        dea_method="dea_scanpy",
+        dict(
+            map="map_tangram_v2",
+            pred="prd_tangram_v2",
+            group="grp_threshold",
+            dea="dea_scanpy",
+        )
     )

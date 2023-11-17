@@ -11,9 +11,9 @@ methods:
   exp1:
     wi_hejin:
       params:
-        map_args:
+        map:
           num_epochs: 2
-        group_args:
+        group:
           feature_name: 'abcc11'
           thres_x: 9
 

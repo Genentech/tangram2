@@ -13,6 +13,28 @@ from thefuzz import fuzz
 W = TypeVar("W")
 
 
+def check_in_out(func):
+    """compatiblity check
+
+    This decorator checks whether the necessary
+    input is provided to a method
+
+
+    """
+
+    def inner(cls, input_dict: Dict[str, Any], **kwargs):
+
+        vars_not_in_input = [x for x in cls.ins if x not in input_dict]
+
+        assert not vars_not_in_input, "{} were not in the input_dict".format(
+            ", ".join(vars_not_in_input)
+        )
+
+        return func(cls, input_dict, **kwargs)
+
+    return inner
+
+
 def design_matrix_to_labels(design_matrix: pd.DataFrame) -> np.ndarray:
     # design matrix is output from any group method : [n_obs] x [n_covariates]
     # creates an array of length [n_obs], each observation has one label

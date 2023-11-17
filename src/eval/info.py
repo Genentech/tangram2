@@ -36,5 +36,5 @@ def list_chained_methods(
 ) -> None:
     """list methods of a workflow"""
     print("Elements of {}:".format(wf.__name__))
-    for method_type, method_name in wf.flow.methods.items():
-        print("  - {} : {}".format(method_type, method_name))
+    for k, method_name in enumerate(wf.flow.methods):
+        print("  - {} : {}".format(k, method_name))

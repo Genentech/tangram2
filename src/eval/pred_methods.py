@@ -15,6 +15,9 @@ from eval._methods import MethodClass
 
 class PredMethodClass(MethodClass):
     # Prediction Method Base class
+    ins = ["T", "X_from"]
+    outs = ["X_to_pred"]
+
     def __init__(
         self,
         *args,
@@ -85,6 +88,9 @@ class TangramPred(PredMethodClass):
     # specify the tangram version
     version = None
 
+    ins = ["T", "X_from"]
+    outs = ["X_to_pred"]
+
     def __init__(
         self,
         *args,
@@ -93,6 +99,7 @@ class TangramPred(PredMethodClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
+    @ut.check_in_out
     def run(
         cls,
         input_dict: Dict[str, Any],

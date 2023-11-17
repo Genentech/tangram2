@@ -126,6 +126,10 @@ class MapMethodClass(MethodClass):
 class RandomMap(MapMethodClass):
     # class that randomly maps object in "from"
     # to locations in "to"
+
+    ins = ["X_to", "X_from"]
+    outs = ["S_from"]
+
     def __init__(
         self,
     ):
@@ -133,6 +137,7 @@ class RandomMap(MapMethodClass):
 
     @classmethod
     @ut.ad2np
+    @ut.check_in_out
     def run(
         cls,
         input_dict: Dict[str, Any],
@@ -183,6 +188,9 @@ class ArgMaxCorrMap(MapMethodClass):
     # Method that assigns each observation in "from"
     # to the observation in "to" that it has the highest
     # correlation with, w.r.t. feature expression
+    ins = ["X_from", "X_to"]
+    outs = ["S_from", "T"]
+
     def __init__(
         self,
         *args,
@@ -192,6 +200,7 @@ class ArgMaxCorrMap(MapMethodClass):
 
     @classmethod
     @ut.ad2np
+    @ut.check_in_out
     def run(
         cls,
         input_dict: Dict[str, Any],
@@ -249,6 +258,9 @@ class TangramMap(MapMethodClass):
     # version number
     version = None
 
+    ins = ["X_to", "X_from"]
+    outs = ["T", "S_from"]
+
     def __init__(
         self,
         *args,
@@ -258,6 +270,7 @@ class TangramMap(MapMethodClass):
         pass
 
     @classmethod
+    @ut.check_in_out
     def run(
         cls,
         input_dict: Dict[str, Any],
@@ -302,6 +315,8 @@ class TangramMap(MapMethodClass):
             num_epochs=num_epochs,
             cluster_label=kwargs.get("cluster_label"),
             random_state=kwargs.get("random_state", 42),
+            wandb_log=kwargs.get("wandb_log", False),
+            wandb_config=kwargs.get("wandb_config", {}),
         )
 
         # depending on mode and version, treat output differently
@@ -401,6 +416,9 @@ class TangramV2Map(TangramMap):
 class CeLEryMap(MapMethodClass):
     # Method class for CeLEry
     # github: https://github.com/QihuangZhang/CeLEry
+    ins = ["X_to", "X_from"]
+    outs = ["S_from"]
+
     def __init__(
         self,
         *args,

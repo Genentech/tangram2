@@ -9,20 +9,24 @@ data:
 
 methods:
   exp1:
-    wf_hejin:
+    wf_test:
       params:
         map:
-          num_epochs: 2
-        group:
-          feature_name: 'abcc11'
-          thres_x: 9
+          random_state: 1
+          num_epochs: 10
+      recipe:
+        map: map_CeLEry
+        pred: prd_tangram_v2
 
 preprocess:
   exp1:
-    sc:
-      total_normalize:
-        target_sum: 1e4
+      sp:
+        standard_scanpy:
+          target_sum: 1e4
+      sc:
+        total_normalize:
+          target_sum: 1e4
 metrics:
   exp1:
-    wf_hejin:
+    wf_test:
       dev_print:

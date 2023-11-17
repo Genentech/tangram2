@@ -9,7 +9,11 @@ class MethodClass(ABC):
         *args,
         **kwargs,
     ):
-        pass
+
+        # elements that are required as input
+        ins = []
+        # elements that are given as output
+        outs = []
 
     @classmethod
     @abstractmethod
