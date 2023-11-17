@@ -11,12 +11,15 @@ methods:
   exp1:
     wf_test:
       params:
-        map_args:
+        map:
           random_state: 1
           num_epochs: 10
-      compose:
+        grp:
+          feature_name: 'erbb2'
+      recipe:
         map: map_tangram_v2
         pred: prd_tangram_v2
+        grp: grp_threshold
 
 
 preprocess:

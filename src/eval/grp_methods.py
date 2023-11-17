@@ -46,6 +46,10 @@ class ThresholdGroup(GroupMethodClass):
     # the "from" observations are grouped based on their
     # how much of their mass is mapped to the two different
     # groups in the "to" data
+
+    ins = ["X_from", "X_to_pred"]
+    outs = ["D_to", "D_from"]
+
     def __init__(
         self,
         *args,
@@ -54,6 +58,7 @@ class ThresholdGroup(GroupMethodClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
+    @ut.check_in_out
     @gut.add_covariates
     def run(
         cls,

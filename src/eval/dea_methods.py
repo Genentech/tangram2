@@ -47,6 +47,9 @@ class ScanpyDEA(DEAMethodClass):
     # Scanpy DEA Method class
     # allows you to execute scanpy.tl.rank_genes
     # using a design matrix and input data
+    ins = ["D_from", "D_to", "X_from"]
+    outs = ["DEA"]
+
     def __init__(
         self,
         *args,
@@ -55,6 +58,7 @@ class ScanpyDEA(DEAMethodClass):
         super().__init__()
 
     @classmethod
+    @ut.check_in_out
     def run(
         cls,
         input_dict: Dict[str, Any],
@@ -66,9 +70,9 @@ class ScanpyDEA(DEAMethodClass):
         method_kwargs: Dict[str, Any] = {},
         normalize: bool = False,
         subset_features: Dict[str, List[str]] | Dict[str, str] | None = None,
+        min_group_obs: int = 2,
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
-
         # data frame of predicted "to" data : [n_to] x [n_from_features]
         X_to_pred = input_dict["X_to_pred"]
         # anndata of "from" : [n_from] x [n_from_features]
@@ -98,25 +102,34 @@ class ScanpyDEA(DEAMethodClass):
         # this is to be able to use the scanpy function
         adata.obs["label"] = labels
 
-        # make group specification align with expected scanpy input
-        if groups is not None:
-            # if groups are "all" remove listified
-            if groups == "all":
-                uni_labels = groups
-            else:
-                # subset identified labels (based on design matrix)
-                # w.r.t. the specified groups
-                groups = ut.listify(groups)
-                uni_labels = np.unique(adata.obs["label"].values)
-                uni_groups = np.unique(groups)
-                uni_labels = [lab for lab in uni_labels if lab in uni_groups]
-                # check that the subsetted labels are at least two
-                if len(uni_labels) < 2:
-                    return dict(pred=pd.DataFrame([]), DEA=pd.DataFrame([]))
+        # get unique labels
+        uni_labels = np.unique(adata.obs["label"].values)
 
-        # if no groups specified set to "all"
+        # make group specification align with expected scanpy input
+        if (groups is not None) or (groups == "all"):
+            # if no groups specified set to "all"
+            main_group = "all"
+            ref_group = "rest"
+
         else:
-            uni_labels = "all"
+            # subset identified labels (based on design matrix)
+            # w.r.t. the specified groups
+            groups = ut.listify(groups)
+            uni_groups, group_counts = np.unique(groups, return_counts=True)
+            # make sure enough observations are in each group
+            uni_groups = [
+                uni_groups[k]
+                for k in range(len(uni_groups))
+                if group_counts[k] >= min_group_obs
+            ]
+            uni_labels = [lab for lab in uni_labels if lab in uni_groups]
+
+            # check that the subsetted labels are at least two
+            if len(uni_labels) < 2:
+                return dict(pred=pd.DataFrame([]), DEA=pd.DataFrame([]))
+
+            main_group = [uni_labels[0]]
+            ref_group = uni_labels[1]
 
         # normalize data if specified
         if normalize:
@@ -128,34 +141,36 @@ class ScanpyDEA(DEAMethodClass):
         sc.tl.rank_genes_groups(
             adata,
             groupby="label",
-            groups=[uni_labels[0]],  # groups _must_ be a list or str, not np.ndarray
-            reference=uni_labels[1],
+            groups=main_group,  # groups _must_ be a list or str, not np.ndarray
+            reference=ref_group,
             method=method,
             **method_kwargs,
         )
 
-        # get data frame of test
-        dedf = sc.get.rank_genes_groups_df(
-            adata,
-            group=uni_labels[0],
-            pval_cutoff=pval_cutoff,
-        )
-
-        # instantiate out dict
         out = dict()
 
-        # modify output based on mode
+        # define groups to extract information from
+        iter_groups = uni_labels if main_group == "all" else [main_group]
 
-        lab = uni_labels[0]
+        # iterate over groups
+        for comp_group in iter_groups:
+            # get data frame of test
+            dedf = sc.get.rank_genes_groups_df(
+                adata,
+                group=comp_group,
+                pval_cutoff=pval_cutoff,
+            )
 
-        if mode == "both":
-            out[lab] = dedf
-        elif mode == "pos":
-            out[lab] = dedf[dedf["scores"].values > 0]
-        elif mode == "neg":
-            out[lab] = dedf[dedf["scores"].values < 0]
-        else:
-            raise NotImplementedError
+            # modify output based on mode
+
+            if mode == "both":
+                out[comp_group] = dedf
+            elif mode == "pos":
+                out[comp_group] = dedf[dedf["scores"].values > 0]
+            elif mode == "neg":
+                out[comp_group] = dedf[dedf["scores"].values < 0]
+            else:
+                raise NotImplementedError
 
         # undo the normalization
         if normalize:

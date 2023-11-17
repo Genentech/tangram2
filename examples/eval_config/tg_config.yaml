@@ -25,16 +25,16 @@ data:
 methods:
   all:
     wf_hejin:
-      compose:
+      recipe:
         map: map_tangramv2
         pred: prd_tangramv2
         group: grp_threshold
         dea: dea_scanpy
       params:
-        map_args:
+        map:
           num_epochs: 1000
-          genes: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/markers/markers.txt'
-        group_args:
+          marker_path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/markers/markers.txt'
+        group:
           feature_name: 'cd274'
           thres_x: 0.5
           thres_t: 0.5

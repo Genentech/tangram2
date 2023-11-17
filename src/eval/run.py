@@ -79,22 +79,22 @@ def run(
             else:
                 met_name = _met_name
 
-            # extract composition formula if specified, else None
-            compose_dict = methods[exp][_met_name].get("compose")
+            if met_name not in wfs_dict:
 
-            if compose_dict is not None:
-                # compose workflow from recipe if specified
-                # Note: keyword compose should be used in config file
-                #       to signify a recipe
-                method = wf.compose_workflow_from_input(compose_dict)
-            elif met_name in methods_dict:
-                # method is a single step get implementation
-                method = methods_dict[met_name]
-            elif met_name in wfs_dict:
-                # method is a workflow, get implementation
-                method = wfs_dict[met_name]
+                # extract composition formula if specified, else None
+                recipe_dict = methods[exp][_met_name].get("recipe")
+                if recipe_dict is None:
+                    recipe_dict = methods[exp][_met_name].get("compose")
+
+                if recipe_dict is not None:
+                    # compose workflow from recipe if specified
+                    # Note: keyword `recipe` should be used in config file
+                    #       to signify a recipe
+                    method = wf.Composite(recipe_dict, use_fuzzy_match=use_fuzzy_match)
+                else:
+                    NotImplementedError
             else:
-                NotImplementedError
+                method = wfs_dict[met_name]
 
             # define output directory
             out_dir = osp.join(root_dir, exp, met_name)
@@ -125,28 +125,13 @@ def run(
 
                 input_dict[ad_type] = ad_i
 
-            # get spatial coordinates from data
-            inp_kwargs = dict(
-                to_spatial_key=(
-                    data[exp]["sp"].get("spatial_key", "spatial")
-                    if "sp" in data[exp]
-                    else None
-                ),
-                from_spatial_key=(
-                    data[exp]["sc"].get("spatial_key", None)
-                    if "sc" in data[exp]
-                    else None
-                ),
-            )
-
             # get method parameters for experiment
             method_params = methods[exp][_met_name].get("params", {})
             # define input to method for experiment
-            met_input = inp_kwargs | method_params
-            met_input["out_dir"] = out_dir
+            method_params["out_dir"] = out_dir
 
             # run method
-            met_val = method.run(input_dict, **met_input)
+            met_val = method.run(input_dict, **method_params)
 
             # save output if specified
             if save_mode:

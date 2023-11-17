@@ -9,13 +9,10 @@ data:
 
 methods:
   exp1:
-    - map_CeLEry
-
-method_params:
-  exp1:
-    map_CeLEry:
-      params:
-        num_epochs_max: 5
+    recipe:
+      map: map_CeLEry
+    params:
+      num_epochs_max: 5
 
 preprocess:
   exp1:
