@@ -16,7 +16,6 @@ def run(
     use_fuzzy_match: bool = False,
     verbose: bool = False,
 ):
-
     # run whole validation workflow
 
     argmap = dict(
@@ -71,7 +70,6 @@ def run(
 
         # iterate over methods for experiment
         for _met_name in met_names:
-
             # check for fuzzy match if enabled
             if use_fuzzy_match:
                 met_name = ut.get_fuzzy_key(_met_name, methods_dict)
@@ -80,7 +78,6 @@ def run(
                 met_name = _met_name
 
             if met_name not in wfs_dict:
-
                 # extract composition formula if specified, else None
                 recipe_dict = methods[exp][_met_name].get("recipe")
                 if recipe_dict is None:
@@ -131,7 +128,7 @@ def run(
             method_params["out_dir"] = out_dir
 
             # run method
-            met_val = method.run(input_dict, **method_params)
+            met_val = method.run(input_dict, experiment_name=exp, **method_params)
 
             # save output if specified
             if save_mode:
@@ -142,7 +139,6 @@ def run(
 
             # calculate all metrics
             for _metric_name, metric_props in method_metrics.items():
-
                 # use fuzzy match if specified
                 if use_fuzzy_match:
                     metric_name = ut.get_fuzzy_key(
