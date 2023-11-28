@@ -90,13 +90,16 @@ class Composite:
     def run(
         self,
         input_dict: Dict[str, Any],
+        experiment_name: str | None = None,
         **kwargs,
     ):
 
         # execute chain of methods in workflow
         for method_key in self._methods.keys():
             out = self._methods[method_key].run(
-                input_dict, **kwargs.get(method_key, {})
+                input_dict,
+                experiment_name=experiment_name,
+                **kwargs.get(method_key, {}),
             )
             # update input dict
             input_dict.update(out)

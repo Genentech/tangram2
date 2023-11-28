@@ -4,3 +4,5 @@ Tangram/
 Tangram
 *.pyc
 .#*
+results/
+results

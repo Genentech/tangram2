@@ -145,7 +145,6 @@ class RandomMap(MapMethodClass):
         return_sparse: bool = True,
         **kwargs,
     ):
-
         # set random seed for reproducibility
         rng = np.random.default_rng(seed)
 
@@ -207,7 +206,6 @@ class ArgMaxCorrMap(MapMethodClass):
         return_sparse: bool = True,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
-
         # anndata of "to"
         X_to = input_dict["X_to"]
         # anndata of "from"
@@ -282,6 +280,7 @@ class TangramMap(MapMethodClass):
         num_epochs: int = 1000,
         hard_map: bool = False,
         genes: List[str] | str | None = None,
+        experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
@@ -306,6 +305,9 @@ class TangramMap(MapMethodClass):
         # preprocess anndata for mapping
         cls.tg.pp_adatas(ad_from, ad_to, genes=genes)
 
+        wandb_config = kwargs.get("wandb_config", {})
+        wandb_config["step_prefix"] = experiment_name
+
         # map cells in "from" to "to"
         tg_out = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
@@ -316,7 +318,7 @@ class TangramMap(MapMethodClass):
             cluster_label=kwargs.get("cluster_label"),
             random_state=kwargs.get("random_state", 42),
             wandb_log=kwargs.get("wandb_log", False),
-            wandb_config=kwargs.get("wandb_config", {}),
+            wandb_config=wandb_config,
         )
 
         # depending on mode and version, treat output differently
@@ -436,7 +438,6 @@ class CeLEryMap(MapMethodClass):
         spatial_key: str = "spatial",
         **kwargs,
     ) -> Dict[str, np.ndarray]:
-
         # anndata of "to" object
         X_to = input_dict["X_to"]
         # anndata of "from" object
