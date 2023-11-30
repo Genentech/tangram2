@@ -165,7 +165,6 @@ def run(
 
                 # iterate over ground truth data sets
                 for ref_datum_name, ref_datum_cf in ref_data.items():
-                    print(ref_datum_name)
                     # read reference datum
                     ref_datum_value = ut.read_input_object(**ref_datum_cf)
                     # apply all metrics to reference
