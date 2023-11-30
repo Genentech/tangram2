@@ -28,9 +28,9 @@ def run(
     # get list of experiment names
     exps = list(data.keys())
     # get specified methods, expand if "all" is used
-    methods = ut.expand_key(config["methods"], exps)
+    methods = ut.expand_key(config.get("methods", {}), exps)
     # get specified metrics, expand if "all" is used
-    metrics = config.get("metrics", None)
+    metrics = ut.expand_key(config.get("metrics", {}), exps)
 
     # adjust to no metrics being specified
     if metrics is not None:
@@ -60,7 +60,7 @@ def run(
     # iterate over experiments
     for exp in exps:
         # get methods to use for experiment
-        met_names = methods[exp]
+        met_names = methods.get(exp, {})
 
         # get preprocessing for experiment and given method, expand if "all" is used
         pp[exp] = ut.expand_key(pp.get(exp, {}), met_names)
@@ -69,6 +69,8 @@ def run(
         input_dict = ut.read_data(data[exp])
 
         # iterate over methods for experiment
+        exp_metrics = ut.expand_key(metrics.get(exp, {}), met_names)
+
         for _met_name in met_names:
             # check for fuzzy match if enabled
             if use_fuzzy_match:
@@ -128,54 +130,49 @@ def run(
             method_params["out_dir"] = out_dir
 
             # run method
-            met_val = method.run(input_dict, experiment_name=exp, **method_params)
+            input_dict = method.run(input_dict, experiment_name=exp, **method_params)
 
             # save output if specified
             if save_mode:
-                method.save(met_val, out_dir)
+                method.save(input_dict, out_dir)
 
             # get method for (experiment,method)
-            method_metrics = ut.recursive_get(metrics, exp, _met_name)
+            # (key,val) = (object, Dict[str,str])
+            method_metrics = ut.recursive_get(exp_metrics, _met_name)
 
             # calculate all metrics
-            for _metric_name, metric_props in method_metrics.items():
-                # use fuzzy match if specified
-                if use_fuzzy_match:
-                    metric_name = ut.get_fuzzy_key(
-                        _metric_name, metrics_dict, verbose=verbose
-                    )
-                else:
-                    metric_name = _metric_name
+            # object is type of object to evaluate e.g., T or X_to_pred
+            for object_name, object_cf in method_metrics.items():
+                # object_name is name of object
+                # object_cf is config for that object
+                out_dir_object = osp.join(out_dir, object_name)
+                os.makedirs(out_dir_object, exist_ok=True)
 
-                # check if metric is implemented
-                if metric_name in metrics_dict:
-                    metric = metrics_dict[metric_name]
-                else:
-                    NotImplementedError
+                # get metrics listed for object
+                object_metrics = object_cf.get("metrics", {})
+                # get fuzzy matches if enabled
+                object_metrics = {
+                    key: ut.get_from_dict_with_fuzzy(key, metrics_dict, use_fuzzy_match)
+                    for key in object_metrics.keys()
+                }
+                object_metrics = {
+                    key: val for key, val in object_metrics.items() if val is not None
+                }
 
-                # get ground truth for metric
-                if metric_props is not None and "ground_truth" in metric_props:
-                    name = metric_props["ground_truth"].pop("name")
-                    name = argmap.get(name, name)
+                # get reference (GT) for object
+                # we expect same GT for all metrics pertaining to the same object
+                ref_data = object_cf.get("data", {})
 
-                    # read if path
-                    if osp.isfile(name):
-                        ground_truth = ut.read_input_object(
-                            name, **metric_props["ground_truth"]
+                # iterate over ground truth data sets
+                for ref_datum_name, ref_datum_cf in ref_data.items():
+                    print(ref_datum_name)
+                    # read reference datum
+                    ref_datum_value = ut.read_input_object(**ref_datum_cf)
+                    # apply all metrics to reference
+                    for metric_name, metric_fun in object_metrics.items():
+                        # compute score
+                        score = metric_fun.score(
+                            input_dict, {object_name: ref_datum_value}
                         )
-                        ground_truth = dict(true=ground_truth)
-
-                    # grab from data (according to method) if not file
-                    else:
-                        ground_truth = metric.get_gt(
-                            input_dict, **metric_props["ground_truth"]
-                        )
-                else:
-                    ground_truth = {}
-
-                # compute score of metric
-                score_vals = ground_truth | met_val
-                score = metric.score(score_vals)
-
-                # save metric score
-                metric.save(score, out_dir)
+                        # save metric
+                        metric_fun.save(score, out_dir_object)

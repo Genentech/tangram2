@@ -24,13 +24,6 @@ class MetricClass(ABC):
         pass
 
     @classmethod
-    @abstractmethod
-    def get_gt(cls, *args, **kwargs) -> Dict[str, Any]:
-        # method to obtain ground truth
-        # should return dictionary with ground truth
-        pass
-
-    @classmethod
     def make_standard_out(cls, value: float | Dict[str, float]) -> Dict[str, float]:
         # method to generate standard output
         # the output of each metric class should adhere
@@ -52,7 +45,9 @@ class MetricClass(ABC):
 
     @classmethod
     @abstractmethod
-    def score(cls, res: Dict[str, Any], *args, **kwargs) -> Dict[str, float]:
+    def score(
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> Dict[str, float]:
         # method to _calculate_ the associated metric(s)
         pass
 
@@ -164,6 +159,21 @@ class HardMapMetricClass(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
+    def _pp(cls, obj: Any):
+        if isinstance(obj, dict) and "row_self" in obj:
+            new_obj = coo_matrix(
+                (
+                    np.ones(obj["row_self"].shape[0]),
+                    (obj["row_self"], obj["row_target"]),
+                ),
+                shape=obj["shape"],
+            ).T
+        else:
+            new_obj = obj
+
+        return new_obj
+
+    @classmethod
     def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
         # we get the ground truth from the original
         # data (X_from)
@@ -185,12 +195,15 @@ class MapJaccardDist(HardMapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str, coo_matrix], *args, **kwargs) -> float:
+    def score(
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> Dict[str, float]:
 
         # get predicted map
-        T_true = res["true"]
+        T_true = cls._pp(ref_dict["T"])
+
         # get true map
-        T_pred = res["pred"]
+        T_pred = cls._pp(res_dict["T"])
 
         # number of rows
         n_rows = T_pred.shape[0]
@@ -229,9 +242,11 @@ class MapAccuracy(HardMapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str, coo_matrix], *args, **kwargs) -> float:
-        T_true = res["true"]
-        T_pred = res["pred"]
+    def score(
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> Dict[str, float]:
+        T_true = ref_dict["T"]
+        T_pred = res_dict["T"]
 
         # sparse matrices do not work with A * B
         inter = T_pred.multiply(T_true)
@@ -258,22 +273,12 @@ class MapRMSE(MapMetricClass):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def get_gt(
-        cls, input_dict: Dict[Any, str], spatial_key: str = "spatial_key", **kwargs
-    ):
-        # get "from" anndata object
-        X_from = input_dict["X_from"]
-        # get true spatial coordinates of "from"
-        S_from = ut.get_ad_value(X_from, spatial_key)
-
-        return {"S_from": S_from}
-
     @classmethod
     def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
         # get true spatial coordinates for "from"
-        S_from = res["S_from"]
+        S_from_true = ref_dict["S_from"]
         # get predicted spatial coordinates for "from"
-        S_from_pred = res["S_from_pred"]
+        S_from_pred = res_dict["S_from"]
 
         # rmse : https://en.wikipedia.org/wiki/Root-mean-square_deviation
         rmse = np.sqrt(np.sum((S_from - S_from_pred) ** 2, axis=1).mean())
@@ -294,25 +299,43 @@ class DEAHyperGeom(DEAMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
+    def score(
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> float:
 
-        # get group name
-        group_name = res["group_name"]
-        # total number of genes in the dataset
-        population = res["X_from"].var.index.values
+        # TODO: I don't like the dependency on X_from
+        population = set(res["X_from"].var.index.values)
         pop_size = len(population)
-        # number of genes in ground truth
-        tot_success = len(set(population).intersection(res["true"]))
-        # number of genes predicted in DEA
-        sample_size = len(res["pred"][group_name]["names"].values)
-        # number of drawn successes
-        drawn_success = len(
-            set(res["true"]).intersection(res["pred"][group_name]["names"].values)
-        )
-        # cdf = hypergeom.cdf(drawn_success, pop_size, tot_success, sample_size)
-        sf = hypergeom.sf(drawn_success - 1, pop_size, tot_success, sample_size)
 
-        out = cls.make_standard_out(sf)
+        def _hg_test(true_set, pred_set):
+            # number of genes in ground truth
+            tot_success = len(set(population).intersection(true_set))
+            # number of genes predicted in DEA
+            sample_size = len(pred_set)
+            # number of drawn successes
+            drawn_success = len(set(true_set).intersection(pred_set))
+
+            # cdf = hypergeom.cdf(drawn_success, pop_size, tot_success, sample_size)
+            sf = hypergeom.sf(drawn_success - 1, pop_size, tot_success, sample_size)
+            return sf
+
+        DEA_pred = res_dict["DEA"]
+        DEA_true = ref_dict["DEA"]
+
+        group_names = list(DEA_pred.keys())
+        sfs = dict()
+        for group_name in group_names:
+            true_set = DEA_true.get(group_name, {})
+            pred_set = DEA_pred.get(group_name, {})
+            if (len(true_set) < 0) or (len(pred_set) < 0):
+                continue
+            true_set = set(true_set[group_name]["names"].values)
+            pred_set = set(pred_set[group_name]["names"].values)
+
+            sf = _ht_test(true_set, pred_set)
+            sfs[group_name] = sf
+
+        out = cls.make_standard_out(sfs)
 
         return out
 
@@ -326,16 +349,40 @@ class DEAAuc(DEAMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
-        genes = res["X_from"].var.index.values
-        true = [1 if g in res["true"] else 0 for g in genes]
-        pred = [1 if g in res["pred"] else 0 for g in genes]
-        # AUC
-        auroc = roc_auc_score(true, pred)
-        # AUPR
-        precision, recall, _ = precision_recall_curve(true, pred)
-        aupr = auc(precision, recall)
+    def score(
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> float:
 
-        out = cls.make_standard_out(dict(ROC=auroc, PR=aupr))
+        # TODO: again, don't like dependence on X_from
+        genes = res["X_from"].var.index.values
+
+        def _aupr():
+            true_lbl = np.isin(true_set, genes).astype(int)
+            pred_lbl = np.isin(pred_set, genes).astype(int)
+            # AUC
+            auroc = roc_auc_score(true_lbl, pred_lbl)
+            # AUPR
+            precision, recall, _ = precision_recall_curve(true_lbl, pred_lbl)
+            aupr = auc(precision, recall)
+            return aupr
+
+        DEA_pred = res_dict["DEA"]
+        DEA_true = ref_dict["DEA"]
+
+        group_names = list(DEA_pred.keys())
+        auprs = dict()
+        for group_name in group_names:
+            true_set = DEA_true.get(group_name, {})
+            pred_set = DEA_pred.get(group_name, {})
+            if (len(true_set) < 0) or (len(pred_set) < 0):
+                continue
+
+            true_set = true_set[group_name]["names"].values
+            pred_set = pred_set[group_name]["names"].values
+
+            aupr = _ht_test(true_set, pred_set)
+            auprs[group_name] = aupr
+
+        out = cls.make_standard_out(auprs)
 
         return out

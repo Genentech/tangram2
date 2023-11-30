@@ -142,7 +142,7 @@ class RandomMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         seed: int = 1,
-        return_sparse: bool = True,
+        return_sparse: bool = False,
         **kwargs,
     ):
         # set random seed for reproducibility
@@ -203,7 +203,7 @@ class ArgMaxCorrMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        return_sparse: bool = True,
+        return_sparse: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         # anndata of "to"
@@ -219,7 +219,7 @@ class ArgMaxCorrMap(MapMethodClass):
         col_idx = np.arange(n_cols).astype(int)
 
         # get correlation between all observations in "to" and "from"
-        sim = ut.matrix_correlation(X_to.X.T, X_from.X.T)
+        sim = ut.matrix_correlation(X_to.T, X_from.T)
         # set nan to max anticorrelation
         sim[np.isnan(sim)] = -np.inf
         # for each observation in "from" get id of

@@ -13,6 +13,21 @@ from thefuzz import fuzz
 W = TypeVar("W")
 
 
+def get_from_dict_with_fuzzy(
+    key: str,
+    base_dict: Dict[str, Any],
+    use_fuzzy_match: bool = False,
+    verbose: bool = False,
+):
+    # use fuzzy match if specified
+    if use_fuzzy_match:
+        match_key = get_fuzzy_key(key, base_dict, verbose=verbose)
+    else:
+        match_key = key
+
+    return base_dict.get(match_key, None)
+
+
 def check_in_out(func):
     """compatiblity check
 
@@ -133,7 +148,12 @@ def identity_fun(x: W, *args, **kwargs) -> W:
 
 
 def read_input_object(
-    path: str, return_array: bool = False, layer=None, return_df: bool = True
+    path: str,
+    return_array: bool = False,
+    layer=None,
+    return_df: bool = True,
+    adata_key: str = None,
+    **kwargs,
 ):
     # function to read a single file of multiple different types
 
@@ -142,17 +162,22 @@ def read_input_object(
         # read
         obj = ad.read_h5ad(path)
         # adjust for layer
-        if layer is not None:
+        if adata_key is not None:
+            obj = get_ad_value(obj, key=adata_key)
+
+        elif layer is not None:
             obj.X = obj.layers[layer]
 
         # return np.ndarry if specified
         if return_array:
-            obj = obj.X
+            if hasattr(obj, "X"):
+                obj = obj.X
             # check if sparse
             if isinstance(obj, spmatrix):
                 obj = obj.todense()
         elif return_df:
-            obj = obj.to_df()
+            if hasattr(obj, "to_df"):
+                obj = obj.to_df()
         else:
             pass
 
@@ -301,7 +326,7 @@ def matrix_correlation(O: np.ndarray, P: np.ndarray) -> np.ndarray:
     return cov / np.sqrt(tmp)
 
 
-def get_ad_value(adata: ad.AnnData, key: str, to_np: bool = True):
+def get_ad_value(adata: ad.AnnData, key: str, to_np: bool = True, **kwargs):
     # helper function to grab information
     # from anndata objects. Check if the key is
     # present in any of multiple different slots
