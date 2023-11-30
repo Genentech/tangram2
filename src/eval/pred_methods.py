@@ -174,7 +174,6 @@ class TangramPred(PredMethodClass):
         to_pred_var = X_to_pred.columns.values.tolist()
 
         return dict(
-            pred=X_to_pred,
             X_to_pred=X_to_pred,
             X_from_pred=None,
             to_pred_names=to_pred_names,
