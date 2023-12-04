@@ -245,8 +245,8 @@ class MapAccuracy(HardMapMetricClass):
     def score(
         cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
-        T_true = cls._pp(ref_dict["T"])
-        T_pred = cls._pp(res_dict["T"])
+        T_true = ref_dict["T"]
+        T_pred = res_dict["T"]
 
         # sparse matrices do not work with A * B
         inter = T_pred.multiply(T_true)
