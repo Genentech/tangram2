@@ -332,7 +332,7 @@ class DEAHyperGeom(DEAMetricClass):
             true_set = set(true_set[group_name]["names"].values)
             pred_set = set(pred_set[group_name]["names"].values)
 
-            sf = _ht_test(true_set, pred_set)
+            sf = _hg_test(true_set, pred_set)
             sfs[group_name] = sf
 
         out = cls.make_standard_out(sfs)
@@ -364,13 +364,13 @@ class DEAAuc(DEAMetricClass):
             # AUPR
             precision, recall, _ = precision_recall_curve(true_lbl, pred_lbl)
             aupr = auc(precision, recall)
-            return aupr
+            return aupr, auroc
 
         DEA_pred = res_dict["DEA"]
         DEA_true = ref_dict["DEA"]
 
         group_names = list(DEA_pred.keys())
-        auprs = dict()
+        out_res = dict()
         for group_name in group_names:
             true_set = DEA_true.get(group_name, {})
             pred_set = DEA_pred.get(group_name, {})
@@ -380,9 +380,10 @@ class DEAAuc(DEAMetricClass):
             true_set = true_set[group_name]["names"].values
             pred_set = pred_set[group_name]["names"].values
 
-            aupr = _ht_test(true_set, pred_set)
-            auprs[group_name] = aupr
+            aupr, auroc = _aupr(true_set, pred_set)
+            out_res[group_name + "_PR"] = aupr
+            out_res[group_name + "_ROC"] = auroc
 
-        out = cls.make_standard_out(auprs)
+        out = cls.make_standard_out(out_res)
 
         return out
