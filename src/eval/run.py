@@ -153,7 +153,7 @@ def run(
                 # get fuzzy matches if enabled
                 object_metrics = {
                     key: ut.get_from_dict_with_fuzzy(key, metrics_dict, use_fuzzy_match)
-                    for key in object_metrics.keys()
+                    for key in object_metrics
                 }
                 object_metrics = {
                     key: val for key, val in object_metrics.items() if val is not None
