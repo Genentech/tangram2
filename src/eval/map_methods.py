@@ -490,6 +490,7 @@ class SpaOTscMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         to_spatial_key: str = "spatial",
+        experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
