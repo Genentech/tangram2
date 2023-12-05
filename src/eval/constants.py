@@ -131,4 +131,5 @@ class PREPROCESS(EnumCustom):
         CeLEry=pp.CeLEryPP,
         tangramv1=pp.StandardTangramV1,
         tangramv2=pp.StandardTangramV2,
+        SpaOTsc=pp.StandardSpaOTsc,
     )
