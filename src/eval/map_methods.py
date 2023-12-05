@@ -516,7 +516,7 @@ class SpaOTscMap(MapMethodClass):
         goodidx = ~np.isnan(S_to).any(axis=1)
         ad_to = ad_to[goodidx]
         # TODO : double check on how to proceed with modified inputs
-        input_data["X_to"] = ad_to
+        input_dict["X_to"] = ad_to
         # Determining the SP distance matrix based on spatial coordinates
         sp_dmat = cdist(ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key])
         # Generating the DataFrame SP input
