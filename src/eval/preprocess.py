@@ -89,3 +89,17 @@ class StandardTangramV2(PPClass):
                 IdentityPP.pp(adata)
             case _:
                 IdentityPP.pp(adata)
+
+class StandardSpaOTsc(PPClass):
+    # SpaOTsc normalization according to the manuscript
+    @staticmethod
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+        # redundant rn but might change in future
+        # check input type
+        match input_type:
+            case "X_from" | "sc":
+                StandardScanpy.pp(adata, **kwargs)
+            case "X_to" | "sp":
+                sc.pp.log1p(adata)
+            case _:
+                StandardScanpy.pp(adata, **kwargs)
