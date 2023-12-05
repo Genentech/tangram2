@@ -10,7 +10,6 @@ from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
 import eval.map_methods as mmet
-import eval.pred_methods as pmet
 import eval.constants as C
 
 from . import utils as ut
