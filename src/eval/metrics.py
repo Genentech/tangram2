@@ -9,6 +9,10 @@ from scipy.sparse import coo_matrix
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
+import eval.map_methods as mmet
+import eval.pred_methods as pmet
+import eval.constants as C
+
 from . import utils as ut
 
 
@@ -46,7 +50,7 @@ class MetricClass(ABC):
     @classmethod
     @abstractmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
         # method to _calculate_ the associated metric(s)
         pass
@@ -107,6 +111,13 @@ class MapMetricClass(MetricClass):
         super().__init__(*args, **kwargs)
 
 
+class PredMetricClass(MetricClass):
+    metric_type = "pred"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class DEAMetricClass(MetricClass):
     """DEA Metric Baseclass"""
 
@@ -121,7 +132,6 @@ class DEAMetricClass(MetricClass):
 
     @classmethod
     def get_gt(cls, input_dict: Dict[Any, str], to_lower: bool = True, **kwargs):
-
         # ground truth should be a data frame in csv
         # two columns are required signal and effect
         # the signal column holds the feature we condition on
@@ -139,7 +149,7 @@ class DEAMetricClass(MetricClass):
         # get effect features for the associated
         gt_genes = signal_effect_df[
             signal_effect_df["signal"].str.upper() == signal_name.upper()
-        ]["effect"].values[0]
+            ]["effect"].values[0]
         # from "[e_1,...,e_k]" to [e_1,...,e_k]
         gt_genes = gt_genes.split(",")
         # convert effect features to lowercase
@@ -196,7 +206,7 @@ class MapJaccardDist(HardMapMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
 
         # get predicted map
@@ -243,7 +253,7 @@ class MapAccuracy(HardMapMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
         T_true = cls._pp(ref_dict["T"])
         T_pred = cls._pp(res_dict["T"])
@@ -274,18 +284,63 @@ class MapRMSE(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
+    def score(cls, res: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs) -> float:
         # get true spatial coordinates for "from"
         S_from_true = ref_dict["S_from"]
         # get predicted spatial coordinates for "from"
         S_from_pred = res_dict["S_from"]
 
         # rmse : https://en.wikipedia.org/wiki/Root-mean-square_deviation
-        rmse = np.sqrt(np.sum((S_from - S_from_pred) ** 2, axis=1).mean())
+        rmse = np.sqrt(np.sum((S_from_true - S_from_pred) ** 2, axis=1).mean())
 
         # create standard output
         out = cls.make_standard_out(rmse)
 
+        return out
+
+
+class PredLOOV(PredMetricClass):
+    """LOOV Test for Pred result"""
+
+    # define name
+    metric_name = "loov"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def score(
+            cls, res_dict: Dict[str, Any], *args, **kwargs
+    ) -> float:
+        x_from_genes = res_dict['X_from'].var.index.values
+        x_to_genes = res_dict['X_to'].var.index.values
+        overlap_genes = list(set(x_from_genes).intersection(x_to_genes))
+        n_tests = kwargs['n_tests']
+        map_fun = C.METHODS["OPTIONS"].value.get(kwargs['method'])
+        # remove these
+        kwargs.pop('n_tests')
+        kwargs.pop('method')
+
+        def _split_list(lst, pos):
+            if pos == 0:
+                return lst[1:]
+            elif pos == len(lst):
+                return lst[0:-1]
+            else:
+                return lst[0:pos] + lst[pos + 1:]
+        cos_sim = []
+        for k, test_gene in enumerate(overlap_genes):
+            if n_tests is not None and k >= n_tests - 1:
+                break
+            training_genes = _split_list(overlap_genes, k)
+            map_res = map_fun.run(input_dict=res_dict, genes=training_genes, **kwargs)
+            _T = map_res['T']
+            gex_true = res_dict['X_to'].obs_vector(test_gene)
+            gex_pred = _T @ res_dict['X_from'].obs_vector(test_gene)
+            norm_sq = np.linalg.norm(gex_true) * np.linalg.norm(gex_pred)
+            cos_sim.append((gex_true @ gex_pred) / norm_sq)
+        mean_cos_sim = np.mean(cos_sim)
+        out = cls.make_standard_out(mean_cos_sim)
         return out
 
 
@@ -300,7 +355,7 @@ class DEAHyperGeom(DEAMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
 
         # TODO: I don't like the dependency on X_from
@@ -332,7 +387,7 @@ class DEAHyperGeom(DEAMetricClass):
             true_set = set(true_set[group_name]["names"].values)
             pred_set = set(pred_set[group_name]["names"].values)
 
-            sf = _ht_test(true_set, pred_set)
+            sf = _hg_test(true_set, pred_set)
             sfs[group_name] = sf
 
         out = cls.make_standard_out(sfs)
@@ -350,7 +405,7 @@ class DEAAuc(DEAMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
 
         # TODO: again, don't like dependence on X_from
@@ -380,7 +435,7 @@ class DEAAuc(DEAMetricClass):
             true_set = true_set[group_name]["names"].values
             pred_set = pred_set[group_name]["names"].values
 
-            aupr = _ht_test(true_set, pred_set)
+            aupr = _aupr(true_set, pred_set)
             auprs[group_name] = aupr
 
         out = cls.make_standard_out(auprs)

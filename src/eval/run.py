@@ -147,7 +147,6 @@ def run(
                 # object_cf is config for that object
                 out_dir_object = osp.join(out_dir, object_name)
                 os.makedirs(out_dir_object, exist_ok=True)
-
                 # get metrics listed for object
                 object_metrics = object_cf.get("metrics", {})
                 # get fuzzy matches if enabled
@@ -158,20 +157,29 @@ def run(
                 object_metrics = {
                     key: val for key, val in object_metrics.items() if val is not None
                 }
-
                 # get reference (GT) for object
                 # we expect same GT for all metrics pertaining to the same object
                 ref_data = object_cf.get("data", {})
+                metric_params = object_cf.get("params", {})
 
-                # iterate over ground truth data sets
-                for ref_datum_name, ref_datum_cf in ref_data.items():
-                    # read reference datum
-                    ref_datum_value = ut.read_input_object(**ref_datum_cf)
-                    # apply all metrics to reference
+                if ref_data is None:
                     for metric_name, metric_fun in object_metrics.items():
                         # compute score
                         score = metric_fun.score(
-                            input_dict, {object_name: ref_datum_value}
+                            input_dict, **metric_params
                         )
                         # save metric
                         metric_fun.save(score, out_dir_object)
+                else:
+                    # iterate over ground truth data sets
+                    for ref_datum_name, ref_datum_cf in ref_data.items():
+                        # read reference datum
+                        ref_datum_value = ut.read_input_object(**ref_datum_cf)
+                        # apply all metrics to reference
+                        for metric_name, metric_fun in object_metrics.items():
+                            # compute score
+                            score = metric_fun.score(
+                                input_dict, {object_name: ref_datum_value}, **metric_params
+                            )
+                            # save metric
+                            metric_fun.save(score, out_dir_object)
