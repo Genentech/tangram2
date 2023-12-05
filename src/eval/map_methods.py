@@ -4,13 +4,17 @@ from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Literal
 
 import anndata as ad
+import scanpy.experimental.pp
+
 import CeLEry as cel
 import numpy as np
 import pandas as pd
 import tangram as tg1
 import tangram2 as tg2
+from spaotsc import SpaOTsc
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
+from scipy.spatial.distance import cdist
 from torch.cuda import is_available
 
 from eval._methods import MethodClass
@@ -462,5 +466,93 @@ class CeLEryMap(MapMethodClass):
 
         # create out dict
         out = dict(model=model_train, T=None, S_from=pred_cord)
+
+        return out
+
+
+class SpaOTscMap(MapMethodClass):
+    # SpaOTsc class
+    # Expected Inputs and Outputs
+    ins = ["X_to", "X_from"]
+    outs = ["T"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        pass
+
+    @classmethod
+    @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        to_spatial_key: str = "spatial",
+        **kwargs,
+    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+
+        # anndata of "from"
+        ad_from = input_dict["X_from"]
+        # anndata of "to"
+        ad_to = input_dict["X_to"]
+        # spatial coordinates of "to"
+        S_to = ad_to.obsm[to_spatial_key]
+
+        # Processing the SC data
+        # Generate PCA40 from the X_from preprocessed data
+        scanpy.experimental.pp.highly_variable_genes(ad_from, min_mean=0.0125, max_mean=3, min_disp=0.5)
+        scanpy.experimental.tl.pca(ad_from, n_comps=40, svd_solver='arpack', use_highly_variable=True)
+
+        # Determining the SC data dissimilarity based on PCA40
+        sc_corr = ut.matrix_correlation(ad_from.obsm['X_pca'].T, ad_from.obsm['X_pca'].T)
+        sc_dmat = np.exp(sc_corr)
+        # Generating the DataFrame SC input
+        df_sc = ad_from.to_df()
+
+        # Processing the SP data
+        # Filtering the nan coordinates in the SP spatial coords data
+        goodidx = ~np.isnan(S_to).any(axis=1)
+        ad_to = ad_to[goodidx]
+        # TODO : double check on how to proceed with modified inputs
+        input_data["X_to"] = ad_to
+        # Determining the SP distance matrix based on spatial coordinates
+        sp_dmat = cdist(ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key])
+        # Generating the DataFrame SP input
+        df_sp = ad_to.to_df()
+
+        # Determining the Cost matrix
+        # Finding overlapping genes between SC and SP data
+        overlap_genes = list(set(ad_to.var_names).intersection(set(ad_from.var_names)))
+        sc_sp_corr = ut.matrix_correlation(df_sp[overlap_genes].T, df_sc[overlap_genes].T)
+        Cost = (np.exp(1-sc_sp_corr))**2
+
+        # Instantiate the SpaOTsc object
+        spaotsc_obj = SpaOTsc.spatial_sc(sc_data = df_sc,
+                                         is_data = df_sp,
+                                         sc_dmat = sc_dmat,
+                                         is_dmat = sp_dmat)
+        # Run optimal transport optimization
+        # Note: This step can take an upwards of several hours
+        spaotsc_obj.transport_plan(Cost,
+                                   alpha = 0.1,
+                                   rho = 100.0,
+                                   epsilon = 1.0,
+                                   scaling=False)
+
+        # Retrieve optimal transport plan [cells x locations]
+        T_soft = spaotsc_obj.gamma_mapping
+
+        # output dict
+        out = dict()
+
+        # transpose map (T) to be in expected format [n_to] x [n_from]
+        out["T"] = T_soft.T
+
+        # observation names for "to"
+        out["to_names"] = ad_to.obs.index.values.tolist()
+        # observation named for "from"
+        out["from_names"] = ad_from.obs.index.values.tolist()
 
         return out
