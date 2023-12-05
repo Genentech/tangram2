@@ -50,7 +50,7 @@ class MetricClass(ABC):
     @classmethod
     @abstractmethod
     def score(
-            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
         # method to _calculate_ the associated metric(s)
         pass
@@ -132,6 +132,7 @@ class DEAMetricClass(MetricClass):
 
     @classmethod
     def get_gt(cls, input_dict: Dict[Any, str], to_lower: bool = True, **kwargs):
+
         # ground truth should be a data frame in csv
         # two columns are required signal and effect
         # the signal column holds the feature we condition on
@@ -149,7 +150,7 @@ class DEAMetricClass(MetricClass):
         # get effect features for the associated
         gt_genes = signal_effect_df[
             signal_effect_df["signal"].str.upper() == signal_name.upper()
-            ]["effect"].values[0]
+        ]["effect"].values[0]
         # from "[e_1,...,e_k]" to [e_1,...,e_k]
         gt_genes = gt_genes.split(",")
         # convert effect features to lowercase
@@ -206,7 +207,7 @@ class MapJaccardDist(HardMapMetricClass):
 
     @classmethod
     def score(
-            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
 
         # get predicted map
@@ -253,10 +254,10 @@ class MapAccuracy(HardMapMetricClass):
 
     @classmethod
     def score(
-            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
-        T_true = cls._pp(ref_dict["T"])
-        T_pred = cls._pp(res_dict["T"])
+        T_true = ref_dict["T"]
+        T_pred = res_dict["T"]
 
         # sparse matrices do not work with A * B
         inter = T_pred.multiply(T_true)
@@ -355,7 +356,7 @@ class DEAHyperGeom(DEAMetricClass):
 
     @classmethod
     def score(
-            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
 
         # TODO: I don't like the dependency on X_from
@@ -405,7 +406,7 @@ class DEAAuc(DEAMetricClass):
 
     @classmethod
     def score(
-            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
 
         # TODO: again, don't like dependence on X_from
@@ -419,13 +420,13 @@ class DEAAuc(DEAMetricClass):
             # AUPR
             precision, recall, _ = precision_recall_curve(true_lbl, pred_lbl)
             aupr = auc(precision, recall)
-            return aupr
+            return aupr, auroc
 
         DEA_pred = res_dict["DEA"]
         DEA_true = ref_dict["DEA"]
 
         group_names = list(DEA_pred.keys())
-        auprs = dict()
+        out_res = dict()
         for group_name in group_names:
             true_set = DEA_true.get(group_name, {})
             pred_set = DEA_pred.get(group_name, {})
@@ -435,9 +436,10 @@ class DEAAuc(DEAMetricClass):
             true_set = true_set[group_name]["names"].values
             pred_set = pred_set[group_name]["names"].values
 
-            aupr = _aupr(true_set, pred_set)
-            auprs[group_name] = aupr
+            aupr, auroc = _aupr(true_set, pred_set)
+            out_res[group_name + "_PR"] = aupr
+            out_res[group_name + "_ROC"] = auroc
 
-        out = cls.make_standard_out(auprs)
+        out = cls.make_standard_out(out_res)
 
         return out
