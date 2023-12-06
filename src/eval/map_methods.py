@@ -4,17 +4,16 @@ from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Literal
 
 import anndata as ad
-import scanpy as sc
-
 import CeLEry as cel
 import numpy as np
 import pandas as pd
+import scanpy as sc
 import tangram as tg1
 import tangram2 as tg2
-from spaotsc import SpaOTsc
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from scipy.spatial.distance import cdist
+from spaotsc import SpaOTsc
 from torch.cuda import is_available
 
 from eval._methods import MethodClass
@@ -504,10 +503,12 @@ class SpaOTscMap(MapMethodClass):
         # Processing the SC data
         # Generate PCA40 from the X_from preprocessed data
         sc.pp.highly_variable_genes(ad_from, min_mean=0.0125, max_mean=3, min_disp=0.5)
-        sc.tl.pca(ad_from, n_comps=40, svd_solver='arpack', use_highly_variable=True)
+        sc.tl.pca(ad_from, n_comps=40, svd_solver="arpack", use_highly_variable=True)
 
         # Determining the SC data dissimilarity based on PCA40
-        sc_corr = ut.matrix_correlation(ad_from.obsm['X_pca'].T, ad_from.obsm['X_pca'].T)
+        sc_corr = ut.matrix_correlation(
+            ad_from.obsm["X_pca"].T, ad_from.obsm["X_pca"].T
+        )
         sc_dmat = np.exp(sc_corr)
         # Generating the DataFrame SC input
         df_sc = ad_from.to_df()
@@ -526,21 +527,24 @@ class SpaOTscMap(MapMethodClass):
         # Determining the Cost matrix
         # Finding overlapping genes between SC and SP data
         overlap_genes = list(set(ad_to.var_names).intersection(set(ad_from.var_names)))
-        sc_sp_corr = ut.matrix_correlation(df_sp[overlap_genes].T, df_sc[overlap_genes].T)
-        Cost = (np.exp(1-sc_sp_corr))**2
+        sc_sp_corr = ut.matrix_correlation(
+            df_sp[overlap_genes].T, df_sc[overlap_genes].T
+        )
+        Cost = (np.exp(1 - sc_sp_corr)) ** 2
 
         # Instantiate the SpaOTsc object
-        spaotsc_obj = SpaOTsc.spatial_sc(sc_data = df_sc,
-                                         is_data = df_sp,
-                                         sc_dmat = sc_dmat,
-                                         is_dmat = sp_dmat)
+        spaotsc_obj = SpaOTsc.spatial_sc(
+            sc_data=df_sc, is_data=df_sp, sc_dmat=sc_dmat, is_dmat=sp_dmat
+        )
         # Run optimal transport optimization
         # Note: This step can take an upwards of several hours
-        spaotsc_obj.transport_plan(Cost,
-                                   alpha = 0.1,
-                                   rho = 100.0,
-                                   epsilon = 1.0,
-                                   scaling=kwargs.get("scaling", False))
+        spaotsc_obj.transport_plan(
+            Cost,
+            alpha=0.1,
+            rho=100.0,
+            epsilon=1.0,
+            scaling=kwargs.get("scaling", False),
+        )
 
         # Retrieve optimal transport plan [cells x locations]
         T_soft = spaotsc_obj.gamma_mapping
