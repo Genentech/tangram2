@@ -60,9 +60,9 @@ class MapMethodClass(MethodClass):
             (np.ones(n_cols), (row_idx, col_idx)), shape=(n_rows, n_cols)
         )
         if return_sparse:
-            out_dict["pred"] = T_sparse
+            out_dict["T"] = T_sparse
         else:
-            out_dict["pred"] = T_sparse.toarray()
+            out_dict["T"] = T_sparse.toarray()
 
         return out_dict
 
@@ -142,7 +142,7 @@ class RandomMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         seed: int = 1,
-        return_sparse: bool = True,
+        return_sparse: bool = False,
         **kwargs,
     ):
         # set random seed for reproducibility
@@ -175,8 +175,6 @@ class RandomMap(MapMethodClass):
         )
 
         # add standard objects to out dict
-        # T is map : [n_to] x [n_from]
-        out["T"] = out["pred"]
         # S_from is spatial coordinates : [n_from] x [n_spatial_dimensions]
         out["S_from"] = input_dict["S_to"][row_idx]
 
@@ -203,7 +201,7 @@ class ArgMaxCorrMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        return_sparse: bool = True,
+        return_sparse: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         # anndata of "to"
@@ -219,7 +217,7 @@ class ArgMaxCorrMap(MapMethodClass):
         col_idx = np.arange(n_cols).astype(int)
 
         # get correlation between all observations in "to" and "from"
-        sim = ut.matrix_correlation(X_to.X.T, X_from.X.T)
+        sim = ut.matrix_correlation(X_to.T, X_from.T)
         # set nan to max anticorrelation
         sim[np.isnan(sim)] = -np.inf
         # for each observation in "from" get id of
@@ -240,8 +238,6 @@ class ArgMaxCorrMap(MapMethodClass):
         )
 
         # add standard objects to out dict
-        # T is map : [n_to] x [n_from]
-        out["T"] = out["pred"]
         # S_from is spatial coordinates : [n_from] x [n_spatial_dimensions]
         out["S_from"] = input_dict["S_to"][row_idx]
 
@@ -346,7 +342,7 @@ class TangramMap(MapMethodClass):
         # transpose map (T) to be in expected format [n_to] x [n_from]
         out["T"] = T_soft.T
         # spatial coordinates for "from" : [n_from] x [n_spatial_dims]
-        out["S_from_pred"] = S_from
+        out["S_from"] = S_from
         # anndata with rescaled (with coefficient) "from" data
         out["X_from_scaled"] = X_from_scaled
 
@@ -380,9 +376,6 @@ class TangramMap(MapMethodClass):
                 n_cols,
                 return_sparse,
             )
-        else:
-            # if not hard map then set pred to soft map (T)
-            out["pred"] = T_soft
 
         return out
 
@@ -468,6 +461,6 @@ class CeLEryMap(MapMethodClass):
         # only predicted coordinates for "from" (S_from)
 
         # create out dict
-        out = dict(pred=pred_cord, model=model_train, T=None, S_from=pred_cord)
+        out = dict(model=model_train, T=None, S_from=pred_cord)
 
         return out
