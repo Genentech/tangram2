@@ -506,7 +506,9 @@ class SpaOTscMap(MapMethodClass):
         default_hvg_dict = dict(min_mean=0.0125, max_mean=3, min_disp=0.5)
         hvg_dict = kwargs.get("hvg_dict", default_hvg_dict)
         sc.pp.highly_variable_genes(ad_from, **hvg_dict)
-        sc.tl.pca(ad_from, n_comps=40, svd_solver="arpack", use_highly_variable=True)
+        default_pca_dict = dict(n_comps=40, svd_solver="arpack")
+        pca_dict = kwargs.get("pca_dict", default_pca_dict)
+        sc.tl.pca(ad_from, use_highly_variable=True, **pca_dict)
 
         # Determining the SC data dissimilarity based on PCA40
         sc_corr = ut.matrix_correlation(
