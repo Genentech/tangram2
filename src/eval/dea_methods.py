@@ -126,7 +126,7 @@ class ScanpyDEA(DEAMethodClass):
 
             # check that the subsetted labels are at least two
             if len(uni_labels) < 2:
-                return dict(pred=pd.DataFrame([]), DEA=pd.DataFrame([]))
+                return dict(DEA=pd.DataFrame([]))
 
             main_group = [uni_labels[0]]
             ref_group = uni_labels[1]
@@ -176,4 +176,4 @@ class ScanpyDEA(DEAMethodClass):
         if normalize:
             adata.X = X_old
 
-        return dict(pred=out, DEA=out)
+        return dict(DEA=out)
