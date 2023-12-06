@@ -1,0 +1,26 @@
+---
+
+data:
+  test_map:
+    sp:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sp/CID4290_sp.h5ad'
+    sc:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sc/CID4290_sc.h5ad'
+
+methods:
+  all:
+    spaotsc_map_wf:
+      recipe:
+        map: map_SpaOTsc
+      params:
+        map:
+          scaling: False
+
+preprocess:
+  all:
+    spaotsc_map_wf:
+      sc:
+        SpaOTsc:
+          target_sum: 1e4
+      sp:
+        SpaOTsc:
