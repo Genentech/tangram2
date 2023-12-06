@@ -120,7 +120,7 @@ def run(
                 for pp_met_name, pp_met_kwargs in pp_met_dict.items():
                     if pp_met_name in C.PREPROCESS["OPTIONS"].value:
                         pp_met = C.PREPROCESS["OPTIONS"].value[pp_met_name]
-                        pp_met.pp(ad_i, **pp_met_kwargs)
+                        pp_met.pp(ad_i, **(pp_met_kwargs if pp_met_kwargs is not None else {}))
 
                 input_dict[ad_type] = ad_i
 
