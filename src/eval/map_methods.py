@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Literal
 
 import anndata as ad
-import scanpy.experimental.pp
+import scanpy as sc
 
 import CeLEry as cel
 import numpy as np
@@ -503,8 +503,8 @@ class SpaOTscMap(MapMethodClass):
 
         # Processing the SC data
         # Generate PCA40 from the X_from preprocessed data
-        scanpy.experimental.pp.highly_variable_genes(ad_from, min_mean=0.0125, max_mean=3, min_disp=0.5)
-        scanpy.experimental.tl.pca(ad_from, n_comps=40, svd_solver='arpack', use_highly_variable=True)
+        sc.pp.highly_variable_genes(ad_from, min_mean=0.0125, max_mean=3, min_disp=0.5)
+        sc.tl.pca(ad_from, n_comps=40, svd_solver='arpack', use_highly_variable=True)
 
         # Determining the SC data dissimilarity based on PCA40
         sc_corr = ut.matrix_correlation(ad_from.obsm['X_pca'].T, ad_from.obsm['X_pca'].T)
