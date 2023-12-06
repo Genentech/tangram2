@@ -540,7 +540,7 @@ class SpaOTscMap(MapMethodClass):
                                    alpha = 0.1,
                                    rho = 100.0,
                                    epsilon = 1.0,
-                                   scaling=False)
+                                   scaling=kwargs.get("scaling", False))
 
         # Retrieve optimal transport plan [cells x locations]
         T_soft = spaotsc_obj.gamma_mapping
