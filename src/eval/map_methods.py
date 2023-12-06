@@ -502,7 +502,10 @@ class SpaOTscMap(MapMethodClass):
 
         # Processing the SC data
         # Generate PCA40 from the X_from preprocessed data
-        sc.pp.highly_variable_genes(ad_from, min_mean=0.0125, max_mean=3, min_disp=0.5)
+        # Taking Alma's suggestion on exposing the HVG parameters
+        default_hvg_dict = dict(min_mean=0.0125, max_mean=3, min_disp=0.5)
+        hvg_dict = kwargs.get("hvg_dict", default_hvg_dict)
+        sc.pp.highly_variable_genes(ad_from, **hvg_dict)
         sc.tl.pca(ad_from, n_comps=40, svd_solver="arpack", use_highly_variable=True)
 
         # Determining the SC data dissimilarity based on PCA40
