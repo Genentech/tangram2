@@ -504,14 +504,14 @@ class SpaOTscMap(MapMethodClass):
         # Generate PCA40 from the X_from preprocessed data
         # Taking Alma's suggestion on exposing the HVG parameters
         default_hvg_dict = dict(min_mean=0.0125, max_mean=3, min_disp=0.5)
-        hvg_dict = kwargs.get("hvg_dict", default_hvg_dict)
+        hvg_dict = kwargs.get("hvg_dict", {})
         # Checking to fill in default values if not all provided
         for key,val in default_hvg_dict.items():
             if key not in hvg_dict:
                 hvg_dict[key] = val
         sc.pp.highly_variable_genes(ad_from, **hvg_dict)
         default_pca_dict = dict(n_comps=40, svd_solver="arpack")
-        pca_dict = kwargs.get("pca_dict", default_pca_dict)
+        pca_dict = kwargs.get("pca_dict", {})
         # Checking to fill in defaut values if not all provided
         for key,val in default_pca_dict.items():
             if key not in pca_dict:
@@ -534,7 +534,7 @@ class SpaOTscMap(MapMethodClass):
         input_dict["X_to"] = ad_to
         # Determining the SP distance matrix based on spatial coordinates
         default_dist_metric = dict(metric="euclidean")
-        dist_metric = kwargs.get("dist_metric", default_dist_metric)
+        dist_metric = kwargs.get("dist_metric", {default_dist_metric})
         sp_dmat = cdist(ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key], **dist_metric)
         # Generating the DataFrame SP input
         df_sp = ad_to.to_df()
@@ -553,12 +553,18 @@ class SpaOTscMap(MapMethodClass):
         )
         # Run optimal transport optimization
         # Note: This step can take an upwards of several hours
+        default_transport_plan_dict = dict(
+            alpha=0.1, rho=100.0, epsilon=1.0, scaling=False
+        )
+        transport_plan_dict = kwargs.get(
+            "transport_plan_dict", {}
+        )
+        for key,val in default_transport_plan_dict.items():
+            if key not in transport_plan_dict:
+                transport_plan_dict[key] = val
         spaotsc_obj.transport_plan(
             Cost,
-            alpha=0.1,
-            rho=100.0,
-            epsilon=1.0,
-            scaling=kwargs.get("scaling", False),
+            **transport_plan_dict,
         )
 
         # Retrieve optimal transport plan [cells x locations]
