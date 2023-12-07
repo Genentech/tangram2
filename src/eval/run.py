@@ -94,7 +94,6 @@ def run(
                     NotImplementedError
             else:
                 method = wfs_dict[met_name]
-
             # define output directory
             out_dir = osp.join(root_dir, exp, met_name)
             # create output directory (and parent folders if necessary)
@@ -106,21 +105,20 @@ def run(
                 ad_i = input_dict.get(argmap[ad_type])
                 if ad_i is None:
                     continue
-
                 # to avoid sequential preprocessing
                 if "_old" in ad_i.layers:
                     ad_i.X = ad_i.layers["_old"].copy()
                 else:
                     ad_i.layers["_old"] = ad_i.X.copy()
 
-                # get preprocssing procedure for (experiment,method, data type)
+                # get preprocessing procedure for (experiment,method, data type)
                 pp_met_dict = ut.recursive_get(pp, exp, _met_name, ad_type)
 
                 # iterate over preprocessing steps if multiple specified
                 for pp_met_name, pp_met_kwargs in pp_met_dict.items():
                     if pp_met_name in C.PREPROCESS["OPTIONS"].value:
                         pp_met = C.PREPROCESS["OPTIONS"].value[pp_met_name]
-                        pp_met.pp(ad_i, **pp_met_kwargs)
+                        pp_met.pp(ad_i, ad_type, **pp_met_kwargs)
 
                 input_dict[ad_type] = ad_i
 

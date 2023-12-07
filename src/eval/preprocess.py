@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-
 import anndata as ad
 import CeLEry as cel
 import numpy as np
@@ -28,7 +27,19 @@ class NormalizeTotal(PPClass):
     # normalize total normalization
     @staticmethod
     def pp(adata: ad.AnnData, **kwargs):
-        sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)))
+
+        sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", None)))
+
+
+class ScanpyPCA(PPClass):
+    @staticmethod
+    def pp(adata: ad.AnnData, **kwargs):
+        sc.tl.pca(
+            data=adata,
+            n_comps=kwargs.get("n_comps", None),
+            svd_solver=kwargs.get("svd_solver", "arpack"),
+            random_state=kwargs.get("random_state", 0),
+        )
 
 
 class StandardScanpy(PPClass):
@@ -89,3 +100,44 @@ class StandardTangramV2(PPClass):
                 IdentityPP.pp(adata)
             case _:
                 IdentityPP.pp(adata)
+
+
+class StandardOTSpatial(PPClass):
+    # Standard PP for OT methods
+    @staticmethod
+    def pp(adata: ad.AnnData, **kwargs):
+        adata = adata[adata.obs[[kwargs["x"], kwargs["y"]]].dropna(axis=0).index]
+        return adata
+
+
+class LowercaseGenes(PPClass):
+    # Method to make all genes lowercase
+    @staticmethod
+    def pp(adata: ad.AnnData, **kwargs):
+        if kwargs is not {}:
+            adata.var.index = [g.lower() for g in adata.var.index.tolist()]
+            return adata
+        else:
+            # TODO: warn that 'nan' coordinates are not removed
+            return adata
+
+
+class StandardMoscot(PPClass):
+    # MOSCOT recommended normalization
+    @staticmethod
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+        match input_type:
+            case "X_from" | "sc":
+                adata = LowercaseGenes.pp(adata)
+                StandardScanpy.pp(adata, **kwargs.get('scanpy_pp', {}))
+                ScanpyPCA.pp(adata, **kwargs.get('scanpy_pca', {}))
+            case "X_to" | "sp":
+                # drop spots with no coordinates
+                adata = LowercaseGenes.pp(adata)
+                adata = StandardOTSpatial.pp(adata, **kwargs.get('ot_spatial', {}))
+                StandardScanpy.pp(adata, **kwargs.get('scanpy_pp', {}))
+                ScanpyPCA.pp(adata, **kwargs.get('scanpy_pca', {}))
+            case _:
+                adata = LowercaseGenes.pp(adata)
+                StandardScanpy.pp(adata, **kwargs.get('scanpy_pp', {}))
+                ScanpyPCA.pp(adata, **kwargs.get('scanpy_pca', {}))

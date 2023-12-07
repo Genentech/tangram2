@@ -9,45 +9,45 @@ import numpy as np
 import pandas as pd
 import tangram as tg1
 import tangram2 as tg2
+from moscot.problems.space import MappingProblem
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from torch.cuda import is_available
 
 from eval._methods import MethodClass
-
 from . import utils as ut
 
 
 class MapMethodClass(MethodClass):
-    ## Base Class for MapMethods
+    # Base Class for MapMethods
     def __init__(
-        self,
-        *args,
-        **kwargs,
+            self,
+            *args,
+            **kwargs,
     ):
         super().__init__()
 
     @classmethod
     @abstractmethod
     def run(
-        cls,
-        X_to: Any,
-        X_from: Any,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
-        **kwargs,
+            cls,
+            X_to: Any,
+            X_from: Any,
+            *args,
+            S_to: np.ndarray | None = None,
+            S_from: np.ndarray | None = None,
+            **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         pass
 
     @staticmethod
     def hard_update_out_dict(
-        out_dict: Dict[str, spmatrix | np.ndarray],
-        row_idx: np.ndarray,
-        col_idx: np.ndarray,
-        n_rows: int,
-        n_cols: int,
-        return_sparse: bool,
+            out_dict: Dict[str, spmatrix | np.ndarray],
+            row_idx: np.ndarray,
+            col_idx: np.ndarray,
+            n_rows: int,
+            n_cols: int,
+            return_sparse: bool,
     ) -> None:
         # helper function to generate the output
         # for hard maps in a sparse format
@@ -68,13 +68,13 @@ class MapMethodClass(MethodClass):
 
     @classmethod
     def save(
-        cls,
-        res_dict: Dict[str, Any],
-        out_dir: str,
-        save_keys: Literal["T", "S_from", "S_to"] | str | None = None,
-        compress: bool = False,
-        verbose: bool = False,
-        **kwargs,
+            cls,
+            res_dict: Dict[str, Any],
+            out_dir: str,
+            save_keys: Literal["T", "S_from", "S_to"] | str | None = None,
+            compress: bool = False,
+            verbose: bool = False,
+            **kwargs,
     ) -> None:
         # shared save function for all Methods
 
@@ -131,7 +131,7 @@ class RandomMap(MapMethodClass):
     outs = ["S_from"]
 
     def __init__(
-        self,
+            self,
     ):
         super().__init__()
 
@@ -141,12 +141,13 @@ class RandomMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        seed: int = 1,
-        return_sparse: bool = False,
+        # seed: int = 1,
+        # return_sparse: bool = False,
+        experiment_name: str | None = None,
         **kwargs,
     ):
         # set random seed for reproducibility
-        rng = np.random.default_rng(seed)
+        rng = np.random.default_rng(kwargs.get("seed", 1))
 
         # anndata object that we map _to_
         X_to = input_dict["X_to"]
@@ -171,7 +172,7 @@ class RandomMap(MapMethodClass):
             col_idx,
             n_rows,
             n_cols,
-            return_sparse,
+            kwargs.get("return_sparse", False),
         )
 
         # add standard objects to out dict
@@ -189,9 +190,9 @@ class ArgMaxCorrMap(MapMethodClass):
     outs = ["S_from", "T"]
 
     def __init__(
-        self,
-        *args,
-        **kwargs,
+            self,
+            *args,
+            **kwargs,
     ):
         pass
 
@@ -201,7 +202,8 @@ class ArgMaxCorrMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        return_sparse: bool = False,
+        experiment_name: str | None = None,
+        # return_sparse: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         # anndata of "to"
@@ -234,7 +236,7 @@ class ArgMaxCorrMap(MapMethodClass):
             col_idx,
             n_rows,
             n_cols,
-            return_sparse,
+            kwargs.get("return_sparse", False),
         )
 
         # add standard objects to out dict
@@ -256,9 +258,9 @@ class TangramMap(MapMethodClass):
     outs = ["T", "S_from"]
 
     def __init__(
-        self,
-        *args,
-        **kwargs,
+            self,
+            *args,
+            **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -268,14 +270,14 @@ class TangramMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        to_spatial_key: str = "spatial",
-        from_spatial_key: str = "spatial",
-        return_sparse: bool = True,
-        pos_by_argmax: bool = True,
-        pos_by_weight: bool = False,
-        num_epochs: int = 1000,
-        hard_map: bool = False,
-        genes: List[str] | str | None = None,
+        # to_spatial_key: str = "spatial",
+        # from_spatial_key: str = "spatial",
+        # return_sparse: bool = True,
+        # pos_by_argmax: bool = True,
+        # pos_by_weight: bool = False,
+        # num_epochs: int = 1000,
+        # hard_map: bool = False,
+        # genes: List[str] | str | None = None,
         experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
@@ -292,8 +294,15 @@ class TangramMap(MapMethodClass):
         # spatial coordinates of "to"
         S_to = ad_to.obsm[to_spatial_key]
 
-        # mapping mode for tangram, default cells
+        # GET PARAMS
+        return_sparse = kwargs.get("return_sparse", True)
+        pos_by_argmax = kwargs.get("pos_by_argmax", True)
+        pos_by_weight = kwargs.get("pos_by_weight", False)
         mode = kwargs.get("mode", "cells")
+        hard_map = kwargs.get("hard_map", False)
+        num_epochs = kwargs.get("num_epochs", 1000)
+        genes = kwargs.get("genes", None)
+
         # get marker genes from tangram
         if genes is not None:
             genes = ut.list_or_path_get(genes)
@@ -386,9 +395,9 @@ class TangramV1Map(TangramMap):
     version = "1"
 
     def __init__(
-        self,
-        *args,
-        **kwargs,
+            self,
+            *args,
+            **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -400,9 +409,9 @@ class TangramV2Map(TangramMap):
     version = "2"
 
     def __init__(
-        self,
-        *args,
-        **kwargs,
+            self,
+            *args,
+            **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -415,21 +424,22 @@ class CeLEryMap(MapMethodClass):
     outs = ["S_from"]
 
     def __init__(
-        self,
-        *args,
-        **kwargs,
+            self,
+            *args,
+            **kwargs,
     ):
         super().__init__()
 
     @classmethod
     def run(
-        cls,
-        input_dict: Dict[str, Any],
-        return_sparse: bool = True,
-        hidden_dims: List[int] = [30, 25, 15],
-        num_epochs_max: int = 100,
-        spatial_key: str = "spatial",
-        **kwargs,
+            cls,
+            input_dict: Dict[str, Any],
+            # return_sparse: bool = True,
+            # hidden_dims: List[int] = [30, 25, 15],
+            # num_epochs_max: int = 100,
+            # spatial_key: str = "spatial",
+            experiment_name: str | None = None,
+            **kwargs,
     ) -> Dict[str, np.ndarray]:
         # anndata of "to" object
         X_to = input_dict["X_to"]
@@ -446,8 +456,8 @@ class CeLEryMap(MapMethodClass):
             # fit model using "to" data
             model_train = cel.Fit_cord(
                 data_train=X_to,
-                hidden_dims=hidden_dims,
-                num_epochs_max=num_epochs_max,
+                hidden_dims=kwargs.get("hidden_dims", [30, 25, 15]),
+                num_epochs_max=kwargs.get("num_epochs_max", 100),
                 path=tmpdir,
                 filename="celery_model",
             )
@@ -456,11 +466,77 @@ class CeLEryMap(MapMethodClass):
             pred_cord = cel.Predict_cord(
                 data_test=X_from, path=tmpdir, filename="celery_model"
             )
-
         # Note: this method does not give a map (T)
         # only predicted coordinates for "from" (S_from)
 
         # create out dict
         out = dict(model=model_train, T=None, S_from=pred_cord)
+
+        return out
+
+
+class MoscotMap(MapMethodClass):
+    # Method class for moscot
+    # github: https://github.com/theislab/moscot
+    ins = ["X_to", "X_from"]
+    outs = ["T"]
+
+    def __init__(
+            self,
+            *args,
+            **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    def run(
+            cls,
+            input_dict: Dict[str, Any],
+            # sc_attr: Dict[str, str] | str,
+            # genes: List[str] | str | None = None,
+            experiment_name: str | None = None,
+            # spatial_key: str = "spatial",
+            **kwargs,
+    ) -> Dict[str, np.ndarray]:
+        # single cell anndata
+        X_from = input_dict['X_from']
+        # spatial anndata
+        X_to = input_dict['X_to']
+
+        # GET PARAMS
+        genes = kwargs.get("genes", None)
+        return_T_norm = kwargs.get("normalize_T", True)
+        # get genes
+        if genes is not None:
+            genes = ut.list_or_path_get(genes)
+
+        prep_kwargs = kwargs.get("prepare", {})
+        prep_kwargs["var_names"] = genes
+        solve_kwargs = kwargs.get("solve", {})
+
+        # set up the mapping problem
+        mp = MappingProblem(adata_sc=X_from, adata_sp=X_to)
+        # prepare for mapping
+        mp = mp.prepare(
+            **prep_kwargs)
+
+        # solve mapping problem
+        mp = mp.solve(
+            **solve_kwargs,
+        )
+        transport_plan = mp['src', 'tgt'].solution.transport_matrix
+        T_soft = transport_plan.T
+
+        # output dict
+        out = dict()
+
+        out['T'] = T_soft
+        out['solution'] = mp
+        out['to_names'] = X_to.obs.index.values.tolist()
+        out['from_names'] = X_from.obs.index.values.tolist()
+
+        if return_T_norm:
+            T_norm = T_soft / T_soft.sum(axis=1).reshape(-1,1)
+            out['T_norm'] = T_norm
 
         return out

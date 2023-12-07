@@ -1,0 +1,47 @@
+---
+
+data:
+  CID4290:
+    sp:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sp/CID4290_sp.h5ad'
+    sc:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sc/CID4290_sc.h5ad'
+
+preprocess:
+  all:
+    moscot_wf:
+      sc:
+        moscot:
+          scanpy_pp:
+            target_sum: 1e4
+          scanpy_pca:
+            n_comps: 10
+      sp:
+        moscot:
+          ot_spatial:
+            x: 'x'
+            y: 'y'
+          scanpy_pp:
+            target_sum: 1e6
+          scanpy_pca:
+            n_comps: 10
+
+methods:
+  all:
+    moscot_wf:
+      recipe:
+        map: map_moscot
+        pred: prd_moscot
+      params:
+        map:
+          prepare:
+            sc_attr: {"attr": "obsm", "key": "X_pca"}
+            kwargs: {"callback_kwargs": "local_pca"}
+          solve:
+            alpha: 0.5
+            device: "cpu"
+        pred:
+          prediction_genes: ['cd274']
+
+
+
