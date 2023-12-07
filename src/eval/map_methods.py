@@ -505,9 +505,17 @@ class SpaOTscMap(MapMethodClass):
         # Taking Alma's suggestion on exposing the HVG parameters
         default_hvg_dict = dict(min_mean=0.0125, max_mean=3, min_disp=0.5)
         hvg_dict = kwargs.get("hvg_dict", default_hvg_dict)
+        # Checking to fill in default values if not all provided
+        for key,val in default_hvg_dict.items():
+            if key not in hvg_dict:
+                hvg_dict[key] = val
         sc.pp.highly_variable_genes(ad_from, **hvg_dict)
         default_pca_dict = dict(n_comps=40, svd_solver="arpack")
         pca_dict = kwargs.get("pca_dict", default_pca_dict)
+        # Checking to fill in defaut values if not all provided
+        for key,val in default_pca_dict.items():
+            if key not in pca_dict:
+                pca_dict[key] = val
         sc.tl.pca(ad_from, use_highly_variable=True, **pca_dict)
 
         # Determining the SC data dissimilarity based on PCA40
