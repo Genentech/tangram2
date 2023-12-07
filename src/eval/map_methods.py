@@ -533,7 +533,9 @@ class SpaOTscMap(MapMethodClass):
         # TODO : double check on how to proceed with modified inputs
         input_dict["X_to"] = ad_to
         # Determining the SP distance matrix based on spatial coordinates
-        sp_dmat = cdist(ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key])
+        default_dist_metric = dict(metric="euclidean")
+        dist_metric = kwargs.get("dist_metric", default_dist_metric)
+        sp_dmat = cdist(ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key], **dist_metric)
         # Generating the DataFrame SP input
         df_sp = ad_to.to_df()
 
