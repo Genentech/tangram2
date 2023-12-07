@@ -14,7 +14,16 @@ methods:
         map: map_SpaOTsc
       params:
         map:
-          scaling: False
+          hvg_dict:
+            min_mean: 0.03
+            min_disp: 0.01
+          pca_dict:
+            n_comps: 60
+          dist_metric:
+            metric: 'correlation'
+          transport_plan_dict:
+            alpha: 0.5
+            scaling: False
 
 preprocess:
   all:
