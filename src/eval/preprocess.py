@@ -98,8 +98,12 @@ class StandardSpaOTsc(PPClass):
         # check input type
         match input_type:
             case "X_from" | "sc":
-                StandardScanpy.pp(adata, **kwargs)
+                # Normalize total
+                sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)))
+                sc.pp.log1p(adata)
             case "X_to" | "sp":
                 sc.pp.log1p(adata)
             case _:
-                StandardScanpy.pp(adata, **kwargs)
+                # Normalize total
+                sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)))
+                sc.pp.log1p(adata)
