@@ -166,7 +166,7 @@ def run(
                     for metric_name, metric_fun in object_metrics.items():
                         # compute score
                         score = metric_fun.score(
-                            input_dict, **metric_params
+                                input_dict, **metric_params
                         )
                         # save metric
                         metric_fun.save(score, out_dir_object)
@@ -179,41 +179,9 @@ def run(
                         for metric_name, metric_fun in object_metrics.items():
                             # compute score
                             score = metric_fun.score(
-                                input_dict, {object_name: ref_datum_value}, **metric_params
+                                input_dict, {object_name: ref_datum_value}, **metric_params,
                             )
                             # save metric
                             metric_fun.save(score, out_dir_object)
-            # object is type of object to evaluate e.g., T or X_to_pred
-            for object_name, object_cf in method_metrics.items():
-                # object_name is name of object
-                # object_cf is config for that object
-                out_dir_object = osp.join(out_dir, object_name)
-                os.makedirs(out_dir_object, exist_ok=True)
 
-                # get metrics listed for object
-                object_metrics = object_cf.get("metrics", {})
-                # get fuzzy matches if enabled
-                object_metrics = {
-                    key: ut.get_from_dict_with_fuzzy(key, metrics_dict, use_fuzzy_match)
-                    for key in object_metrics
-                }
-                object_metrics = {
-                    key: val for key, val in object_metrics.items() if val is not None
-                }
 
-                # get reference (GT) for object
-                # we expect same GT for all metrics pertaining to the same object
-                ref_data = object_cf.get("data", {})
-
-                # iterate over ground truth data sets
-                for ref_datum_name, ref_datum_cf in ref_data.items():
-                    # read reference datum
-                    ref_datum_value = ut.read_input_object(**ref_datum_cf)
-                    # apply all metrics to reference
-                    for metric_name, metric_fun in object_metrics.items():
-                        # compute score
-                        score = metric_fun.score(
-                            input_dict, {object_name: ref_datum_value}
-                        )
-                        # save metric
-                        metric_fun.save(score, out_dir_object)
