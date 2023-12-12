@@ -27,21 +27,18 @@ class NormalizeTotal(PPClass):
     # normalize total normalization
     @staticmethod
     def pp(adata: ad.AnnData, **kwargs):
-        adata = sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", None)), inplace=False)
-        return adata
+        sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", None)))
 
 
 class ScanpyPCA(PPClass):
     @staticmethod
     def pp(adata: ad.AnnData, **kwargs):
-        adata = sc.tl.pca(
+        sc.tl.pca(
             data=adata,
             n_comps=kwargs.get("n_comps", None),
             svd_solver=kwargs.get("svd_solver", "arpack"),
             random_state=kwargs.get("random_state", 0),
-            inplace=False
         )
-        return adata
 
 
 class StandardScanpy(PPClass):
@@ -55,10 +52,9 @@ class StandardScanpy(PPClass):
         # change dtype to float32
         adata.X = adata.X.astype(np.float32)
         # normalize total
-        adata = sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)), inplace=False)
+        sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)))
         # log1p transform
-        adata = sc.pp.log1p(adata, inplace=False)
-        return adata
+        sc.pp.log1p(adata)
 
 
 class CeLEryPP(PPClass):
@@ -83,14 +79,11 @@ class StandardTangramV1(PPClass):
         # check input type
         match input_type:
             case "X_from" | "sc":
-                adata = NormalizeTotal.pp(adata, **kwargs)
-                return adata
+                NormalizeTotal.pp(adata, **kwargs)
             case "X_to" | "sp":
-                adata = NormalizeTotal.pp(adata, **kwargs)
-                return adata
+                NormalizeTotal.pp(adata, **kwargs)
             case _:
-                adata = NormalizeTotal.pp(adata, **kwargs)
-                return adata
+                NormalizeTotal.pp(adata, **kwargs)
 
 
 class StandardTangramV2(PPClass):
@@ -102,25 +95,22 @@ class StandardTangramV2(PPClass):
         match input_type:
             case "X_from" | "sc":
                 IdentityPP.pp(adata)
-                return adata
             case "X_to" | "sp":
                 IdentityPP.pp(adata)
-                return adata
             case _:
                 IdentityPP.pp(adata)
-                return adata
 
 
-class StandardOTSpatial(PPClass):
-    # Standard PP for OT methods
-    @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
-        if kwargs is {}:
-            # TODO: warn that 'nan' coordinates are not removed
-            return adata
-        else:
-            keep = adata.obs[[kwargs["x_coords"], kwargs["y_coords"]]].dropna(axis=0).index
-            return adata[keep, :].copy()
+# class StandardOTSpatial(PPClass):
+#     # Standard PP for OT methods
+#     @staticmethod
+#     def pp(adata: ad.AnnData, **kwargs):
+#         if kwargs is {}:
+#             # TODO: warn that 'nan' coordinates are not removed
+#             return adata
+#         else:
+#             keep = adata.obs[[kwargs["x_coords"], kwargs["y_coords"]]].dropna(axis=0).index
+#             return adata[keep, :].copy()
 
 
 class LowercaseGenes(PPClass):
@@ -128,7 +118,6 @@ class LowercaseGenes(PPClass):
     @staticmethod
     def pp(adata: ad.AnnData, **kwargs):
         adata.var.index = [g.lower() for g in adata.var.index.tolist()]
-        return adata
 
 
 class StandardMoscot(PPClass):
@@ -137,19 +126,17 @@ class StandardMoscot(PPClass):
     def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
         match input_type:
             case "X_from" | "sc":
-                adata = LowercaseGenes.pp(adata)
+                LowercaseGenes.pp(adata)
                 StandardScanpy.pp(adata, **kwargs.get('scanpy_pp', {}))
                 ScanpyPCA.pp(adata, **kwargs.get('scanpy_pca', {}))
                 return adata
             case "X_to" | "sp":
-                # drop spots with no coordinates
-                adata = StandardOTSpatial.pp(adata, **kwargs.get('ot_spatial', {}))
-                adata = LowercaseGenes.pp(adata)
+                LowercaseGenes.pp(adata)
                 StandardScanpy.pp(adata, **kwargs.get('scanpy_pp', {}))
                 ScanpyPCA.pp(adata, **kwargs.get('scanpy_pca', {}))
                 return adata
             case _:
-                adata = LowercaseGenes.pp(adata)
+                LowercaseGenes.pp(adata)
                 StandardScanpy.pp(adata, **kwargs.get('scanpy_pp', {}))
                 ScanpyPCA.pp(adata, **kwargs.get('scanpy_pca', {}))
                 return adata
