@@ -141,8 +141,8 @@ class RandomMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        # seed: int = 1,
-        # return_sparse: bool = False,
+        seed: int = 1,
+        return_sparse: bool = False,
         experiment_name: str | None = None,
         **kwargs,
     ):
@@ -172,7 +172,7 @@ class RandomMap(MapMethodClass):
             col_idx,
             n_rows,
             n_cols,
-            kwargs.get("return_sparse", False),
+            return_sparse,
         )
 
         # add standard objects to out dict
@@ -203,7 +203,7 @@ class ArgMaxCorrMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         experiment_name: str | None = None,
-        # return_sparse: bool = False,
+        return_sparse: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         # anndata of "to"
@@ -236,7 +236,7 @@ class ArgMaxCorrMap(MapMethodClass):
             col_idx,
             n_rows,
             n_cols,
-            kwargs.get("return_sparse", False),
+            return_sparse,
         )
 
         # add standard objects to out dict
