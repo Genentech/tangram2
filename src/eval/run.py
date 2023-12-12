@@ -117,7 +117,7 @@ def run(
                 for pp_met_name, pp_met_kwargs in pp_met_dict.items():
                     if pp_met_name in C.PREPROCESS["OPTIONS"].value:
                         pp_met = C.PREPROCESS["OPTIONS"].value[pp_met_name]
-                        ad_i = pp_met.pp(ad_i, ad_type, **pp_met_kwargs)
+                        pp_met.pp(ad_i, ad_type, **pp_met_kwargs)
                 input_dict[argmap[ad_type]] = ad_i
 
             # get method parameters for experiment
