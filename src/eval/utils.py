@@ -227,6 +227,13 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
         if transpose:
             obj = obj.T
 
+        # remove all nan spots
+        if name in (["sp", "X_to"]) and hasattr(obj, "obs"):
+            x = data_dict[name].get("x_coords", "x")
+            y = data_dict[name].get("y_coords", "y")
+            keep = obj.obs[[x, y]].dropna(axis=0).index
+            obj = obj[keep, :].copy()
+
         # store object
         input_dict[name] = obj
 
