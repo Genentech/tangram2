@@ -270,14 +270,14 @@ class TangramMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        # to_spatial_key: str = "spatial",
-        # from_spatial_key: str = "spatial",
-        # return_sparse: bool = True,
-        # pos_by_argmax: bool = True,
-        # pos_by_weight: bool = False,
-        # num_epochs: int = 1000,
-        # hard_map: bool = False,
-        # genes: List[str] | str | None = None,
+        to_spatial_key: str = "spatial",
+        from_spatial_key: str = "spatial",
+        return_sparse: bool = True,
+        pos_by_argmax: bool = True,
+        pos_by_weight: bool = False,
+        num_epochs: int = 1000,
+        hard_map: bool = False,
+        genes: List[str] | str | None = None,
         experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
@@ -294,15 +294,6 @@ class TangramMap(MapMethodClass):
         # spatial coordinates of "to"
         S_to = ad_to.obsm[to_spatial_key]
 
-        # GET PARAMS
-        return_sparse = kwargs.get("return_sparse", True)
-        pos_by_argmax = kwargs.get("pos_by_argmax", True)
-        pos_by_weight = kwargs.get("pos_by_weight", False)
-        mode = kwargs.get("mode", "cells")
-        hard_map = kwargs.get("hard_map", False)
-        num_epochs = kwargs.get("num_epochs", 1000)
-        genes = kwargs.get("genes", None)
-
         # get marker genes from tangram
         if genes is not None:
             genes = ut.list_or_path_get(genes)
@@ -317,13 +308,14 @@ class TangramMap(MapMethodClass):
         tg_out = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
             adata_sp=ad_to,
-            mode=mode,
+            mode=kwargs.get("mode", "cells"),
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
             cluster_label=kwargs.get("cluster_label"),
             random_state=kwargs.get("random_state", 42),
             wandb_log=kwargs.get("wandb_log", False),
             wandb_config=wandb_config,
+            **kwargs
         )
 
         # depending on mode and version, treat output differently
