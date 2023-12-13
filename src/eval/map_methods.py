@@ -110,8 +110,9 @@ class MapMethodClass(MethodClass):
                 print(f"Saving object: {key}")
             if key in res_dict:
                 # create data frame
+                matrix = res_dict[key]
                 df = pd.DataFrame(
-                    res_dict[key],
+                    matrix.toarray() if isinstance(matrix, spmatrix) else matrix,
                     index=index,
                     columns=columns,
                 )
