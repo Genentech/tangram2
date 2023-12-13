@@ -9,6 +9,9 @@ from scipy.sparse import coo_matrix
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
+import eval.map_methods as mmet
+import eval.constants as C
+
 from . import utils as ut
 
 
@@ -102,6 +105,13 @@ class PrintMetric(MetricClass):
 
 class MapMetricClass(MetricClass):
     metric_type = "map"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class PredMetricClass(MetricClass):
+    metric_type = "pred"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -274,18 +284,51 @@ class MapRMSE(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str, np.ndarray], *args, **kwargs) -> float:
+    def score(cls, res: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs) -> float:
         # get true spatial coordinates for "from"
         S_from_true = ref_dict["S_from"]
         # get predicted spatial coordinates for "from"
         S_from_pred = res_dict["S_from"]
 
         # rmse : https://en.wikipedia.org/wiki/Root-mean-square_deviation
-        rmse = np.sqrt(np.sum((S_from - S_from_pred) ** 2, axis=1).mean())
+        rmse = np.sqrt(np.sum((S_from_true - S_from_pred) ** 2, axis=1).mean())
 
         # create standard output
         out = cls.make_standard_out(rmse)
 
+        return out
+
+
+class PredLeaveOutScore(PredMetricClass):
+    """Leave out(Held out) set score for Pred result"""
+
+    # define name
+    metric_name = "loov"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def score(
+            cls, res_dict: Dict[str, Any], *args, **kwargs
+    ) -> float:
+        X_to = res_dict['X_to']
+        X_to_pred = res_dict['X_to_pred']
+        test_genes = kwargs.get("test_genes", None)
+        if test_genes is not None:
+            test_genes = ut.list_or_path_get(test_genes)
+            test_genes = [g.lower() for g in test_genes]
+            overlap_genes = list(set(X_to.var.index.tolist()).intersection(test_genes))
+        gex_true = X_to[:, overlap_genes].X.toarray()
+        gex_pred = X_to_pred.loc[:, overlap_genes].to_numpy()
+
+        def _cos_sim2D(a1, a2):
+            norm_sq = np.linalg.norm(a1, axis=1) * np.linalg.norm(a2, axis=1)
+            return (a1 * a2).sum(axis=1) / norm_sq
+
+        cos_sim = _cos_sim2D(gex_true, gex_pred)
+        mean_cos_sim = np.nanmean(cos_sim)
+        out = cls.make_standard_out(mean_cos_sim)
         return out
 
 

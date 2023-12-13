@@ -98,7 +98,9 @@ class METRICS(EnumCustom):
     }
 
     # raw prediction metrics names
-    _PRD_METRICS = dict()
+    _PRD_METRICS = dict(
+        loov=mtx.PredLeaveOutScore,
+    )
 
     # "prefixed" prediction metrics names
     PRD_METRICS = {
