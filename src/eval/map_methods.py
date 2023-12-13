@@ -7,10 +7,13 @@ import anndata as ad
 import CeLEry as cel
 import numpy as np
 import pandas as pd
+import scanpy as sc
 import tangram as tg1
 import tangram2 as tg2
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
+from scipy.spatial.distance import cdist
+from spaotsc import SpaOTsc
 from torch.cuda import is_available
 
 from eval._methods import MethodClass
@@ -463,5 +466,120 @@ class CeLEryMap(MapMethodClass):
 
         # create out dict
         out = dict(model=model_train, T=None, S_from=pred_cord)
+
+        return out
+
+
+class SpaOTscMap(MapMethodClass):
+    # SpaOTsc class
+    # Expected Inputs and Outputs
+    ins = ["X_to", "X_from"]
+    outs = ["T"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        pass
+
+    @classmethod
+    @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        to_spatial_key: str = "spatial",
+        experiment_name: str | None = None,
+        **kwargs,
+    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+
+        # anndata of "from"
+        ad_from = input_dict["X_from"]
+        # anndata of "to"
+        ad_to = input_dict["X_to"]
+        # spatial coordinates of "to"
+        S_to = ad_to.obsm[to_spatial_key]
+
+        # Processing the SC data
+        # Generate PCA40 from the X_from preprocessed data
+        # Taking Alma's suggestion on exposing the HVG parameters
+        default_hvg_dict = dict(min_mean=0.0125, max_mean=3, min_disp=0.5)
+        hvg_dict = kwargs.get("hvg_dict", {})
+        # Checking to fill in default values if not all provided
+        for key,val in default_hvg_dict.items():
+            if key not in hvg_dict:
+                hvg_dict[key] = val
+        sc.pp.highly_variable_genes(ad_from, **hvg_dict)
+        default_pca_dict = dict(n_comps=40, svd_solver="arpack")
+        pca_dict = kwargs.get("pca_dict", {})
+        # Checking to fill in defaut values if not all provided
+        for key,val in default_pca_dict.items():
+            if key not in pca_dict:
+                pca_dict[key] = val
+        sc.tl.pca(ad_from, use_highly_variable=True, **pca_dict)
+
+        # Determining the SC data dissimilarity based on PCA40
+        sc_corr = ut.matrix_correlation(
+            ad_from.obsm["X_pca"].T, ad_from.obsm["X_pca"].T
+        )
+        sc_dmat = np.exp(sc_corr)
+        # Generating the DataFrame SC input
+        df_sc = ad_from.to_df()
+
+        # Processing the SP data
+        # Filtering the nan coordinates in the SP spatial coords data
+        goodidx = ~np.isnan(S_to).any(axis=1)
+        ad_to = ad_to[goodidx]
+        # TODO : double check on how to proceed with modified inputs
+        input_dict["X_to"] = ad_to
+        # Determining the SP distance matrix based on spatial coordinates
+        default_dist_metric = dict(metric="euclidean")
+        dist_metric = kwargs.get("dist_metric", {default_dist_metric})
+        sp_dmat = cdist(ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key], **dist_metric)
+        # Generating the DataFrame SP input
+        df_sp = ad_to.to_df()
+
+        # Determining the Cost matrix
+        # Finding overlapping genes between SC and SP data
+        overlap_genes = list(set(ad_to.var_names).intersection(set(ad_from.var_names)))
+        sc_sp_corr = ut.matrix_correlation(
+            df_sp[overlap_genes].T, df_sc[overlap_genes].T
+        )
+        Cost = (np.exp(1 - sc_sp_corr)) ** 2
+
+        # Instantiate the SpaOTsc object
+        spaotsc_obj = SpaOTsc.spatial_sc(
+            sc_data=df_sc, is_data=df_sp, sc_dmat=sc_dmat, is_dmat=sp_dmat
+        )
+        # Run optimal transport optimization
+        # Note: This step can take an upwards of several hours
+        default_transport_plan_dict = dict(
+            alpha=0.1, rho=100.0, epsilon=1.0, scaling=False
+        )
+        transport_plan_dict = kwargs.get(
+            "transport_plan_dict", {}
+        )
+        for key,val in default_transport_plan_dict.items():
+            if key not in transport_plan_dict:
+                transport_plan_dict[key] = val
+        spaotsc_obj.transport_plan(
+            Cost,
+            **transport_plan_dict,
+        )
+
+        # Retrieve optimal transport plan [cells x locations]
+        T_soft = spaotsc_obj.gamma_mapping
+
+        # output dict
+        out = dict()
+
+        # transpose map (T) to be in expected format [n_to] x [n_from]
+        out["T"] = T_soft.T
+
+        # observation names for "to"
+        out["to_names"] = ad_to.obs.index.values.tolist()
+        # observation named for "from"
+        out["from_names"] = ad_from.obs.index.values.tolist()
 
         return out
