@@ -106,7 +106,7 @@ class ScanpyDEA(DEAMethodClass):
         uni_labels = np.unique(adata.obs["label"].values)
 
         # make group specification align with expected scanpy input
-        if (groups is not None) or (groups == "all"):
+        if (groups is None) or (groups == "all"):
             # if no groups specified set to "all"
             main_group = "all"
             ref_group = "rest"

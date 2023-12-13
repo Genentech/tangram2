@@ -10,6 +10,7 @@ import pandas as pd
 import scanpy as sc
 import tangram as tg1
 import tangram2 as tg2
+from moscot.problems.space import MappingProblem
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from scipy.spatial.distance import cdist
@@ -22,7 +23,7 @@ from . import utils as ut
 
 
 class MapMethodClass(MethodClass):
-    ## Base Class for MapMethods
+    # Base Class for MapMethods
     def __init__(
         self,
         *args,
@@ -147,6 +148,7 @@ class RandomMap(MapMethodClass):
         input_dict: Dict[str, Any],
         seed: int = 1,
         return_sparse: bool = False,
+        experiment_name: str | None = None,
         **kwargs,
     ):
         # set random seed for reproducibility
@@ -205,6 +207,7 @@ class ArgMaxCorrMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
+        experiment_name: str | None = None,
         return_sparse: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
@@ -296,8 +299,6 @@ class TangramMap(MapMethodClass):
         # spatial coordinates of "to"
         S_to = ad_to.obsm[to_spatial_key]
 
-        # mapping mode for tangram, default cells
-        mode = kwargs.get("mode", "cells")
         # get marker genes from tangram
         if genes is not None:
             genes = ut.list_or_path_get(genes)
@@ -305,20 +306,21 @@ class TangramMap(MapMethodClass):
         # preprocess anndata for mapping
         cls.tg.pp_adatas(ad_from, ad_to, genes=genes)
 
-        wandb_config = kwargs.get("wandb_config", {})
+        wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name
 
         # map cells in "from" to "to"
         tg_out = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
             adata_sp=ad_to,
-            mode=mode,
+            mode=kwargs.pop("mode", "cells"),
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
-            cluster_label=kwargs.get("cluster_label"),
-            random_state=kwargs.get("random_state", 42),
-            wandb_log=kwargs.get("wandb_log", False),
+            cluster_label=kwargs.pop("cluster_label"),
+            random_state=kwargs.pop("random_state", 42),
+            wandb_log=kwargs.pop("wandb_log", False),
             wandb_config=wandb_config,
+            **kwargs
         )
 
         # depending on mode and version, treat output differently
@@ -581,5 +583,69 @@ class SpaOTscMap(MapMethodClass):
         out["to_names"] = ad_to.obs.index.values.tolist()
         # observation named for "from"
         out["from_names"] = ad_from.obs.index.values.tolist()
+
+        return out
+
+
+class MoscotMap(MapMethodClass):
+    # Method class for moscot
+    # github: https://github.com/theislab/moscot
+    ins = ["X_to", "X_from"]
+    outs = ["T"]
+
+    def __init__(
+            self,
+            *args,
+            **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    def run(
+            cls,
+            input_dict: Dict[str, Any],
+            genes: List[str] | str | None = None,
+            experiment_name: str | None = None,
+            return_T_norm: bool = True,
+            # spatial_key: str = "spatial",
+            **kwargs,
+    ) -> Dict[str, np.ndarray]:
+        # single cell anndata
+        X_from = input_dict['X_from']
+        # spatial anndata
+        X_to = input_dict['X_to']
+
+        # get genes
+        if genes is not None:
+            genes = ut.list_or_path_get(genes)
+
+        prep_kwargs = kwargs.get("prepare", {})
+        prep_kwargs["var_names"] = genes
+        solve_kwargs = kwargs.get("solve", {})
+
+        # set up the mapping problem
+        mp = MappingProblem(adata_sc=X_from, adata_sp=X_to)
+        # prepare for mapping
+        mp = mp.prepare(
+            **prep_kwargs)
+
+        # solve mapping problem
+        mp = mp.solve(
+            **solve_kwargs,
+        )
+        transport_plan = mp['src', 'tgt'].solution.transport_matrix
+        T_soft = transport_plan.T
+
+        # output dict
+        out = dict()
+
+        out['T'] = T_soft
+        out['solution'] = mp
+        out['to_names'] = X_to.obs.index.values.tolist()
+        out['from_names'] = X_from.obs.index.values.tolist()
+
+        if return_T_norm:
+            T_norm = T_soft / T_soft.sum(axis=1).reshape(-1,1)
+            out['T_norm'] = T_norm
 
         return out

@@ -35,6 +35,7 @@ class METHODS(EnumCustom):
         tangram_v2=mmet.TangramV2Map,
         CeLEry=mmet.CeLEryMap,
         SpaOTsc=mmet.SpaOTscMap,
+        moscot=mmet.MoscotMap,
     )
 
     # "prefixed" names of map methods
@@ -46,6 +47,7 @@ class METHODS(EnumCustom):
     _PRD_METHODS = dict(
         tangram_v1=pmet.TangramV1Pred,
         tangram_v2=pmet.TangramV2Pred,
+        moscot=pmet.MoscotPred,
     )
 
     # "prefixed" names of predictions methods
@@ -134,4 +136,5 @@ class PREPROCESS(EnumCustom):
         tangramv1=pp.StandardTangramV1,
         tangramv2=pp.StandardTangramV2,
         SpaOTsc=pp.StandardSpaOTsc,
+        moscot=pp.StandardMoscot,
     )

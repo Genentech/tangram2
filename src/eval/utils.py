@@ -227,6 +227,17 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
         if transpose:
             obj = obj.T
 
+        # remove all nan spots
+        if name in (["sp", "X_to"]) and hasattr(obj, "obs"):
+            x = data_dict[name].get("x_coords", None)
+            y = data_dict[name].get("y_coords", None)
+            if x is None or y is None:
+                # TODO: Add warning here that rows with that NaN values from all columns will be dropped
+                keep = obj.obs.dropna(axis=0).index
+            else:
+                keep = obj.obs[[x, y]].dropna(axis=0).index
+            obj = obj[keep, :].copy()
+
         # store object
         input_dict[name] = obj
 
