@@ -34,6 +34,7 @@ class METHODS(EnumCustom):
         tangram_v1=mmet.TangramV1Map,
         tangram_v2=mmet.TangramV2Map,
         CeLEry=mmet.CeLEryMap,
+        SpaOTsc=mmet.SpaOTscMap,
         moscot=mmet.MoscotMap,
     )
 
@@ -100,7 +101,7 @@ class METRICS(EnumCustom):
 
     # raw prediction metrics names
     _PRD_METRICS = dict(
-        loov=mtx.PredLOOV,
+        loov=mtx.PredLeaveOutScore,
     )
 
     # "prefixed" prediction metrics names
@@ -134,5 +135,6 @@ class PREPROCESS(EnumCustom):
         CeLEry=pp.CeLEryPP,
         tangramv1=pp.StandardTangramV1,
         tangramv2=pp.StandardTangramV2,
+        SpaOTsc=pp.StandardSpaOTsc,
         moscot=pp.StandardMoscot,
     )

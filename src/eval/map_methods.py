@@ -7,47 +7,51 @@ import anndata as ad
 import CeLEry as cel
 import numpy as np
 import pandas as pd
+import scanpy as sc
 import tangram as tg1
 import tangram2 as tg2
 from moscot.problems.space import MappingProblem
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
+from scipy.spatial.distance import cdist
+from spaotsc import SpaOTsc
 from torch.cuda import is_available
 
 from eval._methods import MethodClass
+
 from . import utils as ut
 
 
 class MapMethodClass(MethodClass):
     # Base Class for MapMethods
     def __init__(
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__()
 
     @classmethod
     @abstractmethod
     def run(
-            cls,
-            X_to: Any,
-            X_from: Any,
-            *args,
-            S_to: np.ndarray | None = None,
-            S_from: np.ndarray | None = None,
-            **kwargs,
+        cls,
+        X_to: Any,
+        X_from: Any,
+        *args,
+        S_to: np.ndarray | None = None,
+        S_from: np.ndarray | None = None,
+        **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         pass
 
     @staticmethod
     def hard_update_out_dict(
-            out_dict: Dict[str, spmatrix | np.ndarray],
-            row_idx: np.ndarray,
-            col_idx: np.ndarray,
-            n_rows: int,
-            n_cols: int,
-            return_sparse: bool,
+        out_dict: Dict[str, spmatrix | np.ndarray],
+        row_idx: np.ndarray,
+        col_idx: np.ndarray,
+        n_rows: int,
+        n_cols: int,
+        return_sparse: bool,
     ) -> None:
         # helper function to generate the output
         # for hard maps in a sparse format
@@ -68,13 +72,13 @@ class MapMethodClass(MethodClass):
 
     @classmethod
     def save(
-            cls,
-            res_dict: Dict[str, Any],
-            out_dir: str,
-            save_keys: Literal["T", "S_from", "S_to"] | str | None = None,
-            compress: bool = False,
-            verbose: bool = False,
-            **kwargs,
+        cls,
+        res_dict: Dict[str, Any],
+        out_dir: str,
+        save_keys: Literal["T", "S_from", "S_to"] | str | None = None,
+        compress: bool = False,
+        verbose: bool = False,
+        **kwargs,
     ) -> None:
         # shared save function for all Methods
 
@@ -107,8 +111,9 @@ class MapMethodClass(MethodClass):
                 print(f"Saving object: {key}")
             if key in res_dict:
                 # create data frame
+                matrix = res_dict[key]
                 df = pd.DataFrame(
-                    res_dict[key],
+                    matrix.toarray() if isinstance(matrix, spmatrix) else matrix,
                     index=index,
                     columns=columns,
                 )
@@ -131,7 +136,7 @@ class RandomMap(MapMethodClass):
     outs = ["S_from"]
 
     def __init__(
-            self,
+        self,
     ):
         super().__init__()
 
@@ -147,7 +152,7 @@ class RandomMap(MapMethodClass):
         **kwargs,
     ):
         # set random seed for reproducibility
-        rng = np.random.default_rng(kwargs.get("seed", 1))
+        rng = np.random.default_rng(seed)
 
         # anndata object that we map _to_
         X_to = input_dict["X_to"]
@@ -190,9 +195,9 @@ class ArgMaxCorrMap(MapMethodClass):
     outs = ["S_from", "T"]
 
     def __init__(
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         pass
 
@@ -258,9 +263,9 @@ class TangramMap(MapMethodClass):
     outs = ["T", "S_from"]
 
     def __init__(
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -301,19 +306,19 @@ class TangramMap(MapMethodClass):
         # preprocess anndata for mapping
         cls.tg.pp_adatas(ad_from, ad_to, genes=genes)
 
-        wandb_config = kwargs.get("wandb_config", {})
+        wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name
 
         # map cells in "from" to "to"
         tg_out = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
             adata_sp=ad_to,
-            mode=kwargs.get("mode", "cells"),
+            mode=kwargs.pop("mode", "cells"),
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
-            cluster_label=kwargs.get("cluster_label"),
-            random_state=kwargs.get("random_state", 42),
-            wandb_log=kwargs.get("wandb_log", False),
+            cluster_label=kwargs.pop("cluster_label"),
+            random_state=kwargs.pop("random_state", 42),
+            wandb_log=kwargs.pop("wandb_log", False),
             wandb_config=wandb_config,
             **kwargs
         )
@@ -387,9 +392,9 @@ class TangramV1Map(TangramMap):
     version = "1"
 
     def __init__(
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -401,9 +406,9 @@ class TangramV2Map(TangramMap):
     version = "2"
 
     def __init__(
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         pass
@@ -416,22 +421,21 @@ class CeLEryMap(MapMethodClass):
     outs = ["S_from"]
 
     def __init__(
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__()
 
     @classmethod
     def run(
-            cls,
-            input_dict: Dict[str, Any],
-            # return_sparse: bool = True,
-            # hidden_dims: List[int] = [30, 25, 15],
-            # num_epochs_max: int = 100,
-            # spatial_key: str = "spatial",
-            experiment_name: str | None = None,
-            **kwargs,
+        cls,
+        input_dict: Dict[str, Any],
+        return_sparse: bool = True,
+        hidden_dims: List[int] = [30, 25, 15],
+        num_epochs_max: int = 100,
+        spatial_key: str = "spatial",
+        **kwargs,
     ) -> Dict[str, np.ndarray]:
         # anndata of "to" object
         X_to = input_dict["X_to"]
@@ -448,8 +452,8 @@ class CeLEryMap(MapMethodClass):
             # fit model using "to" data
             model_train = cel.Fit_cord(
                 data_train=X_to,
-                hidden_dims=kwargs.get("hidden_dims", [30, 25, 15]),
-                num_epochs_max=kwargs.get("num_epochs_max", 100),
+                hidden_dims=hidden_dims,
+                num_epochs_max=num_epochs_max,
                 path=tmpdir,
                 filename="celery_model",
             )
@@ -458,11 +462,127 @@ class CeLEryMap(MapMethodClass):
             pred_cord = cel.Predict_cord(
                 data_test=X_from, path=tmpdir, filename="celery_model"
             )
+
         # Note: this method does not give a map (T)
         # only predicted coordinates for "from" (S_from)
 
         # create out dict
         out = dict(model=model_train, T=None, S_from=pred_cord)
+
+        return out
+
+
+class SpaOTscMap(MapMethodClass):
+    # SpaOTsc class
+    # Expected Inputs and Outputs
+    ins = ["X_to", "X_from"]
+    outs = ["T"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        pass
+
+    @classmethod
+    @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        to_spatial_key: str = "spatial",
+        experiment_name: str | None = None,
+        **kwargs,
+    ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+
+        # anndata of "from"
+        ad_from = input_dict["X_from"]
+        # anndata of "to"
+        ad_to = input_dict["X_to"]
+        # spatial coordinates of "to"
+        S_to = ad_to.obsm[to_spatial_key]
+
+        # Processing the SC data
+        # Generate PCA40 from the X_from preprocessed data
+        # Taking Alma's suggestion on exposing the HVG parameters
+        default_hvg_dict = dict(min_mean=0.0125, max_mean=3, min_disp=0.5)
+        hvg_dict = kwargs.get("hvg_dict", {})
+        # Checking to fill in default values if not all provided
+        for key,val in default_hvg_dict.items():
+            if key not in hvg_dict:
+                hvg_dict[key] = val
+        sc.pp.highly_variable_genes(ad_from, **hvg_dict)
+        default_pca_dict = dict(n_comps=40, svd_solver="arpack")
+        pca_dict = kwargs.get("pca_dict", {})
+        # Checking to fill in defaut values if not all provided
+        for key,val in default_pca_dict.items():
+            if key not in pca_dict:
+                pca_dict[key] = val
+        sc.tl.pca(ad_from, use_highly_variable=True, **pca_dict)
+
+        # Determining the SC data dissimilarity based on PCA40
+        sc_corr = ut.matrix_correlation(
+            ad_from.obsm["X_pca"].T, ad_from.obsm["X_pca"].T
+        )
+        sc_dmat = np.exp(sc_corr)
+        # Generating the DataFrame SC input
+        df_sc = ad_from.to_df()
+
+        # Processing the SP data
+        # Filtering the nan coordinates in the SP spatial coords data
+        goodidx = ~np.isnan(S_to).any(axis=1)
+        ad_to = ad_to[goodidx]
+        # TODO : double check on how to proceed with modified inputs
+        input_dict["X_to"] = ad_to
+        # Determining the SP distance matrix based on spatial coordinates
+        default_dist_metric = dict(metric="euclidean")
+        dist_metric = kwargs.get("dist_metric", {default_dist_metric})
+        sp_dmat = cdist(ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key], **dist_metric)
+        # Generating the DataFrame SP input
+        df_sp = ad_to.to_df()
+
+        # Determining the Cost matrix
+        # Finding overlapping genes between SC and SP data
+        overlap_genes = list(set(ad_to.var_names).intersection(set(ad_from.var_names)))
+        sc_sp_corr = ut.matrix_correlation(
+            df_sp[overlap_genes].T, df_sc[overlap_genes].T
+        )
+        Cost = (np.exp(1 - sc_sp_corr)) ** 2
+
+        # Instantiate the SpaOTsc object
+        spaotsc_obj = SpaOTsc.spatial_sc(
+            sc_data=df_sc, is_data=df_sp, sc_dmat=sc_dmat, is_dmat=sp_dmat
+        )
+        # Run optimal transport optimization
+        # Note: This step can take an upwards of several hours
+        default_transport_plan_dict = dict(
+            alpha=0.1, rho=100.0, epsilon=1.0, scaling=False
+        )
+        transport_plan_dict = kwargs.get(
+            "transport_plan_dict", {}
+        )
+        for key,val in default_transport_plan_dict.items():
+            if key not in transport_plan_dict:
+                transport_plan_dict[key] = val
+        spaotsc_obj.transport_plan(
+            Cost,
+            **transport_plan_dict,
+        )
+
+        # Retrieve optimal transport plan [cells x locations]
+        T_soft = spaotsc_obj.gamma_mapping
+
+        # output dict
+        out = dict()
+
+        # transpose map (T) to be in expected format [n_to] x [n_from]
+        out["T"] = T_soft.T
+
+        # observation names for "to"
+        out["to_names"] = ad_to.obs.index.values.tolist()
+        # observation named for "from"
+        out["from_names"] = ad_from.obs.index.values.tolist()
 
         return out
 
@@ -484,9 +604,9 @@ class MoscotMap(MapMethodClass):
     def run(
             cls,
             input_dict: Dict[str, Any],
-            # sc_attr: Dict[str, str] | str,
-            # genes: List[str] | str | None = None,
+            genes: List[str] | str | None = None,
             experiment_name: str | None = None,
+            return_T_norm: bool = True,
             # spatial_key: str = "spatial",
             **kwargs,
     ) -> Dict[str, np.ndarray]:
@@ -495,9 +615,6 @@ class MoscotMap(MapMethodClass):
         # spatial anndata
         X_to = input_dict['X_to']
 
-        # GET PARAMS
-        genes = kwargs.get("genes", None)
-        return_T_norm = kwargs.get("normalize_T", True)
         # get genes
         if genes is not None:
             genes = ut.list_or_path_get(genes)

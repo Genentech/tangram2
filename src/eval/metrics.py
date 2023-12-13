@@ -299,8 +299,8 @@ class MapRMSE(MapMetricClass):
         return out
 
 
-class PredLOOV(PredMetricClass):
-    """LOOV Test for Pred result"""
+class PredLeaveOutScore(PredMetricClass):
+    """Leave out(Held out) set score for Pred result"""
 
     # define name
     metric_name = "loov"
@@ -312,34 +312,22 @@ class PredLOOV(PredMetricClass):
     def score(
             cls, res_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
-        x_from_genes = res_dict['X_from'].var.index.values
-        x_to_genes = res_dict['X_to'].var.index.values
-        overlap_genes = list(set(x_from_genes).intersection(x_to_genes))
-        n_tests = kwargs['n_tests']
-        map_fun = C.METHODS["OPTIONS"].value.get(kwargs['method'])
-        # remove these
-        kwargs.pop('n_tests')
-        kwargs.pop('method')
+        X_to = res_dict['X_to']
+        X_to_pred = res_dict['X_to_pred']
+        test_genes = kwargs.get("test_genes", None)
+        if test_genes is not None:
+            test_genes = ut.list_or_path_get(test_genes)
+            test_genes = [g.lower() for g in test_genes]
+            overlap_genes = list(set(X_to.var.index.tolist()).intersection(test_genes))
+        gex_true = X_to[:, overlap_genes].X.toarray()
+        gex_pred = X_to_pred.loc[:, overlap_genes].to_numpy()
 
-        def _split_list(lst, pos):
-            if pos == 0:
-                return lst[1:]
-            elif pos == len(lst):
-                return lst[0:-1]
-            else:
-                return lst[0:pos] + lst[pos + 1:]
-        cos_sim = []
-        for k, test_gene in enumerate(overlap_genes):
-            if n_tests is not None and k >= n_tests - 1:
-                break
-            training_genes = _split_list(overlap_genes, k)
-            map_res = map_fun.run(input_dict=res_dict, genes=training_genes, **kwargs)
-            _T = map_res['T']
-            gex_true = res_dict['X_to'].obs_vector(test_gene)
-            gex_pred = _T @ res_dict['X_from'].obs_vector(test_gene)
-            norm_sq = np.linalg.norm(gex_true) * np.linalg.norm(gex_pred)
-            cos_sim.append((gex_true @ gex_pred) / norm_sq)
-        mean_cos_sim = np.mean(cos_sim)
+        def _cos_sim2D(a1, a2):
+            norm_sq = np.linalg.norm(a1, axis=1) * np.linalg.norm(a2, axis=1)
+            return (a1 * a2).sum(axis=1) / norm_sq
+
+        cos_sim = _cos_sim2D(gex_true, gex_pred)
+        mean_cos_sim = np.nanmean(cos_sim)
         out = cls.make_standard_out(mean_cos_sim)
         return out
 

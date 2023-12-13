@@ -100,6 +100,23 @@ class StandardTangramV2(PPClass):
             case _:
                 IdentityPP.pp(adata)
 
+class StandardSpaOTsc(PPClass):
+    # SpaOTsc normalization according to the manuscript
+    @staticmethod
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+        # redundant rn but might change in future
+        # check input type
+        match input_type:
+            case "X_from" | "sc":
+                # Normalize total
+                sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)))
+                sc.pp.log1p(adata)
+            case "X_to" | "sp":
+                sc.pp.log1p(adata)
+            case _:
+                # Normalize total
+                sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)))
+                sc.pp.log1p(adata)
 
 # class StandardOTSpatial(PPClass):
 #     # Standard PP for OT methods
