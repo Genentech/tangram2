@@ -34,6 +34,7 @@ class METHODS(EnumCustom):
         tangram_v1=mmet.TangramV1Map,
         tangram_v2=mmet.TangramV2Map,
         CeLEry=mmet.CeLEryMap,
+        SpaOTsc=mmet.SpaOTscMap,
     )
 
     # "prefixed" names of map methods
@@ -130,4 +131,5 @@ class PREPROCESS(EnumCustom):
         CeLEry=pp.CeLEryPP,
         tangramv1=pp.StandardTangramV1,
         tangramv2=pp.StandardTangramV2,
+        SpaOTsc=pp.StandardSpaOTsc,
     )
