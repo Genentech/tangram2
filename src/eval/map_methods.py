@@ -305,7 +305,7 @@ class TangramMap(MapMethodClass):
 
         # preprocess anndata for mapping
         cls.tg.pp_adatas(ad_from, ad_to, genes=genes)
-
+        mode = kwargs.pop("mode", "cells")
         wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name
 
@@ -313,7 +313,7 @@ class TangramMap(MapMethodClass):
         tg_out = cls.tg.map_cells_to_space(
             adata_sc=ad_from,
             adata_sp=ad_to,
-            mode=kwargs.pop("mode", "cells"),
+            mode=mode,
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
             cluster_label=kwargs.pop("cluster_label"),
