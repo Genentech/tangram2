@@ -315,12 +315,20 @@ class PredLeaveOutScore(PredMetricClass):
         X_to = res_dict['X_to']
         X_to_pred = res_dict['X_to_pred']
         test_genes = kwargs.get("test_genes", None)
-        if test_genes is not None:
+        training_genes = kwargs.get("test_genes", None)
+        if test_genes is None and training_genes is None:
+            raise NotImplementedError("Input either training/test gene set")
+        elif test_genes is not None:
             test_genes = ut.list_or_path_get(test_genes)
             test_genes = [g.lower() for g in test_genes]
-            overlap_genes = list(set(X_to.var.index.tolist()).intersection(test_genes))
-        gex_true = X_to[:, overlap_genes].X.toarray()
-        gex_pred = X_to_pred.loc[:, overlap_genes].to_numpy()
+            eval_genes = list(set(X_to.var.index.tolist()).intersection(test_genes))
+        else:
+            training_genes = ut.list_or_path_get(training_genes)
+            training_genes = [g.lower() for g in training_genes]
+            eval_genes = [g for g in X_to.var.index.tolist() if g not in training_genes]
+
+        gex_true = X_to[:, eval_genes].X.toarray()
+        gex_pred = X_to_pred.loc[:, eval_genes].to_numpy()
 
         def _cos_sim2D(a1, a2):
             norm_sq = np.linalg.norm(a1, axis=1) * np.linalg.norm(a2, axis=1)
