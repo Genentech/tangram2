@@ -115,15 +115,16 @@ class ScanpyDEA(DEAMethodClass):
             # subset identified labels (based on design matrix)
             # w.r.t. the specified groups
             groups = ut.listify(groups)
-            uni_groups, group_counts = np.unique(groups, return_counts=True)
-            # make sure enough observations are in each group
-            uni_groups = [
-                uni_groups[k]
-                for k in range(len(uni_groups))
-                if group_counts[k] >= min_group_obs
-            ]
+            uni_groups = np.unique(groups)
+            # make sure enough observations are in each group -- BEFORE
+            # uni_groups = [
+            #     uni_groups[k]
+            #     for k in range(len(uni_groups))
+            #     if group_counts[k] >= min_group_obs
+            # ]
             uni_labels = [lab for lab in uni_labels if lab in uni_groups]
-
+            # make sure enough observations are in each group -- NOW
+            uni_labels = [lab for lab in uni_labels if (adata.obs["label"] == lab).sum() >= min_group_obs]
             # check that the subsetted labels are at least two
             if len(uni_labels) < 2:
                 return dict(DEA=pd.DataFrame([]))
@@ -150,7 +151,7 @@ class ScanpyDEA(DEAMethodClass):
         out = dict()
 
         # define groups to extract information from
-        iter_groups = uni_labels if main_group == "all" else [main_group]
+        iter_groups = uni_labels if main_group == "all" else main_group
 
         # iterate over groups
         for comp_group in iter_groups:
