@@ -157,26 +157,18 @@ def run(
                 ref_data = object_cf.get("data", {})
                 metric_params = object_cf.get("params", {})
 
-                if ref_data is None:
+                # iterate over ground truth data sets
+                for ref_datum_name, ref_datum_cf in ref_data.items():
+                    if ref_datum_cf:
+                        # read reference datum
+                        ref_datum_value = ut.read_input_object(**ref_datum_cf)
+                    # apply all metrics to reference
                     for metric_name, metric_fun in object_metrics.items():
                         # compute score
                         score = metric_fun.score(
-                                input_dict, **metric_params
+                            input_dict, {object_name: ref_datum_value}, **metric_params,
                         )
                         # save metric
                         metric_fun.save(score, out_dir_object)
-                else:
-                    # iterate over ground truth data sets
-                    for ref_datum_name, ref_datum_cf in ref_data.items():
-                        # read reference datum
-                        ref_datum_value = ut.read_input_object(**ref_datum_cf)
-                        # apply all metrics to reference
-                        for metric_name, metric_fun in object_metrics.items():
-                            # compute score
-                            score = metric_fun.score(
-                                input_dict, {object_name: ref_datum_value}, **metric_params,
-                            )
-                            # save metric
-                            metric_fun.save(score, out_dir_object)
 
 
