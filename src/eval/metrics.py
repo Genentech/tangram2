@@ -310,23 +310,23 @@ class PredLeaveOutScore(PredMetricClass):
 
     @classmethod
     def score(
-            cls, res_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: None,  *args, **kwargs
     ) -> float:
         X_to = res_dict['X_to']
         X_to_pred = res_dict['X_to_pred']
         test_genes = kwargs.get("test_genes", None)
-        training_genes = kwargs.get("test_genes", None)
-        if test_genes is None and training_genes is None:
-            raise NotImplementedError("Input either training/test gene set")
+        train_genes = kwargs.get("train_genes", None)
+        if test_genes is None and train_genes is None:
+            raise NotImplementedError("Input either train/test gene set")
         elif test_genes is not None:
             test_genes = ut.list_or_path_get(test_genes)
             test_genes = [g.lower() for g in test_genes]
-            eval_genes = list(set(X_to.var.index.tolist()).intersection(test_genes))
+            eval_genes = list(set(test_genes).intersection(X_to.var.index.tolist(), X_to_pred.columns))
         else:
-            training_genes = ut.list_or_path_get(training_genes)
-            training_genes = [g.lower() for g in training_genes]
-            eval_genes = [g for g in X_to.var.index.tolist() if g not in training_genes]
-
+            train_genes = ut.list_or_path_get(train_genes)
+            train_genes = [g.lower() for g in train_genes]
+            test_genes = [g for g in X_to.var.index.tolist() if g not in train_genes]
+            eval_genes = list(set(test_genes).intersection(X_to_pred.columns))
         gex_true = X_to[:, eval_genes].X.toarray()
         gex_pred = X_to_pred.loc[:, eval_genes].to_numpy()
 
