@@ -154,7 +154,7 @@ def run(
                 }
                 # get reference (GT) for object
                 # we expect same GT for all metrics pertaining to the same object
-                ref_data = object_cf.get("data", {})
+                ref_data = object_cf.get("data", {None: None})
                 metric_params = object_cf.get("params", {})
 
                 # iterate over ground truth data sets
