@@ -159,9 +159,11 @@ def run(
 
                 # iterate over ground truth data sets
                 for ref_datum_name, ref_datum_cf in ref_data.items():
-                    if ref_datum_cf:
+                    if ref_datum_cf is not None:
                         # read reference datum
                         ref_datum_value = ut.read_input_object(**ref_datum_cf)
+                    else:
+                        ref_datum_value = None
                     # apply all metrics to reference
                     for metric_name, metric_fun in object_metrics.items():
                         # compute score
