@@ -316,25 +316,25 @@ class PredLeaveOutScore(PredMetricClass):
         X_to_pred = res_dict['X_to_pred']
         test_genes = kwargs.get("test_genes", None)
         train_genes = kwargs.get("train_genes", None)
+        use_lowercase = kwargs.get("use_lowercase", False)
         if test_genes is None and train_genes is None:
-            raise NotImplementedError("Input either train/test gene set")
+            raise AssertionError("Input either train/test gene set")
         elif test_genes is not None:
             test_genes = ut.list_or_path_get(test_genes)
-            test_genes = [g.lower() for g in test_genes]
+            if use_lowercase:
+                test_genes = [g.lower() for g in test_genes]
             eval_genes = list(set(test_genes).intersection(X_to.var.index.tolist(), X_to_pred.columns))
         else:
             train_genes = ut.list_or_path_get(train_genes)
-            train_genes = [g.lower() for g in train_genes]
+            if use_lowercase:
+                train_genes = [g.lower() for g in train_genes]
             test_genes = [g for g in X_to.var.index.tolist() if g not in train_genes]
             eval_genes = list(set(test_genes).intersection(X_to_pred.columns))
         gex_true = X_to[:, eval_genes].X.toarray()
         gex_pred = X_to_pred.loc[:, eval_genes].to_numpy()
 
-        def _cos_sim2D(a1, a2):
-            norm_sq = np.linalg.norm(a1, axis=1) * np.linalg.norm(a2, axis=1)
-            return (a1 * a2).sum(axis=1) / norm_sq
-
-        cos_sim = _cos_sim2D(gex_true, gex_pred)
+        norm_sq = np.linalg.norm(gex_true, axis=1) * np.linalg.norm(gex_pred, axis=1)
+        cos_sim = (gex_true * gex_pred).sum(axis=1) / norm_sq
         mean_cos_sim = np.nanmean(cos_sim)
         out = cls.make_standard_out(mean_cos_sim)
         return out
