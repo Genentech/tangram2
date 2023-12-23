@@ -1,9 +1,9 @@
 from enum import Enum
 
-import eval.dea_methods as dmet
-import eval.grp_methods as gmet
-import eval.map_methods as mmet
-import eval.pred_methods as pmet
+import cccv.evaluation.dea_methods as dmet
+import cccv.evaluation.grp_methods as gmet
+import cccv.evaluation.map_methods as mmet
+import cccv.evaluation.pred_methods as pmet
 
 from . import metrics as mtx
 from . import preprocess as pp
@@ -76,10 +76,10 @@ class METHODS(EnumCustom):
 
 
 class WORKFLOWS(EnumCustom):
-    import eval.workflows as wf
+    import cccv.evaluation.workflows as wf
 
     # raw workflow names
-    _OPTIONS = dict(hejin=wf.HejinWorkflow)
+    _OPTIONS = dict(tg2_base=wf.Tangram2BaselineWorkflow)
 
     # "prefixed" workflow names
     OPTIONS = {PREFIX.workflow.value + "_" + key: val for key, val in _OPTIONS.items()}

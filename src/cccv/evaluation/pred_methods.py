@@ -9,8 +9,8 @@ import tangram as tg1
 import tangram2 as tg2
 from scipy.sparse import spmatrix
 
-import eval.utils as ut
-from eval._methods import MethodClass
+import cccv.evaluation.utils as ut
+from cccv.evaluation._methods import MethodClass
 
 
 class PredMethodClass(MethodClass):
@@ -225,20 +225,19 @@ class MoscotPred(PredMethodClass):
     @classmethod
     @ut.check_in_out
     def run(
-        cls,
-        input_dict: Dict[str, Any],
-        experiment_name: str | None = None,
-        **kwargs
+        cls, input_dict: Dict[str, Any], experiment_name: str | None = None, **kwargs
     ) -> Dict[str, pd.DataFrame]:
 
         # TODO: change this -- after fixing jax dependency
         mp = input_dict["solution"]
         var_names = kwargs.get("prediction_genes", None)
         if var_names is None:
-            var_names = input_dict['X_from'].var.index.tolist()
+            var_names = input_dict["X_from"].var.index.tolist()
         device = kwargs.get("device", "cpu")
         ad_list = []
-        for genes in np.array_split(var_names, 100):  # split all genes in 100 lists of ~30 genes
+        for genes in np.array_split(
+            var_names, 100
+        ):  # split all genes in 100 lists of ~30 genes
             ad_list.append(mp.impute(var_names=genes, device=device))
         ad_ge = ad.concat(ad_list, axis=1)
 
@@ -256,10 +255,3 @@ class MoscotPred(PredMethodClass):
             to_pred_names=to_pred_names,
             to_pred_var=to_pred_var,
         )
-
-
-
-
-
-
-

@@ -1,0 +1,12 @@
+name: cccv
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - cudatoolkit
+  - cudnn
+  - pip
+  - setuptools
+  - pip:
+    - poetry==1.7.1

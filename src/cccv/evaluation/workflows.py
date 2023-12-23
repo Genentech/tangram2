@@ -2,13 +2,13 @@ from abc import ABC
 from collections import OrderedDict
 from typing import Any, Dict
 
-import eval.constants as C
-import eval.dea_methods as dmet
-import eval.grp_methods as gmet
-import eval.map_methods as mmet
-import eval.pred_methods as pmet
-import eval.utils as ut
-from eval._methods import MethodClass
+import cccv.evaluation.constants as C
+import cccv.evaluation.dea_methods as dmet
+import cccv.evaluation.grp_methods as gmet
+import cccv.evaluation.map_methods as mmet
+import cccv.evaluation.pred_methods as pmet
+import cccv.evaluation.utils as ut
+from cccv.evaluation._methods import MethodClass
 
 
 class IdentityFun:
@@ -154,7 +154,7 @@ class WorkFlowClass(MethodClass):
         cls.flow.save(res_dict, out_dir, **kwargs)
 
 
-class HejinWorkflow(WorkFlowClass):
+class Tangram2BaselineWorkflow(WorkFlowClass):
     """Implementation of Hejin's workflow"""
 
     flow = Composite(
