@@ -4,5 +4,7 @@ Tangram/
 Tangram
 *.pyc
 .#*
+.idea
 results/
 results
+poetry.lock

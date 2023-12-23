@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 
-from eval._methods import MethodClass
+from cccv.evaluation._methods import MethodClass
 
 from . import utils as ut
 
@@ -124,7 +124,11 @@ class ScanpyDEA(DEAMethodClass):
             # ]
             uni_labels = [lab for lab in uni_labels if lab in uni_groups]
             # make sure enough observations are in each group -- NOW
-            uni_labels = [lab for lab in uni_labels if (adata.obs["label"] == lab).sum() >= min_group_obs]
+            uni_labels = [
+                lab
+                for lab in uni_labels
+                if (adata.obs["label"] == lab).sum() >= min_group_obs
+            ]
             # check that the subsetted labels are at least two
             if len(uni_labels) < 2:
                 return dict(DEA=pd.DataFrame([]))

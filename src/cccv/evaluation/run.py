@@ -160,9 +160,7 @@ def run(
                 if ref_data is None:
                     for metric_name, metric_fun in object_metrics.items():
                         # compute score
-                        score = metric_fun.score(
-                                input_dict, **metric_params
-                        )
+                        score = metric_fun.score(input_dict, **metric_params)
                         # save metric
                         metric_fun.save(score, out_dir_object)
                 else:
@@ -174,9 +172,9 @@ def run(
                         for metric_name, metric_fun in object_metrics.items():
                             # compute score
                             score = metric_fun.score(
-                                input_dict, {object_name: ref_datum_value}, **metric_params,
+                                input_dict,
+                                {object_name: ref_datum_value},
+                                **metric_params,
                             )
                             # save metric
                             metric_fun.save(score, out_dir_object)
-
-

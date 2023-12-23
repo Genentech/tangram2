@@ -3,8 +3,9 @@ from abc import ABC, abstractmethod
 import anndata as ad
 import numpy as np
 import pytest
-from eval import map_methods as mm
-from eval.tests import utils as ut
+
+from cccv.evaluation import map_methods as mm
+from cccv.evaluation.tests import utils as ut
 
 
 class BaseTestMapMethods:

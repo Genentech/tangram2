@@ -4,8 +4,6 @@ from os import makedirs
 import click
 import yaml
 
-import eval as ev
-
 
 # create click group
 @click.group()
@@ -20,6 +18,8 @@ def cli():
 @click.option("-sv", "--save_mode", help="save_outputs", is_flag=True, default=False)
 @click.option("-db", "--debug", help="debug", is_flag=True, default=False)
 def eval(config: str, out_dir, save_mode: bool = False, debug: bool = True):
+    import cccv.evaluation as ev
+
     """Execute and/or evaluate CCC workflows"""
 
     # check if the config path is a directory
@@ -63,6 +63,12 @@ def eval(config: str, out_dir, save_mode: bool = False, debug: bool = True):
 
         # run workflow using config file
         ev.run.run(design, cf_out_dir, save_mode)
+
+
+# add subcommand 'eval' to group
+@cli.command("test")
+def test():
+    print("The CLI for CCCV is working")
 
 
 if __name__ == "__main__":

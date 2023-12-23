@@ -9,8 +9,8 @@ from scipy.sparse import coo_matrix
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
-import eval.map_methods as mmet
-import eval.constants as C
+import cccv.evaluation.constants as C
+import cccv.evaluation.map_methods as mmet
 
 from . import utils as ut
 
@@ -284,7 +284,9 @@ class MapRMSE(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs) -> float:
+    def score(
+        cls, res: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> float:
         # get true spatial coordinates for "from"
         S_from_true = ref_dict["S_from"]
         # get predicted spatial coordinates for "from"
@@ -309,11 +311,9 @@ class PredLeaveOutScore(PredMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(
-            cls, res_dict: Dict[str, Any], *args, **kwargs
-    ) -> float:
-        X_to = res_dict['X_to']
-        X_to_pred = res_dict['X_to_pred']
+    def score(cls, res_dict: Dict[str, Any], *args, **kwargs) -> float:
+        X_to = res_dict["X_to"]
+        X_to_pred = res_dict["X_to_pred"]
         test_genes = kwargs.get("test_genes", None)
         if test_genes is not None:
             test_genes = ut.list_or_path_get(test_genes)

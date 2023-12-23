@@ -17,7 +17,7 @@ from scipy.spatial.distance import cdist
 from spaotsc import SpaOTsc
 from torch.cuda import is_available
 
-from eval._methods import MethodClass
+from cccv.evaluation._methods import MethodClass
 
 from . import utils as ut
 
@@ -80,6 +80,7 @@ class MapMethodClass(MethodClass):
         verbose: bool = False,
         **kwargs,
     ) -> None:
+
         # shared save function for all Methods
 
         # get names of data being mapped (from)
@@ -320,7 +321,7 @@ class TangramMap(MapMethodClass):
             random_state=kwargs.pop("random_state", 42),
             wandb_log=kwargs.pop("wandb_log", False),
             wandb_config=wandb_config,
-            **kwargs
+            **kwargs,
         )
 
         # depending on mode and version, treat output differently
@@ -509,14 +510,14 @@ class SpaOTscMap(MapMethodClass):
         default_hvg_dict = dict(min_mean=0.0125, max_mean=3, min_disp=0.5)
         hvg_dict = kwargs.get("hvg_dict", {})
         # Checking to fill in default values if not all provided
-        for key,val in default_hvg_dict.items():
+        for key, val in default_hvg_dict.items():
             if key not in hvg_dict:
                 hvg_dict[key] = val
         sc.pp.highly_variable_genes(ad_from, **hvg_dict)
         default_pca_dict = dict(n_comps=40, svd_solver="arpack")
         pca_dict = kwargs.get("pca_dict", {})
         # Checking to fill in defaut values if not all provided
-        for key,val in default_pca_dict.items():
+        for key, val in default_pca_dict.items():
             if key not in pca_dict:
                 pca_dict[key] = val
         sc.tl.pca(ad_from, use_highly_variable=True, **pca_dict)
@@ -538,7 +539,9 @@ class SpaOTscMap(MapMethodClass):
         # Determining the SP distance matrix based on spatial coordinates
         default_dist_metric = dict(metric="euclidean")
         dist_metric = kwargs.get("dist_metric", {default_dist_metric})
-        sp_dmat = cdist(ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key], **dist_metric)
+        sp_dmat = cdist(
+            ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key], **dist_metric
+        )
         # Generating the DataFrame SP input
         df_sp = ad_to.to_df()
 
@@ -559,10 +562,8 @@ class SpaOTscMap(MapMethodClass):
         default_transport_plan_dict = dict(
             alpha=0.1, rho=100.0, epsilon=1.0, scaling=False
         )
-        transport_plan_dict = kwargs.get(
-            "transport_plan_dict", {}
-        )
-        for key,val in default_transport_plan_dict.items():
+        transport_plan_dict = kwargs.get("transport_plan_dict", {})
+        for key, val in default_transport_plan_dict.items():
             if key not in transport_plan_dict:
                 transport_plan_dict[key] = val
         spaotsc_obj.transport_plan(
@@ -594,26 +595,26 @@ class MoscotMap(MapMethodClass):
     outs = ["T"]
 
     def __init__(
-            self,
-            *args,
-            **kwargs,
+        self,
+        *args,
+        **kwargs,
     ):
         super().__init__()
 
     @classmethod
     def run(
-            cls,
-            input_dict: Dict[str, Any],
-            genes: List[str] | str | None = None,
-            experiment_name: str | None = None,
-            return_T_norm: bool = True,
-            # spatial_key: str = "spatial",
-            **kwargs,
+        cls,
+        input_dict: Dict[str, Any],
+        genes: List[str] | str | None = None,
+        experiment_name: str | None = None,
+        return_T_norm: bool = True,
+        # spatial_key: str = "spatial",
+        **kwargs,
     ) -> Dict[str, np.ndarray]:
         # single cell anndata
-        X_from = input_dict['X_from']
+        X_from = input_dict["X_from"]
         # spatial anndata
-        X_to = input_dict['X_to']
+        X_to = input_dict["X_to"]
 
         # get genes
         if genes is not None:
@@ -626,26 +627,25 @@ class MoscotMap(MapMethodClass):
         # set up the mapping problem
         mp = MappingProblem(adata_sc=X_from, adata_sp=X_to)
         # prepare for mapping
-        mp = mp.prepare(
-            **prep_kwargs)
+        mp = mp.prepare(**prep_kwargs)
 
         # solve mapping problem
         mp = mp.solve(
             **solve_kwargs,
         )
-        transport_plan = mp['src', 'tgt'].solution.transport_matrix
+        transport_plan = mp["src", "tgt"].solution.transport_matrix
         T_soft = transport_plan.T
 
         # output dict
         out = dict()
 
-        out['T'] = T_soft
-        out['solution'] = mp
-        out['to_names'] = X_to.obs.index.values.tolist()
-        out['from_names'] = X_from.obs.index.values.tolist()
+        out["T"] = T_soft
+        out["solution"] = mp
+        out["to_names"] = X_to.obs.index.values.tolist()
+        out["from_names"] = X_from.obs.index.values.tolist()
 
         if return_T_norm:
-            T_norm = T_soft / T_soft.sum(axis=1).reshape(-1,1)
-            out['T_norm'] = T_norm
+            T_norm = T_soft / T_soft.sum(axis=1).reshape(-1, 1)
+            out["T_norm"] = T_norm
 
         return out
