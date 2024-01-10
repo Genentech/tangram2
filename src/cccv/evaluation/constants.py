@@ -9,6 +9,16 @@ from . import metrics as mtx
 from . import preprocess as pp
 
 
+class CONF(Enum):
+    data = "data"
+    wfs = "workflows"
+    metrics = "metrics"
+    pp = "preprocess"
+    recipe = "recipe"
+    params = "params"
+    eval = "evaluation"
+
+
 class PREFIX(Enum):
     # prefixes for each method
     mapping = "map"
