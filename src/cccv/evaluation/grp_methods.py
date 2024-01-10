@@ -6,7 +6,7 @@ import anndata as ad
 import numpy as np
 import pandas as pd
 
-from eval._methods import MethodClass
+from cccv.evaluation._methods import MethodClass
 
 from . import _grp_utils as gut
 from . import utils as ut

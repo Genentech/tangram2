@@ -4,5 +4,9 @@ Tangram/
 Tangram
 *.pyc
 .#*
+.idea
 results/
 results
+poetry.lock
+flycheck_run.py
+src/cccv/evaluation/_old_run.py

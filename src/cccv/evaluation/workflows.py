@@ -2,13 +2,13 @@ from abc import ABC
 from collections import OrderedDict
 from typing import Any, Dict
 
-import eval.constants as C
-import eval.dea_methods as dmet
-import eval.grp_methods as gmet
-import eval.map_methods as mmet
-import eval.pred_methods as pmet
-import eval.utils as ut
-from eval._methods import MethodClass
+import cccv.evaluation.constants as C
+import cccv.evaluation.dea_methods as dmet
+import cccv.evaluation.grp_methods as gmet
+import cccv.evaluation.map_methods as mmet
+import cccv.evaluation.pred_methods as pmet
+import cccv.evaluation.utils as ut
+from cccv.evaluation._methods import MethodClass
 
 
 class IdentityFun:
@@ -37,7 +37,12 @@ class Composite:
         self,
         methods: Dict[str, str],
         use_fuzzy_match: bool = False,
+        check_compatibility: bool = True,
     ):
+
+        # if compatibility should be checked
+        self.cc = check_compatibility
+
         # list method names, for 'info' support
         self.methods = []
 
@@ -68,22 +73,24 @@ class Composite:
                     # add method to dictionary of methods
                     self._methods[method_key] = method_fun
                     # update available variables
-                    available_vars += method_fun.ins
-                    available_vars += method_fun.outs
+                    if self.cc:
+                        available_vars += method_fun.ins
+                        available_vars += method_fun.outs
 
                 # if not first method to be added
                 else:
                     # check if the method to add is compatible with chain
-                    is_comp = all([x in available_vars for x in method_fun.ins])
-                    # if not compatible raise error
-                    assert is_comp, "{} is not compatible with {}".format(
-                        method_name, self.methods[k - 1]
-                    )
+                    if self.cc:
+                        is_comp = all([x in available_vars for x in method_fun.ins])
+                        # if not compatible raise error
+                        assert is_comp, "{} is not compatible with {}".format(
+                            method_name, self.methods[k - 1]
+                        )
+                        # update set of available variables
+                        available_vars += method_fun.outs
 
                     # if compatible, add to list of methods
                     self._methods[method_key] = method_fun
-                    # update set of available variables
-                    available_vars += method_fun.outs
             else:
                 raise NotImplementedError
 
@@ -96,10 +103,12 @@ class Composite:
 
         # execute chain of methods in workflow
         for method_key in self._methods.keys():
+            method_kwargs = ut.ifnonereturn(kwargs.get(method_key), {})
+
             out = self._methods[method_key].run(
                 input_dict,
                 experiment_name=experiment_name,
-                **kwargs.get(method_key, {}),
+                **method_kwargs,
             )
             # update input dict
             input_dict.update(out)
@@ -154,7 +163,7 @@ class WorkFlowClass(MethodClass):
         cls.flow.save(res_dict, out_dir, **kwargs)
 
 
-class HejinWorkflow(WorkFlowClass):
+class Tangram2BaselineWorkflow(WorkFlowClass):
     """Implementation of Hejin's workflow"""
 
     flow = Composite(

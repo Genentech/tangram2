@@ -9,8 +9,8 @@ from scipy.sparse import coo_matrix
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
-import eval.map_methods as mmet
-import eval.constants as C
+import cccv.evaluation.constants as C
+import cccv.evaluation.map_methods as mmet
 
 from . import utils as ut
 
@@ -284,7 +284,9 @@ class MapRMSE(MapMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(cls, res: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs) -> float:
+    def score(
+        cls, res: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> float:
         # get true spatial coordinates for "from"
         S_from_true = ref_dict["S_from"]
         # get predicted spatial coordinates for "from"

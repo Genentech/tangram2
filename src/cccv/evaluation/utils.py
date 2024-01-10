@@ -13,6 +13,12 @@ from thefuzz import fuzz
 W = TypeVar("W")
 
 
+def ifnonereturn(obj, return_object: None):
+    if obj is None:
+        return return_object
+    return obj
+
+
 def get_from_dict_with_fuzzy(
     key: str,
     base_dict: Dict[str, Any],
