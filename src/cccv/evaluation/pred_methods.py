@@ -38,49 +38,6 @@ class PredMethodClass(MethodClass):
     ) -> Dict[str, Any]:
         pass
 
-    @classmethod
-    def save(
-        cls,
-        res_dict: Dict[str, Any],
-        out_dir: str,
-        compress: bool = False,
-        **kwargs,
-    ) -> None:
-        # common save method for pred methods
-        # tries to save X_to_pred and X_from_pred
-        # if they exist in the res_dict
-
-        # loop over object prefixes
-        for obj_ind in ["to_pred", "from_pred"]:
-
-            # get object name
-            obj_name = f"X_{obj_ind}"
-
-            # grab object from results dict
-            # if not available return None
-            obj = res_dict.get(obj_name, None)
-
-            # if object is present
-            if obj is not None:
-
-                # create a data_frame using the object
-                obj_df = pd.DataFrame(
-                    obj,
-                    index=res_dict[f"{obj_ind}_names"],
-                    columns=res_dict[f"{obj_ind}_var"],
-                )
-
-                # define output path
-                out_pth = osp.join(out_dir, f"{obj_name}.csv")
-
-                # write to .gz if compressed output is specified
-                if compress:
-                    out_pth = out_pth + ".gz"
-                    ut.to_csv_gzip(obj_df, out_pth)
-                # write to .csv if no compression specified
-                else:
-                    obj_df.to_csv(out_pth)
-
 
 class TangramPred(PredMethodClass):
     # specify which tangram module to use

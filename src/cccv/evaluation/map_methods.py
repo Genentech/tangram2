@@ -1,7 +1,7 @@
 import os.path as osp
 from abc import ABC, abstractmethod
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, List, Literal
+from typing import Any, Callable, Dict, List, Literal
 
 import anndata as ad
 import CeLEry as cel
@@ -17,9 +17,8 @@ from scipy.spatial.distance import cdist
 from spaotsc import SpaOTsc
 from torch.cuda import is_available
 
+import cccv.evaluation.utils as ut
 from cccv.evaluation._methods import MethodClass
-
-from . import utils as ut
 
 
 class MapMethodClass(MethodClass):
@@ -69,64 +68,6 @@ class MapMethodClass(MethodClass):
             out_dict["T"] = T_sparse.toarray()
 
         return out_dict
-
-    @classmethod
-    def save(
-        cls,
-        res_dict: Dict[str, Any],
-        out_dir: str,
-        save_keys: Literal["T", "S_from", "S_to"] | str | None = None,
-        compress: bool = False,
-        verbose: bool = False,
-        **kwargs,
-    ) -> None:
-
-        # shared save function for all Methods
-
-        # get names of data being mapped (from)
-        from_names = res_dict["from_names"]
-        # get names of data we map onto (to)
-        to_names = res_dict["to_names"]
-
-        # to save with loop, less code
-        # format is {object_name : (row_names,col_names)}
-        # in the output
-        save_items = dict(
-            T=(to_names, from_names),
-            S_from=(from_names, ["x", "y"]),
-            S_to=(to_names, ["x", "y"]),
-        )
-
-        # filter to only include objects we
-        # specified to save, if None then save all
-        if save_keys is not None:
-            if isinstance(save_keys, str):
-                save_keys = [save_keys]
-            save_items = {
-                key: val for key, val in save_items.items() if key in save_keys
-            }
-
-        # save each object
-        for key, (index, columns) in save_items.items():
-            if verbose:
-                print(f"Saving object: {key}")
-            if key in res_dict:
-                # create data frame
-                matrix = res_dict[key]
-                df = pd.DataFrame(
-                    matrix.toarray() if isinstance(matrix, spmatrix) else matrix,
-                    index=index,
-                    columns=columns,
-                )
-
-                # assemble out path
-                out_pth = osp.join(out_dir, key + ".csv")
-                # if save as .gz (compressed)
-                if compress:
-                    out_pth = out_pth + ".gz"
-                    ut.to_csv_gzip(df, out_pth)
-                else:
-                    df.to_csv(out_pth)
 
 
 class RandomMap(MapMethodClass):
@@ -317,7 +258,7 @@ class TangramMap(MapMethodClass):
             mode=mode,
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
-            cluster_label=kwargs.pop("cluster_label"),
+            cluster_label=kwargs.pop("cluster_label", None),
             random_state=kwargs.pop("random_state", 42),
             wandb_log=kwargs.pop("wandb_log", False),
             wandb_config=wandb_config,
@@ -412,6 +353,18 @@ class TangramV2Map(TangramMap):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        pass
+
+    @classmethod
+    @property
+    def custom_save_funcs(cls) -> Dict[str, Callable]:
+        _funcs = dict(w=cls._save_w)
+        return _funcs
+
+    @classmethod
+    def _save_w(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
+        # update this function to add
+        # save method for the 'w'
         pass
 
 
