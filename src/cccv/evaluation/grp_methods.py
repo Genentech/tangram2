@@ -31,13 +31,6 @@ class GroupMethodClass(MethodClass):
     ) -> Dict[str, pd.DataFrame]:
         pass
 
-    @classmethod
-    def save(cls, res_dict: Dict[str, pd.DataFrame], out_dir: str, **kwargs):
-        for key in ["D_to", "D_from"]:
-            df = res_dict[key]
-            out_pth = osp.join(out_dir, key + ".csv")
-            df.to_csv(out_pth)
-
 
 class ThresholdGroup(GroupMethodClass):
     # Threshold based grouping
