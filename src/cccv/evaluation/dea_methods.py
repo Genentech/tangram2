@@ -30,18 +30,6 @@ class DEAMethodClass(MethodClass):
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
         pass
 
-    @classmethod
-    def save(
-        cls,
-        res_dict: Dict[str, Any],
-        out_dir: str,
-        **kwargs,
-    ) -> None:
-        dea = res_dict["DEA"]
-        for key, df in dea.items():
-            out_pth = osp.join(out_dir, f"{key}_vs_rest_dea.csv")
-            df.to_csv(out_pth)
-
 
 class ScanpyDEA(DEAMethodClass):
     # Scanpy DEA Method class
