@@ -162,43 +162,46 @@ def read_input_object(
     **kwargs,
 ):
     # function to read a single file of multiple different types
-
-    # if anndata object
-    if path.endswith(".h5ad"):
-        # read
-        obj = ad.read_h5ad(path)
-        # adjust for layer
-        if adata_key is not None:
-            obj = get_ad_value(obj, key=adata_key)
-
-        elif layer is not None:
-            obj.X = obj.layers[layer]
-
-        # return np.ndarry if specified
-        if return_array:
-            if hasattr(obj, "X"):
-                obj = obj.X
-            # check if sparse
-            if isinstance(obj, spmatrix):
-                obj = obj.todense()
-        elif return_df:
-            if hasattr(obj, "to_df"):
-                obj = obj.to_df()
-        else:
-            pass
-
-    # if path to csv or tsv file
-    elif path.endswith((".csv", ".tsv")):
-        obj = pd.read_csv(path, header=0, index_col=0)
-        # return np.ndarray if specified
-        if return_array:
-            obj = obj.values
-
-    # if path to numpy object
-    elif path.endswith(".npy"):
-        obj = np.load(path)
+    if path is None:
+        obj = None
     else:
-        raise NotImplementedError
+        # if anndata object
+        if path.endswith(".h5ad"):
+            # read
+            obj = ad.read_h5ad(path)
+            # adjust for layer
+            if adata_key is not None:
+                obj = get_ad_value(obj, key=adata_key)
+
+            elif layer is not None:
+                obj.X = obj.layers[layer]
+
+            # return np.ndarry if specified
+            if return_array:
+                if hasattr(obj, "X"):
+                    obj = obj.X
+                # check if sparse
+                if isinstance(obj, spmatrix):
+                    obj = obj.todense()
+            elif return_df:
+                if hasattr(obj, "to_df"):
+                    obj = obj.to_df()
+            else:
+                pass
+
+        # if path to csv or tsv file
+        elif path.endswith((".csv", ".tsv")):
+            obj = pd.read_csv(path, header=0, index_col=0)
+            # return np.ndarray if specified
+            if return_array:
+                obj = obj.values
+
+        # if path to numpy object
+        elif path.endswith(".npy"):
+            obj = np.load(path)
+
+        else:
+            raise NotImplementedError
 
     return obj
 
