@@ -315,11 +315,13 @@ class PredLeaveOutScore(PredMetricClass):
             cls, res_dict: Dict[str, Any], ref_dict: None,  *args, **kwargs
     ) -> float:
         X_to = res_dict['X_to']
+        assert X_to is not None, "X_to needs to be in input dictionary"
         X_to_pred = res_dict['X_to_pred']
+        assert X_to_pred is not None, "X_to_pred needs to be in input dictionary"
         test_genes = kwargs.get("test_genes", None)
         train_genes = kwargs.get("train_genes", None)
         use_lowercase = kwargs.get("use_lowercase", False)
-        if test_genes is None and train_genes is None:
+        if (test_genes is None) and (train_genes is None):
             raise AssertionError("Input either train/test gene set")
         elif test_genes is not None:
             test_genes = ut.list_or_path_get(test_genes)
@@ -333,7 +335,12 @@ class PredLeaveOutScore(PredMetricClass):
             test_genes = [g for g in X_to.var.index.tolist() if g not in train_genes]
             eval_genes = list(set(test_genes).intersection(X_to_pred.columns))
         gex_true = X_to[:, eval_genes].X.toarray()
-        gex_pred = X_to_pred.loc[:, eval_genes].to_numpy()
+        if isinstance(X_to_pred, ad.AnnData):
+            gex_pred = X_to_pred.to_df().loc[:, eval_genes].values
+        elif isinstance(X_to_pred, pd.DataFrame):
+            gex_pred = X_to_pred.loc[:, eval_genes].values
+        else:
+            raise NotImplementedError
 
         norm_sq = np.linalg.norm(gex_true, axis=1) * np.linalg.norm(gex_pred, axis=1)
         cos_sim = (gex_true * gex_pred).sum(axis=1) / norm_sq
