@@ -7,6 +7,18 @@ import cccv.evaluation.pred_methods as pmet
 
 from . import metrics as mtx
 from . import preprocess as pp
+from . import save_methods as sm
+
+
+class CONF(Enum):
+    data = "data"
+    wfs = "workflows"
+    metrics = "metrics"
+    pp = "preprocess"
+    recipe = "recipe"
+    params = "params"
+    eval = "evaluation"
+    save = "save"
 
 
 class CONF(Enum):

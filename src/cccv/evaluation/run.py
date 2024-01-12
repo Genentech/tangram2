@@ -124,4 +124,5 @@ def run(
             use_fuzzy_match=use_fuzzy_match,
             verbose=verbose,
             root_dir=root_dir,
+            save_mode=save_mode,
         )
