@@ -81,17 +81,17 @@ class StandardSaveMethods:
         obj_name = f"X_{obj}_pred"
         # grab object from results dict
         # if not available return None
-        obj = res_dict[obj_name]
+        obj_X = res_dict[obj_name]
         # if object is present
         # create a data_frame using the object
         obj_df = pd.DataFrame(
-            obj,
-            index=res_dict[f"{obj_name}_pred_names"],
-            columns=res_dict[f"{obj_name}_pred_var"],
+            obj_X,
+            index=res_dict[f"{obj}_pred_names"],
+            columns=res_dict[f"{obj}_pred_var"],
         )
 
         out_pth = osp.join(out_dir, obj_name + ".csv")
-        cls.save_df(df, out_pth, **kwargs)
+        cls.save_df(obj_df, out_pth, **kwargs)
 
     @classmethod
     def _save_X_to_pred(
@@ -100,11 +100,11 @@ class StandardSaveMethods:
         out_dir: str,
         **kwargs,
     ):
-        cls._save_X_pred(res_dict, "to", **kwargs)
+        cls._save_X_pred(res_dict, "to", out_dir, **kwargs)
 
     @classmethod
     def _save_X_from_pred(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
-        cls._save_X_pred(res_dict, "from", **kwargs)
+        cls._save_X_pred(res_dict, "from", out_dir, **kwargs)
 
     @classmethod
     def _save_D(cls, res_dict: Dict[str, Any], obj: str, out_dir: str, **kwargs):
