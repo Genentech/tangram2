@@ -59,6 +59,7 @@ def make_fake_T(
     t_row_sum: float | None = 1,
     t_col_sum: float | None = None,
     res_dict: Dict[str, Any] | None = None,
+    return_sparse: bool = False,
     **kwargs,
 ):
 
@@ -77,25 +78,38 @@ def make_fake_T(
     else:
         from_names = [f"from_{x}" for x in range(n_from)]
 
-    T = np.random.random((n_to, n_from))
+    if return_sparse:
+        col_idx = np.arange(n_from).astype(int)
+        row_idx = np.random.choice(n_to, replace=True, size=n_from).astype(int)
 
-    match (t_row_sum, t_col_sum):
-        case (_, None):
-            sum_axis = 1
-        case (None, _):
-            sum_axis = 0
-        case (None, None):
-            sum_axis = None
-        case (_, _):
-            raise AssertionError("Can't specify sum for both row/col")
+        ordr = np.argsort(col_idx)
 
-    if sum_axis is not None:
-        T_div = T.sum(axis=sum_axis, keepdims=True)
-        T = np.divide(T, T_div)
+        row_idx = row_idx[ordr]
+        col_idx = col_idx[ordr]
 
-    res_dict["T"] = T
-    res_dict["from_names"] = from_names
-    res_dict["to_name"] = to_names
+        T = coo_matrix((np.ones(n_cols), (row_idx, col_idx)), shape=(n_to, n_from))
+
+    else:
+
+        T = np.random.random((n_to, n_from))
+
+        match (t_row_sum, t_col_sum):
+            case (_, None):
+                sum_axis = 1
+            case (None, _):
+                sum_axis = 0
+            case (None, None):
+                sum_axis = None
+            case (_, _):
+                raise AssertionError("Can't specify sum for both row/col")
+
+        if sum_axis is not None:
+            T_div = T.sum(axis=sum_axis, keepdims=True)
+            T = np.divide(T, T_div)
+
+        res_dict["T"] = T
+        res_dict["from_names"] = from_names
+        res_dict["to_name"] = to_names
 
     return res_dict
 
