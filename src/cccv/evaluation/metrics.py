@@ -178,6 +178,8 @@ class HardMapMetricClass(MapMetricClass):
                 ),
                 shape=obj["shape"],
             ).T
+        elif isinstance(obj, np.ndarray):
+            new_obj = coo_matrix(obj)
         else:
             new_obj = obj
 
