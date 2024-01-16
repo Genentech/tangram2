@@ -131,7 +131,6 @@ class DEAMetricClass(MetricClass):
 
     @classmethod
     def get_gt(cls, input_dict: Dict[Any, str], to_lower: bool = True, **kwargs):
-
         # ground truth should be a data frame in csv
         # two columns are required signal and effect
         # the signal column holds the feature we condition on
@@ -208,7 +207,6 @@ class MapJaccardDist(HardMapMetricClass):
     def score(
         cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
-
         # get predicted map
         T_true = cls._pp(ref_dict["T"])
 
@@ -311,41 +309,46 @@ class PredLeaveOutScore(PredMetricClass):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def score(
-            cls, res_dict: Dict[str, Any], ref_dict: None,  *args, **kwargs
-    ) -> float:
-        X_to = res_dict['X_to']
+    def score(cls, res_dict: Dict[str, Any], ref_dict: None = None, **kwargs) -> float:
+        X_to = res_dict.get("X_to")
         assert X_to is not None, "X_to needs to be in input dictionary"
-        X_to_pred = res_dict['X_to_pred']
+
+        X_to_pred = res_dict.get("X_to_pred")
         assert X_to_pred is not None, "X_to_pred needs to be in input dictionary"
+
+        if isinstance(X_to_pred, ad.AnnData):
+            X_to_pred = X_to_pred.to_df()
+        elif not isinstance(X_to_pred, pd.DataFrame):
+            raise NotImplementedError
+
         test_genes = kwargs.get("test_genes", None)
         train_genes = kwargs.get("train_genes", None)
         use_lowercase = kwargs.get("use_lowercase", False)
+
         if (test_genes is None) and (train_genes is None):
             raise AssertionError("Input either train/test gene set")
         elif test_genes is not None:
             test_genes = ut.list_or_path_get(test_genes)
             if use_lowercase:
                 test_genes = [g.lower() for g in test_genes]
-            eval_genes = list(set(test_genes).intersection(X_to.var.index.tolist(), X_to_pred.columns))
+            eval_genes = list(
+                set(test_genes).intersection(X_to.var.index.tolist(), X_to_pred.columns)
+            )
         else:
             train_genes = ut.list_or_path_get(train_genes)
             if use_lowercase:
                 train_genes = [g.lower() for g in train_genes]
             test_genes = [g for g in X_to.var.index.tolist() if g not in train_genes]
             eval_genes = list(set(test_genes).intersection(X_to_pred.columns))
+
         gex_true = X_to[:, eval_genes].X.toarray()
-        if isinstance(X_to_pred, ad.AnnData):
-            gex_pred = X_to_pred.to_df().loc[:, eval_genes].values
-        elif isinstance(X_to_pred, pd.DataFrame):
-            gex_pred = X_to_pred.loc[:, eval_genes].values
-        else:
-            raise NotImplementedError
+        gex_pred = X_to_pred.loc[:, eval_genes].values
 
         norm_sq = np.linalg.norm(gex_true, axis=1) * np.linalg.norm(gex_pred, axis=1)
         cos_sim = (gex_true * gex_pred).sum(axis=1) / norm_sq
         mean_cos_sim = np.nanmean(cos_sim)
         out = cls.make_standard_out(mean_cos_sim)
+
         return out
 
 
@@ -362,7 +365,6 @@ class DEAHyperGeom(DEAMetricClass):
     def score(
         cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
-
         # TODO: I don't like the dependency on X_from
         population = set(res["X_from"].var.index.values)
         pop_size = len(population)
@@ -412,7 +414,6 @@ class DEAAuc(DEAMetricClass):
     def score(
         cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
-
         # TODO: again, don't like dependence on X_from
         genes = res["X_from"].var.index.values
 
