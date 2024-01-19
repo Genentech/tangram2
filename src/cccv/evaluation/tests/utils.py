@@ -41,12 +41,17 @@ def make_fake_X(
     n_features_from=15,
     n_labels_to=5,
     n_labels_from=3,
+    include_pred: bool = False,
     **kwargs,
 ):
     X_to = make_fake_adata(n_to, n_features_to, n_labels_to)
     X_from = make_fake_adata(n_from, n_features_from, n_labels_from)
 
     res_dict = dict(X_to=X_to, X_from=X_from)
+    if include_pred:
+        res_dict["X_to_pred"] = X_to.copy()
+        res_dict["X_from_pred"] = X_from.copy()
+
     return res_dict
 
 
