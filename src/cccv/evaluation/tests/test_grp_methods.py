@@ -45,7 +45,6 @@ class TestThresholdGroup:
         feature_name = res_dict["X_from"].var_names[feature_id]
 
         if n_covariates > 0:
-            uni_labels = np.unique(res_dict["X_from"].obs["labels"])
             label_col = res_dict["X_from"].obs.columns[0]
             add_covariates = {"from": [label_col]}
         else:
