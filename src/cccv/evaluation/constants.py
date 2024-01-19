@@ -55,8 +55,8 @@ class METHODS(EnumCustom):
         max_corr=mmet.ArgMaxCorrMap,
         tangram_v1=mmet.TangramV1Map,
         tangram_v2=mmet.TangramV2Map,
-        CeLEry=mmet.CeLEryMap,
-        SpaOTsc=mmet.SpaOTscMap,
+        celery=mmet.CeLEryMap,
+        spaotsc=mmet.SpaOTscMap,
         moscot=mmet.MoscotMap,
     )
 
@@ -154,9 +154,9 @@ class PREPROCESS(EnumCustom):
     OPTIONS = dict(
         standard_scanpy=pp.StandardScanpy,
         normalize_totaly=pp.NormalizeTotal,
-        CeLEry=pp.CeLEryPP,
+        celery=pp.CeLEryPP,
         tangramv1=pp.StandardTangramV1,
         tangramv2=pp.StandardTangramV2,
-        SpaOTsc=pp.StandardSpaOTsc,
+        spaotsc=pp.StandardSpaOTsc,
         moscot=pp.StandardMoscot,
     )

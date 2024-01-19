@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Union
 import anndata as ad
 import numpy as np
 import pandas as pd
-from scipy.sparse import coo_matrix
+from scipy.sparse import coo_matrix, spmatrix
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
@@ -176,7 +176,7 @@ class HardMapMetricClass(MapMetricClass):
                     (obj["row_self"], obj["row_target"]),
                 ),
                 shape=obj["shape"],
-            ).T
+            )
         else:
             new_obj = obj
 
@@ -213,29 +213,14 @@ class MapJaccardDist(HardMapMetricClass):
         # get true map
         T_pred = cls._pp(res_dict["T"])
 
-        # number of rows
-        n_rows = T_pred.shape[0]
+        if isinstance(T_pred, spmatrix) and isinstance(T_pred, spmatrix):
+            inter = np.sum(T_pred.multiply(T_true))
+        elif isinstance(T_pred, np.ndarray) and isinstance(T_pred, np.ndarray):
+            inter = np.sum(T_pred * T_true)
 
-        # jaccard helper function
-        def _jaccard(u, v):
-            inter = np.sum(u * v)
-            union = np.sum((u + v) > 0)
-            if union < 1:
-                return 1
-            return inter / union
+        union = np.sum((T_pred + T_true) > 0)
 
-        jc = 0
-        # we do it like this to keep down memory usage
-        for ii in range(n_rows):
-            # get value for row ("to") i in predicted map
-            u_a = T_pred.getrow(ii).toarray().flatten()
-            # get value for row i ("to") in true map
-            v_a = T_true.getrow(ii).toarray().flatten()
-            # compute jaccard distance between true and pred
-            jc += _jaccard(u_a, v_a)
-
-        # mean
-        jc /= n_rows
+        jc = inter / union
 
         # create output object
         out = cls.make_standard_out(jc)
@@ -253,13 +238,22 @@ class MapAccuracy(HardMapMetricClass):
     def score(
         cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
-        T_true = ref_dict["T"]
-        T_pred = res_dict["T"]
+
+        # get predicted map
+        T_true = cls._pp(ref_dict["T"])
+
+        # get true map
+        T_pred = cls._pp(res_dict["T"])
 
         # sparse matrices do not work with A * B
-        inter = T_pred.multiply(T_true)
-        inter = np.sum(inter)
-        full = np.sum(T_true)
+        # inter = T_pred.multiply(T_true)
+
+        # inter = np.sum(inter)
+        # full = np.sum(T_true)
+
+        inter = np.sum(T_pred == T_true)
+        full = T_true.shape[0] * T_true.shape[1]
+
         acc = inter / full
 
         out = cls.make_standard_out(acc)
