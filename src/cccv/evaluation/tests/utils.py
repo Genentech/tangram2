@@ -95,18 +95,22 @@ def make_fake_T(
         T = np.random.random((n_to, n_from))
 
         match (t_row_sum, t_col_sum):
-            case (_, None):
-                sum_axis = 1
-            case (None, _):
-                sum_axis = 0
             case (None, None):
                 sum_axis = None
+                multiplier = 1
+            case (_, None):
+                sum_axis = 1
+                multiplier = t_row_sum
+            case (None, _):
+                sum_axis = 0
+                multiplier = t_col_sum
             case (_, _):
                 raise AssertionError("Can't specify sum for both row/col")
 
         if sum_axis is not None:
             T_div = T.sum(axis=sum_axis, keepdims=True)
             T = np.divide(T, T_div)
+            T = T * multiplier
 
     res_dict["T"] = T
     res_dict["from_names"] = from_names
@@ -156,7 +160,6 @@ def make_fake_D(
                 n_to = res_dict["X_to"].shape[0]
             elif "X_to_pred" in res_dict:
                 n_to = res_dict["X_to_pred"].shape[0]
-
             if "X_from" in res_dict:
                 n_from = res_dict["X_from"].shape[0]
 
@@ -164,3 +167,15 @@ def make_fake_D(
         mat = np.concatenate(
             [np.random.randint(0, 2, size=(n_row, 1)) for x in range(n_col)], axis=1
         )
+        row_names = [f"{row_prefix}_{x}" for x in range(n_row)]
+        col_names = [f"{col_prefix}_{x}" for x in range(n_col)]
+        df = pd.DataFrame(mat, index=row_names, columns=col_names)
+        return df
+
+    D_to = _gen_D(n_to, n_grp_to, row_prefix="to", col_prefix="cat_to")
+    D_from = _gen_D(n_from, n_grp_from, row_prefix="from", col_prefix="cat_from")
+
+    res_dict["D_to"] = D_to
+    res_dict["D_from"] = D_from
+
+    return res_dict
