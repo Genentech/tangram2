@@ -132,8 +132,8 @@ def make_fake_S(
     if "T" in res_dict:
         n_to, n_from = res_dict["T"].shape
 
-    S_to = np.random.unform(0, 10, size=(n_to, 2))
-    S_from = np.random.unform(0, 10, size=(n_from, 2))
+    S_to = np.random.uniform(0, 10, size=(n_to, 2))
+    S_from = np.random.uniform(0, 10, size=(n_from, 2))
 
     res_dict["S_to"] = S_to
     res_dict["S_from"] = S_from
@@ -167,3 +167,15 @@ def make_fake_D(
         mat = np.concatenate(
             [np.random.randint(0, 2, size=(n_row, 1)) for x in range(n_col)], axis=1
         )
+        row_names = [f"{row_prefix}_{x}" for x in range(n_row)]
+        col_names = [f"{col_prefix}_{x}" for x in range(n_col)]
+        df = pd.DataFrame(mat, index=row_names, columns=col_names)
+        return df
+
+    D_to = _gen_D(n_to, n_grp_to, row_prefix="to", col_prefix="cat_to")
+    D_from = _gen_D(n_from, n_grp_from, row_prefix="from", col_prefix="cat_from")
+
+    res_dict["D_to"] = D_to
+    res_dict["D_from"] = D_from
+
+    return res_dict
