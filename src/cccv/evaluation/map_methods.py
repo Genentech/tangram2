@@ -18,6 +18,7 @@ from spaotsc import SpaOTsc
 from torch.cuda import is_available
 
 import cccv.evaluation.utils as ut
+from cccv.evaluation import _map_utils as mut
 from cccv.evaluation._methods import MethodClass
 
 
@@ -62,6 +63,7 @@ class MapMethodClass(MethodClass):
         T_sparse = coo_matrix(
             (np.ones(n_cols), (row_idx, col_idx)), shape=(n_rows, n_cols)
         )
+
         if return_sparse:
             out_dict["T"] = T_sparse
         else:
@@ -228,7 +230,6 @@ class TangramMap(MapMethodClass):
         experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
-
         # n_obs in "from"
         n_cols = input_dict["X_from"].shape[0]
         # n_obs in "to"
@@ -251,18 +252,30 @@ class TangramMap(MapMethodClass):
         wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name
 
-        # map cells in "from" to "to"
-        tg_out = cls.tg.map_cells_to_space(
+        random_state = kwargs.get("random_state")
+        if random_state is None:
+            random_state = kwargs.get("seed")
+            if random_state is None:
+                random_state = 42
+
+        method_params = dict(
             adata_sc=ad_from,
             adata_sp=ad_to,
             mode=mode,
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
             cluster_label=kwargs.pop("cluster_label", None),
-            random_state=kwargs.pop("random_state", 42),
-            wandb_log=kwargs.pop("wandb_log", False),
-            wandb_config=wandb_config,
-            **kwargs,
+            random_state=random_state,
+        )
+
+        if cls.version == "2":
+            method_params
+            method_params["wandb_log"] = (kwargs.pop("wandb_log", False),)
+            method_params["wandb_config"] = wandb_config
+
+        # map cells in "from" to "to"
+        tg_out = cls.tg.map_cells_to_space(
+            **method_params,
         )
 
         # depending on mode and version, treat output differently
@@ -300,30 +313,15 @@ class TangramMap(MapMethodClass):
         out["from_names"] = ad_from.obs.index.values.tolist()
 
         # convert soft map (T) to hard map if specified
-        if hard_map and (pos_by_argmax or pos_by_weight):
-            col_idx = np.arange(n_cols)
-
-            # assign hard positions by argmax
-            if pos_by_weight:
-                # build kd tree of spatial coordinates in "to"
-                kd = cKDTree(S_to)
-                _, idxs = kd.query(S_from, k=2)
-
-                row_idx = idxs[:, 1::].flatten()
-
-            # assign hard positions by argmax
-            if pos_by_argmax:
-                row_idx = np.argmax(T_soft, axis=0).flatten()
-
-            # save hard map as sparse matrix
-            cls.hard_update_out_dict(
-                out,
-                row_idx,
-                col_idx,
-                n_rows,
-                n_cols,
-                return_sparse,
-            )
+        mut.soft_T_to_hard(
+            cls,
+            T=out["T"],
+            out=out,
+            hard_map=hard_map,
+            pos_by_argmax=pos_by_argmax,
+            pos_by_weight=pos_by_weight,
+            return_sparse=return_sparse,
+        )
 
         return out
 
@@ -447,15 +445,22 @@ class SpaOTscMap(MapMethodClass):
         input_dict: Dict[str, Any],
         to_spatial_key: str = "spatial",
         experiment_name: str | None = None,
+        hard_map: bool = False,
+        return_sparse: bool = False,
+        seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
-
         # anndata of "from"
         ad_from = input_dict["X_from"]
         # anndata of "to"
         ad_to = input_dict["X_to"]
         # spatial coordinates of "to"
         S_to = ad_to.obsm[to_spatial_key]
+
+        if seed is not None:
+            import ot
+
+            ot.backend.NumpyBackend.seed(seed)
 
         # Processing the SC data
         # Generate PCA40 from the X_from preprocessed data
@@ -491,7 +496,7 @@ class SpaOTscMap(MapMethodClass):
         input_dict["X_to"] = ad_to
         # Determining the SP distance matrix based on spatial coordinates
         default_dist_metric = dict(metric="euclidean")
-        dist_metric = kwargs.get("dist_metric", {default_dist_metric})
+        dist_metric = kwargs.get("dist_metric", default_dist_metric)
         sp_dmat = cdist(
             ad_to.obsm[to_spatial_key], ad_to.obsm[to_spatial_key], **dist_metric
         )
@@ -538,6 +543,17 @@ class SpaOTscMap(MapMethodClass):
         # observation named for "from"
         out["from_names"] = ad_from.obs.index.values.tolist()
 
+        # convert soft map (T) to hard map if specified
+        mut.soft_T_to_hard(
+            cls,
+            T=out["T"],
+            out=out,
+            hard_map=hard_map,
+            pos_by_argmax=True,
+            pos_by_weight=False,
+            return_sparse=return_sparse,
+        )
+
         return out
 
 
@@ -561,9 +577,15 @@ class MoscotMap(MapMethodClass):
         genes: List[str] | str | None = None,
         experiment_name: str | None = None,
         return_T_norm: bool = True,
+        hard_map: bool = False,
         # spatial_key: str = "spatial",
+        return_sparse: bool = False,
+        seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray]:
+        if seed is not None:
+            np.random.seed(seed)
+
         # single cell anndata
         X_from = input_dict["X_from"]
         # spatial anndata
@@ -573,7 +595,15 @@ class MoscotMap(MapMethodClass):
         if genes is not None:
             genes = ut.list_or_path_get(genes)
 
+        # TODO: this does not run
         prep_kwargs = kwargs.get("prepare", {})
+
+        if prep_kwargs is None:
+            if "X_pca" in X_from.obsm:
+                prep_kwargs["sc_attr"] = dict(attr="obsm", key="X_pca")
+            else:
+                prep_kwargs["sc_attr"] = dict(attr="X")
+
         prep_kwargs["var_names"] = genes
         solve_kwargs = kwargs.get("solve", {})
 
@@ -587,7 +617,7 @@ class MoscotMap(MapMethodClass):
             **solve_kwargs,
         )
         transport_plan = mp["src", "tgt"].solution.transport_matrix
-        T_soft = transport_plan.T
+        T_soft = transport_plan
 
         # output dict
         out = dict()
@@ -600,5 +630,16 @@ class MoscotMap(MapMethodClass):
         if return_T_norm:
             T_norm = T_soft / T_soft.sum(axis=1).reshape(-1, 1)
             out["T_norm"] = T_norm
+
+        # convert soft map (T) to hard map if specified
+        mut.soft_T_to_hard(
+            cls,
+            T=out["T"],
+            out=out,
+            hard_map=hard_map,
+            pos_by_argmax=True,
+            pos_by_weight=False,
+            return_sparse=return_sparse,
+        )
 
         return out
