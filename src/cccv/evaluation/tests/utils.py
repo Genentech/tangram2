@@ -99,18 +99,22 @@ def make_fake_T(
         T = np.random.random((n_to, n_from))
 
         match (t_row_sum, t_col_sum):
-            case (_, None):
-                sum_axis = 1
-            case (None, _):
-                sum_axis = 0
             case (None, None):
                 sum_axis = None
+                multiplier = 1
+            case (_, None):
+                sum_axis = 1
+                multiplier = t_row_sum
+            case (None, _):
+                sum_axis = 0
+                multiplier = t_col_sum
             case (_, _):
                 raise AssertionError("Can't specify sum for both row/col")
 
         if sum_axis is not None:
             T_div = T.sum(axis=sum_axis, keepdims=True)
             T = np.divide(T, T_div)
+            T = T * multiplier
 
         res_dict["T"] = T
         res_dict["from_names"] = from_names
