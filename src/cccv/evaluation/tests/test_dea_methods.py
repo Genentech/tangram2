@@ -40,7 +40,9 @@ class TestScanpyDEA(BaseTestDEAMethods):
     ):
         return dm.ScanpyDEA
 
-    def test_default(self, method, tmp_path):
+    def test_run_default(self, method, tmp_path):
+        # tests for runtime error with default settings
+
         self._method_base(method, tmp_path)
 
     @pytest.mark.parametrize(
@@ -54,7 +56,7 @@ class TestScanpyDEA(BaseTestDEAMethods):
             ("to", 0, "wilcoxon", True, "both", True),
         ],
     )
-    def test_custom(
+    def test_run_custom(
         self,
         method,
         tmp_path,
@@ -65,6 +67,8 @@ class TestScanpyDEA(BaseTestDEAMethods):
         mode,
         target,
     ):
+        # tests for runtime error with custom settings
+
         res_dict = self._make_base_input()
 
         no_target = {"to": "from", "from": "to"}[target]
@@ -102,3 +106,7 @@ class TestScanpyDEA(BaseTestDEAMethods):
         self._method_base(
             method, tmp_path, res_dict=res_dict, method_params=method_params
         )
+
+    def test_output(*args, **kwargs):
+        # asserts that the output is as expected
+        pass

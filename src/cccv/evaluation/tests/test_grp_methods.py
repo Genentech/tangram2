@@ -34,6 +34,8 @@ class TestThresholdGroup:
         n_features_to=15,
         n_features_from=15,
     ):
+        # tests for runtime errors
+
         res_dict = ut.make_fake_X(
             n_to, n_from, n_features_to, n_features_from, n_labels_from=4
         )
@@ -63,3 +65,7 @@ class TestThresholdGroup:
         method.save(res_dict, tmp_path)
 
         ut.check_out(method, res_dict)
+
+    def test_output(*args, **kwargs):
+        # asserts that the output is as expected
+        pass

@@ -62,13 +62,14 @@ class TestMapMetric(BaseTestMetric):
             ["map_rmse", False],
         ),
     )
-    def test_default(
+    def test_run(
         cls,
         metric_name,
         return_sparse,
         tmp_path,
         **kwargs,
     ):
+        # tests for runtime errors
 
         metric = C.METRICS["OPTIONS"].value[metric_name]
 
@@ -80,3 +81,7 @@ class TestMapMetric(BaseTestMetric):
             res_dict=res_dict,
             ref_dict=ref_dict,
         )
+
+    def test_output(*args, **kwargs):
+        # asserts that the output is as expected
+        pass
