@@ -37,7 +37,6 @@ class BaseTestMetric(ABC):
 
         metric.save(score_dict, tmp_path)
 
-    @abstractmethod
     def test_default(*args, **kwargs):
         pass
 
