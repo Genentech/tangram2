@@ -35,7 +35,7 @@ class ScanpyDEA(DEAMethodClass):
     # Scanpy DEA Method class
     # allows you to execute scanpy.tl.rank_genes
     # using a design matrix and input data
-    ins = ["D_from", "D_to", "X_from"]
+    ins = ["D_from", "D_to", "X_from", "X_to_pred"]
     outs = ["DEA"]
 
     def __init__(
@@ -59,114 +59,169 @@ class ScanpyDEA(DEAMethodClass):
         normalize: bool = False,
         subset_features: Dict[str, List[str]] | Dict[str, str] | None = None,
         min_group_obs: int = 2,
+        split_by_base: bool = True,
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
         # data frame of predicted "to" data : [n_to] x [n_from_features]
-        X_to_pred = input_dict["X_to_pred"]
+        X_to_pred = input_dict.get("X_to_pred")
         # anndata of "from" : [n_from] x [n_from_features]
-        adata = input_dict["X_from"]
+        adata = input_dict.get("X_from")
         # design matrix for "to" : [n_to] x [n_to_covariates]
-        D_to = input_dict["D_to"]
+        D_to = input_dict.get("D_to")
         # design matrix for "from" : [n_from] x [n_from_covariates]
-        D_from = input_dict["D_from"]
+        D_from = input_dict.get("D_from")
 
-        # subset design matrices if specified
-        if subset_features is not None:
-            if not isinstance(subset_features, dict):
-                NotImplementedError
+        X_from = input_dict.get("X_from")
 
-            if "to" in subset_features:
-                D_to = D_to.loc[:, subset_features["to"]]
-            if "from" in subset_features:
-                D_from = D_from.loc[:, subset_features["from"]]
+        objects = dict()
 
-        # get labels from design matrix
-        labels = ut.design_matrix_to_labels(D_from)
+        if (D_to is not None) and (X_to_pred is not None):
+            # data frame of predicted "to" data : [n_to] x [n_from_features]
+            to_pred_names = input_dict["to_pred_names"]
+            to_pred_var = input_dict["to_pred_names"]
+            adata_to = ad.AnnData(
+                X_to_pred,
+                obs=pd.DataFrame(
+                    [],
+                    index=to_pred_names,
+                ),
+                var=pd.DataFrame([], index=to_pred_var),
+            )
 
-        # set unlabeled observations to "background"
-        labels[labels == ""] = "background"
+            # update objects
+            objects["to"] = dict(D=D_to, adata=adata_to)
 
-        # add labels as a column in adata ("from")
-        # this is to be able to use the scanpy function
-        adata.obs["label"] = labels
-
-        # get unique labels
-        uni_labels = np.unique(adata.obs["label"].values)
-
-        # make group specification align with expected scanpy input
-        if (groups is None) or (groups == "all"):
-            # if no groups specified set to "all"
-            main_group = "all"
-            ref_group = "rest"
-
-        else:
-            # subset identified labels (based on design matrix)
-            # w.r.t. the specified groups
-            groups = ut.listify(groups)
-            uni_groups = np.unique(groups)
-            # make sure enough observations are in each group -- BEFORE
-            # uni_groups = [
-            #     uni_groups[k]
-            #     for k in range(len(uni_groups))
-            #     if group_counts[k] >= min_group_obs
-            # ]
-            uni_labels = [lab for lab in uni_labels if lab in uni_groups]
-            # make sure enough observations are in each group -- NOW
-            uni_labels = [
-                lab
-                for lab in uni_labels
-                if (adata.obs["label"] == lab).sum() >= min_group_obs
-            ]
-            # check that the subsetted labels are at least two
-            if len(uni_labels) < 2:
-                return dict(DEA=pd.DataFrame([]))
-
-            main_group = [uni_labels[0]]
-            ref_group = uni_labels[1]
-
-        # normalize data if specified
-        if normalize:
-            X_old = adata.X.copy()
-            sc.pp.normalize_total(adata, 1e4)
-            sc.pp.log1p(adata)
-
-        # execute DE test
-        sc.tl.rank_genes_groups(
-            adata,
-            groupby="label",
-            groups=main_group,  # groups _must_ be a list or str, not np.ndarray
-            reference=ref_group,
-            method=method,
-            **method_kwargs,
-        )
+        if (D_from is not None) and (X_from is not None):
+            objects["from"] = dict(D=D_from, adata=X_from)
 
         out = dict()
 
-        # define groups to extract information from
-        iter_groups = uni_labels if main_group == "all" else main_group
+        for obj_name in objects.keys():
+            D = objects[obj_name]["D"]
+            adata = objects[obj_name]["adata"]
 
-        # iterate over groups
-        for comp_group in iter_groups:
-            # get data frame of test
-            dedf = sc.get.rank_genes_groups_df(
-                adata,
-                group=comp_group,
-                pval_cutoff=pval_cutoff,
-            )
+            base_groups_og = input_dict.get("base_groups", None)
 
-            # modify output based on mode
+            if split_by_base:
+                if base_groups_og is not None:
+                    from itertools import chain
 
-            if mode == "both":
-                out[comp_group] = dedf
-            elif mode == "pos":
-                out[comp_group] = dedf[dedf["scores"].values > 0]
-            elif mode == "neg":
-                out[comp_group] = dedf[dedf["scores"].values < 0]
+                    flat_base_groups = list(chain(*base_groups_og))
+                    base_cols = np.array([x in flat_base_groups for x in D.columns])
+                    add_cols = D.columns[~base_cols].tolist()
+                    base_groups = base_groups_og
+                else:
+                    NotImplementedError
             else:
-                raise NotImplementedError
+                base_groups = [D.columns.tolist()]
+                add_cols = []
+                groups = "all"
 
-        # undo the normalization
-        if normalize:
-            adata.X = X_old
+            # subset design matrices if specified
+            if subset_features is not None:
+                if not isinstance(subset_features, dict):
+                    NotImplementedError
+                if obj_name in subset_features:
+                    base_groups = [
+                        x
+                        for x in base_groups
+                        if any(y in subset_features[obj_name] for y in x)
+                    ]
+                    add_cols = [x for x in add_cols if x in subset_features[obj_name]]
+
+            # normalize data if specified
+            if normalize:
+                X_old = adata.X.copy()
+                sc.pp.normalize_total(adata, 1e4)
+                sc.pp.log1p(adata)
+
+            for idx in base_groups:
+
+                sel_cols = list(idx) + list(add_cols)
+                # get labels from design matrix
+                labels = ut.design_matrix_to_labels(D.loc[:, sel_cols])
+                # set unlabeled observations to "background"
+                labels[labels == ""] = "background"
+                uni_labels = np.unique(labels)
+
+                # add labels as a column in adata ("from")
+                # this is to be able to use the scanpy function
+                adata.obs["_label"] = labels
+
+                # make group specification align with expected scanpy input
+                if groups == "all":
+                    # if no groups specified set to "all"
+                    main_group = "all"
+                    ref_group = "rest"
+
+                    # execute DE test
+                    sc.tl.rank_genes_groups(
+                        adata,
+                        groupby="_label",
+                        groups=main_group,  # groups _must_ be a list or str, not np.ndarray
+                        reference=ref_group,
+                        method=method,
+                        **method_kwargs,
+                    )
+
+                    for lab in uni_labels:
+
+                        dedf = sc.get.rank_genes_groups_df(
+                            adata,
+                            group=lab,
+                            pval_cutoff=pval_cutoff,
+                        )
+                        name = f"{obj_name}_{lab}_vs_rest"
+                        out[name] = dedf
+
+                else:
+                    # iterate over groups
+                    # groups are [(grp_1_a,grp_1_b),(grp_2_a,grp_2_b)]
+                    if groups is None:
+                        if base_groups_og is not None:
+                            _groups = ut.update_default_groups(base_groups, uni_labels)
+                        else:
+                            NotImplementedError
+
+                    for group in _groups:
+                        grp_1, grp_2 = group
+
+                        # execute DE test
+                        sc.tl.rank_genes_groups(
+                            adata,
+                            groupby="_label",
+                            groups=[
+                                grp_1
+                            ],  # groups _must_ be a list or str, not np.ndarray
+                            reference=grp_2,
+                            method=method,
+                            **method_kwargs,
+                        )
+
+                        dedf = sc.get.rank_genes_groups_df(
+                            adata,
+                            group=grp_1,
+                            pval_cutoff=pval_cutoff,
+                        )
+
+                        name = f"{obj_name}_{grp_1}_vs_{grp_2}"
+                        out[name] = dedf
+
+                for key in out.keys():
+
+                    dedf = out[key]
+
+                    if mode == "both":
+                        pass
+                    elif mode == "pos":
+                        out["key"] = dedf[dedf["scores"].values > 0]
+                    elif mode == "neg":
+                        out[key] = dedf[dedf["scores"].values < 0]
+                    else:
+                        raise NotImplementedError
+
+            # undo the normalization
+            if normalize:
+                adata.X = X_old
 
         return dict(DEA=out)

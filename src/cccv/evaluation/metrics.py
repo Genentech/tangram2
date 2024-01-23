@@ -176,7 +176,9 @@ class HardMapMetricClass(MapMetricClass):
                     (obj["row_self"], obj["row_target"]),
                 ),
                 shape=obj["shape"],
-            )
+            ).T
+        elif isinstance(obj, np.ndarray):
+            new_obj = coo_matrix(obj)
         else:
             new_obj = obj
 
@@ -277,7 +279,7 @@ class MapRMSE(MapMetricClass):
 
     @classmethod
     def score(
-        cls, res: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs
+        cls, res_dict: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
         # get true spatial coordinates for "from"
         S_from_true = ref_dict["S_from"]
