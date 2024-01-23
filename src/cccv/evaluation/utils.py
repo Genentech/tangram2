@@ -1,7 +1,7 @@
 import gzip
 import os.path as osp
 from functools import reduce
-from typing import Any, Dict, List, TypeVar
+from typing import Any, Dict, List, Tuple, TypeVar
 
 import anndata as ad
 import numpy as np
@@ -11,6 +11,22 @@ from scipy.sparse import spmatrix
 from thefuzz import fuzz
 
 W = TypeVar("W")
+
+
+def update_default_groups(raw_groups: List[Tuple[str, str]], uni_labels: np.ndarray):
+    groups = raw_groups
+    new_groups = []
+    for group in groups:
+        grp_a, grp_b = group
+        new_grp_a = [x for x in uni_labels if grp_a in x]
+        new_group = [
+            (x, x.replace(grp_a, grp_b))
+            for x in new_grp_a
+            if x.replace(grp_a, grp_b) in uni_labels
+        ]
+        new_groups += new_group
+
+    return new_groups
 
 
 def ifnonereturn(obj, return_object: None):
