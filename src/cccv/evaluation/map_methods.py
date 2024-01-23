@@ -275,6 +275,11 @@ class TangramMap(MapMethodClass):
             "lambda_g1": 1,
             "lambda_g2": 0,
             "lambda_r": 0,
+            "scale": True,
+            "lambda_count": 1,
+            "lambda_f_reg": 1,
+            "target_count": None,
+            "random_state": None,
         }
 
         for key, value in default_loss_params.items():
