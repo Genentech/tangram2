@@ -268,17 +268,20 @@ class TangramMap(MapMethodClass):
             random_state=random_state,
         )
 
-        default_loss_params = {'learning_rate': 0.1, 'lambda_d': 0, 'density_prior': 'rna_count_based',
-                               'lambda_g1': 1, 'lambda_g2': 0, 'lambda_r': 0, }
-        loss_params = kwargs.get('loss_params', {})
+        default_loss_params = {
+            "learning_rate": 0.1,
+            "lambda_d": 0,
+            "density_prior": "rna_count_based",
+            "lambda_g1": 1,
+            "lambda_g2": 0,
+            "lambda_r": 0,
+        }
 
         for key, value in default_loss_params.items():
-            if key not in loss_params:
-                loss_params[key] = value
-
-        method_params.update(loss_params)
-
-        print(method_params)
+            if key in kwargs:
+                method_params[key] = kwargs[key]
+            else:
+                method_params[key] = value
 
         if cls.version == "2":
             method_params
