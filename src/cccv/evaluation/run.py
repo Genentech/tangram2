@@ -33,7 +33,7 @@ def preprocess_data(data_dict, pp_config, inplace: bool = True):
                 pp_step = C.PREPROCESS["OPTIONS"].value.get(pp_step_name)
                 if pp_step is not None:
                     pp_step_kwargs = ut.ifnonereturn(pp_steps.get(pp_step_name), {})
-                    pp_step.pp(obj, **pp_step_kwargs)
+                    pp_step.pp(obj, input_type=obj_name, **pp_step_kwargs)
         data_dict[obj_name] = obj
 
     if not inplace:
@@ -52,7 +52,7 @@ def evaluate_workflow(input_dict, eval_config, out_dir):
     match_objs = [obj for obj in eval_config.keys() if obj in input_dict]
 
     for obj_name in match_objs:
-        out_dir_object = osp.join(out_dir, obj_name)
+        out_dir_object = osp.join(out_dir, "metrics", obj_name)
         os.makedirs(out_dir_object, exist_ok=True)
 
         obj_config = eval_config[obj_name]
@@ -91,7 +91,7 @@ def process_experiment(
     wfs = exp_config[C.CONF.wfs.value]
 
     for wf_name in wfs.keys():
-        out_dir = osp.join(root_dir, wf_name)
+        out_dir = osp.join(root_dir, experiment_name, wf_name)
         os.makedirs(out_dir, exist_ok=True)
 
         pp_config = wfs[wf_name].get(C.CONF.pp.value, {})
@@ -107,7 +107,11 @@ def process_experiment(
 
         eval_conf = exp_config.get(C.CONF.eval.value, {})
 
-        evaluate_workflow(input_dict, eval_conf, root_dir)
+        evaluate_workflow(
+            input_dict,
+            eval_conf,
+            out_dir,
+        )
 
 
 def run(

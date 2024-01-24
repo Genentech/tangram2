@@ -41,7 +41,10 @@ class ThresholdGroup(GroupMethodClass):
     # groups in the "to" data
 
     ins = ["X_from", "X_to_pred"]
-    outs = ["D_to", "D_from"]
+    outs = [
+        "D_to",
+        "D_from",
+    ]
 
     def __init__(
         self,
@@ -96,6 +99,8 @@ class ThresholdGroup(GroupMethodClass):
         # this is to match names with specified features
         X_to_pred.columns = X_to_pred.columns.str.lower()
 
+        base_groups = []
+
         # iterate over all features
         for feature in feature_name:
 
@@ -140,10 +145,12 @@ class ThresholdGroup(GroupMethodClass):
             D_from[t_high, 1] = 1
             D_from[~t_high, 0] = 1
 
+            cols = [f"nadj_{feature}", f"adj_{feature}"]
+            base_groups.append(cols)
             # convert "from" design matrix to data frame
             D_from = pd.DataFrame(
                 D_from.astype(int),
-                columns=[f"nadj_{feature}", f"adj_{feature}"],
+                columns=cols,
                 index=X_from.obs.index,
             )
 
@@ -161,4 +168,4 @@ class ThresholdGroup(GroupMethodClass):
         # Note: if we specify add covariates
         # additional covariates will be appended to the design matrix
 
-        return dict(D_to=Ds_to, D_from=Ds_from)
+        return dict(D_to=Ds_to, D_from=Ds_from, base_groups=base_groups)
