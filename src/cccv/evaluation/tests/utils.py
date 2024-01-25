@@ -4,6 +4,7 @@ import anndata as ad
 import numpy as np
 import pandas as pd
 from scipy.sparse import coo_matrix
+from moscot.problems.space import MappingProblem
 
 
 def check_out(method, res_dict):
@@ -315,3 +316,15 @@ def make_fake_D(
     res_dict["D_from"] = D_from
 
     return res_dict
+
+
+def make_fake_ot_solution(res_dict: Dict[str, Any] | None = None):
+    mp = MappingProblem(adata_sc=res_dict["X_from"], adata_sp=res_dict["X_to"])
+    mp = mp.prepare(sc_attr={"attr":"X"})
+    solution = mp.solve()
+    res_dict["solution"] = solution
+    return res_dict
+
+
+
+
