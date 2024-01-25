@@ -136,7 +136,6 @@ class ScanpyDEA(DEAMethodClass):
                 sc.pp.log1p(adata)
 
             for idx in base_groups:
-
                 sel_cols = list(idx) + list(add_cols)
                 # get labels from design matrix
                 labels = ut.design_matrix_to_labels(D.loc[:, sel_cols])
@@ -165,7 +164,6 @@ class ScanpyDEA(DEAMethodClass):
                     )
 
                     for lab in uni_labels:
-
                         dedf = sc.get.rank_genes_groups_df(
                             adata,
                             group=lab,
@@ -208,7 +206,6 @@ class ScanpyDEA(DEAMethodClass):
                         out[name] = dedf
 
                 for key in out.keys():
-
                     dedf = out[key]
 
                     if mode == "both":
@@ -225,3 +222,129 @@ class ScanpyDEA(DEAMethodClass):
                 adata.X = X_old
 
         return dict(DEA=out)
+
+
+class GLMDEA(DEAMethodClass):
+    super().__init__()
+
+    @classmethod
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        family: str = "nb",
+        target: Literal["to", "from", "both"] = "both",
+        use_covariates: List[str] | str | None = None,
+        drop_covariates: List[str] | str | None = None,
+        use_pred: bool | Dict[str, bool] = True,
+        features: List[str] | str | None = None,
+        fit_intercept: bool = True,
+        **kwargs,
+    ) -> Dict[str, Dict[str, pd.DataFrame]]:
+        import glum as gl
+        from statsmodels.stats.multitest import multipletests as mht
+
+        target_l = ut.listify(target)
+        covs_l = ut.listify(use_coavriates)
+
+        for tgt in target_l:
+            D = input_dict.get("D_{}".format(tgt))
+            assert D is not None, f"D_{tgt} is not defined"
+
+            X_name = "X_{}".format(tgt)
+            if isinstance(use_pred, dict):
+                if use_pred.get(tgt, False):
+                    X_name += "_pred"
+            elif isinstance(use_pred, bool):
+                if use_pred:
+                    X_name += "_pred"
+
+            X = input_dict.get(X_name)
+
+            assert X is not None, f"{X_name} is not defined"
+
+            X_inp = X.copy()
+            if isinstance(ad.AnnData, X_inp):
+                X_inp = X_inp.to_df()
+
+            D_inp = D.copy()
+
+            if use_covariates is not None:
+                D_inp = D_inp[ut.listify(use_covariates)]
+            if drop_covariates is not None:
+                keep_cols = [
+                    x for x in D.columns if x not in ut.listify(drop_covariates)
+                ]
+                D_inp = D_inp[keep_cols]
+
+            if features is None:
+                _features = X_inp.columns
+
+            glm_params = dict(
+                alpha=None,
+                l1_ratio=0,
+                P1="identity",
+                P2="identity",
+                link="auto",
+                solver="auto",
+                max_iter=100,
+                gradient_tol=None,
+                step_size_tol=None,
+                hessian_approx=0.0,
+                warm_start=False,
+                alpha_search=False,
+                alphas=None,
+                n_alphas=100,
+                min_alpha_ratio=None,
+                min_alpha=None,
+                start_params=None,
+                selection="cyclic",
+                random_state=None,
+                copy_X=None,
+                check_input=True,
+                verbose=0,
+                scale_predictors=False,
+                lower_bounds=None,
+                upper_bounds=None,
+                A_ineq=None,
+                b_ineq=None,
+                force_all_finite=True,
+                drop_first=False,
+                robust=True,
+                expected_information=False,
+            )
+
+            for key in glm_params.keys():
+                if key in kwargs:
+                    glm_params[key] = kwargs[key]
+            glm_params["fit_intercept"] = fit_intercept
+            glm_params["family"] = family
+
+            res = dict(
+                covariate=[],
+                coef=[],
+                p_value=[],
+                feature=[],
+            )
+            for feature in _features:
+                y = X_inp[feature].values.flatten()
+                glm = gl.GeneralizedLinearRegressor(**glm_params)
+                glm.fit(X=D_inp, y=y)
+                coef_table = glm.coef_table(X=D_inp, y=y)
+                res["covariate"] += coef_table.index.tolist()
+                res["p_value"] += coef_table["p_value"].values.tolist()
+                res["coef"] += coef_table["coef"].values.tolist()
+                res["feature"] += [feature] * coef_table.shape[0]
+
+            # because we need all p-values when doing the correction
+            _, p_val_adj, _, _ = mhs(
+                res["p_value"],
+                method=mht_method,
+            )
+
+            res["p_value_adj"] = p_val_adj
+
+            res = pd.DataFrame(res)
+            out = {
+                cov: res.iloc[res["covariate"].values == cov].copy()
+                for cov in D_inp.columns
+            }
