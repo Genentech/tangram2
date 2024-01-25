@@ -11,32 +11,53 @@ class BaseTestPredMethods:
         if res_dict is None:
             res_dict = ut.make_fake_map_input()
             res_dict = ut.make_fake_T(res_dict=res_dict)
-            # TODO: Add X_from_scaled to fake data
-
+            if method == pm.TangramV2Pred:
+                res_dict["X_from_scaled"] = res_dict["X_from"].copy()
+            if method == pm.MoscotPred:
+                res_dict = ut.make_fake_ot_solution(res_dict=res_dict)
         out = method.run(res_dict, **method_params)
         res_dict.update(out)
 
         assert all([x in res_dict for x in method.outs])
-
-        if "X_to_pred" in res_dict:
+        if (method == pm.MoscotPred) and (method_params.get("prediction_genes") is not None):
+            X_to_pred_row, X_to_pred_col = res_dict["X_to_pred"].shape
+            assert (X_to_pred_row == res_dict["X_to"].shape[0]) and (
+                    X_to_pred_col == len(method_params["prediction_genes"])
+            )
+        else:
             X_to_pred_row, X_to_pred_col = res_dict["X_to_pred"].shape
             assert (X_to_pred_row == res_dict["X_to"].shape[0]) and (
                     X_to_pred_col == res_dict["X_from"].shape[1]
             )
+
         if "X_from_pred" in res_dict:
             assert res_dict["X_from_pred"] is None
 
         method.save(res_dict, tmp_path)
 
 
-class TestTangramPred(BaseTestPredMethods):
+class TestTangramV1Pred(BaseTestPredMethods):
     @pytest.fixture(autouse=True)
     def method(
         self,
     ):
-        return pm.TangramPred
+        return pm.TangramV1Pred
 
-    def test_default(self, method, tmp_path):
+    def test_run_default(self, method, tmp_path):
+        # test that structure and dims of output is correct
+        # checks default params case
+
+        self._method_base(method, tmp_path)
+
+
+class TestTangramV1Pred(BaseTestPredMethods):
+    @pytest.fixture(autouse=True)
+    def method(
+        self,
+    ):
+        return pm.TangramV2Pred
+
+    def test_run_default(self, method, tmp_path):
         # test that structure and dims of output is correct
         # checks default params case
 
@@ -50,7 +71,7 @@ class TestMoscotPred(BaseTestPredMethods):
     ):
         return pm.MoscotPred
 
-    def test_default(self, method, tmp_path):
+    def test_run_default(self, method, tmp_path):
         # test that structure and dims of output is correct
         # checks default params case
 
@@ -60,7 +81,7 @@ class TestMoscotPred(BaseTestPredMethods):
         "prediction_genes",
         [["feature_2"], ["feature_1", "feature_4"]],
     )
-    def test_custom(self, method, tmp_path, prediction_genes):
+    def test_run_custom(self, method, tmp_path, prediction_genes):
         # test that structure and dims of output is correct
         # checks custom params case
 
