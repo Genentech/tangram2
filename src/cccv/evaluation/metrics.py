@@ -442,6 +442,4 @@ class DEAAuc(DEAMetricClass):
             out_res[group_name + "_PR"] = aupr
             out_res[group_name + "_ROC"] = auroc
 
-        out = cls.make_standard_out(out_res)
-
-        return out
+        out = cls.make_a
