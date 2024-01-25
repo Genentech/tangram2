@@ -478,7 +478,7 @@ class SpaOTscMap(MapMethodClass):
         for key, val in default_pca_dict.items():
             if key not in pca_dict:
                 pca_dict[key] = val
-        sc.tl.pca(ad_from, use_highly_variable=True, **pca_dict)
+        sc.pp.pca(ad_from, use_highly_variable=True, **pca_dict)
 
         # Determining the SC data dissimilarity based on PCA40
         sc_corr = ut.matrix_correlation(
@@ -598,7 +598,7 @@ class MoscotMap(MapMethodClass):
         # TODO: this does not run
         prep_kwargs = kwargs.get("prepare", {})
 
-        if prep_kwargs is None:
+        if not prep_kwargs:
             if "X_pca" in X_from.obsm:
                 prep_kwargs["sc_attr"] = dict(attr="obsm", key="X_pca")
             else:
