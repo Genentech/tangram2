@@ -263,7 +263,7 @@ class GLMDEA(DEAMethodClass):
         use_covariates: List[str] | str | None = None,
         drop_covariates: List[str] | str | None = None,
         use_pred: bool | Dict[str, bool] = True,
-        features: List[str] | str | None = None,
+        subset_features: List[str] | str | None = None,
         fit_intercept: bool = True,
         mht_method: str = "fdr_bh",
         **kwargs,
@@ -277,9 +277,6 @@ class GLMDEA(DEAMethodClass):
             target_l = ["to", "from"]
         else:
             target_l = ut.listify(target)
-
-        # get covariates
-        covs_l = ut.listify(use_covariates)
 
         # instantiate output dictionary
         out = dict()
@@ -326,7 +323,7 @@ class GLMDEA(DEAMethodClass):
                 D_inp = D_inp[keep_cols]
 
             # check what features to test
-            _features = X_inp.columns if features is None else features
+            _features = X_inp.columns if subset_features is None else subset_features
 
             # default glm parameters
             # from: https://glum.readthedocs.io/en/latest/glm.html#glum.GeneralizedLinearRegressor (2024-01-25)
