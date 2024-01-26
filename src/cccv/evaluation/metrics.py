@@ -176,7 +176,7 @@ class HardMapMetricClass(MapMetricClass):
                     (obj["row_self"], obj["row_target"]),
                 ),
                 shape=obj["shape"],
-            ).T
+            )
         elif isinstance(obj, np.ndarray):
             new_obj = coo_matrix(obj)
         else:
@@ -214,10 +214,11 @@ class MapJaccardDist(HardMapMetricClass):
 
         # get true map
         T_pred = cls._pp(res_dict["T"])
+        print(T_pred.shape, T_true.shape)
 
-        if isinstance(T_pred, spmatrix) and isinstance(T_pred, spmatrix):
+        if isinstance(T_pred, spmatrix) and isinstance(T_true, spmatrix):
             inter = np.sum(T_pred.multiply(T_true))
-        elif isinstance(T_pred, np.ndarray) and isinstance(T_pred, np.ndarray):
+        elif isinstance(T_pred, np.ndarray) and isinstance(T_true, np.ndarray):
             inter = np.sum(T_pred * T_true)
 
         union = np.sum((T_pred + T_true) > 0)
@@ -441,6 +442,4 @@ class DEAAuc(DEAMetricClass):
             out_res[group_name + "_PR"] = aupr
             out_res[group_name + "_ROC"] = auroc
 
-        out = cls.make_standard_out(out_res)
-
-        return out
+        out = cls.make_a

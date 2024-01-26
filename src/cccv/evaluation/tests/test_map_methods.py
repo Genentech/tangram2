@@ -89,3 +89,16 @@ class TestArgMaxCorrMap(BaseTestMapMethods):
         res_dict["X_to"] = res_dict["X_from"]
         out = method.run(res_dict, return_sparse=True)
         np.testing.assert_array_equal(out["T"].row, out["T"].col)
+
+
+class TestSpaOTscMap(BaseTestMapMethods):
+    @pytest.fixture(autouse=True)
+    def method(
+        self,
+    ):
+        return mm.SpaOTscMap
+
+    def test_run_default(self, method, tmp_path):
+        # test that structure and dims of output is correct
+        # checks default params case
+        self._method_base(method, tmp_path, pca_dict=dict(n_comps=2))

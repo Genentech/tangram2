@@ -68,6 +68,7 @@ class TestScanpyDEA(BaseTestDEAMethods):
         target,
     ):
         # tests for runtime error with custom settings
+
         res_dict = self._make_base_input()
 
         no_target = {"to": "from", "from": "to"}[target]

@@ -35,6 +35,7 @@ class TestThresholdGroup:
         n_features_from=15,
     ):
         # tests for runtime errors
+
         res_dict = ut.make_fake_X(
             n_to, n_from, n_features_to, n_features_from, n_labels_from=4
         )
