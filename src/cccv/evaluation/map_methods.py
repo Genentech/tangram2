@@ -644,7 +644,6 @@ class MoscotMap(MapMethodClass):
         out = dict()
 
         out["T"] = T_soft
-        out["solution"] = mp
         out["to_names"] = X_to.obs.index.values.tolist()
         out["from_names"] = X_from.obs.index.values.tolist()
         out["marginals"] = marginals
