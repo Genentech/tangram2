@@ -251,6 +251,9 @@ class GLMDEA(DEAMethodClass):
     ):
         super().__init__()
 
+    ins = ["D_from", "D_to", "X_from", "X_to"]
+    outs = ["DEA"]
+
     @classmethod
     def run(
         cls,
