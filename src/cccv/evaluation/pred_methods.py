@@ -169,7 +169,7 @@ class TangramV2Pred(TangramPred):
 class MoscotPred(PredMethodClass):
     # MOSCOT Prediction Method Class
 
-    ins = ["T", "X_from"]
+    ins = ["T", "X_from", "to_names"]
     outs = ["X_to_pred"]
 
     def __init__(
@@ -182,33 +182,87 @@ class MoscotPred(PredMethodClass):
     @classmethod
     @ut.check_in_out
     def run(
-        cls, input_dict: Dict[str, Any], experiment_name: str | None = None, **kwargs
+        cls,
+        input_dict: Dict[str, Any],
+        experiment_name: str | None = None,
+        eps=1e-12,
+        **kwargs,
     ) -> Dict[str, pd.DataFrame]:
 
         # TODO: change this -- after fixing jax dependency
-        mp = input_dict["solution"]
-        var_names = kwargs.get("prediction_genes", None)
-        if var_names is None:
-            var_names = input_dict["X_from"].var.index.tolist()
-        device = kwargs.get("device", "cpu")
-        ad_list = []
-        for genes in np.array_split(
-            var_names, 100
-        ):  # split all genes in 100 lists of ~30 genes
-            ad_list.append(mp.impute(var_names=genes, device=device))
-        ad_ge = ad.concat(ad_list, axis=1)
+        T = input_dict.get("T")
+        assert T is not None, "T is not found in input"
+        X_from = input_dict.get("X_from")
+        assert X_from is not None, "X_from is not found in input"
+        n_from = X_from.shape[0]
 
-        # get data frame of projected genes
-        X_to_pred = ad_ge.to_df()
+        to_names = input_dict.get("to_names")
+        assert to_names is not None, "to_names needs to be included"
 
-        # get names for "to_pred" objects
-        to_pred_names = X_to_pred.index.values.tolist()
-        # get names for "to_pred" features
-        to_pred_var = X_to_pred.columns.values.tolist()
+        # var_names = kwargs.get("prediction_genes", None)
+        marginals = kwargs.get("marginals", None)
+        marginals = ut.ifnonereturn(marginals, input_dict.get("marginals"))
+        b = marginals.get("b")
+        if b is None:
+            b = np.ones(n_from) / n_from
+
+        X_to_pred = T_soft @ ((X_from.X) / (b[:, None] + eps))
+
+        X_to_pred = pd.DataFrame(
+            X_to_pred,
+            index=to_names,
+            columns=X_from.columns,
+        )
 
         return dict(
             X_to_pred=X_to_pred,
             X_from_pred=None,
-            to_pred_names=to_pred_names,
-            to_pred_var=to_pred_var,
         )
+
+
+# class MoscotPred(PredMethodClass):
+#     # MOSCOT Prediction Method Class
+
+#     ins = ["T", "X_from"]
+#     outs = ["X_to_pred"]
+
+#     def __init__(
+#         self,
+#         *args,
+#         **kwargs,
+#     ):
+#         super().__init__(*args, **kwargs)
+
+#     @classmethod
+#     @ut.check_in_out
+#     def run(
+#         cls, input_dict: Dict[str, Any], experiment_name: str | None = None, **kwargs
+#     ) -> Dict[str, pd.DataFrame]:
+
+#         # TODO: change this -- after fixing jax dependency
+#         mp = input_dict["solution"]
+#         var_names = kwargs.get("prediction_genes", None)
+#         if var_names is None:
+#             var_names = input_dict["X_from"].var.index.tolist()
+#         device = kwargs.get("device", "cpu")
+#         ad_list = []
+#         for genes in np.array_split(
+#             var_names, 100
+#         ):  # split all genes in 100 lists of ~30 genes
+#             ad_list.append(mp.impute(var_names=genes, device=device))
+#         ad_ge = ad.concat(ad_list, axis=1)
+
+#         # get data frame of projected genes
+#         X_to_pred = ad_ge.to_df()
+
+#         # get names for "to_pred" objects
+#         to_pred_names = X_to_pred.index.values.tolist()
+#         # get names for "to_pred" features
+#         to_pred_var = X_to_pred.columns.values.tolist()
+
+#         return dict(
+#             X_to_pred=X_to_pred,
+#             X_from_pred=None,
+#             to_pred_names=to_pred_names,
+#             to_pred_var=to_pred_var,
+#         )
