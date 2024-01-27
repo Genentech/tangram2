@@ -214,7 +214,6 @@ class MapJaccardDist(HardMapMetricClass):
 
         # get true map
         T_pred = cls._pp(res_dict["T"])
-        print(T_pred.shape, T_true.shape)
 
         if isinstance(T_pred, spmatrix) and isinstance(T_true, spmatrix):
             inter = np.sum(T_pred.multiply(T_true))
