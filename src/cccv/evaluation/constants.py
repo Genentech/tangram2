@@ -153,7 +153,7 @@ class PREPROCESS(EnumCustom):
     # preprocessing options
     OPTIONS = dict(
         standard_scanpy=pp.StandardScanpy,
-        normalize_totaly=pp.NormalizeTotal,
+        normalize_total=pp.NormalizeTotal,
         celery=pp.CeLEryPP,
         tangramv1=pp.StandardTangramV1,
         tangramv2=pp.StandardTangramV2,
