@@ -641,14 +641,14 @@ class MoscotMap(MapMethodClass):
         # output dict
         out = dict()
 
-        out["T"] = T_soft
+        out["T"] = np.asarray(T_soft)
         out["solution"] = mp
         out["to_names"] = X_to.obs.index.values.tolist()
         out["from_names"] = X_from.obs.index.values.tolist()
 
         if return_T_norm:
-            T_norm = T_soft / T_soft.sum(axis=1).reshape(-1, 1)
-            out["T_norm"] = T_norm
+            T_norm = T_soft / T_soft.sum(axis=0) #.reshape(-1, 1)
+            out["T_norm"] = np.asarray(T_norm)
 
         # convert soft map (T) to hard map if specified
         mut.soft_T_to_hard(
