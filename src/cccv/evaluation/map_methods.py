@@ -648,7 +648,7 @@ class MoscotMap(MapMethodClass):
 
         if return_T_norm:
             T_norm = T_soft / T_soft.sum(axis=0) #.reshape(-1, 1)
-            out["T_norm"] = np.asarray(T_norm)
+            out["T_norm"] = T_norm
 
         # convert soft map (T) to hard map if specified
         mut.soft_T_to_hard(
