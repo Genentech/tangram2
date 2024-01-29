@@ -638,13 +638,15 @@ class MoscotMap(MapMethodClass):
         transport_plan = mp["src", "tgt"].solution.transport_matrix
         T_soft = transport_plan
 
+        marginals = dict(a=mp.problems["src", "tgt"].a, b=mp.problems["src", "tgt"].b)
+
         # output dict
         out = dict()
 
         out["T"] = T_soft
-        out["solution"] = mp
         out["to_names"] = X_to.obs.index.values.tolist()
         out["from_names"] = X_from.obs.index.values.tolist()
+        out["marginals"] = marginals
 
         if return_T_norm:
             T_norm = T_soft / T_soft.sum(axis=1).reshape(-1, 1)
