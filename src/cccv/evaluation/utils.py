@@ -13,6 +13,16 @@ from thefuzz import fuzz
 W = TypeVar("W")
 
 
+def merge_default_dict_with_kwargs(default_dict, kwargs):
+    out_dict = dict()
+    for key, value in default_dict.items():
+        if key in kwargs:
+            out_dict[key] = kwargs[key]
+        else:
+            out_dict[key] = value
+    return out_dict
+
+
 def update_default_groups(raw_groups: List[Tuple[str, str]], uni_labels: np.ndarray):
     groups = raw_groups
     new_groups = []

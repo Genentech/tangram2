@@ -21,16 +21,6 @@ class CONF(Enum):
     save = "save"
 
 
-class CONF(Enum):
-    data = "data"
-    wfs = "workflows"
-    metrics = "metrics"
-    pp = "preprocess"
-    recipe = "recipe"
-    params = "params"
-    eval = "evaluation"
-
-
 class PREFIX(Enum):
     # prefixes for each method
     mapping = "map"
