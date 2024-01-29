@@ -28,7 +28,10 @@ class NormalizeTotal(PPClass):
     # normalize total normalization
     @staticmethod
     def pp(adata: ad.AnnData, **kwargs):
-        sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", None)))
+        target_sum = kwargs.get("target_sum", None)
+        if target_sum is not None:
+            target_sum = float(target_sum)
+        sc.pp.normalize_total(adata, target_sum=target_sum)
 
 
 class ScanpyPCA(PPClass):
