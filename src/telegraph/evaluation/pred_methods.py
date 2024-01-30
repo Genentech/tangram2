@@ -217,19 +217,30 @@ class MoscotPred(PredMethodClass):
         if b is None:
             b = np.ones(n_from) / n_from
 
-        X_to_pred = T @ ((X_from.X) / (b[:, None] + eps))
+        prediction_genes = kwargs.get("prediction_genes")
+
+        if prediction_genes is None:
+            prediction_genes = X_from.var_names
+
+        X_to_pred = T @ ((X_from[:, prediction_genes].X) / (b[:, None] + eps))
 
         X_to_pred = pd.DataFrame(
             X_to_pred,
             index=to_names,
-            columns=X_from.var_names,
+            columns=prediction_genes,
+        )
+
+        pol.check_values(X_to_pred, "X_to_pred")
+        pol.check_type(X_to_pred, "X_to_pred")
+        pol.check_dimensions(
+            X_to_pred, "X_to_pred", (T.shape[0], len(prediction_genes))
         )
 
         out = dict(
             X_to_pred=X_to_pred,
             X_from_pred=None,
+            to_pred_names=to_names,
+            to_pred_var=prediction_genes,
         )
 
-        pol.check_values(X_to_pred, "X_to_pred")
-        pol.check_type(X_to_pred, "X_to_pred")
-        pol.check_dimensions(X_to_pred, "X_to_pred", (X_to.shape[0], None))
+        return out

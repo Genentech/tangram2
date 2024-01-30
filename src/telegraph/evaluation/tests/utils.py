@@ -93,7 +93,7 @@ def make_fake_T(
         row_idx = row_idx[ordr]
         col_idx = col_idx[ordr]
 
-        T = coo_matrix((np.ones(n_cols), (row_idx, col_idx)), shape=(n_to, n_from))
+        T = coo_matrix((np.ones(n_from), (row_idx, col_idx)), shape=(n_to, n_from))
 
     else:
 
@@ -117,9 +117,9 @@ def make_fake_T(
             T = np.divide(T, T_div)
             T = T * multiplier
 
-        res_dict["T"] = T
-        res_dict["from_names"] = from_names
-        res_dict["to_name"] = to_names
+    res_dict["T"] = T
+    res_dict["from_names"] = from_names
+    res_dict["to_names"] = to_names
 
     return res_dict
 
@@ -183,12 +183,4 @@ def make_fake_D(
     res_dict["D_to"] = D_to
     res_dict["D_from"] = D_from
 
-    return res_dict
-
-
-def make_fake_ot_solution(res_dict: Dict[str, Any] | None = None):
-    mp = MappingProblem(adata_sc=res_dict["X_from"], adata_sp=res_dict["X_to"])
-    mp = mp.prepare(sc_attr={"attr": "X"})
-    solution = mp.solve()
-    res_dict["solution"] = solution
     return res_dict

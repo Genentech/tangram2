@@ -11,12 +11,11 @@ from telegraph.evaluation.tests import utils as ut
 class BaseTestPredMethods:
     def _method_base(self, method, tmp_path, res_dict=None, **method_params):
         if res_dict is None:
-            res_dict = ut.make_fake_map_input()
+            res_dict = ut.make_fake_X()
             res_dict = ut.make_fake_T(res_dict=res_dict)
             if method == pm.TangramV2Pred:
                 res_dict["X_from_scaled"] = res_dict["X_from"].copy()
-            if method == pm.MoscotPred:
-                res_dict = ut.make_fake_ot_solution(res_dict=res_dict)
+
         out = method.run(res_dict, **method_params)
         res_dict.update(out)
 
