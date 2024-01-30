@@ -65,17 +65,28 @@ class ThresholdGroup(GroupMethodClass):
         **kwargs,
     ) -> pd.DataFrame:
 
-        # get anndata of "to"
-        # X_to = input_dict["X_to"]
-        # get anndata of "from"
-        X_from = input_dict["X_from"]
-        # get dataframe of "X_to_pred"
+        # anndata for predict to data
         X_to_pred = input_dict["X_to_pred"]
+        pol.check_values(X_to_pred, "X_to_pred")
+        pol.check_type(X_to_pred, "X_to_pred")
+
+        # anndata object that we map _from_
+        X_from = input_dict["X_from"]
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
+
         if isinstance(X_to_pred, ad.AnnData):
             X_to_pred = X_to_pred.to_df()
 
         # get map (T) : [n_to] x [n_from]
         T = input_dict["T"]
+
+        n_to = X_to_pred.shape[0]
+        n_from = X_from.shape[0]
+
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_to, n_from))
 
         # make sure feature_name is in list format
         feature_name = ut.listify(feature_name)
@@ -162,8 +173,15 @@ class ThresholdGroup(GroupMethodClass):
         Ds_from = pd.concat(Ds_from, axis=1)
         Ds_to = pd.concat(Ds_to, axis=1)
 
-        # Ds_from is [n_from] x [2 x n_features]
         # Ds_to is in [n_to] x [2 x n_features]
+        pol.check_values(D_to, "D_to")
+        pol.check_type(D_to, "D_to")
+        pol.check_dimensions(D_to, "D_to", (n_to, None))
+
+        # Ds_from is [n_from] x [2 x n_features]
+        pol.check_values(D_from, "D_from")
+        pol.check_type(D_from, "D_from")
+        pol.check_dimensions(D_from, "D_from", (n_from, None))
 
         # Note: if we specify add covariates
         # additional covariates will be appended to the design matrix

@@ -17,6 +17,7 @@ from scipy.spatial.distance import cdist
 from spaotsc import SpaOTsc
 from torch.cuda import is_available
 
+import cccv.evaluation.policies as pol
 import cccv.evaluation.utils as ut
 from cccv.evaluation import _map_utils as mut
 from cccv.evaluation._methods import MethodClass
@@ -100,8 +101,13 @@ class RandomMap(MapMethodClass):
 
         # anndata object that we map _to_
         X_to = input_dict["X_to"]
+        pol.check_values(X_to, "X_to")
+        pol.check_type(X_to, "X_to")
+
         # anndata object that we map _from_
         X_from = input_dict["X_from"]
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
 
         # get dimensions
         n_rows = X_to.shape[0]
@@ -127,6 +133,12 @@ class RandomMap(MapMethodClass):
         # add standard objects to out dict
         # S_from is spatial coordinates : [n_from] x [n_spatial_dimensions]
         out["S_from"] = input_dict["S_to"][row_idx]
+
+        T = out["T"]
+
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_rows, n_cols))
 
         return out
 
@@ -157,8 +169,13 @@ class ArgMaxCorrMap(MapMethodClass):
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         # anndata of "to"
         X_to = input_dict["X_to"]
+        pol.check_values(X_to, "X_to")
+        pol.check_type(X_to, "X_to")
+
         # anndata of "from"
         X_from = input_dict["X_from"]
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
 
         # n_obs in from
         n_cols = X_from.shape[0]
@@ -191,6 +208,11 @@ class ArgMaxCorrMap(MapMethodClass):
         # add standard objects to out dict
         # S_from is spatial coordinates : [n_from] x [n_spatial_dimensions]
         out["S_from"] = input_dict["S_to"][row_idx]
+
+        T = out["T"]
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_rows, n_cols))
 
         return out
 
@@ -237,8 +259,14 @@ class TangramMap(MapMethodClass):
 
         # anndata of "from"
         ad_from = input_dict["X_from"]
+        pol.check_values(ad_from, "X_from")
+        pol.check_type(ad_from, "X_from")
+
         # anndata of "to"
         ad_to = input_dict["X_to"]
+        pol.check_values(ad_to, "X_to")
+        pol.check_type(ad_to, "X_to")
+
         # spatial coordinates of "to"
         S_to = ad_to.obsm[to_spatial_key]
 
@@ -341,6 +369,11 @@ class TangramMap(MapMethodClass):
             pos_by_weight=pos_by_weight,
             return_sparse=return_sparse,
         )
+
+        T = out["T"]
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_rows, n_cols))
 
         return out
 
@@ -471,10 +504,17 @@ class SpaOTscMap(MapMethodClass):
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         # anndata of "from"
         ad_from = input_dict["X_from"]
+        pol.check_values(ad_from, "X_from")
+        pol.check_type(ad_from, "X_from")
+
         # anndata of "to"
         ad_to = input_dict["X_to"]
+        pol.check_values(ad_to, "X_to")
+        pol.check_type(ad_to, "X_to")
+
         # spatial coordinates of "to"
         S_to = ad_to.obsm[to_spatial_key]
+        # anndata object that we map _to_
 
         if seed is not None:
             import ot
@@ -562,6 +602,13 @@ class SpaOTscMap(MapMethodClass):
         # observation named for "from"
         out["from_names"] = ad_from.obs.index.values.tolist()
 
+        T = out["T"]
+        n_rows = ad_to.shape[0]
+        n_cols = ad_from.shape[0]
+
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_rows, n_cols))
         # convert soft map (T) to hard map if specified
         mut.soft_T_to_hard(
             cls,
@@ -580,7 +627,7 @@ class MoscotMap(MapMethodClass):
     # Method class for moscot
     # github: https://github.com/theislab/moscot
     ins = ["X_to", "X_from"]
-    outs = ["T"]
+    outs = ["T", "moscot_solution"]
 
     def __init__(
         self,
@@ -602,6 +649,7 @@ class MoscotMap(MapMethodClass):
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray]:
+        # anndata object that we map _to_
         if seed is not None:
             np.random.seed(seed)
 
@@ -609,6 +657,14 @@ class MoscotMap(MapMethodClass):
         X_from = input_dict["X_from"]
         # spatial anndata
         X_to = input_dict["X_to"]
+
+        pol.check_values(X_to, "X_to")
+        pol.check_type(X_to, "X_to")
+
+        # anndata object that we map _from_
+        X_from = input_dict["X_from"]
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
 
         # get genes
         if genes is not None:
@@ -651,6 +707,15 @@ class MoscotMap(MapMethodClass):
         if return_T_norm:
             T_norm = T_soft / T_soft.sum(axis=0) #.reshape(-1, 1)
             out["T_norm"] = T_norm
+
+        T = out["T"]
+
+        n_rows = X_to.shape[0]
+        n_cols = X_from.shape[0]
+
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_rows, n_cols))
 
         # convert soft map (T) to hard map if specified
         mut.soft_T_to_hard(

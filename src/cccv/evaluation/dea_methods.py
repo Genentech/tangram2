@@ -72,10 +72,11 @@ class ScanpyDEA(DEAMethodClass):
         split_by_base: bool = True,
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
+
         # data frame of predicted "to" data : [n_to] x [n_from_features]
         X_to_pred = input_dict.get("X_to_pred")
         # anndata of "from" : [n_from] x [n_from_features]
-        adata = input_dict.get("X_from")
+        X_from = input_dict.get("X_from")
         # design matrix for "to" : [n_to] x [n_to_covariates]
         D_to = input_dict.get("D_to")
         # design matrix for "from" : [n_from] x [n_from_covariates]
@@ -86,6 +87,15 @@ class ScanpyDEA(DEAMethodClass):
         objects = dict()
 
         if (D_to is not None) and (X_to_pred is not None):
+            pol.check_values(X_to_pred, "X_to_pred")
+            pol.check_type(X_to_pred, "X_to_pred")
+
+            n_to = X_to_pred.shape[0]
+
+            pol.check_values(D_to, "D_to")
+            pol.check_type(D_to, "D_to")
+            pol.check_dimensions(D_to, "D_to", (n_to, None))
+
             # data frame of predicted "to" data : [n_to] x [n_from_features]
             to_pred_names = input_dict["to_pred_names"]
             to_pred_var = input_dict["to_pred_names"]
@@ -102,6 +112,15 @@ class ScanpyDEA(DEAMethodClass):
             objects["to"] = dict(D=D_to, adata=adata_to)
 
         if (D_from is not None) and (X_from is not None):
+            pol.check_values(X_from, "X_from")
+            pol.check_type(X_from, "X_from")
+
+            n_from = X_from.shape[0]
+
+            pol.check_values(D_from, "D_from")
+            pol.check_type(D_from, "D_from")
+            pol.check_dimensions(D_from, "D_from", (n_from, None))
+
             objects["from"] = dict(D=D_from, adata=X_from)
 
         out = dict()
@@ -291,6 +310,9 @@ class GLMDEA(DEAMethodClass):
             # copy object to prevent permanent changes
             D_inp = D.copy()
 
+            pol.check_values(D_inp, f"D_{tgt}")
+            pol.check_type(D_inp, f"D_{tgt}")
+
             # get name of feature object
             X_name = "X_{}".format(tgt)
             # if pred should be used modify name
@@ -307,6 +329,9 @@ class GLMDEA(DEAMethodClass):
             assert X is not None, f"{X_name} is not defined"
             # copy object to prevent permanent changes
             X_inp = X.copy()
+
+            pol.check_values(X_inp, X_name)
+            pol.check_type(X_inp, X_name)
 
             # convert X to pandas data frame
             if isinstance(X_inp, ad.AnnData):

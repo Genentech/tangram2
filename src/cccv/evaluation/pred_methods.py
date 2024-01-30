@@ -9,6 +9,7 @@ import tangram as tg1
 import tangram2 as tg2
 from scipy.sparse import spmatrix
 
+import cccv.evaluation.policies as pol
 import cccv.evaluation.utils as ut
 from cccv.evaluation._methods import MethodClass
 
@@ -85,6 +86,10 @@ class TangramPred(PredMethodClass):
         else:
             T_soft = T.copy()
 
+        pol.check_type(T_soft, "T")
+        pol.check_values(T_soft, "T")
+        pol.check_dimensions(T_soft, "T", (X_to.shape[0], X_from.shape[0]))
+
         # create anndata object of map
         # tangram functions expects map to be [n_from] x [n_to]
         # hence the transpose
@@ -130,12 +135,18 @@ class TangramPred(PredMethodClass):
         # get names for "to_pred" features
         to_pred_var = X_to_pred.columns.values.tolist()
 
-        return dict(
+        out = dict(
             X_to_pred=X_to_pred,
             X_from_pred=None,
             to_pred_names=to_pred_names,
             to_pred_var=to_pred_var,
         )
+
+        pol.check_values(X_to_pred, "X_to_pred")
+        pol.check_type(X_to_pred, "X_to_pred")
+        pol.check_dimensions(X_to_pred, "X_to_pred", (X_to.shape[0], X_from.shape[1]))
+
+        return out
 
 
 class TangramV1Pred(TangramPred):
@@ -189,7 +200,6 @@ class MoscotPred(PredMethodClass):
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
 
-        # TODO: change this -- after fixing jax dependency
         T = input_dict.get("T")
         assert T is not None, "T is not found in input"
         X_from = input_dict.get("X_from")
@@ -215,7 +225,11 @@ class MoscotPred(PredMethodClass):
             columns=X_from.var_names,
         )
 
-        return dict(
+        out = dict(
             X_to_pred=X_to_pred,
             X_from_pred=None,
         )
+
+        pol.check_values(X_to_pred, "X_to_pred")
+        pol.check_type(X_to_pred, "X_to_pred")
+        pol.check_dimensions(X_to_pred, "X_to_pred", (X_to.shape[0], None))
