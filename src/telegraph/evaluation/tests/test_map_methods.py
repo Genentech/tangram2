@@ -11,7 +11,7 @@ from telegraph.evaluation.tests import utils as ut
 class BaseTestMapMethods:
     def _method_base(self, method, tmp_path, res_dict=None, **method_params):
         if res_dict is None:
-            res_dict = ut.make_fake_map_input()
+            res_dict = ut.make_fake_X()
 
         out = method.run(res_dict, **method_params)
         res_dict.update(out)
@@ -85,7 +85,7 @@ class TestArgMaxCorrMap(BaseTestMapMethods):
         # mapping by ArgMaxCorrMap shoul give 1-1
         # mapping
 
-        res_dict = ut.make_fake_map_input()
+        res_dict = ut.make_fake_X()
         res_dict["X_to"] = res_dict["X_from"]
         out = method.run(res_dict, return_sparse=True)
         np.testing.assert_array_equal(out["T"].row, out["T"].col)

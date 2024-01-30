@@ -97,12 +97,10 @@ class RandomMap(MapMethodClass):
         # anndata object that we map _to_
         X_to = input_dict["X_to"]
         pol.check_values(X_to, "X_to")
-        pol.check_type(X_to, "X_to")
 
         # anndata object that we map _from_
         X_from = input_dict["X_from"]
         pol.check_values(X_from, "X_from")
-        pol.check_type(X_from, "X_from")
 
         # get dimensions
         n_rows = X_to.shape[0]
@@ -165,12 +163,10 @@ class ArgMaxCorrMap(MapMethodClass):
         # anndata of "to"
         X_to = input_dict["X_to"]
         pol.check_values(X_to, "X_to")
-        pol.check_type(X_to, "X_to")
 
         # anndata of "from"
         X_from = input_dict["X_from"]
         pol.check_values(X_from, "X_from")
-        pol.check_type(X_from, "X_from")
 
         # n_obs in from
         n_cols = X_from.shape[0]
