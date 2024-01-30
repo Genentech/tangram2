@@ -8,9 +8,12 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 
-from telegraph.evaluation._methods import MethodClass
-
+from . import policies as pol
 from . import utils as ut
+from ._methods import MethodClass
+
+# import telegraph.evaluation.policies as pol
+# from telegraph.evaluation._methods import MethodClass
 
 
 class DEA(Enum):
@@ -69,7 +72,7 @@ class ScanpyDEA(DEAMethodClass):
         normalize: bool = False,
         subset_features: Dict[str, List[str]] | Dict[str, str] | None = None,
         min_group_obs: int = 2,
-        split_by_base: bool = True,
+        split_by_base: bool = False,
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
 
@@ -97,16 +100,21 @@ class ScanpyDEA(DEAMethodClass):
             pol.check_dimensions(D_to, "D_to", (n_to, None))
 
             # data frame of predicted "to" data : [n_to] x [n_from_features]
-            to_pred_names = input_dict["to_pred_names"]
-            to_pred_var = input_dict["to_pred_names"]
-            adata_to = ad.AnnData(
-                X_to_pred,
-                obs=pd.DataFrame(
-                    [],
-                    index=to_pred_names,
-                ),
-                var=pd.DataFrame([], index=to_pred_var),
-            )
+            if isinstance(X_to_pred, pd.DataFrame):
+                to_pred_names = input_dict["to_pred_names"]
+                to_pred_var = input_dict["to_pred_names"]
+                adata_to = ad.AnnData(
+                    X_to_pred,
+                    obs=pd.DataFrame(
+                        [],
+                        index=to_pred_names,
+                    ),
+                    var=pd.DataFrame([], index=to_pred_var),
+                )
+            elif isinstance(X_to_pred, ad.AnnData):
+                adata_to = X_to_pred
+            else:
+                raise NotImplementedError
 
             # update objects
             objects["to"] = dict(D=D_to, adata=adata_to)
@@ -140,7 +148,7 @@ class ScanpyDEA(DEAMethodClass):
                     add_cols = D.columns[~base_cols].tolist()
                     base_groups = base_groups_og
                 else:
-                    NotImplementedError
+                    raise NotImplementedError
             else:
                 base_groups = [D.columns.tolist()]
                 add_cols = []
@@ -243,21 +251,20 @@ class ScanpyDEA(DEAMethodClass):
                         name = f"{obj_name}_{grp_1}_vs_{grp_2}"
                         out[name] = dedf
 
-                for key in out.keys():
-                    dedf = out[key]
-
-                    if mode == "both":
-                        pass
-                    elif mode == "pos":
-                        out["key"] = dedf[dedf["scores"].values > 0]
-                    elif mode == "neg":
-                        out[key] = dedf[dedf["scores"].values < 0]
-                    else:
-                        raise NotImplementedError
-
             # undo the normalization
             if normalize:
                 adata.X = X_old
+
+        for key in out.keys():
+            dedf = out[key]
+            if mode == "both":
+                pass
+            elif mode == "pos":
+                out[key] = dedf[dedf["scores"].values > 0]
+            elif mode == "neg":
+                out[key] = dedf[dedf["scores"].values < 0]
+            else:
+                raise NotImplementedError
 
         return dict(DEA=out)
 

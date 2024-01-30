@@ -153,7 +153,6 @@ class TangramPred(PredMethodClass):
 
 class TangramV1Pred(TangramPred):
     # Tangram v1 Prediction Method class
-    tg = tg1
     version = "1"
 
     def __init__(
@@ -167,7 +166,6 @@ class TangramV1Pred(TangramPred):
 
 class TangramV2Pred(TangramPred):
     # Tangram v2 Prediction Method class
-    tg = tg2
     version = "2"
 
     def __init__(
