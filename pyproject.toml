@@ -1,6 +1,6 @@
 [tool.poetry]
 
-name = "cccv"
+name = "telegraph"
 version = '0.1'
 authors = [
     "Aicha BenTaieb <bentaiea@gene.com>",
@@ -76,4 +76,4 @@ louvain = "^0.8.1"
 progressbar = "^2.5"
 
 [tool.poetry.scripts]
-cccv = 'cccv.cli:cli'
+telegraph = 'telegraph.cli:cli'
