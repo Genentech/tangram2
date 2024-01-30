@@ -1,10 +1,10 @@
 # Cell Cell Communication Validation (CCCV) Pipeline
 
-![](imgs/cccv-logo.png)
+![](imgs/logo.png)
 
 ## Description
 
-Welcome the CCCV framework by BRAID's MAGIC team. This is a computational suite
+Welcome the TELEGRAPH framework by BRAID's MAGIC team. This is a computational suite
 built for two purposes: 1) rigorous and fair comparisons of different
 computational methods that relate to cell-cell communication inference, 2) a
 form of "Swiss army knife" that makes it easy to run multiple CCC tools on your
@@ -29,7 +29,7 @@ For instructions of usage we refer to our [wiki](https://code.roche.com/rb-aiml-
 
 
 ## Installation
-To install the CCCV pipeline, do:
+To install the TELEGRAPH pipeline, do:
 
 ### 1. Clone this repository
 
@@ -52,7 +52,7 @@ install the package with poetry within this environment. To do this, do:
 
 ```sh
 conda env create -f environment.yml
-conda activate cccv
+conda activate telegraph
 ```
 
 If you are working in a remote server, you might have to load your
@@ -80,6 +80,6 @@ poetry install
 
 Make sure the installation was successful by running:
 ```sh
-cccv test
+telegraph test
 ```
 this should print a message confirming the CLI application runs as expected. Note, you may have to reload your conda environment or shell variables before running this.
