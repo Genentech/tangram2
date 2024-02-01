@@ -6,7 +6,8 @@ import anndata as ad
 import numpy as np
 import pandas as pd
 
-from cccv.evaluation._methods import MethodClass
+import telegraph.evaluation.policies as pol
+from telegraph.evaluation._methods import MethodClass
 
 from . import _grp_utils as gut
 from . import utils as ut

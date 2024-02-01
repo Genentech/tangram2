@@ -2,13 +2,13 @@ from abc import ABC
 from collections import OrderedDict
 from typing import Any, Dict
 
-import cccv.evaluation.constants as C
-import cccv.evaluation.dea_methods as dmet
-import cccv.evaluation.grp_methods as gmet
-import cccv.evaluation.map_methods as mmet
-import cccv.evaluation.pred_methods as pmet
-import cccv.evaluation.utils as ut
-from cccv.evaluation._methods import MethodClass
+import telegraph.evaluation.constants as C
+import telegraph.evaluation.dea_methods as dmet
+import telegraph.evaluation.grp_methods as gmet
+import telegraph.evaluation.map_methods as mmet
+import telegraph.evaluation.pred_methods as pmet
+import telegraph.evaluation.utils as ut
+from telegraph.evaluation._methods import MethodClass
 
 
 class IdentityFun:

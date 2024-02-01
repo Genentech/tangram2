@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List
 
-from cccv.evaluation.save_methods import StandardSaveMethods
+from telegraph.evaluation.save_methods import StandardSaveMethods
 
 from . import utils as ut
 

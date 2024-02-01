@@ -5,13 +5,11 @@ from typing import Any, Dict
 import anndata as ad
 import numpy as np
 import pandas as pd
-import tangram as tg1
-import tangram2 as tg2
 from scipy.sparse import spmatrix
 
-import cccv.evaluation.policies as pol
-import cccv.evaluation.utils as ut
-from cccv.evaluation._methods import MethodClass
+import telegraph.evaluation.policies as pol
+import telegraph.evaluation.utils as ut
+from telegraph.evaluation._methods import MethodClass
 
 
 class PredMethodClass(MethodClass):
@@ -41,8 +39,6 @@ class PredMethodClass(MethodClass):
 
 
 class TangramPred(PredMethodClass):
-    # specify which tangram module to use
-    tg = None
     # specify the tangram version
     version = None
 
@@ -67,6 +63,12 @@ class TangramPred(PredMethodClass):
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
         # Tangram Prediction Baseclass
+        if cls.version == "1":
+            import tangram as tg
+        elif cls.version == "2":
+            import tangram2 as tg
+        else:
+            raise NotImplementedError
 
         # get "to" anndata : [n_to] x [n_to_features]
         X_to = input_dict["X_to"]
@@ -125,7 +127,7 @@ class TangramPred(PredMethodClass):
             NotImplementedError
 
         # project genes in the "to" data
-        ad_ge = cls.tg.project_genes(adata_map=ad_map, adata_sc=ad_sc)
+        ad_ge = tg.project_genes(adata_map=ad_map, adata_sc=ad_sc)
 
         # get data frame of projected genes
         X_to_pred = ad_ge.to_df()
@@ -151,7 +153,6 @@ class TangramPred(PredMethodClass):
 
 class TangramV1Pred(TangramPred):
     # Tangram v1 Prediction Method class
-    tg = tg1
     version = "1"
 
     def __init__(
@@ -165,7 +166,6 @@ class TangramV1Pred(TangramPred):
 
 class TangramV2Pred(TangramPred):
     # Tangram v2 Prediction Method class
-    tg = tg2
     version = "2"
 
     def __init__(
@@ -217,19 +217,30 @@ class MoscotPred(PredMethodClass):
         if b is None:
             b = np.ones(n_from) / n_from
 
-        X_to_pred = T @ ((X_from.X) / (b[:, None] + eps))
+        prediction_genes = kwargs.get("prediction_genes")
+
+        if prediction_genes is None:
+            prediction_genes = X_from.var_names
+
+        X_to_pred = T @ ((X_from[:, prediction_genes].X) / (b[:, None] + eps))
 
         X_to_pred = pd.DataFrame(
             X_to_pred,
             index=to_names,
-            columns=X_from.var_names,
+            columns=prediction_genes,
+        )
+
+        pol.check_values(X_to_pred, "X_to_pred")
+        pol.check_type(X_to_pred, "X_to_pred")
+        pol.check_dimensions(
+            X_to_pred, "X_to_pred", (T.shape[0], len(prediction_genes))
         )
 
         out = dict(
             X_to_pred=X_to_pred,
             X_from_pred=None,
+            to_pred_names=to_names,
+            to_pred_var=prediction_genes,
         )
 
-        pol.check_values(X_to_pred, "X_to_pred")
-        pol.check_type(X_to_pred, "X_to_pred")
-        pol.check_dimensions(X_to_pred, "X_to_pred", (X_to.shape[0], None))
+        return out

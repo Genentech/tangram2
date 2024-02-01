@@ -4,9 +4,9 @@ import anndata as ad
 import numpy as np
 import pytest
 
-from cccv.evaluation import dea_methods as dm
-from cccv.evaluation.tests import utils as ut
-from cccv.evaluation.utils import design_matrix_to_labels
+from telegraph.evaluation import dea_methods as dm
+from telegraph.evaluation.tests import utils as ut
+from telegraph.evaluation.utils import design_matrix_to_labels
 
 
 class BaseTestDEAMethods:

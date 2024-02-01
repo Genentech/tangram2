@@ -4,23 +4,18 @@ from tempfile import TemporaryDirectory
 from typing import Any, Callable, Dict, List, Literal
 
 import anndata as ad
-import CeLEry as cel
 import numpy as np
 import pandas as pd
 import scanpy as sc
-import tangram as tg1
-import tangram2 as tg2
-from moscot.problems.space import MappingProblem
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from scipy.spatial.distance import cdist
-from spaotsc import SpaOTsc
 from torch.cuda import is_available
 
-import cccv.evaluation.policies as pol
-import cccv.evaluation.utils as ut
-from cccv.evaluation import _map_utils as mut
-from cccv.evaluation._methods import MethodClass
+import telegraph.evaluation.policies as pol
+import telegraph.evaluation.utils as ut
+from telegraph.evaluation import _map_utils as mut
+from telegraph.evaluation._methods import MethodClass
 
 
 class MapMethodClass(MethodClass):
@@ -102,12 +97,10 @@ class RandomMap(MapMethodClass):
         # anndata object that we map _to_
         X_to = input_dict["X_to"]
         pol.check_values(X_to, "X_to")
-        pol.check_type(X_to, "X_to")
 
         # anndata object that we map _from_
         X_from = input_dict["X_from"]
         pol.check_values(X_from, "X_from")
-        pol.check_type(X_from, "X_from")
 
         # get dimensions
         n_rows = X_to.shape[0]
@@ -170,12 +163,10 @@ class ArgMaxCorrMap(MapMethodClass):
         # anndata of "to"
         X_to = input_dict["X_to"]
         pol.check_values(X_to, "X_to")
-        pol.check_type(X_to, "X_to")
 
         # anndata of "from"
         X_from = input_dict["X_from"]
         pol.check_values(X_from, "X_from")
-        pol.check_type(X_from, "X_from")
 
         # n_obs in from
         n_cols = X_from.shape[0]
@@ -219,7 +210,6 @@ class ArgMaxCorrMap(MapMethodClass):
 
 class TangramMap(MapMethodClass):
     # TangramMap Baseclass
-
     # tangram module to use
     tg = None
     # version number
@@ -252,6 +242,14 @@ class TangramMap(MapMethodClass):
         experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+
+        if cls.version == "1":
+            import tangram as tg
+        elif cls.version == "2":
+            import tangram2 as tg
+        else:
+            raise NotImplementedError
+
         # n_obs in "from"
         n_cols = input_dict["X_from"].shape[0]
         # n_obs in "to"
@@ -275,7 +273,7 @@ class TangramMap(MapMethodClass):
             genes = ut.list_or_path_get(genes)
 
         # preprocess anndata for mapping
-        cls.tg.pp_adatas(ad_from, ad_to, genes=genes)
+        tg.pp_adatas(ad_from, ad_to, genes=genes)
         mode = kwargs.pop("mode", "cells")
         wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name
@@ -321,7 +319,7 @@ class TangramMap(MapMethodClass):
             method_params["wandb_config"] = wandb_config
 
         # map cells in "from" to "to"
-        tg_out = cls.tg.map_cells_to_space(
+        tg_out = tg.map_cells_to_space(
             **method_params,
         )
 
@@ -380,7 +378,6 @@ class TangramMap(MapMethodClass):
 
 class TangramV1Map(TangramMap):
     # Method class for TangramV1
-    tg = tg1
     version = "1"
 
     def __init__(
@@ -394,7 +391,6 @@ class TangramV1Map(TangramMap):
 
 class TangramV2Map(TangramMap):
     # Method class for TangramV2
-    tg = tg2
     version = "2"
 
     def __init__(
@@ -419,6 +415,8 @@ class TangramV2Map(TangramMap):
 
 
 class CeLEryMap(MapMethodClass):
+    import CeLEry as cel
+
     # Method class for CeLEry
     # github: https://github.com/QihuangZhang/CeLEry
     ins = ["X_to", "X_from"]
@@ -477,6 +475,7 @@ class CeLEryMap(MapMethodClass):
 
 
 class SpaOTscMap(MapMethodClass):
+
     # SpaOTsc class
     # Expected Inputs and Outputs
     ins = ["X_to", "X_from"]
@@ -502,6 +501,8 @@ class SpaOTscMap(MapMethodClass):
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        from spaotsc import SpaOTsc
+
         # anndata of "from"
         ad_from = input_dict["X_from"]
         pol.check_values(ad_from, "X_from")
@@ -624,6 +625,7 @@ class SpaOTscMap(MapMethodClass):
 
 
 class MoscotMap(MapMethodClass):
+
     # Method class for moscot
     # github: https://github.com/theislab/moscot
     ins = ["X_to", "X_from"]
@@ -649,6 +651,8 @@ class MoscotMap(MapMethodClass):
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray]:
+        from moscot.problems.space import MappingProblem
+
         # anndata object that we map _to_
         if seed is not None:
             np.random.seed(seed)
@@ -705,7 +709,7 @@ class MoscotMap(MapMethodClass):
         out["marginals"] = marginals
 
         if return_T_norm:
-            T_norm = T_soft / T_soft.sum(axis=0) #.reshape(-1, 1)
+            T_norm = T_soft / T_soft.sum(axis=0)  # .reshape(-1, 1)
             out["T_norm"] = T_norm
 
         T = out["T"]

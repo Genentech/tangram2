@@ -1,4 +1,4 @@
-from cccv.evaluation.workflows import WorkFlowClass
+from telegraph.evaluation.workflows import WorkFlowClass
 
 from . import constants as C
 

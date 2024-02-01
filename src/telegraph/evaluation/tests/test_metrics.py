@@ -6,8 +6,8 @@ import anndata as ad
 import numpy as np
 import pytest
 
-import cccv.evaluation.constants as C
-from cccv.evaluation.tests import utils as ut
+import telegraph.evaluation.constants as C
+from telegraph.evaluation.tests import utils as ut
 
 
 class BaseTestMetric(ABC):
@@ -27,7 +27,7 @@ class BaseTestMetric(ABC):
     ):
         match (res_dict, ref_dict):
             case (None, None):
-                res_dict, ref_dict = cls._make_input()
+                res_dict, ref_dict = cls._make_fake_T()
             case (_, None):
                 _, ref_dict = cls._make_input()
             case (None, _):

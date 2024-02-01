@@ -9,8 +9,8 @@ from scipy.sparse import coo_matrix, spmatrix
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
-import cccv.evaluation.constants as C
-import cccv.evaluation.map_methods as mmet
+import telegraph.evaluation.constants as C
+import telegraph.evaluation.map_methods as mmet
 
 from . import utils as ut
 

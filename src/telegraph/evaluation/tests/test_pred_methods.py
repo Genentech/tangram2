@@ -1,33 +1,36 @@
 import copy
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Tuple
+
 import pytest
-from cccv.evaluation import pred_methods as pm
-from cccv.evaluation.tests import utils as ut
+
+from telegraph.evaluation import pred_methods as pm
+from telegraph.evaluation.tests import utils as ut
 
 
 class BaseTestPredMethods:
     def _method_base(self, method, tmp_path, res_dict=None, **method_params):
         if res_dict is None:
-            res_dict = ut.make_fake_map_input()
+            res_dict = ut.make_fake_X()
             res_dict = ut.make_fake_T(res_dict=res_dict)
             if method == pm.TangramV2Pred:
                 res_dict["X_from_scaled"] = res_dict["X_from"].copy()
-            if method == pm.MoscotPred:
-                res_dict = ut.make_fake_ot_solution(res_dict=res_dict)
+
         out = method.run(res_dict, **method_params)
         res_dict.update(out)
 
         assert all([x in res_dict for x in method.outs])
-        if (method == pm.MoscotPred) and (method_params.get("prediction_genes") is not None):
+        if (method == pm.MoscotPred) and (
+            method_params.get("prediction_genes") is not None
+        ):
             X_to_pred_row, X_to_pred_col = res_dict["X_to_pred"].shape
             assert (X_to_pred_row == res_dict["X_to"].shape[0]) and (
-                    X_to_pred_col == len(method_params["prediction_genes"])
+                X_to_pred_col == len(method_params["prediction_genes"])
             )
         else:
             X_to_pred_row, X_to_pred_col = res_dict["X_to_pred"].shape
             assert (X_to_pred_row == res_dict["X_to"].shape[0]) and (
-                    X_to_pred_col == res_dict["X_from"].shape[1]
+                X_to_pred_col == res_dict["X_from"].shape[1]
             )
 
         if "X_from_pred" in res_dict:
@@ -86,4 +89,3 @@ class TestMoscotPred(BaseTestPredMethods):
         # checks custom params case
 
         self._method_base(method, tmp_path, prediction_genes=prediction_genes)
-

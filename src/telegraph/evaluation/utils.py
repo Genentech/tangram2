@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 from numba import njit
 from scipy.sparse import spmatrix
-from thefuzz import fuzz
 
 W = TypeVar("W")
 
@@ -297,6 +296,7 @@ def ad2np(func):
         *args,
         **kwargs,
     ):
+
         arr_X_to = input_dict["X_to"].X
         if isinstance(arr_X_to, spmatrix):
             arr_X_to = arr_X_to.toarray()

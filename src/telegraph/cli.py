@@ -68,7 +68,7 @@ def eval(config: str, out_dir, save_mode: bool = False, debug: bool = True):
 # add subcommand 'eval' to group
 @cli.command("test")
 def test():
-    print("The CLI for CCCV is working")
+    print("The CLI for telegraph is working")
 
 
 if __name__ == "__main__":

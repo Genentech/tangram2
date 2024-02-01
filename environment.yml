@@ -1,4 +1,4 @@
-name: cccv
+name: telegraph
 channels:
   - conda-forge
   - defaults

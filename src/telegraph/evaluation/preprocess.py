@@ -1,11 +1,8 @@
 from abc import ABC, abstractmethod
 
 import anndata as ad
-import CeLEry as cel
 import numpy as np
 import scanpy as sc
-import tangram as tg
-import tangram2 as tg2
 from scipy.sparse import spmatrix
 
 
@@ -76,13 +73,15 @@ class CeLEryPP(PPClass):
     # Based on: https://github.com/QihuangZhang/CeLEry/blob/main/tutorial/tutorial.md
     @staticmethod
     def pp(adata: ad.AnnData, **kwargs):
+        from CeLEry import get_zscore
+
         # check if sparse matrix
         if isinstance(adata.X, spmatrix):
             adata.X = adata.X.toarray()
         # change dtype to float32 (for autograd framework)
         adata.X = adata.X.astype(np.float32)
         # get zscore
-        cel.get_zscore(adata)
+        get_zscore(adata)
 
 
 class StandardTangramV1(PPClass):

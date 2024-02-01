@@ -1,9 +1,9 @@
 from enum import Enum
 
-import cccv.evaluation.dea_methods as dmet
-import cccv.evaluation.grp_methods as gmet
-import cccv.evaluation.map_methods as mmet
-import cccv.evaluation.pred_methods as pmet
+import telegraph.evaluation.dea_methods as dmet
+import telegraph.evaluation.grp_methods as gmet
+import telegraph.evaluation.map_methods as mmet
+import telegraph.evaluation.pred_methods as pmet
 
 from . import metrics as mtx
 from . import preprocess as pp
@@ -88,7 +88,7 @@ class METHODS(EnumCustom):
 
 
 class WORKFLOWS(EnumCustom):
-    import cccv.evaluation.workflows as wf
+    import telegraph.evaluation.workflows as wf
 
     # raw workflow names
     _OPTIONS = dict(tg2_base=wf.Tangram2BaselineWorkflow)

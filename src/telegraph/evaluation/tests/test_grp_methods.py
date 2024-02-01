@@ -4,8 +4,8 @@ import anndata as ad
 import numpy as np
 import pytest
 
-from cccv.evaluation import grp_methods as gm
-from cccv.evaluation.tests import utils as ut
+from telegraph.evaluation import grp_methods as gm
+from telegraph.evaluation.tests import utils as ut
 
 
 class TestThresholdGroup:
@@ -35,7 +35,6 @@ class TestThresholdGroup:
         n_features_from=15,
     ):
         # tests for runtime errors
-
         res_dict = ut.make_fake_X(
             n_to, n_from, n_features_to, n_features_from, n_labels_from=4
         )
@@ -47,6 +46,7 @@ class TestThresholdGroup:
         feature_name = res_dict["X_from"].var_names[feature_id]
 
         if n_covariates > 0:
+            uni_labels = np.unique(res_dict["X_from"].obs["labels"])
             label_col = res_dict["X_from"].obs.columns[0]
             add_covariates = {"from": [label_col]}
         else:
