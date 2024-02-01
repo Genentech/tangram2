@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import anndata as ad
 import numpy as np
+import pandas as pd
 import pytest
 
 from telegraph.evaluation import map_methods as mm
@@ -88,7 +89,8 @@ class TestArgMaxCorrMap(BaseTestMapMethods):
         res_dict = ut.make_fake_X()
         res_dict["X_to"] = res_dict["X_from"]
         out = method.run(res_dict, return_sparse=True)
-        np.testing.assert_array_equal(out["T"].row, out["T"].col)
+        T = out["T"].sparse.to_coo()
+        np.testing.assert_array_equal(T.row, T.col)
 
 
 class TestSpaOTscMap(BaseTestMapMethods):

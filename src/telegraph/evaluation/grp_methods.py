@@ -146,7 +146,7 @@ class ThresholdGroup(GroupMethodClass):
             # that thres_t_high assigned to the "high" observations
             # in "to"
             if np.sum(x_high) > 0:
-                t_high = T[x_high, :].sum(axis=0) >= thres_t_high
+                t_high = T.values[x_high, :].sum(axis=0) >= thres_t_high
             else:
                 t_high = np.zeros(T.shape[1]).astype(bool)
 
@@ -244,7 +244,7 @@ class AssociationScore(GroupMethodClass):
         T = input_dict["T"]
 
         # compute association between obs i in 'from' with feature f in 'to_pred'
-        Q = T.T @ X_to_pred.values
+        Q = T.values.T @ X_to_pred.values
 
         # convert to dataframe
         Q = pd.DataFrame(

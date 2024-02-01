@@ -177,10 +177,21 @@ class HardMapMetricClass(MapMetricClass):
                 ),
                 shape=obj["shape"],
             )
+            names_self = obj.get("names_self")
+            names_target = obj.get("names_target")
+            new_obj = pd.DataFrame.sparse.from_spmatrix(
+                new_obj,
+                index=names_self,
+                columns=names_target,
+            )
+
         elif isinstance(obj, np.ndarray):
             new_obj = coo_matrix(obj)
+            new_obj = pd.DataFrame.sparse.from_spmatrix(new_obj)
+        elif isinstance(obj, pd.DataFrame):
+            new_obj = obj.astype(pd.SparseDtype("float", 0))
         else:
-            new_obj = obj
+            raise NotImplementedError
 
         return new_obj
 
@@ -211,14 +222,13 @@ class MapJaccardDist(HardMapMetricClass):
     ) -> Dict[str, float]:
         # get predicted map
         T_true = cls._pp(ref_dict["T"])
-
         # get true map
         T_pred = cls._pp(res_dict["T"])
 
-        if isinstance(T_pred, spmatrix) and isinstance(T_true, spmatrix):
-            inter = np.sum(T_pred.multiply(T_true))
-        elif isinstance(T_pred, np.ndarray) and isinstance(T_true, np.ndarray):
-            inter = np.sum(T_pred * T_true)
+        T_true = T_true.sparse.to_coo()
+        T_pred = T_pred.sparse.to_coo()
+
+        inter = np.sum(T_pred.multiply(T_true))
 
         union = np.sum((T_pred + T_true) > 0)
 
