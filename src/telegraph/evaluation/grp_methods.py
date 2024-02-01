@@ -41,11 +41,8 @@ class ThresholdGroup(GroupMethodClass):
     # how much of their mass is mapped to the two different
     # groups in the "to" data
 
-    ins = ["X_from", "X_to_pred"]
-    outs = [
-        "D_to",
-        "D_from",
-    ]
+    ins = ["X_from", "X_to_pred", "T"]
+    outs = ["D_to", "D_from"]
 
     def __init__(
         self,
@@ -188,3 +185,86 @@ class ThresholdGroup(GroupMethodClass):
         # additional covariates will be appended to the design matrix
 
         return dict(D_to=Ds_to, D_from=Ds_from, base_groups=base_groups)
+
+
+class AssociationScore(GroupMethodClass):
+    """Association Score between
+
+    how strongly is observation i in 'from' associated
+    with feature f in 'from'
+
+
+    Calculates `Q` where, Q_{if} indicates how strongly associated
+    observation i in 'from' is with feature f in 'to_pred'.
+
+
+    We use the formula: $Q = T^t \cdot X_to_pred = T^t \cdot (T \cdot X_{to\_pred})$
+
+    The dimensions for the objects are:
+
+    X_from : [n_from] x [n_var] (e.g., spatial gene expression)
+    X_to_pred : [n_to] x [n_var] (e.g., single cell gene expression)
+    T : [n_to] x [n_from] (e.g., map of single cells to visium spots)
+    Q : [n_from] x [n_var]
+
+    Q should be a pd.DataFrame object
+
+    """
+
+    ins = ["X_from", "X_to_pred", "T"]
+    outs = ["D_to"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    @ut.check_in_out
+    @gut.add_covariates
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        feature_name: List[str] | str | None = None,
+        **kwargs,
+    ) -> pd.DataFrame:
+
+        X_from = input_dict.get("X_from")
+        assert X_from is not None, "X_from needs to be an object"
+        # get dataframe of "X_to_pred"
+        X_to_pred = input_dict.get("X_to_pred")
+        assert X_to_pred is not None, "X_to_pred needs to be an object"
+
+        if isinstance(X_to_pred, ad.AnnData):
+            X_to_pred = X_to_pred.to_df()
+
+        # get map (T) : [n_to] x [n_from]
+        T = input_dict["T"]
+
+        # compute association between obs i in 'from' with feature f in 'to_pred'
+        Q = T.T @ X_to_pred.values
+
+        # convert to dataframe
+        Q = pd.DataFrame(
+            Q,
+            index=X_from.index,
+            columns=X_to_pred.columns,
+        )
+
+        # make sure feature_name is in list format
+        feature_name = ut.listify(feature_name)
+
+        # only keep features specified
+        if feature_name[0] is not None:
+            feature_not_in_vars = [x for x in feature_name if x not in Q.columns]
+            assert (
+                len(feature_not_in_vars) == 0
+            ), "Features: {} were not found in the data".format(
+                ",".join(feature_not_in_vars)
+            )
+
+            Q = Q.loc[:, feature_name]
+
+        return dict(D_to=Q)
