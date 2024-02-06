@@ -12,6 +12,20 @@ from scipy.sparse import spmatrix
 W = TypeVar("W")
 
 
+def array_to_sparse_df(
+    arr: np.ndarray, index: None | List[str] = None, columns: None | List[str] = None
+):
+    arr = pd.DataFrame(
+        arr,
+        index=index,
+        columns=columns,
+    )
+
+    arr = arr.astype(pd.SparseDtype("float", 0))
+
+    return arr
+
+
 def merge_default_dict_with_kwargs(default_dict, kwargs):
     out_dict = dict()
     for key, value in default_dict.items():
