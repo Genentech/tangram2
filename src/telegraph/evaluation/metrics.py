@@ -257,13 +257,7 @@ class MapAccuracy(HardMapMetricClass):
         # get true map
         T_pred = cls._pp(res_dict["T"])
 
-        # sparse matrices do not work with A * B
-        # inter = T_pred.multiply(T_true)
-
-        # inter = np.sum(inter)
-        # full = np.sum(T_true)
-
-        inter = np.sum(T_pred == T_true)
+        inter = np.sum(T_pred.values == T_true.values)
         full = T_true.shape[0] * T_true.shape[1]
 
         acc = inter / full
