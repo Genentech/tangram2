@@ -1,6 +1,6 @@
 [tool.poetry]
 
-name = "telegraph"
+name = 'telegraph'
 version = '0.1'
 authors = [
     "Aicha BenTaieb <bentaiea@gene.com>",
