@@ -666,7 +666,6 @@ class MoscotMap(MapMethodClass):
         pol.check_type(X_to, "X_to")
 
         # anndata object that we map _from_
-        X_from = input_dict["X_from"]
         pol.check_values(X_from, "X_from")
         pol.check_type(X_from, "X_from")
 
@@ -695,18 +694,20 @@ class MoscotMap(MapMethodClass):
         mp = mp.solve(
             **solve_kwargs,
         )
+
         transport_plan = mp["src", "tgt"].solution.transport_matrix
-        T_soft = transport_plan
+        T_soft = np.asarray(transport_plan)
 
         marginals = dict(a=mp.problems["src", "tgt"].a, b=mp.problems["src", "tgt"].b)
 
         # output dict
         out = dict()
 
-        out["T"] = np.asarray(T_soft)
+        out["T"] = T_soft
         out["to_names"] = X_to.obs.index.values.tolist()
         out["from_names"] = X_from.obs.index.values.tolist()
         out["marginals"] = marginals
+        out["converged"] = mp["src", "tgt"].solution.converged
 
         if return_T_norm:
             T_norm = T_soft / T_soft.sum(axis=0)  # .reshape(-1, 1)
