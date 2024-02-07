@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import anndata as ad
 import numpy as np
+import pandas as pd
 import pytest
 
 from telegraph.evaluation import dea_methods as dm
