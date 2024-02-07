@@ -18,7 +18,7 @@ def cli():
 @click.option("-sv", "--save_mode", help="save_outputs", is_flag=True, default=False)
 @click.option("-db", "--debug", help="debug", is_flag=True, default=False)
 def eval(config: str, out_dir, save_mode: bool = False, debug: bool = True):
-    import cccv.evaluation as ev
+    import telegraph.evaluation as ev
 
     """Execute and/or evaluate CCC workflows"""
 
