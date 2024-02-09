@@ -286,7 +286,7 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
                     print("There may be nan coordinates ")
                 else:
                     keep = obj.obs[[x, y]].dropna(axis=0).index
-        obj = obj[keep, :].copy()
+            obj = obj[keep, :].copy()
 
         # store object
         input_dict[name] = obj
