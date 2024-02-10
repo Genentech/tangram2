@@ -59,6 +59,7 @@ class TestMapMetric(BaseTestMetric):
             ["map_jaccard", False],
             ["map_accuracy", True],
             ["map_rmse", False],
+            ["map_f1", True],
         ),
     )
     def test_run(

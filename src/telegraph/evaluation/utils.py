@@ -12,6 +12,20 @@ from scipy.sparse import spmatrix
 W = TypeVar("W")
 
 
+def array_to_sparse_df(
+    arr: np.ndarray, index: None | List[str] = None, columns: None | List[str] = None
+):
+    arr = pd.DataFrame(
+        arr,
+        index=index,
+        columns=columns,
+    )
+
+    arr = arr.astype(pd.SparseDtype("float", 0))
+
+    return arr
+
+
 def merge_default_dict_with_kwargs(default_dict, kwargs):
     out_dict = dict()
     for key, value in default_dict.items():
@@ -262,14 +276,16 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
             obj = obj.T
 
         # remove all nan spots
-        if name in (["sp", "X_to"]) and hasattr(obj, "obs"):
-            x = data_dict[name].get("x_coords", None)
-            y = data_dict[name].get("y_coords", None)
-            if x is None or y is None:
-                # TODO: Add warning here that rows with that NaN values from all columns will be dropped
-                keep = obj.obs.dropna(axis=0).index
-            else:
-                keep = obj.obs[[x, y]].dropna(axis=0).index
+        if name in (["sp", "X_to"]):
+            if (hasattr(obj, "obsm")) and ("spatial" in obj.obsm):
+                keep = ~(np.any(np.isnan(obj.obsm["spatial"]), axis=1))
+            elif hasattr(obj, "obs"):
+                x = data_dict[name].get("x_coords", None)
+                y = data_dict[name].get("y_coords", None)
+                if x is None or y is None:
+                    print("There may be nan coordinates ")
+                else:
+                    keep = obj.obs[[x, y]].dropna(axis=0).index
             obj = obj[keep, :].copy()
 
         # store object

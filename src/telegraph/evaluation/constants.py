@@ -104,6 +104,7 @@ class METRICS(EnumCustom):
         jaccard=mtx.MapJaccardDist,
         accuracy=mtx.MapAccuracy,
         rmse=mtx.MapRMSE,
+        f1=mtx.MapF1,
     )
 
     # "prefixed" map metrics names

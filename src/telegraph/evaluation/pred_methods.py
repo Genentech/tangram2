@@ -82,19 +82,16 @@ class TangramPred(PredMethodClass):
         # get map : [n_to] x [n_from]
         T = input_dict["T"]
 
-        # convert map to dense matrix
-        if isinstance(T, spmatrix):
-            T_soft = T.todense()
-        else:
-            T_soft = T.copy()
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (X_to.shape[0], X_from.shape[0]))
 
-        pol.check_type(T_soft, "T")
-        pol.check_values(T_soft, "T")
-        pol.check_dimensions(T_soft, "T", (X_to.shape[0], X_from.shape[0]))
+        T_soft = T.values
 
         # create anndata object of map
         # tangram functions expects map to be [n_from] x [n_to]
         # hence the transpose
+        # TODO : potentially change this to var,obs based on T
         ad_map = ad.AnnData(
             T_soft.T,
             var=X_to.obs,
@@ -180,7 +177,7 @@ class TangramV2Pred(TangramPred):
 class MoscotPred(PredMethodClass):
     # MOSCOT Prediction Method Class
 
-    ins = ["T", "X_from", "to_names"]
+    ins = ["T", "X_from"]
     outs = ["X_to_pred"]
 
     def __init__(
@@ -206,8 +203,8 @@ class MoscotPred(PredMethodClass):
         assert X_from is not None, "X_from is not found in input"
         n_from = X_from.shape[0]
 
-        to_names = input_dict.get("to_names")
-        assert to_names is not None, "to_names needs to be included"
+        to_names = T.index
+        from_names = T.columns
 
         # var_names = kwargs.get("prediction_genes", None)
         marginals = kwargs.get("marginals", None)
@@ -222,7 +219,7 @@ class MoscotPred(PredMethodClass):
         if prediction_genes is None:
             prediction_genes = X_from.var_names
 
-        X_to_pred = T @ ((X_from[:, prediction_genes].X) / (b[:, None] + eps))
+        X_to_pred = T.values @ ((X_from[:, prediction_genes].X) / (b[:, None] + eps))
 
         X_to_pred = pd.DataFrame(
             X_to_pred,

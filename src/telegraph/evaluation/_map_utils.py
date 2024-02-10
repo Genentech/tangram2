@@ -1,20 +1,29 @@
 import numpy as np
+import pandas as pd
 from scipy.spatial import cKDTree
 
 
 def soft_T_to_hard(
     cls,
-    T: np.ndarray,
+    T: np.ndarray | pd.DataFrame,
     out,
     hard_map=False,
     pos_by_argmax=True,
     pos_by_weight=False,
     S_to=None,
     S_from=None,
-    return_sparse=False,
 ):
 
     n_rows, n_cols = T.shape
+
+    if isinstance(T, np.ndarray):
+        row_names = None
+        col_names = None
+    elif isinstance(T, pd.DataFrame):
+        row_names = T.index
+        col_names = T.columns
+    else:
+        raise NotImplementedError
 
     if hard_map and (pos_by_argmax or pos_by_weight):
         col_idx = np.arange(n_cols)
@@ -38,5 +47,6 @@ def soft_T_to_hard(
             col_idx,
             n_rows,
             n_cols,
-            return_sparse,
+            row_names=row_names,
+            col_names=col_names,
         )

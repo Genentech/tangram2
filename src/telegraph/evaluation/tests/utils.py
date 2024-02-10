@@ -94,6 +94,7 @@ def make_fake_T(
         col_idx = col_idx[ordr]
 
         T = coo_matrix((np.ones(n_from), (row_idx, col_idx)), shape=(n_to, n_from))
+        T = pd.DataFrame.sparse.from_spmatrix(T, index=to_names, columns=from_names)
 
     else:
 
@@ -117,9 +118,10 @@ def make_fake_T(
             T = np.divide(T, T_div)
             T = T * multiplier
 
+        T = pd.DataFrame(T, index=to_names, columns=from_names)
+        T = T.astype((pd.SparseDtype("float", 0)))
+
     res_dict["T"] = T
-    res_dict["from_names"] = from_names
-    res_dict["to_names"] = to_names
 
     return res_dict
 

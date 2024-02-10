@@ -177,10 +177,21 @@ class HardMapMetricClass(MapMetricClass):
                 ),
                 shape=obj["shape"],
             )
+            names_self = obj.get("names_self")
+            names_target = obj.get("names_target")
+            new_obj = pd.DataFrame.sparse.from_spmatrix(
+                new_obj,
+                index=names_self,
+                columns=names_target,
+            )
+
         elif isinstance(obj, np.ndarray):
             new_obj = coo_matrix(obj)
+            new_obj = pd.DataFrame.sparse.from_spmatrix(new_obj)
+        elif isinstance(obj, pd.DataFrame):
+            new_obj = obj.astype(pd.SparseDtype("float", 0))
         else:
-            new_obj = obj
+            raise NotImplementedError
 
         return new_obj
 
@@ -211,14 +222,13 @@ class MapJaccardDist(HardMapMetricClass):
     ) -> Dict[str, float]:
         # get predicted map
         T_true = cls._pp(ref_dict["T"])
-
         # get true map
         T_pred = cls._pp(res_dict["T"])
 
-        if isinstance(T_pred, spmatrix) and isinstance(T_true, spmatrix):
-            inter = np.sum(T_pred.multiply(T_true))
-        elif isinstance(T_pred, np.ndarray) and isinstance(T_true, np.ndarray):
-            inter = np.sum(T_pred * T_true)
+        T_true = T_true.sparse.to_coo()
+        T_pred = T_pred.sparse.to_coo()
+
+        inter = np.sum(T_pred.multiply(T_true))
 
         union = np.sum((T_pred + T_true) > 0)
 
@@ -247,18 +257,42 @@ class MapAccuracy(HardMapMetricClass):
         # get true map
         T_pred = cls._pp(res_dict["T"])
 
-        # sparse matrices do not work with A * B
-        # inter = T_pred.multiply(T_true)
-
-        # inter = np.sum(inter)
-        # full = np.sum(T_true)
-
-        inter = np.sum(T_pred == T_true)
+        inter = np.sum(T_pred.values == T_true.values)
         full = T_true.shape[0] * T_true.shape[1]
 
         acc = inter / full
 
         out = cls.make_standard_out(acc)
+
+        return out
+
+
+class MapF1(HardMapMetricClass):
+    metric_name = "f1"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def score(
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> Dict[str, float]:
+        from sklearn.metrics import f1_score
+
+        # get predicted map
+        T_true = cls._pp(ref_dict["T"])
+
+        # get true map
+        T_pred = cls._pp(res_dict["T"])
+
+        y_pred = T_pred.values.flatten()
+        y_true = T_true.values.flatten()
+
+        score = f1_score(
+            y_true, y_pred, pos_label=1, average="binary", zero_division=0.0
+        )
+
+        out = cls.make_standard_out(score)
 
         return out
 

@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Any, List
 
 import numpy as np
+import pandas as pd
 from anndata import AnnData
 from pandas import DataFrame
 from scipy.sparse import spmatrix
@@ -68,12 +69,12 @@ class BasePolicy(ABC):
 
 class PolicyT(BasePolicy):
     object_name = "T"
-    object_type = (np.ndarray, spmatrix)
+    object_type = pd.DataFrame
 
     @classmethod
     def test_values(cls, obj: np.ndarray | spmatrix):
 
-        is_neg = np.sum(obj < 0)
+        is_neg = np.sum(obj.values < 0)
         assert is_neg == 0, f"{cls.object_name} has negative values"
 
 

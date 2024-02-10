@@ -35,20 +35,12 @@ class StandardSaveMethods:
 
     @classmethod
     def _save_T(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
+
+        T = res_dict["T"]
         # get names of data being mapped (from)
-        columns = res_dict["from_names"]
-        # get names of data we map onto (to)
-        index = res_dict["to_names"]
-
-        matrix = res_dict["T"]
-        df = pd.DataFrame(
-            matrix.toarray() if isinstance(matrix, spmatrix) else matrix,
-            index=index,
-            columns=columns,
-        )
-
         out_pth = osp.join(out_dir, "T" + ".csv")
-        cls.save_df(df, out_pth, **kwargs)
+
+        cls.save_df(T, out_pth, **kwargs)
 
     @classmethod
     def _save_S(cls, res_dict: Dict[str, Any], obj: str, out_dir: str, **kwargs):
