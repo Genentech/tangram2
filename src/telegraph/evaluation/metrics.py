@@ -267,6 +267,36 @@ class MapAccuracy(HardMapMetricClass):
         return out
 
 
+class MapF1(HardMapMetricClass):
+    metric_name = "f1"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def score(
+        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+    ) -> Dict[str, float]:
+        from sklearn.metrics import f1_score
+
+        # get predicted map
+        T_true = cls._pp(ref_dict["T"])
+
+        # get true map
+        T_pred = cls._pp(res_dict["T"])
+
+        y_pred = T_pred.values.flatten()
+        y_true = T_true.values.flatten()
+
+        score = f1_score(
+            y_true, y_pred, pos_label=1, average="binary", zero_division=0.0
+        )
+
+        out = cls.make_standard_out(score)
+
+        return out
+
+
 class MapRMSE(MapMetricClass):
     """RMSE for spatial coordinates
 
