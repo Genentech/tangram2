@@ -9,5 +9,6 @@ dependencies:
   - cudnn
   - pip
   - setuptools
+  - cddlib
   - pip:
     - poetry==1.7.1
