@@ -722,9 +722,9 @@ class MoscotMap(MapMethodClass):
         n_rows = X_to.shape[0]
         n_cols = X_from.shape[0]
 
-        pol.check_type(T, "T_soft")
-        pol.check_values(T, "T_soft")
-        pol.check_dimensions(T, "T_soft", (n_rows, n_cols))
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_rows, n_cols))
 
         # convert soft map (T) to hard map if specified
         mut.soft_T_to_hard(
