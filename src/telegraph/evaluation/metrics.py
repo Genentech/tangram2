@@ -195,19 +195,20 @@ class HardMapMetricClass(MapMetricClass):
 
         return new_obj
 
-    @classmethod
-    def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
-        # we get the ground truth from the original
-        # data (X_from)
-        X_from = input_dict["X_from"]
-        obj_map = ut.get_ad_value(X_from, key)
-        row_idx = obj_map["row_self"]
-        col_idx = obj_map["row_target"]
-        n_rows, n_cols = obj_map["shape"]
-
-        T = coo_matrix((np.ones(n_rows), (row_idx, col_idx)), shape=(n_rows, n_cols))
-
-        return dict(true=T.T)
+    # DEAD CODE?
+    # @classmethod
+    # def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
+    #     # we get the ground truth from the original
+    #     # data (X_from)
+    #     X_from = input_dict["X_from"]
+    #     obj_map = ut.get_ad_value(X_from, key)
+    #     row_idx = obj_map["row_self"]
+    #     col_idx = obj_map["row_target"]
+    #     n_rows, n_cols = obj_map["shape"]
+    #
+    #     T = coo_matrix((np.ones(n_rows), (row_idx, col_idx)), shape=(n_rows, n_cols))
+    #
+    #     return dict(true=T.T)
 
 
 class MapJaccardDist(HardMapMetricClass):
@@ -221,9 +222,9 @@ class MapJaccardDist(HardMapMetricClass):
         cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
         # get predicted map
-        T_true = cls._pp(ref_dict["T"])
+        T_true = cls._pp(ref_dict["T_hard"])
         # get true map
-        T_pred = cls._pp(res_dict["T"])
+        T_pred = cls._pp(res_dict["T_hard"])
 
         T_true = T_true.sparse.to_coo()
         T_pred = T_pred.sparse.to_coo()
@@ -252,10 +253,10 @@ class MapAccuracy(HardMapMetricClass):
     ) -> Dict[str, float]:
 
         # get predicted map
-        T_true = cls._pp(ref_dict["T"])
+        T_true = cls._pp(ref_dict["T_hard"])
 
         # get true map
-        T_pred = cls._pp(res_dict["T"])
+        T_pred = cls._pp(res_dict["T_hard"])
 
         inter = np.sum(T_pred.values == T_true.values)
         full = T_true.shape[0] * T_true.shape[1]
@@ -280,10 +281,10 @@ class MapF1(HardMapMetricClass):
         from sklearn.metrics import f1_score
 
         # get predicted map
-        T_true = cls._pp(ref_dict["T"])
+        T_true = cls._pp(ref_dict["T_hard"])
 
         # get true map
-        T_pred = cls._pp(res_dict["T"])
+        T_pred = cls._pp(res_dict["T_hard"])
 
         y_pred = T_pred.values.flatten()
         y_true = T_true.values.flatten()
