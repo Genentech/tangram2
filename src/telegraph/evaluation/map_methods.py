@@ -68,7 +68,7 @@ class MapMethodClass(MethodClass):
             columns=col_names,
         )
 
-        out_dict["T"] = T_sparse
+        out_dict["T_hard"] = T_sparse
 
         return out_dict
 
@@ -78,7 +78,7 @@ class RandomMap(MapMethodClass):
     # to locations in "to"
 
     ins = ["X_to", "X_from"]
-    outs = ["T"]
+    outs = ["T_hard"]
 
     def __init__(
         self,
@@ -131,7 +131,7 @@ class RandomMap(MapMethodClass):
             col_names=from_names,
         )
 
-        T = out["T"]
+        T = out["T_hard"]
 
         pol.check_type(T, "T")
         pol.check_values(T, "T")
@@ -145,7 +145,7 @@ class ArgMaxCorrMap(MapMethodClass):
     # to the observation in "to" that it has the highest
     # correlation with, w.r.t. feature expression
     ins = ["X_from", "X_to"]
-    outs = ["T"]
+    outs = ["T_hard"]
 
     def __init__(
         self,
@@ -206,7 +206,7 @@ class ArgMaxCorrMap(MapMethodClass):
 
         # add standard objects to out dict
 
-        T = out["T"]
+        T = out["T_hard"]
         pol.check_type(T, "T")
         pol.check_values(T, "T")
         pol.check_dimensions(T, "T", (n_rows, n_cols))
@@ -355,7 +355,7 @@ class TangramMap(MapMethodClass):
         # observation named for "from"
         from_names = ad_from.obs.index.values.tolist()
         # transpose map (T) to be in expected format [n_to] x [n_from]
-        out["T"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
+        out["T_soft"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
         # spatial coordinates for "from" : [n_from] x [n_spatial_dims]
         out["S_from"] = S_from
         # anndata with rescaled (with coefficient) "from" data
@@ -364,14 +364,14 @@ class TangramMap(MapMethodClass):
         # convert soft map (T) to hard map if specified
         mut.soft_T_to_hard(
             cls,
-            T=out["T"],
+            T=out["T_soft"],
             out=out,
             hard_map=hard_map,
             pos_by_argmax=pos_by_argmax,
             pos_by_weight=pos_by_weight,
         )
 
-        T = out["T"]
+        T = out["T_soft"]
         pol.check_type(T, "T")
         pol.check_values(T, "T")
         pol.check_dimensions(T, "T", (n_rows, n_cols))
@@ -481,7 +481,7 @@ class SpaOTscMap(MapMethodClass):
     # SpaOTsc class
     # Expected Inputs and Outputs
     ins = ["X_to", "X_from"]
-    outs = ["T"]
+    outs = ["T_soft"]
 
     def __init__(
         self,
@@ -602,9 +602,9 @@ class SpaOTscMap(MapMethodClass):
         from_names = ad_from.obs.index.values.tolist()
 
         # transpose map (T) to be in expected format [n_to] x [n_from]
-        out["T"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
+        out["T_soft"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
 
-        T = out["T"]
+        T = out["T_soft"]
         n_rows = ad_to.shape[0]
         n_cols = ad_from.shape[0]
 
@@ -614,7 +614,7 @@ class SpaOTscMap(MapMethodClass):
         # convert soft map (T) to hard map if specified
         mut.soft_T_to_hard(
             cls,
-            T=out["T"],
+            T=out["T_soft"],
             out=out,
             hard_map=hard_map,
             pos_by_argmax=True,
@@ -629,7 +629,7 @@ class MoscotMap(MapMethodClass):
     # Method class for moscot
     # github: https://github.com/theislab/moscot
     ins = ["X_to", "X_from"]
-    outs = ["T", "moscot_solution"]
+    outs = ["T_soft", "moscot_solution"]
 
     def __init__(
         self,
@@ -704,7 +704,7 @@ class MoscotMap(MapMethodClass):
         to_names = X_to.obs.index.values.tolist()
         from_names = X_from.obs.index.values.tolist()
 
-        out["T"] = ut.array_to_sparse_df(
+        out["T_soft"] = ut.array_to_sparse_df(
             T_soft,
             index=to_names,
             columns=from_names,
@@ -717,19 +717,19 @@ class MoscotMap(MapMethodClass):
             T_norm = T_soft / T_soft.sum(axis=0)  # .reshape(-1, 1)
             out["T_norm"] = T_norm
 
-        T = out["T"]
+        T = out["T_soft"]
 
         n_rows = X_to.shape[0]
         n_cols = X_from.shape[0]
 
-        pol.check_type(T, "T")
-        pol.check_values(T, "T")
-        pol.check_dimensions(T, "T", (n_rows, n_cols))
+        pol.check_type(T, "T_soft")
+        pol.check_values(T, "T_soft")
+        pol.check_dimensions(T, "T_soft", (n_rows, n_cols))
 
         # convert soft map (T) to hard map if specified
         mut.soft_T_to_hard(
             cls,
-            T=out["T"],
+            T=out["T_soft"],
             out=out,
             hard_map=hard_map,
             pos_by_argmax=True,
