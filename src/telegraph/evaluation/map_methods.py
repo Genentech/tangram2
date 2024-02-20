@@ -222,7 +222,7 @@ class TangramMap(MapMethodClass):
     version = None
 
     ins = ["X_to", "X_from"]
-    outs = ["T", "S_from"]
+    outs = ["T_soft", "S_from"]
 
     def __init__(
         self,
@@ -254,6 +254,9 @@ class TangramMap(MapMethodClass):
             import tangram2 as tg
         else:
             raise NotImplementedError
+
+        if hard_map:
+            cls.outs.append("T_hard")
 
         # n_obs in "from"
         n_cols = input_dict["X_from"].shape[0]
@@ -502,6 +505,10 @@ class SpaOTscMap(MapMethodClass):
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+
+        if hard_map:
+            cls.outs.append("T_hard")
+
         from spaotsc import SpaOTsc
 
         # anndata of "from"
@@ -650,6 +657,10 @@ class MoscotMap(MapMethodClass):
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray]:
+
+        if hard_map:
+            cls.outs.append("T_hard")
+
         from moscot.problems.space import MappingProblem
 
         # anndata object that we map _to_
