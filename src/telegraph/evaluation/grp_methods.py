@@ -77,7 +77,7 @@ class ThresholdGroup(GroupMethodClass):
             X_to_pred = X_to_pred.to_df()
 
         # get map (T) : [n_to] x [n_from]
-        T = input_dict["T"]
+        T = input_dict["T_soft"]
 
         n_to = X_to_pred.shape[0]
         n_from = X_from.shape[0]
@@ -241,7 +241,7 @@ class AssociationScore(GroupMethodClass):
             X_to_pred = X_to_pred.to_df()
 
         # get map (T) : [n_to] x [n_from]
-        T = input_dict["T"]
+        T = input_dict["T_soft"]
 
         # compute association between obs i in 'from' with feature f in 'to_pred'
         Q = T.values.T @ X_to_pred.values

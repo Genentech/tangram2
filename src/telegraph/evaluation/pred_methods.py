@@ -80,7 +80,7 @@ class TangramPred(PredMethodClass):
         # If not None [n_from] x [n_from_features]
         X_from_scaled = input_dict.get("X_from_scaled")
         # get map : [n_to] x [n_from]
-        T = input_dict["T"]
+        T = input_dict["T_soft"]
 
         pol.check_type(T, "T")
         pol.check_values(T, "T")
@@ -197,7 +197,7 @@ class MoscotPred(PredMethodClass):
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
 
-        T = input_dict.get("T")
+        T = input_dict.get("T_soft")
         assert T is not None, "T is not found in input"
         X_from = input_dict.get("X_from")
         assert X_from is not None, "X_from is not found in input"
