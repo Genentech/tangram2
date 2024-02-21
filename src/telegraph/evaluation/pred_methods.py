@@ -14,7 +14,7 @@ from telegraph.evaluation._methods import MethodClass
 
 class PredMethodClass(MethodClass):
     # Prediction Method Base class
-    ins = ["T_soft", "X_from"]
+    ins = ["T", "X_from"]
     outs = ["X_to_pred"]
 
     def __init__(
@@ -42,7 +42,7 @@ class TangramPred(PredMethodClass):
     # specify the tangram version
     version = None
 
-    ins = ["T_soft", "X_from"]
+    ins = ["T", "X_from"]
     outs = ["X_to_pred"]
 
     def __init__(
@@ -177,7 +177,7 @@ class TangramV2Pred(TangramPred):
 class MoscotPred(PredMethodClass):
     # MOSCOT Prediction Method Class
 
-    ins = ["T_soft", "X_from"]
+    ins = ["T", "X_from"]
     outs = ["X_to_pred"]
 
     def __init__(

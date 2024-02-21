@@ -14,7 +14,7 @@ from torch.cuda import is_available
 
 import telegraph.evaluation.policies as pol
 import telegraph.evaluation.utils as ut
-from telegraph.evaluation import _map_utils as mut
+# from telegraph.evaluation import _map_utils as mut
 from telegraph.evaluation._methods import MethodClass
 
 
@@ -73,12 +73,13 @@ class MapMethodClass(MethodClass):
         return out_dict
 
 
+
 class RandomMap(MapMethodClass):
     # class that randomly maps object in "from"
     # to locations in "to"
 
     ins = ["X_to", "X_from"]
-    outs = ["T_hard"]
+    outs = ["T"]
 
     def __init__(
         self,
@@ -131,7 +132,8 @@ class RandomMap(MapMethodClass):
             col_names=from_names,
         )
 
-        T = out["T_hard"]
+        out["T"] = out["T_hard"]
+        T = out["T"]
 
         pol.check_type(T, "T")
         pol.check_values(T, "T")
@@ -145,7 +147,7 @@ class ArgMaxCorrMap(MapMethodClass):
     # to the observation in "to" that it has the highest
     # correlation with, w.r.t. feature expression
     ins = ["X_from", "X_to"]
-    outs = ["T_hard"]
+    outs = ["T"]
 
     def __init__(
         self,
@@ -191,6 +193,8 @@ class ArgMaxCorrMap(MapMethodClass):
 
         # output
         out = dict()
+        # make correlation matrix T_soft
+        out["T"] = ut.array_to_sparse_df(sim.T, index=to_names, columns=from_names)
 
         # update output with sparse map
         # create sparse map and add to out dict
@@ -206,7 +210,7 @@ class ArgMaxCorrMap(MapMethodClass):
 
         # add standard objects to out dict
 
-        T = out["T_hard"]
+        T = out["T"]
         pol.check_type(T, "T")
         pol.check_values(T, "T")
         pol.check_dimensions(T, "T", (n_rows, n_cols))
@@ -222,7 +226,7 @@ class TangramMap(MapMethodClass):
     version = None
 
     ins = ["X_to", "X_from"]
-    outs = ["T_soft", "S_from"]
+    outs = ["T", "S_from"]
 
     def __init__(
         self,
@@ -239,10 +243,10 @@ class TangramMap(MapMethodClass):
         input_dict: Dict[str, Any],
         to_spatial_key: str = "spatial",
         from_spatial_key: str = "spatial",
-        pos_by_argmax: bool = True,
-        pos_by_weight: bool = False,
+        # pos_by_argmax: bool = True,
+        # pos_by_weight: bool = False,
         num_epochs: int = 1000,
-        hard_map: bool = False,
+        # hard_map: bool = False,
         genes: List[str] | str | None = None,
         experiment_name: str | None = None,
         **kwargs,
@@ -254,9 +258,6 @@ class TangramMap(MapMethodClass):
             import tangram2 as tg
         else:
             raise NotImplementedError
-
-        if hard_map:
-            cls.outs.append("T_hard")
 
         # n_obs in "from"
         n_cols = input_dict["X_from"].shape[0]
@@ -358,23 +359,25 @@ class TangramMap(MapMethodClass):
         # observation named for "from"
         from_names = ad_from.obs.index.values.tolist()
         # transpose map (T) to be in expected format [n_to] x [n_from]
-        out["T_soft"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
+        out["T"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
         # spatial coordinates for "from" : [n_from] x [n_spatial_dims]
         out["S_from"] = S_from
         # anndata with rescaled (with coefficient) "from" data
         out["X_from_scaled"] = X_from_scaled
+        out["to_names"] = to_names
+        out["from_names"] = from_names
 
-        # convert soft map (T) to hard map if specified
-        mut.soft_T_to_hard(
-            cls,
-            T=out["T_soft"],
-            out=out,
-            hard_map=hard_map,
-            pos_by_argmax=pos_by_argmax,
-            pos_by_weight=pos_by_weight,
-        )
+        # # convert soft map (T) to hard map if specified
+        # mut.soft_T_to_hard(
+        #     cls,
+        #     T=out["T"],
+        #     out=out,
+        #     hard_map=hard_map,
+        #     pos_by_argmax=pos_by_argmax,
+        #     pos_by_weight=pos_by_weight,
+        # )
 
-        T = out["T_soft"]
+        T = out["T"]
         pol.check_type(T, "T")
         pol.check_values(T, "T")
         pol.check_dimensions(T, "T", (n_rows, n_cols))
@@ -484,7 +487,7 @@ class SpaOTscMap(MapMethodClass):
     # SpaOTsc class
     # Expected Inputs and Outputs
     ins = ["X_to", "X_from"]
-    outs = ["T_soft"]
+    outs = ["T"]
 
     def __init__(
         self,
@@ -501,16 +504,12 @@ class SpaOTscMap(MapMethodClass):
         input_dict: Dict[str, Any],
         to_spatial_key: str = "spatial",
         experiment_name: str | None = None,
-        hard_map: bool = False,
+        # hard_map: bool = False,
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
-        if hard_map:
-            cls.outs.append("T_hard")
-
         from spaotsc import SpaOTsc
-
         # anndata of "from"
         ad_from = input_dict["X_from"]
         pol.check_values(ad_from, "X_from")
@@ -609,24 +608,25 @@ class SpaOTscMap(MapMethodClass):
         from_names = ad_from.obs.index.values.tolist()
 
         # transpose map (T) to be in expected format [n_to] x [n_from]
-        out["T_soft"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
+        out["T"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
 
-        T = out["T_soft"]
+        T = out["T"]
         n_rows = ad_to.shape[0]
         n_cols = ad_from.shape[0]
 
         pol.check_type(T, "T")
         pol.check_values(T, "T")
         pol.check_dimensions(T, "T", (n_rows, n_cols))
+
         # convert soft map (T) to hard map if specified
-        mut.soft_T_to_hard(
-            cls,
-            T=out["T_soft"],
-            out=out,
-            hard_map=hard_map,
-            pos_by_argmax=True,
-            pos_by_weight=False,
-        )
+        # mut.soft_T_to_hard(
+        #     cls,
+        #     T=out["T"],
+        #     out=out,
+        #     hard_map=hard_map,
+        #     pos_by_argmax=True,
+        #     pos_by_weight=False,
+        # )
 
         return out
 
@@ -636,7 +636,7 @@ class MoscotMap(MapMethodClass):
     # Method class for moscot
     # github: https://github.com/theislab/moscot
     ins = ["X_to", "X_from"]
-    outs = ["T_soft", "moscot_solution"]
+    outs = ["T", "moscot_solution"]
 
     def __init__(
         self,
@@ -652,14 +652,11 @@ class MoscotMap(MapMethodClass):
         genes: List[str] | str | None = None,
         experiment_name: str | None = None,
         return_T_norm: bool = True,
-        hard_map: bool = False,
+        # hard_map: bool = False,
         # spatial_key: str = "spatial",
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray]:
-
-        if hard_map:
-            cls.outs.append("T_hard")
 
         from moscot.problems.space import MappingProblem
 
@@ -715,7 +712,7 @@ class MoscotMap(MapMethodClass):
         to_names = X_to.obs.index.values.tolist()
         from_names = X_from.obs.index.values.tolist()
 
-        out["T_soft"] = ut.array_to_sparse_df(
+        out["T"] = ut.array_to_sparse_df(
             T_soft,
             index=to_names,
             columns=from_names,
@@ -728,7 +725,7 @@ class MoscotMap(MapMethodClass):
             T_norm = T_soft / T_soft.sum(axis=0)  # .reshape(-1, 1)
             out["T_norm"] = T_norm
 
-        T = out["T_soft"]
+        T = out["T"]
 
         n_rows = X_to.shape[0]
         n_cols = X_from.shape[0]
@@ -738,13 +735,13 @@ class MoscotMap(MapMethodClass):
         pol.check_dimensions(T, "T", (n_rows, n_cols))
 
         # convert soft map (T) to hard map if specified
-        mut.soft_T_to_hard(
-            cls,
-            T=out["T_soft"],
-            out=out,
-            hard_map=hard_map,
-            pos_by_argmax=True,
-            pos_by_weight=False,
-        )
+        # mut.soft_T_to_hard(
+        #     cls,
+        #     T=out["T"],
+        #     out=out,
+        #     hard_map=hard_map,
+        #     pos_by_argmax=True,
+        #     pos_by_weight=False,
+        # )
 
         return out

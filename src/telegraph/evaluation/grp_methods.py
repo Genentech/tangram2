@@ -41,7 +41,7 @@ class ThresholdGroup(GroupMethodClass):
     # how much of their mass is mapped to the two different
     # groups in the "to" data
 
-    ins = ["X_from", "X_to_pred", "T_soft"]
+    ins = ["X_from", "X_to_pred", "T"]
     outs = ["D_to", "D_from"]
 
     def __init__(
@@ -211,7 +211,7 @@ class AssociationScore(GroupMethodClass):
 
     """
 
-    ins = ["X_from", "X_to_pred", "T_soft"]
+    ins = ["X_from", "X_to_pred", "T"]
     outs = ["D_to"]
 
     def __init__(
