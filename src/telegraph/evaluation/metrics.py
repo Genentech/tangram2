@@ -8,6 +8,7 @@ import pandas as pd
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
+from scipy.spatial import cKDTree
 
 import telegraph.evaluation.constants as C
 import telegraph.evaluation.map_methods as mmet
@@ -195,6 +196,50 @@ class HardMapMetricClass(MapMetricClass):
 
         return new_obj
 
+    @classmethod
+    def _soft_T_to_hard(cls, out: Dict[str, Any], pos_by_argmax=True, pos_by_weight=False):
+
+        T = out["T"]
+        n_rows, n_cols = T.shape
+
+        if isinstance(T, np.ndarray):
+            row_names = None
+            col_names = None
+        elif isinstance(T, pd.DataFrame):
+            row_names = T.index
+            col_names = T.columns
+        else:
+            raise NotImplementedError
+
+        col_idx = np.arange(n_cols)
+
+        # assign hard positions by argmax
+        if pos_by_weight:
+            assert "S_from" in out.keys() , "Single cell coordinates not available for pos_by_weight"
+            assert "S_to" in out.keys(), "Spatial coordinates not available for pos_by_weight"
+            S_to = out["S_to"]
+            S_from = out["S_from"]
+            # build kd tree of spatial coordinates in "to"
+            kd = cKDTree(S_to)
+            _, idxs = kd.query(S_from, k=1)
+
+            row_idx = idxs.flatten()
+
+        # assign hard positions by argmax
+        if pos_by_argmax:
+            row_idx = np.argmax(T, axis=0).flatten()
+
+        # save hard map as sparse matrix
+        mmet.MapMethodClass.hard_update_out_dict(
+            out,
+            row_idx,
+            col_idx,
+            n_rows,
+            n_cols,
+            row_names=row_names,
+            col_names=col_names,
+        )
+
     # DEAD CODE?
     # @classmethod
     # def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
@@ -221,9 +266,15 @@ class MapJaccardDist(HardMapMetricClass):
     def score(
         cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
-        # get predicted map
-        T_true = cls._pp(ref_dict["T_hard"])
+
+        if "T_hard" not in res_dict.keys():
+            cls._soft_T_to_hard(res_dict,
+                                kwargs.get("pos_by_argmax", True),
+                                kwargs.get("pos_by_weight", False))
+
         # get true map
+        T_true = cls._pp(ref_dict["T"])
+        # get pred map
         T_pred = cls._pp(res_dict["T_hard"])
 
         T_true = T_true.sparse.to_coo()
@@ -252,8 +303,14 @@ class MapAccuracy(HardMapMetricClass):
         cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
 
+        # add capability to use hard map for metrics only
+        if "T_hard" not in res_dict.keys():
+            cls._soft_T_to_hard(res_dict,
+                                kwargs.get("pos_by_argmax", True),
+                                kwargs.get("pos_by_weight", False))
+
         # get predicted map
-        T_true = cls._pp(ref_dict["T_hard"])
+        T_true = cls._pp(ref_dict["T"])
 
         # get true map
         T_pred = cls._pp(res_dict["T_hard"])
@@ -280,8 +337,14 @@ class MapF1(HardMapMetricClass):
     ) -> Dict[str, float]:
         from sklearn.metrics import f1_score
 
+        # add capability to use hard map for metrics only
+        if "T_hard" not in res_dict.keys():
+            cls._soft_T_to_hard(res_dict,
+                                kwargs.get("pos_by_argmax", True),
+                                kwargs.get("pos_by_weight", False))
+
         # get predicted map
-        T_true = cls._pp(ref_dict["T_hard"])
+        T_true = cls._pp(ref_dict["T"])
 
         # get true map
         T_pred = cls._pp(res_dict["T_hard"])
