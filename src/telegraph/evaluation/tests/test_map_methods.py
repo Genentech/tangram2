@@ -7,6 +7,7 @@ import pytest
 
 from telegraph.evaluation import map_methods as mm
 from telegraph.evaluation.tests import utils as ut
+from telegraph.evaluation.transforms import soft_T_to_hard
 
 
 class BaseTestMapMethods:
@@ -89,7 +90,8 @@ class TestArgMaxCorrMap(BaseTestMapMethods):
         res_dict = ut.make_fake_X()
         res_dict["X_to"] = res_dict["X_from"]
         out = method.run(res_dict, return_sparse=True)
-        T = out["T"].sparse.to_coo()
+        T = soft_T_to_hard(out["T"])
+        T = T.sparse.to_coo()
         np.testing.assert_array_equal(T.row, T.col)
 
 

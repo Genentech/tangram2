@@ -1,8 +1,9 @@
+from typing import Any, Dict, List, Union
+
 import numpy as np
 import pandas as pd
-from scipy.spatial import cKDTree
 from scipy.sparse import coo_matrix
-from typing import Any, Dict, List, Union
+from scipy.spatial import cKDTree
 
 
 def sparsify_hard_map(
@@ -17,9 +18,7 @@ def sparsify_hard_map(
     row_idx = row_idx[ordr]
     col_idx = col_idx[ordr]
 
-    T_sparse = coo_matrix(
-        (np.ones(n_cols), (row_idx, col_idx)), shape=(n_rows, n_cols)
-    )
+    T_sparse = coo_matrix((np.ones(n_cols), (row_idx, col_idx)), shape=(n_rows, n_cols))
 
     T_sparse = pd.DataFrame.sparse.from_spmatrix(
         T_sparse,
@@ -31,8 +30,8 @@ def sparsify_hard_map(
 
 def soft_T_to_hard(
     T: np.ndarray | pd.DataFrame,
-    S_to: np.ndarray | pd.DataFrame | None,
-    S_from: np.ndarray | pd.DataFrame | None,
+    S_to: np.ndarray | pd.DataFrame | None = None,
+    S_from: np.ndarray | pd.DataFrame | None = None,
     pos_by_argmax=True,
     pos_by_weight=False,
     **kwargs
