@@ -197,50 +197,6 @@ class HardMapMetricClass(MapMetricClass):
 
         return new_obj
 
-    # @classmethod
-    # def _soft_T_to_hard(cls, out: Dict[str, Any], pos_by_argmax=True, pos_by_weight=False):
-    #
-    #     T = out["T"]
-    #     n_rows, n_cols = T.shape
-    #
-    #     if isinstance(T, np.ndarray):
-    #         row_names = None
-    #         col_names = None
-    #     elif isinstance(T, pd.DataFrame):
-    #         row_names = T.index
-    #         col_names = T.columns
-    #     else:
-    #         raise NotImplementedError
-    #
-    #     col_idx = np.arange(n_cols)
-    #
-    #     # assign hard positions by argmax
-    #     if pos_by_weight:
-    #         assert "S_from" in out.keys() , "Single cell coordinates not available for pos_by_weight"
-    #         assert "S_to" in out.keys(), "Spatial coordinates not available for pos_by_weight"
-    #         S_to = out["S_to"]
-    #         S_from = out["S_from"]
-    #         # build kd tree of spatial coordinates in "to"
-    #         kd = cKDTree(S_to)
-    #         _, idxs = kd.query(S_from, k=1)
-    #
-    #         row_idx = idxs.flatten()
-    #
-    #     # assign hard positions by argmax
-    #     if pos_by_argmax:
-    #         row_idx = np.argmax(T, axis=0).flatten()
-    #
-    #     # save hard map as sparse matrix
-    #     mmet.MapMethodClass.hard_update_out_dict(
-    #         out,
-    #         row_idx,
-    #         col_idx,
-    #         n_rows,
-    #         n_cols,
-    #         row_names=row_names,
-    #         col_names=col_names,
-    #     )
-
     # DEAD CODE?
     # @classmethod
     # def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
