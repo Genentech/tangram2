@@ -35,6 +35,7 @@ def soft_T_to_hard(
     S_from: np.ndarray | pd.DataFrame | None,
     pos_by_argmax=True,
     pos_by_weight=False,
+    **kwargs
 ):
 
     n_rows, n_cols = T.shape
