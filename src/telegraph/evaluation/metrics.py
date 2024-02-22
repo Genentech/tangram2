@@ -197,6 +197,23 @@ class HardMapMetricClass(MapMetricClass):
 
         return new_obj
 
+    @classmethod
+    def _make_T_hard(cls, input_dict: Dict[str, Any], make_hard=True, hard_method="argmax"):
+        if make_hard:
+            T_use = "T_hard"
+            if "T_hard" not in input_dict.keys():
+                if hard_method == "argmax":
+                    params = {"pos_by_argmax": True, "pos_by_weight": False, "S_to": None, "S_from": None}
+                elif hard_method == "weight":
+                    params = {"pos_by_argmax": False, "pos_by_weight": True, "S_to": input_dict.get("S_to", None),
+                              "S_from": input_dict.get("S_from", None)}
+                else:
+                    raise NotImplementedError
+                input_dict["T_hard"] = tf.soft_T_to_hard(input_dict["T"], **params)
+        else:
+            T_use = "T"
+        return T_use
+
     # DEAD CODE?
     # @classmethod
     # def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
@@ -224,18 +241,8 @@ class MapJaccardDist(HardMapMetricClass):
             cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
 
-        make_hard = kwargs.get("make_hard", True)
-        if make_hard:
-            T_use = "T_hard"
-            if "T_hard" not in res_dict.keys():
-                res_dict["T_hard"] = tf.soft_T_to_hard(res_dict["T"],
-                                                       pos_by_argmax=kwargs.get("pos_by_argmax", True),
-                                                       pos_by_weight=kwargs.get("pos_by_weight", False),
-                                                       S_to=res_dict.get("S_to", None),
-                                                       S_from=res_dict.get("S_from", None))
-        else:
-            T_use = "T"
-
+        T_use = cls._make_T_hard(input_dict=res_dict, make_hard=kwargs.get("make_hard", True),
+                                 hard_method=kwargs.get("hard_method", "argmax"))
         # get true map
         T_true = cls._pp(ref_dict["T"])
         # get pred map
@@ -267,18 +274,8 @@ class MapAccuracy(HardMapMetricClass):
             cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
         # add capability to use hard map for metrics only
-        make_hard = kwargs.get("make_hard", True)
-        if make_hard:
-            T_use = "T_hard"
-            if "T_hard" not in res_dict.keys():
-                res_dict["T_hard"] = tf.soft_T_to_hard(res_dict["T"],
-                                                       pos_by_argmax=kwargs.get("pos_by_argmax", True),
-                                                       pos_by_weight=kwargs.get("pos_by_weight", False),
-                                                       S_to=res_dict.get("S_to", None),
-                                                       S_from=res_dict.get("S_from", None))
-        else:
-            T_use = "T"
-
+        T_use = cls._make_T_hard(input_dict=res_dict, make_hard=kwargs.get("make_hard", True),
+                                 hard_method=kwargs.get("hard_method", "argmax"))
         # get predicted map
         T_true = cls._pp(ref_dict["T"])
 
@@ -308,18 +305,8 @@ class MapF1(HardMapMetricClass):
         from sklearn.metrics import f1_score
 
         # add capability to use hard map for metrics only
-        make_hard = kwargs.get("make_hard", True)
-        if make_hard:
-            T_use = "T_hard"
-            if "T_hard" not in res_dict.keys():
-                res_dict["T_hard"] = tf.soft_T_to_hard(res_dict["T"],
-                                                       pos_by_argmax=kwargs.get("pos_by_argmax", True),
-                                                       pos_by_weight=kwargs.get("pos_by_weight", False),
-                                                       S_to=res_dict.get("S_to", None),
-                                                       S_from=res_dict.get("S_from", None))
-        else:
-            T_use = "T"
-
+        T_use = cls._make_T_hard(input_dict=res_dict, make_hard=kwargs.get("make_hard", True),
+                                 hard_method=kwargs.get("hard_method", "argmax"))
         # get predicted map
         T_true = cls._pp(ref_dict["T"])
 
