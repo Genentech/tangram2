@@ -8,6 +8,8 @@ import pandas as pd
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
+import telegraph.evaluation.transforms as tf
+from scipy.spatial import cKDTree
 
 import telegraph.evaluation.constants as C
 import telegraph.evaluation.map_methods as mmet
@@ -49,7 +51,7 @@ class MetricClass(ABC):
     @classmethod
     @abstractmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
         # method to _calculate_ the associated metric(s)
         pass
@@ -148,7 +150,7 @@ class DEAMetricClass(MetricClass):
         # get effect features for the associated
         gt_genes = signal_effect_df[
             signal_effect_df["signal"].str.upper() == signal_name.upper()
-        ]["effect"].values[0]
+            ]["effect"].values[0]
         # from "[e_1,...,e_k]" to [e_1,...,e_k]
         gt_genes = gt_genes.split(",")
         # convert effect features to lowercase
@@ -195,6 +197,23 @@ class HardMapMetricClass(MapMetricClass):
 
         return new_obj
 
+    @classmethod
+    def _make_T_hard(cls, input_dict: Dict[str, Any], make_hard=True, hard_method="argmax"):
+        if make_hard:
+            T_use = "T_hard"
+            if "T_hard" not in input_dict.keys():
+                if hard_method == "argmax":
+                    params = {"pos_by_argmax": True, "pos_by_weight": False, "S_to": None, "S_from": None}
+                elif hard_method == "weight":
+                    params = {"pos_by_argmax": False, "pos_by_weight": True, "S_to": input_dict.get("S_to", None),
+                              "S_from": input_dict.get("S_from", None)}
+                else:
+                    raise NotImplementedError
+                input_dict["T_hard"] = tf.soft_T_to_hard(input_dict["T"], **params)
+        else:
+            T_use = "T"
+        return T_use
+
     # DEAD CODE?
     # @classmethod
     # def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
@@ -219,12 +238,15 @@ class MapJaccardDist(HardMapMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
-        # get predicted map
-        T_true = cls._pp(ref_dict["T_hard"])
+
+        T_use = cls._make_T_hard(input_dict=res_dict, make_hard=kwargs.get("make_hard", True),
+                                 hard_method=kwargs.get("hard_method", "argmax"))
         # get true map
-        T_pred = cls._pp(res_dict["T_hard"])
+        T_true = cls._pp(ref_dict["T"])
+        # get pred map
+        T_pred = cls._pp(res_dict[T_use])
 
         T_true = T_true.sparse.to_coo()
         T_pred = T_pred.sparse.to_coo()
@@ -249,14 +271,16 @@ class MapAccuracy(HardMapMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
-
+        # add capability to use hard map for metrics only
+        T_use = cls._make_T_hard(input_dict=res_dict, make_hard=kwargs.get("make_hard", True),
+                                 hard_method=kwargs.get("hard_method", "argmax"))
         # get predicted map
-        T_true = cls._pp(ref_dict["T_hard"])
+        T_true = cls._pp(ref_dict["T"])
 
         # get true map
-        T_pred = cls._pp(res_dict["T_hard"])
+        T_pred = cls._pp(res_dict[T_use])
 
         inter = np.sum(T_pred.values == T_true.values)
         full = T_true.shape[0] * T_true.shape[1]
@@ -276,15 +300,18 @@ class MapF1(HardMapMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> Dict[str, float]:
         from sklearn.metrics import f1_score
 
+        # add capability to use hard map for metrics only
+        T_use = cls._make_T_hard(input_dict=res_dict, make_hard=kwargs.get("make_hard", True),
+                                 hard_method=kwargs.get("hard_method", "argmax"))
         # get predicted map
-        T_true = cls._pp(ref_dict["T_hard"])
+        T_true = cls._pp(ref_dict["T"])
 
         # get true map
-        T_pred = cls._pp(res_dict["T_hard"])
+        T_pred = cls._pp(res_dict[T_use])
 
         y_pred = T_pred.values.flatten()
         y_true = T_true.values.flatten()
@@ -314,7 +341,7 @@ class MapRMSE(MapMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, np.ndarray], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
         # get true spatial coordinates for "from"
         S_from_true = ref_dict["S_from"]
@@ -394,7 +421,7 @@ class DEAHyperGeom(DEAMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
         # TODO: I don't like the dependency on X_from
         population = set(res["X_from"].var.index.values)
@@ -443,7 +470,7 @@ class DEAAuc(DEAMetricClass):
 
     @classmethod
     def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
+            cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
     ) -> float:
         # TODO: again, don't like dependence on X_from
         genes = res["X_from"].var.index.values

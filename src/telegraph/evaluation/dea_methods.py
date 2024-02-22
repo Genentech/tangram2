@@ -102,7 +102,7 @@ class ScanpyDEA(DEAMethodClass):
             # data frame of predicted "to" data : [n_to] x [n_from_features]
             if isinstance(X_to_pred, pd.DataFrame):
                 to_pred_names = input_dict["to_pred_names"]
-                to_pred_var = input_dict["to_pred_names"]
+                to_pred_var = input_dict["to_pred_var"]
                 adata_to = ad.AnnData(
                     X_to_pred,
                     obs=pd.DataFrame(

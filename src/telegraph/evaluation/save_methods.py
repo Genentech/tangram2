@@ -13,8 +13,7 @@ class StandardSaveMethods:
         cls,
     ):
         _funcs = dict(
-            T_soft=cls._save_T_soft,
-            T_hard=cls._save_T_hard,
+            T=cls._save_T,
             X_to_pred=cls._save_X_to_pred,
             X_from_pred=cls._save_X_from_pred,
             S_to=cls._save_S_to,
@@ -35,21 +34,12 @@ class StandardSaveMethods:
             df.to_csv(out_pth)
 
     @classmethod
-    def _save_T(cls, res_dict: Dict[str, Any], obj: str, out_dir: str, **kwargs):
-        obj_name = f"T_{obj}"
-        T = res_dict[obj_name]
+    def _save_T(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
+        T = res_dict["T"]
         # get names of data being mapped (from)
-        out_pth = osp.join(out_dir, obj_name + ".csv")
+        out_pth = osp.join(out_dir, "T" + ".csv")
 
         cls.save_df(T, out_pth, **kwargs)
-
-    @classmethod
-    def _save_T_soft(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
-        cls._save_T(res_dict, "soft", out_dir, **kwargs)
-
-    @classmethod
-    def _save_T_hard(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
-        cls._save_T(res_dict, "hard", out_dir, **kwargs)
 
     @classmethod
     def _save_S(cls, res_dict: Dict[str, Any], obj: str, out_dir: str, **kwargs):
