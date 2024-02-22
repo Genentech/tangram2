@@ -11,6 +11,7 @@ from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from scipy.spatial.distance import cdist
 from torch.cuda import is_available
+from scipy.special import softmax
 
 import telegraph.evaluation.policies as pol
 import telegraph.evaluation.utils as ut
@@ -185,6 +186,8 @@ class ArgMaxCorrMap(MapMethodClass):
         sim = ut.matrix_correlation(X_to.X.T, X_from.X.T)
         # set nan to max anticorrelation
         sim[np.isnan(sim)] = -np.inf
+        # make probabilistic
+        T_soft = softmax(sim, axis=1)
         # for each observation in "from" get id of
         # observation in "to" that it correlates the most with
         row_idx = np.argmax(sim, axis=1).astype(int)
@@ -192,7 +195,7 @@ class ArgMaxCorrMap(MapMethodClass):
         # output
         out = dict()
         # make correlation matrix T_soft
-        out["T"] = ut.array_to_sparse_df(sim.T, index=to_names, columns=from_names)
+        out["T"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
 
         # update output with sparse map
         # create sparse map and add to out dict
