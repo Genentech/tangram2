@@ -35,7 +35,6 @@ class StandardSaveMethods:
 
     @classmethod
     def _save_T(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
-
         T = res_dict["T"]
         # get names of data being mapped (from)
         out_pth = osp.join(out_dir, "T" + ".csv")
@@ -61,7 +60,7 @@ class StandardSaveMethods:
 
     @classmethod
     def _save_S_to(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
-        cls._save_S(res_dict, "to")
+        cls._save_S(res_dict, "to", out_dir, **kwargs)
 
     @classmethod
     def _save_S_from(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
