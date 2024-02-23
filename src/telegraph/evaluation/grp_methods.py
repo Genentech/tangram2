@@ -254,6 +254,8 @@ class AssociationScore(GroupMethodClass):
             columns=X_to_pred.columns,
         )
 
+        Q.columns = Q.columns.str.lower()
+
         # make sure feature_name is in list format
         feature_name = ut.listify(feature_name)
 
