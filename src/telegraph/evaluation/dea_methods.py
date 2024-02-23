@@ -327,7 +327,7 @@ class GLMDEA(DEAMethodClass):
                 if use_pred.get(tgt, False):
                     X_name += "_pred"
             elif isinstance(use_pred, bool):
-                if use_pred and f"X_{tgt}_pred" in input_dict:
+                if use_pred and (input_dict.get(f"X_{tgt}_pred", None) is not None):
                     X_name += "_pred"
 
             # get X object
