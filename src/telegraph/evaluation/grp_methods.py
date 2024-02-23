@@ -126,21 +126,23 @@ class ThresholdGroup(GroupMethodClass):
             x_low = val < thres_x_low
 
             # create blank "to" design matrix
-            D_to = np.zeros((X_to_pred.shape[0], 2))
+            D_to = np.zeros((X_to_pred.shape[0], 1))
             # update "to" design matrix according to
             # high/low assignments
-            D_to[x_high, 1] = 1
-            D_to[x_low, 0] = 1
+            D_to[x_high, 0] = 1
 
             # converts design matrix to data frame
+            to_cols = [f"high_{feature}"]
+            base_groups.append(to_cols)
+
             D_to = pd.DataFrame(
                 D_to.astype(int),
-                columns=[f"low_{feature}", f"high_{feature}"],
+                columns=to_cols,
                 index=X_to_pred.index,
             )
 
             # instantiate "from" design matrix
-            D_from = np.zeros((X_from.shape[0], 2))
+            D_from = np.zeros((X_from.shape[0], 1))
 
             # get observations in "from" with a mass higher
             # that thres_t_high assigned to the "high" observations
@@ -151,15 +153,14 @@ class ThresholdGroup(GroupMethodClass):
                 t_high = np.zeros(T.shape[1]).astype(bool)
 
             # update "from" design matrix
-            D_from[t_high, 1] = 1
-            D_from[~t_high, 0] = 1
+            D_from[t_high, 0] = 1
 
-            cols = [f"nadj_{feature}", f"adj_{feature}"]
-            base_groups.append(cols)
+            from_cols = [f"adj_{feature}"]
+            base_groups.append(from_cols)
             # convert "from" design matrix to data frame
             D_from = pd.DataFrame(
                 D_from.astype(int),
-                columns=cols,
+                columns=from_cols,
                 index=X_from.obs.index,
             )
 
