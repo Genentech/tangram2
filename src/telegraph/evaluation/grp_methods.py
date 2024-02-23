@@ -249,7 +249,7 @@ class AssociationScore(GroupMethodClass):
         # convert to dataframe
         Q = pd.DataFrame(
             Q,
-            index=X_from.index,
+            index=X_from.obs.index,
             columns=X_to_pred.columns,
         )
 
