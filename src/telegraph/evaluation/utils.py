@@ -362,10 +362,17 @@ def mat_cosine_similarity(V1, V2, axis=0):
     return cs
 
 
-def matrix_correlation(O: np.ndarray, P: np.ndarray) -> np.ndarray:
+def matrix_correlation(
+    O: np.ndarray | spmatrix, P: np.ndarray | spmatrix
+) -> np.ndarray:
     # efficient implementation of columnwise
     # correlation between two input matrices
     # shamelessly stolen from: https://github.com/ikizhvatov/efficient-columnwise-correlation/blob/master/columnwise_corrcoef_perf.py
+
+    if isinstance(O, spmatrix):
+        O = O.toarray()
+    if isinstance(P, spmatrix):
+        P = P.toarray()
 
     (n, t) = O.shape  # n traces of t samples
     (n_bis, m) = P.shape  # n predictions for each of m candidates
