@@ -104,7 +104,7 @@ class ScanpyDEA(DEAMethodClass):
                 to_pred_names = input_dict["to_pred_names"]
                 to_pred_var = input_dict["to_pred_var"]
                 adata_to = ad.AnnData(
-                    X_to_pred,
+                    X_to_pred.values,
                     obs=pd.DataFrame(
                         [],
                         index=to_pred_names,
