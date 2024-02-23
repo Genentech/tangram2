@@ -267,4 +267,4 @@ class AssociationScore(GroupMethodClass):
 
             Q = Q.loc[:, feature_name]
 
-        return dict(D_to=Q)
+        return dict(D_from=Q)
