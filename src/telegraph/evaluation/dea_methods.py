@@ -417,7 +417,7 @@ class GLMDEA(DEAMethodClass):
                 # fit glm object
                 glm.fit(X=D_inp, y=y)
                 # get coefficient table
-                coef_table = glm.coef_table(X=D_inp, y=y)
+                coef_table = glm.coef_table(X=D_inp.astype(np.float64), y=y)
                 # transfer values to results dictionary
                 res["covariate"] += coef_table.index.tolist()
                 res[DEA.p_value.value] += coef_table["p_value"].values.tolist()
