@@ -411,7 +411,9 @@ class GLMDEA(DEAMethodClass):
             # iterate over features
             for feature in _features:
                 # prepare dependent variable
-                y = X_inp[feature].values.flatten()
+                y = X_inp[feature].values.flatten().astype(np.float64)
+                if np.sum(y) == 0:
+                    continue
                 # create glm object
                 glm = gl.GeneralizedLinearRegressor(**glm_params)
                 # fit glm object

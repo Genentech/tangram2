@@ -10,13 +10,13 @@ import scanpy as sc
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from scipy.spatial.distance import cdist
-from torch.cuda import is_available
 from scipy.special import softmax
+from torch.cuda import is_available
 
 import telegraph.evaluation.policies as pol
+import telegraph.evaluation.transforms as tf
 import telegraph.evaluation.utils as ut
 from telegraph.evaluation._methods import MethodClass
-import telegraph.evaluation.transforms as tf
 
 
 class MapMethodClass(MethodClass):
@@ -497,6 +497,7 @@ class SpaOTscMap(MapMethodClass):
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
         from spaotsc import SpaOTsc
+
         # anndata of "from"
         ad_from = input_dict["X_from"]
         pol.check_values(ad_from, "X_from")
@@ -532,7 +533,11 @@ class SpaOTscMap(MapMethodClass):
         for key, val in default_pca_dict.items():
             if key not in pca_dict:
                 pca_dict[key] = val
-        sc.pp.pca(ad_from, use_highly_variable=True, **pca_dict)
+        sc.pp.pca(
+            ad_from,
+            use_highly_variable=kwargs.get("use_highly_variable_genes", True),
+            **pca_dict,
+        )
 
         # Determining the SC data dissimilarity based on PCA40
         sc_corr = ut.matrix_correlation(
