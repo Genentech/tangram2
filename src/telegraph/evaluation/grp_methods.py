@@ -271,3 +271,152 @@ class AssociationScore(GroupMethodClass):
             Q = Q.loc[:, feature_name]
 
         return dict(D_from=Q)
+
+
+class QuantileGroup(GroupMethodClass):
+
+    ins = ["X_from", "X_to", "T"]
+    outs = ["D_to", "D_from"]
+
+    @classmethod
+    @ut.check_in_out
+    @gut.add_covariates
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        feature_name: List[str] | str,
+        q_t: float | Tuple[float, float] = 0.25,
+        q_x: float | Tuple[float, float] = 0.25,
+        **kwargs,
+    ) -> pd.DataFrame:
+
+        # anndata for predict to data
+        X_to_use = input_dict.get("X_to_pred")
+        if X_to_use is None:
+            X_to_use = input_dict.get("X_to")
+            X_to_use_name = "X_to"
+        else:
+            X_to_use_name = "X_to_pred"
+
+        pol.check_values(X_to_use, X_to_use_name)
+        pol.check_type(X_to_use, X_to_use_name)
+
+        # anndata object that we map _from_
+        X_from = input_dict["X_from"]
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
+
+        if isinstance(X_to_use, ad.AnnData):
+            X_to_use = X_to_use.to_df()
+
+        # get map (T) : [n_to] x [n_from]
+        T = input_dict["T"]
+
+        n_to = X_to_use.shape[0]
+        n_from = X_from.shape[0]
+
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_to, n_from))
+
+        # make sure feature_name is in list format
+        feature_name = ut.listify(feature_name)
+
+        Ds_from, Ds_to = [], []
+
+        # set feature names in X_to_use to lowercase
+        # this is to match names with specified features
+        X_to_use.columns = X_to_use.columns.str.lower()
+
+        base_groups = []
+
+        # iterate over all features
+        for feature in feature_name:
+
+            # get feature expression, numpy format
+            # feature to lowercase to avoid
+            # case-mismatch
+            val = X_to_use[feature.lower()].values
+            q_x_high = np.quantile(val, 1 - q_x)
+            q_x_low = np.quantile(val, q_x)
+
+            # boolean vector of observations in "to_pred"
+            # that are higher than the "high" threshold
+            x_high = val >= q_x_high
+            # boolean vector of observations in "to_pred"
+            # that are lower than the "low" threshold
+            x_low = val <= q_x_low
+
+            # create blank "to" design matrix
+            D_to = np.zeros((X_to_use.shape[0], 2))
+            # update "to" design matrix according to
+            # high/low assignments
+            D_to[x_low, 0] = 1
+            D_to[x_high, 1] = 1
+
+            # converts design matrix to data frame
+            to_cols = [f"low_{feature}", f"high_{feature}"]
+            base_groups.append(to_cols)
+
+            D_to = pd.DataFrame(
+                D_to.astype(int),
+                columns=to_cols,
+                index=X_to_use.index,
+            )
+
+            # instantiate "from" design matrix
+            D_from = np.zeros((X_from.shape[0], 2))
+
+            # get observations in "from" with a mass higher
+            # that thres_t_high assigned to the "high" observations
+            # in "to"
+
+            if np.sum(x_high) > 0:
+                T_high_sum = T.values[x_high, :].sum(axis=0)
+                q_t_high = np.quantile(T_high_sum, 1 - q_t)
+                t_high = T.values[x_high, :].sum(axis=0) >= q_t_high
+            else:
+                t_high = np.zeros(T.shape[1]).astype(bool)
+
+            if np.sum(x_low) > 0:
+                T_low_sum = T.values[x_low, :].sum(axis=0)
+                q_t_low = np.quantile(T_low_sum, q_t)
+                t_low = T.values[x_low, :].sum(axis=0) <= q_t_low
+            else:
+                t_low = np.zeros(T.shape[1]).astype(bool)
+
+            # update "from" design matrix
+            D_from[t_low, 0] = 1
+            D_from[t_high, 1] = 1
+
+            from_cols = [f"nadj_{feature}", f"adj_{feature}"]
+            base_groups.append(from_cols)
+            # convert "from" design matrix to data frame
+            D_from = pd.DataFrame(
+                D_from.astype(int),
+                columns=from_cols,
+                index=X_from.obs.index,
+            )
+
+            # save feature specific design matrix
+            Ds_from.append(D_from)
+            Ds_to.append(D_to)
+
+        # join indicators from all features to create single design matrix
+        Ds_from = pd.concat(Ds_from, axis=1)
+        Ds_to = pd.concat(Ds_to, axis=1)
+
+        # Ds_to is in [n_to] x [2 x n_features]
+        pol.check_values(D_to, "D_to")
+        pol.check_type(D_to, "D_to")
+        pol.check_dimensions(D_to, "D_to", (n_to, None))
+
+        # Ds_from is [n_from] x [2 x n_features]
+        pol.check_values(D_from, "D_from")
+        pol.check_type(D_from, "D_from")
+        pol.check_dimensions(D_from, "D_from", (n_from, None))
+
+        # Note: if we specify add covariates
+        # additional covariates will be appended to the design matrix
+
+        return dict(D_to=Ds_to, D_from=Ds_from, base_groups=base_groups)
