@@ -28,10 +28,7 @@ class PredMethodClass(MethodClass):
     @abstractmethod
     def run(
         cls,
-        X_to: Any,
-        X_from: Any,
-        S_from: np.ndarray | None,
-        T: np.ndarray | spmatrix | None = None,
+        input_dict: Dict[str, Any],
         *args,
         **kwargs,
     ) -> Dict[str, Any]:

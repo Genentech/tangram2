@@ -2,6 +2,7 @@ from enum import Enum
 
 import telegraph.evaluation.dea_methods as dmet
 import telegraph.evaluation.grp_methods as gmet
+import telegraph.evaluation.imp_methods as imet
 import telegraph.evaluation.map_methods as mmet
 import telegraph.evaluation.pred_methods as pmet
 
@@ -27,6 +28,7 @@ class PREFIX(Enum):
     pred = "prd"
     dea = "dea"
     group = "grp"
+    imputation = "imp"
     workflow = "wf"
 
 
@@ -67,6 +69,17 @@ class METHODS(EnumCustom):
         PREFIX.pred.value + "_" + key: val for key, val in _PRD_METHODS.items()
     }
 
+    _IMP_METHODS = dict(
+        mean=imet.MeanImputation,
+        knn=imet.KNNImputation,
+        fcnn=imet.FCNNImputation,
+        vaeknn=imet.VAEKNNImputation,
+    )
+
+    IMP_METHODS = {
+        PREFIX.imputation.value + "_" + key: val for key, val in _IMP_METHODS.items()
+    }
+
     # raw names of group methods
     _GRP_METHODS = dict(threshold=gmet.ThresholdGroup)
 
@@ -84,7 +97,7 @@ class METHODS(EnumCustom):
     }
 
     # all available methods
-    OPTIONS = MAP_METHODS | PRD_METHODS | GRP_METHODS | DEA_METHODS
+    OPTIONS = MAP_METHODS | PRD_METHODS | IMP_METHODS | GRP_METHODS | DEA_METHODS
 
 
 class WORKFLOWS(EnumCustom):
