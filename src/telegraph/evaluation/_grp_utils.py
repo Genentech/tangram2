@@ -14,11 +14,9 @@ def add_covariates(func, *args, **kwargs):
         cls,
         input_dict: Dict[str, Any],
         *args,
-        add_covariates: Dict[str, List[str]]
-        | Dict[str, str]
-        | List[str]
-        | str
-        | None = None,
+        add_covariates: (
+            Dict[str, List[str]] | Dict[str, str] | List[str] | str | None
+        ) = None,
         subset: List[str] | str = None,
         merge: bool = False,
         **kwargs,

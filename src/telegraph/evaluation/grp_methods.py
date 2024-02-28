@@ -380,14 +380,19 @@ class QuantileGroup(GroupMethodClass):
 
             if np.sum(x_low) > 0:
                 T_low_sum = T.values[x_low, :].sum(axis=0)
-                q_t_low = np.quantile(T_low_sum, q_t)
-                t_low = T.values[x_low, :].sum(axis=0) <= q_t_low
+                q_t_low = np.quantile(T_low_sum, 1 - q_t)
+                t_low = T.values[x_low, :].sum(axis=0) >= q_t_low
             else:
                 t_low = np.zeros(T.shape[1]).astype(bool)
+
+            is_both = t_low & t_high
 
             # update "from" design matrix
             D_from[t_low, 0] = 1
             D_from[t_high, 1] = 1
+
+            D_from[is_both, 0] = 0
+            D_from[is_both, 1] = 0
 
             from_cols = [f"nadj_{feature}", f"adj_{feature}"]
             base_groups.append(from_cols)
