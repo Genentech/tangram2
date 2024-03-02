@@ -451,3 +451,54 @@ class VAEKNNImputation(TrainValImputationClass):
         out = dict(X_to_pred=X_to_pred)
 
         return out
+
+
+class SpaGEImputation(ImpMethodClass):
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        genes: str | List | None = None,
+        num_pv: int = 30,
+        **kwargs
+    ):
+        from SpaGE.main import SpaGE
+
+        # get single cell spatial data X_to
+        X_to = input_dict.get("X_to")
+        assert X_to is not None
+        # get single cell RNASeq data X_from
+        X_from = input_dict.get("X_from")
+        assert X_from is not None
+
+        if isinstance(X_to, ad.AnnData):
+            X_to = X_to.to_df()
+        elif isinstance(X_to, pd.DataFrame):
+            pass
+        else:
+            raise NotImplementedError
+
+        if isinstance(X_from, ad.AnnData):
+            X_from = X_from.to_df()
+        elif isinstance(X_from, pd.DataFrame):
+            pass
+        else:
+            raise NotImplementedError
+
+        if genes is not None:
+            genes = ut.listify(genes)
+            genes = [g.lower() for g in genes]
+
+        imp_genes = SpaGE(X_to, X_from, n_pv=num_pv, genes_to_predict=genes)
+        X_to_pred = pd.concat((X_to, imp_genes), axis=1)
+
+        out = dict(X_to_pred=X_to_pred)
+
+        return out
