@@ -279,14 +279,19 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
         if name in (["sp", "X_to"]):
             if (hasattr(obj, "obsm")) and ("spatial" in obj.obsm):
                 keep = ~(np.any(np.isnan(obj.obsm["spatial"]), axis=1))
+                obj = obj[keep, :].copy()
             elif hasattr(obj, "obs"):
                 x = data_dict[name].get("x_coords", None)
                 y = data_dict[name].get("y_coords", None)
                 if x is None or y is None:
-                    print("There may be nan coordinates ")
+                    print("There may be nan coordinates")
                 else:
                     keep = obj.obs[[x, y]].dropna(axis=0).index
-            obj = obj[keep, :].copy()
+                    obj = obj[keep, :].copy()
+            else:
+                pass
+
+
 
         # store object
         input_dict[name] = obj
