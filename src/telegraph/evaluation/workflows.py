@@ -97,7 +97,6 @@ class Composite:
     def run(
         self,
         input_dict: Dict[str, Any],
-        # experiment_name: str | None = None,
         **kwargs,
     ):
 
@@ -107,7 +106,6 @@ class Composite:
 
             out = self._methods[method_key].run(
                 input_dict,
-                # experiment_name=experiment_name,
                 **method_kwargs,
             )
             # update input dict
