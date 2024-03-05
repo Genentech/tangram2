@@ -213,7 +213,7 @@ class AssociationScore(GroupMethodClass):
     """
 
     ins = ["X_from", "X_to_pred", "T"]
-    outs = ["D_to"]
+    outs = ["D_from"]
 
     def __init__(
         self,
@@ -258,6 +258,8 @@ class AssociationScore(GroupMethodClass):
 
         # make sure feature_name is in list format
         feature_name = ut.listify(feature_name)
+        # make input features lowercase to make sure it matches with Q columns which are made lower case above
+        feature_name = [f.lower() for f in feature_name]
 
         # only keep features specified
         if feature_name[0] is not None:
