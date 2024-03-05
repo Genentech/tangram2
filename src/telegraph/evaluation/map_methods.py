@@ -41,38 +41,6 @@ class MapMethodClass(MethodClass):
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         pass
 
-    # @staticmethod
-    # def hard_update_out_dict(
-    #     out_dict: Dict[str, spmatrix | np.ndarray],
-    #     row_idx: np.ndarray,
-    #     col_idx: np.ndarray,
-    #     n_rows: int,
-    #     n_cols: int,
-    #     row_names: List[str] | None = None,
-    #     col_names: List[str] | None = None,
-    #     **kwargs,
-    # ) -> None:
-    #     # helper function to generate the output
-    #     # for hard maps in a sparse format
-    #
-    #     ordr = np.argsort(col_idx)
-    #     row_idx = row_idx[ordr]
-    #     col_idx = col_idx[ordr]
-    #
-    #     T_sparse = coo_matrix(
-    #         (np.ones(n_cols), (row_idx, col_idx)), shape=(n_rows, n_cols)
-    #     )
-    #
-    #     T_sparse = pd.DataFrame.sparse.from_spmatrix(
-    #         T_sparse,
-    #         index=row_names,
-    #         columns=col_names,
-    #     )
-    #
-    #     out_dict["T_hard"] = T_sparse
-    #
-    #     return out_dict
-
 
 class RandomMap(MapMethodClass):
     # class that randomly maps object in "from"
@@ -92,7 +60,6 @@ class RandomMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         seed: int = 1,
-        experiment_name: str | None = None,
         **kwargs,
     ):
         # set random seed for reproducibility
@@ -160,7 +127,6 @@ class ArgMaxCorrMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         # anndata of "to"
@@ -245,7 +211,6 @@ class TangramMap(MapMethodClass):
         from_spatial_key: str = "spatial",
         num_epochs: int = 1000,
         genes: List[str] | str | None = None,
-        experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
@@ -282,7 +247,7 @@ class TangramMap(MapMethodClass):
         tg.pp_adatas(ad_from, ad_to, genes=genes)
         mode = kwargs.pop("mode", "cells")
         wandb_config = kwargs.pop("wandb_config", {})
-        wandb_config["step_prefix"] = experiment_name
+        wandb_config["step_prefix"] = kwargs.get("experiment_name")
 
         random_state = kwargs.get("random_state")
         if random_state is None:
@@ -491,7 +456,6 @@ class SpaOTscMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         to_spatial_key: str = "spatial",
-        experiment_name: str | None = None,
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
@@ -632,7 +596,6 @@ class MoscotMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         genes: List[str] | str | None = None,
-        experiment_name: str | None = None,
         return_T_norm: bool = True,
         seed: int | None = None,
         **kwargs,
