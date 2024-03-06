@@ -146,7 +146,10 @@ class LowercaseGenes(PPClass):
     @staticmethod
     def pp(adata: ad.AnnData, **kwargs):
         adata.var.index = [g.lower() for g in adata.var.index.tolist()]
-        adata.var_names_make_unique()
+        # remove duplicates
+        keep = ~adata.var.index.duplicated()
+        adata.var.index = adata.var.index[keep]
+        adata.X = adata[:, keep].X
 
 
 class StandardMoscot(PPClass):
