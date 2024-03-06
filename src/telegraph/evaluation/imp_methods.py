@@ -454,6 +454,10 @@ class VAEKNNImputation(TrainValImputationClass):
 
 
 class SpaGEImputation(ImpMethodClass):
+
+    ins = ["X_to", "X_from"]
+    outs = ["X_to_pred"]
+
     def __init__(
         self,
         *args,
@@ -466,7 +470,8 @@ class SpaGEImputation(ImpMethodClass):
         cls,
         input_dict: Dict[str, Any],
         genes: str | List | None = None,
-        num_pv: int = 30,
+        n_pca: int = 30,
+        lowercase_var_names: bool = True,
         **kwargs
     ):
         from SpaGE.main import SpaGE
@@ -492,12 +497,22 @@ class SpaGEImputation(ImpMethodClass):
         else:
             raise NotImplementedError
 
+        if lowercase_var_names:
+            X_to.columns = [x.lower() for x in X_to.columns]
+            X_from.columns = [x.lower() for x in X_from.columns]
+
+        # policy checks
+        pol.check_values(X_to, "X_to")
+        pol.check_type(X_to, "X_to")
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
+
         if genes is not None:
             genes = ut.listify(genes)
             genes = [g.lower() for g in genes]
 
-        imp_genes = SpaGE(X_to, X_from, n_pv=num_pv, genes_to_predict=genes)
-        X_to_pred = pd.concat((X_to, imp_genes), axis=1)
+        imp_genes = SpaGE(X_to, X_from, n_pv=n_pca, genes_to_predict=genes)
+        X_to_pred = pd.concat((X_to.loc[:,X_to.columns.difference(imp_genes)], imp_genes), axis=1)
 
         out = dict(X_to_pred=X_to_pred)
 
