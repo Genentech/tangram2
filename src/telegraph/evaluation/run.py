@@ -100,7 +100,7 @@ def process_experiment(
         recipe = wfs[wf_name].get(C.CONF.recipe.value)
         assert recipe is not None, "must give a recipe for the workflow"
         workflow = build_workflow(recipe, use_fuzzy_match)
-        workflow.run(input_dict, experiment_name=experiment_name, **recipe)
+        workflow.run(input_dict, **recipe)
 
         if save_mode:
             workflow.save(input_dict, out_dir)

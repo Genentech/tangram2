@@ -443,7 +443,7 @@ class GLMDEA(DEAMethodClass):
                 for cov in D_inp.columns
             }
 
-        # update output dictionary
-        out.update(tgt_out)
+            # update output dictionary
+            out.update(tgt_out)
 
         return dict(DEA=out)
