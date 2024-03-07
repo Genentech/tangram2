@@ -74,6 +74,7 @@ class METHODS(EnumCustom):
         knn=imet.KNNImputation,
         fcnn=imet.FCNNImputation,
         vaeknn=imet.VAEKNNImputation,
+        spage=imet.SpaGEImputation,
     )
 
     IMP_METHODS = {
@@ -163,4 +164,5 @@ class PREPROCESS(EnumCustom):
         tangramv2=pp.StandardTangramV2,
         spaotsc=pp.StandardSpaOTsc,
         moscot=pp.StandardMoscot,
+        spage=pp.StandardSpaGE,
     )
