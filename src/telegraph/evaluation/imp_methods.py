@@ -543,7 +543,6 @@ class gimVIImputation(ImpMethodClass):
         cls,
         input_dict: Dict[str, Any],
         n_epochs: int = 200,
-        n_hidden: int = 64,
         generative_distributions: List[str] = ["zinb", "nb"],
         model_library_size: List[bool] = [True, False],
         n_latent: int = 10,
@@ -588,7 +587,6 @@ class gimVIImputation(ImpMethodClass):
         model = GIMVI(
             X_from,
             X_to_partial,
-            n_hidden=n_hidden,
             generative_distributions=generative_distributions,
             model_library_size=model_library_size,
             n_latent=n_latent,
