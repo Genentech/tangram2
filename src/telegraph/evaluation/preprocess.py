@@ -63,7 +63,7 @@ class StandardScanpy(PPClass):
         # change dtype to float32
         adata.X = adata.X.astype(np.float32)
         # normalize total
-        target_sum = kwargs.get("target_sum", None)
+        target_sum = kwargs.get("target_sum", 1e4)
         if target_sum is not None:
             target_sum = float(target_sum)
         sc.pp.normalize_total(adata, target_sum=target_sum)
