@@ -74,6 +74,7 @@ class METHODS(EnumCustom):
         knn=imet.KNNImputation,
         fcnn=imet.FCNNImputation,
         vaeknn=imet.VAEKNNImputation,
+        gimvi=imet.gimVIImputation,
         spage=imet.SpaGEImputation,
     )
 
@@ -165,4 +166,5 @@ class PREPROCESS(EnumCustom):
         spaotsc=pp.StandardSpaOTsc,
         moscot=pp.StandardMoscot,
         spage=pp.StandardSpaGE,
+        gimvi=pp.gimVIPP,
     )

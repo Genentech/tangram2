@@ -170,6 +170,21 @@ class StandardMoscot(PPClass):
                 ScanpyPCA.pp(adata, **kwargs.get("scanpy_pca", {}))
 
 
+class gimVIPP(PPClass):
+    @staticmethod
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+        match input_type:
+            case "X_from" | "sc":
+                # Remove cells with no gene count
+                sc.pp.filter_cells(adata, min_counts=1)
+            case "X_to" | "sp":
+                # Remove cells with no gene count
+                sc.pp.filter_cells(adata, min_counts=1)
+            case _:
+                # Remove cells with no gene count
+                sc.pp.filter_cells(adata, min_counts=1)
+
+
 class FilterGenes(PPClass):
     # Method to filter genes using scanpy's filter genes method
     @staticmethod
@@ -179,14 +194,14 @@ class FilterGenes(PPClass):
             min_counts=kwargs.get("min_counts", None),
             min_cells=kwargs.get("min_cells", None),
             max_counts=kwargs.get("max_counts", None),
-            max_cells=kwargs.get("max_cells", None)
+            max_cells=kwargs.get("max_cells", None),
         )
 
 
 class StandardSpaGE(PPClass):
     # SpaGE recommended pre-processing
     @staticmethod
-    def pp(adata: ad.AnnData, input_type:str | None = None, **kwargs):
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
         match input_type:
             case "X_from" | "sc":
                 LowercaseGenes.pp(adata)
@@ -197,4 +212,3 @@ class StandardSpaGE(PPClass):
                 StandardScanpy.pp(adata, **kwargs)
             case _:
                 StandardScanpy.pp(adata, **kwargs)
-
