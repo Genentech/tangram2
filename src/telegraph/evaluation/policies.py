@@ -85,6 +85,28 @@ class PolicyX(BasePolicy):
     def test_values(cls, *args, **kwargs):
         pass
 
+    @classmethod
+    def test_integer(cls, obj: pd.DataFrame | AnnData):
+        if isinstance(obj, pd.DataFrame):
+            obj = obj.values
+        if isinstance(obj, AnnData):
+            if isinstance(obj.X, spmatrix):
+                obj = obj.X.toarray()
+            else:
+                obj = obj.X
+        assert np.all(np.mod(obj, 1) == 0), f"{cls.object_name} has non-integer values"
+
+    @classmethod
+    def test_non_negative(cls, obj: np.ndarray | spmatrix):
+        if isinstance(obj, pd.DataFrame):
+            obj = obj.values
+        if isinstance(obj, AnnData):
+            if isinstance(obj.X, spmatrix):
+                obj = obj.X.toarray()
+            else:
+                obj = obj.X
+        assert np.all(obj >= 0) == True, f"{cls.object_name} has negative values"
+
 
 class PolicyXto(PolicyX):
     object_name = "X_to"
@@ -137,3 +159,11 @@ def check_dimensions(obj, obj_name: str, *args, **kwargs):
 
 def check_type(obj, obj_name: str, *args, **kwargs):
     PolicyDict[obj_name].value.test_type(obj, *args, **kwargs)
+
+
+def check_integer(obj, obj_name: str, *args, **kwargs):
+    PolicyDict[obj_name].value.test_integer(obj, *args, **kwargs)
+
+
+def check_non_negative(obj, obj_name: str, *args, **kwargs):
+    PolicyDict[obj_name].value.test_non_negative(obj, *args, **kwargs)

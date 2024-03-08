@@ -279,14 +279,19 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
         if name in (["sp", "X_to"]):
             if (hasattr(obj, "obsm")) and ("spatial" in obj.obsm):
                 keep = ~(np.any(np.isnan(obj.obsm["spatial"]), axis=1))
+                obj = obj[keep, :].copy()
             elif hasattr(obj, "obs"):
                 x = data_dict[name].get("x_coords", None)
                 y = data_dict[name].get("y_coords", None)
                 if x is None or y is None:
-                    print("There may be nan coordinates ")
+                    raise RuntimeError(
+                        "Could not find x_coords/y_coords in obs. Please provide coordinate column names in config file."
+                    )
                 else:
                     keep = obj.obs[[x, y]].dropna(axis=0).index
-            obj = obj[keep, :].copy()
+                    obj = obj[keep, :].copy()
+            else:
+                pass
 
         # store object
         input_dict[name] = obj
@@ -471,3 +476,9 @@ def listify(obj: W) -> List[W]:
     if not isinstance(obj, (tuple, list)):
         return [obj]
     return obj
+
+
+def df2ad(in_df: pd.DataFrame) -> ad.AnnData:
+    # convert a pandas dataframe to anndata
+    out_ad = ad.AnnData(in_df, obs=in_df.index, var=in_df.columns)
+    return out_ad

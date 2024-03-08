@@ -8,6 +8,7 @@ import lightning as L
 import numpy as np
 import pandas as pd
 import torch as t
+from scvi.external import GIMVI
 from sklearn.model_selection import train_test_split
 
 import telegraph.evaluation.policies as pol
@@ -447,6 +448,154 @@ class VAEKNNImputation(TrainValImputationClass):
             columns=list(from_var),
             index=to_names,
         )
+
+        out = dict(X_to_pred=X_to_pred)
+
+        return out
+
+
+class SpaGEImputation(ImpMethodClass):
+
+    ins = ["X_to", "X_from"]
+    outs = ["X_to_pred"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        genes: str | List | None = None,
+        n_pca: int = 30,
+        lowercase_var_names: bool = True,
+        **kwargs,
+    ):
+        from SpaGE.main import SpaGE
+
+        # get single cell spatial data X_to
+        X_to = input_dict.get("X_to")
+        assert X_to is not None
+        # get single cell RNASeq data X_from
+        X_from = input_dict.get("X_from")
+        assert X_from is not None
+
+        if isinstance(X_to, ad.AnnData):
+            X_to = X_to.to_df()
+        elif isinstance(X_to, pd.DataFrame):
+            pass
+        else:
+            raise NotImplementedError
+
+        if isinstance(X_from, ad.AnnData):
+            X_from = X_from.to_df()
+        elif isinstance(X_from, pd.DataFrame):
+            pass
+        else:
+            raise NotImplementedError
+
+        if lowercase_var_names:
+            X_to.columns = [x.lower() for x in X_to.columns]
+            # remove duplicates
+            X_to.iloc[:, ~X_to.columns.duplicated()]
+            X_from.columns = [x.lower() for x in X_from.columns]
+
+        # policy checks
+        pol.check_values(X_to, "X_to")
+        pol.check_type(X_to, "X_to")
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
+
+        if genes is not None:
+            genes = ut.listify(genes)
+            genes = [g.lower() for g in genes]
+
+        imp_genes = SpaGE(X_to, X_from, n_pv=n_pca, genes_to_predict=genes)
+        X_to_pred = pd.concat(
+            (X_to.loc[:, X_to.columns.difference(imp_genes)], imp_genes), axis=1
+        )
+
+        out = dict(X_to_pred=X_to_pred)
+
+        return out
+
+
+class gimVIImputation(ImpMethodClass):
+    """Imputation using scVI's GIMVI model"""
+
+    # Expected inputs and outputs
+    ins = ["X_to", "X_from"]
+    outs = ["X_to_pred"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        n_epochs: int = 200,
+        generative_distributions: List[str] = ["zinb", "nb"],
+        model_library_size: List[bool] = [True, False],
+        n_latent: int = 10,
+        training_genes: List[str] | None = None,
+        **kwargs,
+    ):
+        X_from = input_dict.get("X_from")
+        assert X_from is not None
+        # policy check
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
+        pol.check_integer(X_from, "X_from")
+        pol.check_non_negative(X_from, "X_from")
+
+        X_to = input_dict.get("X_to")
+        assert X_to is not None
+        # policy check
+        pol.check_values(X_to, "X_to")
+        pol.check_type(X_to, "X_to")
+        pol.check_integer(X_to, "X_to")
+        pol.check_non_negative(X_to, "X_to")
+
+        if isinstance(X_from, pd.DataFrame):
+            X_from = ut.df2ad(X_from)
+        if isinstance(X_to, pd.DataFrame):
+            X_to = ut.df2ad(X_to)
+
+        if not training_genes:
+            training_genes = list(
+                set(X_to.var_names).intersection(set(X_from.var_names))
+            )
+        assert (
+            len(list(set(training_genes).intersection(set(X_to.var_names)))) != 0
+        ), "No genes in common between X_to and training_genes"
+        assert (
+            len(list(set(training_genes).intersection(set(X_from.var_names)))) != 0
+        ), "No genes in common between X_from and training_genes"
+        training_genes = list(set(training_genes).intersection(set(X_to.var_names)))
+        X_to_partial = X_to[:, training_genes].copy()
+        GIMVI.setup_anndata(X_to_partial)
+        GIMVI.setup_anndata(X_from)
+        model = GIMVI(
+            X_from,
+            X_to_partial,
+            generative_distributions=generative_distributions,
+            model_library_size=model_library_size,
+            n_latent=n_latent,
+        )
+        model.train(max_epochs=n_epochs)
+        _, imputation = model.get_imputed_values(normalized=False)
+        X_to_pred = ad.AnnData(imputation, obs=X_to.obs, var=X_from.var)
+        X_to_pred.uns = X_to.uns.copy()
+        X_to_pred.obsm = X_to.obsm.copy()
 
         out = dict(X_to_pred=X_to_pred)
 

@@ -63,7 +63,10 @@ class StandardScanpy(PPClass):
         # change dtype to float32
         adata.X = adata.X.astype(np.float32)
         # normalize total
-        sc.pp.normalize_total(adata, target_sum=float(kwargs.get("target_sum", 1e4)))
+        target_sum = kwargs.get("target_sum", 1e4)
+        if target_sum is not None:
+            target_sum = float(target_sum)
+        sc.pp.normalize_total(adata, target_sum=target_sum)
         # log1p transform
         sc.pp.log1p(adata)
 
@@ -169,3 +172,47 @@ class StandardMoscot(PPClass):
                 LowercaseGenes.pp(adata)
                 StandardScanpy.pp(adata, **kwargs.get("scanpy_pp", {}))
                 ScanpyPCA.pp(adata, **kwargs.get("scanpy_pca", {}))
+
+
+class gimVIPP(PPClass):
+    @staticmethod
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+        match input_type:
+            case "X_from" | "sc":
+                # Remove cells with no gene count
+                sc.pp.filter_cells(adata, min_counts=1)
+            case "X_to" | "sp":
+                # Remove cells with no gene count
+                sc.pp.filter_cells(adata, min_counts=1)
+            case _:
+                # Remove cells with no gene count
+                sc.pp.filter_cells(adata, min_counts=1)
+
+
+class FilterGenes(PPClass):
+    # Method to filter genes using scanpy's filter genes method
+    @staticmethod
+    def pp(adata: ad.AnnData, **kwargs):
+        sc.pp.filter_genes(
+            data=adata,
+            min_counts=kwargs.get("min_counts", None),
+            min_cells=kwargs.get("min_cells", None),
+            max_counts=kwargs.get("max_counts", None),
+            max_cells=kwargs.get("max_cells", None),
+        )
+
+
+class StandardSpaGE(PPClass):
+    # SpaGE recommended pre-processing
+    @staticmethod
+    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+        match input_type:
+            case "X_from" | "sc":
+                LowercaseGenes.pp(adata)
+                FilterGenes.pp(adata, **kwargs)
+                StandardScanpy.pp(adata, **kwargs)
+            case "X_to" | "sc":
+                LowercaseGenes.pp(adata)
+                StandardScanpy.pp(adata, **kwargs)
+            case _:
+                StandardScanpy.pp(adata, **kwargs)

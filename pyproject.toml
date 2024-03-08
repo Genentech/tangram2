@@ -67,6 +67,7 @@ wandb = '>=0.16.1'
 celerypy = {git  = 'https://code.roche.com/rb-aiml-cv-spatial/cci-explore/imported-methods/gne-celery.git'}
 spaotsc = {git = 'https://code.roche.com/rb-aiml-cv-spatial/cci-explore/imported-methods/gne_spaotsc.git'}
 tangram2 = {git = 'https://code.roche.com/tangramgroup/Tangram2.git'}
+spage = {git = 'https://code.roche.com/rb-aiml-cv-spatial/cci-explore/imported-methods/gne_spage.git'}
 moscot = "^0.3.3"
 igraph = "^0.10.0"
 pot = "^0.9.1"
@@ -77,6 +78,8 @@ progressbar = "^2.5"
 scverse = "^0.0.1"
 black = "^24.1.1"
 isort = "^5.13.2"
+scvi-tools = "^1.1.2"
+loompy = "^3.0.7"
 
 [tool.poetry.scripts]
 telegraph = 'telegraph.cli:cli'

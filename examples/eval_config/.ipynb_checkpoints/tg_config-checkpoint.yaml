@@ -1,0 +1,43 @@
+---
+
+data:
+  CID4290:
+    sp:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sp/CID4290_sp.h5ad'
+    sc:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sc/CID4290_sc.h5ad'
+  CID4465:
+    sp:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sp/CID4465_sp.h5ad'
+    sc:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sc/CID4465_sc.h5ad'
+  CID44971:
+    sp:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sp/CID44971_sp.h5ad'
+    sc:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sc/CID44971_sc.h5ad'
+  CID4535:
+    sp:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sp/CID4535_sp.h5ad'
+    sc:
+      path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/sc/CID4535_sc.h5ad'
+
+methods:
+  all:
+    - wf_hejin
+
+method_params:
+  all:
+    wf_hejin:
+      map_args:
+        num_epochs: 1000
+        marker_path: '/gstore/data/resbioai/spacerangers/cci-explore/data/hejin_map_tangramv2/markers/markers.txt'
+      group_args:
+        feature_name: 'cd274'
+        thres_x: 1
+        thres_t: 0.5
+
+metrics:
+  all:
+    wf_hejin:
+      dev_print:
