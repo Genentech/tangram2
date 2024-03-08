@@ -6,8 +6,8 @@ import anndata as ad
 import numpy as np
 import pytest
 
-import telegraph.evaluation.constants as C
-from telegraph.evaluation.tests import utils as ut
+import telegraph.constants as C
+from telegraph.tests import test_utils as ut
 
 
 class BaseTestMetric(ABC):

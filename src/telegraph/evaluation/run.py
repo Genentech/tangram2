@@ -4,9 +4,9 @@ from typing import Any, Dict
 
 import anndata as ad
 
-from . import constants as C
-from . import utils as ut
-from . import workflows as wf
+import telegraph.constants as C
+from telegraph.evaluation import utils as ut
+from telegraph.methods import workflows as wf
 
 OBJMAP = dict(
     sc="X_from",

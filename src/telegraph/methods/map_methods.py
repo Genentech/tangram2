@@ -13,10 +13,10 @@ from scipy.spatial.distance import cdist
 from scipy.special import softmax
 from torch.cuda import is_available
 
-import telegraph.evaluation.policies as pol
-import telegraph.evaluation.transforms as tf
-import telegraph.evaluation.utils as ut
-from telegraph.evaluation._methods import MethodClass
+import telegraph.methods.policies as pol
+import telegraph.methods.transforms as tf
+import telegraph.methods.utils as ut
+from telegraph.methods._methods import MethodClass
 
 
 class MapMethodClass(MethodClass):

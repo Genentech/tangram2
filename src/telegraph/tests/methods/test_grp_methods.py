@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from telegraph.evaluation import grp_methods as gm
-from telegraph.evaluation.tests import utils as ut
+from telegraph.methods import grp_methods as gm
+from telegraph.tests import test_utils as ut
 
 
 class TestThresholdGroup:

@@ -12,8 +12,8 @@ from . import policies as pol
 from . import utils as ut
 from ._methods import MethodClass
 
-# import telegraph.evaluation.policies as pol
-# from telegraph.evaluation._methods import MethodClass
+# import telegraph.methods.policies as pol
+# from telegraph.methods._methods import MethodClass
 
 
 class DEA(Enum):
@@ -23,6 +23,7 @@ class DEA(Enum):
     feature = "feature"
     score = "score"
     coeff = "score"
+    agg_p_value = "pvals_agg"
 
 
 class DEAMethodClass(MethodClass):

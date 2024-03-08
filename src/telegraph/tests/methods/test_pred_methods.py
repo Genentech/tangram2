@@ -4,8 +4,8 @@ from typing import Any, Dict, Tuple
 
 import pytest
 
-from telegraph.evaluation import pred_methods as pm
-from telegraph.evaluation.tests import utils as ut
+from telegraph.methods import pred_methods as pm
+from telegraph.tests import test_utils as ut
 
 
 class BaseTestPredMethods:

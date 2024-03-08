@@ -11,9 +11,9 @@ import torch as t
 from scvi.external import GIMVI
 from sklearn.model_selection import train_test_split
 
-import telegraph.evaluation.policies as pol
-import telegraph.evaluation.utils as ut
-from telegraph.evaluation._methods import MethodClass
+import telegraph.methods.policies as pol
+import telegraph.methods.utils as ut
+from telegraph.methods._methods import MethodClass
 
 
 class ImpMethodClass(MethodClass):
@@ -231,7 +231,7 @@ class FCNNImputation(TrainValImputationClass):
 
         from torch.utils.data import DataLoader
 
-        from telegraph.evaluation.models.fcnn import FCNNDataset, FCNNImp
+        from telegraph.methods.models.fcnn import FCNNDataset, FCNNImp
 
         X_to = input_dict.get("X_to")
         assert X_to is not None
@@ -344,7 +344,7 @@ class VAEKNNImputation(TrainValImputationClass):
 
         from torch.utils.data import DataLoader
 
-        from telegraph.evaluation.models import vae
+        from telegraph.methods.models import vae
 
         X_to = input_dict.get("X_to")
         assert X_to is not None

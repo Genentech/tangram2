@@ -1,14 +1,13 @@
 from enum import Enum
 
-import telegraph.evaluation.dea_methods as dmet
-import telegraph.evaluation.grp_methods as gmet
-import telegraph.evaluation.imp_methods as imet
-import telegraph.evaluation.map_methods as mmet
-import telegraph.evaluation.pred_methods as pmet
-
-from . import metrics as mtx
-from . import preprocess as pp
-from . import save_methods as sm
+import telegraph.methods.dea_methods as dmet
+import telegraph.methods.grp_methods as gmet
+import telegraph.methods.imp_methods as imet
+import telegraph.methods.map_methods as mmet
+import telegraph.methods.pred_methods as pmet
+from telegraph.evaluation import metrics as mtx
+from telegraph.methods import preprocess as pp
+from telegraph.methods import save_methods as sm
 
 
 class CONF(Enum):
@@ -100,16 +99,6 @@ class METHODS(EnumCustom):
 
     # all available methods
     OPTIONS = MAP_METHODS | PRD_METHODS | IMP_METHODS | GRP_METHODS | DEA_METHODS
-
-
-class WORKFLOWS(EnumCustom):
-    import telegraph.evaluation.workflows as wf
-
-    # raw workflow names
-    _OPTIONS = dict(tg2_base=wf.Tangram2BaselineWorkflow)
-
-    # "prefixed" workflow names
-    OPTIONS = {PREFIX.workflow.value + "_" + key: val for key, val in _OPTIONS.items()}
 
 
 class METRICS(EnumCustom):

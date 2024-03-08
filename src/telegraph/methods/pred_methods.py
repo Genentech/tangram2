@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import spmatrix
 
-import telegraph.evaluation.policies as pol
-import telegraph.evaluation.utils as ut
-from telegraph.evaluation._methods import MethodClass
+import telegraph.methods.policies as pol
+import telegraph.methods.utils as ut
+from telegraph.methods._methods import MethodClass
 
 
 class PredMethodClass(MethodClass):
