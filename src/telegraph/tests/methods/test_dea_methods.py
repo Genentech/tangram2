@@ -5,9 +5,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from telegraph.evaluation import dea_methods as dm
-from telegraph.evaluation.tests import utils as ut
-from telegraph.evaluation.utils import design_matrix_to_labels
+from telegraph.methods import dea_methods as dm
+from telegraph.methods.utils import design_matrix_to_labels
+from telegraph.tests import test_utils as ut
 
 
 class BaseTestDEAMethods:

@@ -5,9 +5,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from telegraph.evaluation import map_methods as mm
-from telegraph.evaluation.tests import utils as ut
-from telegraph.evaluation.transforms import soft_T_to_hard
+from telegraph.methods import map_methods as mm
+from telegraph.methods.transforms import soft_T_to_hard
+from telegraph.tests import test_utils as ut
 
 
 class BaseTestMapMethods:

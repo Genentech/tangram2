@@ -2,13 +2,9 @@ from abc import ABC
 from collections import OrderedDict
 from typing import Any, Dict
 
-import telegraph.evaluation.constants as C
-import telegraph.evaluation.dea_methods as dmet
-import telegraph.evaluation.grp_methods as gmet
-import telegraph.evaluation.map_methods as mmet
-import telegraph.evaluation.pred_methods as pmet
-import telegraph.evaluation.utils as ut
-from telegraph.evaluation._methods import MethodClass
+import telegraph.constants as C
+import telegraph.methods.utils as ut
+from telegraph.methods._methods import MethodClass
 
 
 class IdentityFun:
@@ -159,16 +155,3 @@ class WorkFlowClass(MethodClass):
     ) -> None:
         # save using "flow's" save method
         cls.flow.save(res_dict, out_dir, **kwargs)
-
-
-class Tangram2BaselineWorkflow(WorkFlowClass):
-    """Implementation of Hejin's workflow"""
-
-    flow = Composite(
-        dict(
-            map="map_tangram_v2",
-            pred="prd_tangram_v2",
-            group="grp_threshold",
-            dea="dea_scanpy",
-        )
-    )
