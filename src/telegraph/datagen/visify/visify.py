@@ -6,7 +6,8 @@ import pandas as pd
 from scipy.sparse import coo_matrix, csr_matrix, spmatrix
 from scipy.spatial import cKDTree as KDTree
 from scipy.stats import multivariate_hypergeom as mhg
-from utils import add_mul_noise, nbrs_to_coo, r_by_n, square_sample_crd
+
+from ._utils import add_mul_noise, nbrs_to_coo, r_by_n, square_sample_crd
 
 
 def visify(

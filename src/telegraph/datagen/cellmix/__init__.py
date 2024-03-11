@@ -1,1 +1,1 @@
-import cellmix
+from . import cellmix
