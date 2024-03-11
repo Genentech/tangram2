@@ -110,6 +110,7 @@ def test_group_separation(
     n_pca: int = 50,
     clf_params: None | Dict[str, Any] = None,
     print_res: bool = False,
+    n_reps: int = 10,
 ):
 
     from sklearn.metrics import confusion_matrix, f1_score
@@ -128,28 +129,44 @@ def test_group_separation(
 
     _classifier = _clfs[classifier.lower()]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        Xn, labels, test_size=0.2, random_state=42
-    )
-
     if clf_params is None:
         clf_params = {}
 
-    clf = _classifier(random_state=42, **clf_params)
-    clf.fit(X_train, y_train)
+    f1_score_train = list()
+    f1_score_test = list()
 
-    y_train_pred = clf.predict(X_train)
-    y_test_pred = clf.predict(X_test)
+    for ii in range(n_reps):
+        X_train, X_test, y_train, y_test = train_test_split(Xn, labels, test_size=0.2)
 
-    f1_score_train = f1_score(y_train, y_train_pred, average="macro")
-    f1_score_test = f1_score(y_test, y_test_pred, average="macro")
+        clf = _classifier(**clf_params)
+        clf.fit(X_train, y_train)
+
+        y_train_pred = clf.predict(X_train)
+        y_test_pred = clf.predict(X_test)
+
+        f1_score_train.append(f1_score(y_train, y_train_pred, average="macro"))
+        f1_score_test.append(f1_score(y_test, y_test_pred, average="macro"))
+
+    f1_mean_train = np.mean(f1_score_train)
+    f1_mean_test = np.mean(f1_score_test)
+
+    f1_std_train = np.std(f1_score_train)
+    f1_std_test = np.std(f1_score_test)
 
     cfm_train = confusion_matrix(y_train, y_train_pred)
     cfm_test = confusion_matrix(y_test, y_test_pred)
 
     if print_res:
-        print("Macro F1 score [TRAIN]: {}".format(f1_score_train))
-        print("Macro F1 score [TEST]: {}".format(f1_score_test))
+        print(
+            "Mean Macro F1 score [TRAIN]: {} +/- {}".format(
+                f1_mean_train, 2 * f1_std_train
+            )
+        )
+        print(
+            "Mean Macro F1 score [TEST]: {} +/- {}".format(
+                f1_mean_test, 2 * f1_std_test
+            )
+        )
 
     return dict(
         f1_train=f1_score_train,
