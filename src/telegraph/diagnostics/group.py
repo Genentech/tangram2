@@ -1,5 +1,5 @@
 from typing import Any, Dict, List
-
+from scipy.sparse import spmatrix
 import anndata as ad
 import matplotlib.pyplot as plt
 import numpy as np
@@ -56,6 +56,7 @@ def plot_group_separation(
     project_method: str | List[str] = "pca",
     cmap=plt.cm.Dark2,
     plot=True,
+    s=10,
 ):
 
     Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
@@ -70,7 +71,7 @@ def plot_group_separation(
     if not isinstance(project_method, (tuple, list)):
         project_method = [project_method]
 
-    project_methods = [x.lower() for x in project_method if x.lower() in _pms]
+    project_method = [x.lower() for x in project_method if x.lower() in _pms]
 
     n_pms = len(project_method)
 
@@ -80,16 +81,16 @@ def plot_group_separation(
 
     uni_labels = np.unique(labels)
     color_mapper = {l: k for k, l in enumerate(uni_labels)}
-    colors = [cmap(color_mapper[l]) for l in labels]
+    # colors = [cmap(color_mapper[l]) for l in labels]
 
     for k, m in enumerate(project_method):
         proj = _pms[m](n_components=2)
         Xnd = proj.fit_transform(Xn)
-
         for lab in uni_labels:
             is_label = labels == lab
+            is_label = is_label.flatten()
             ax[k].scatter(
-                Xnd[is_label, 0], Xnd[is_label, 1], c=cmap(color_mapper[lab]), label=lab
+                Xnd[is_label, 0], Xnd[is_label, 1], c=cmap(color_mapper[lab]), label=lab, s=s,
             )
         ax[k].set_title("Projection Method : {}".format(m))
         ax[k].legend()
@@ -136,7 +137,7 @@ def test_group_separation(
     f1_score_test = list()
 
     for ii in range(n_reps):
-        X_train, X_test, y_train, y_test = train_test_split(Xn, labels, test_size=0.2)
+        X_train, X_test, y_train, y_test = train_test_split(Xd, labels, test_size=0.2)
 
         clf = _classifier(**clf_params)
         clf.fit(X_train, y_train)
