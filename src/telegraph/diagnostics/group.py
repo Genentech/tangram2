@@ -1,10 +1,11 @@
 from typing import Any, Dict, List
-from scipy.sparse import spmatrix
+
 import anndata as ad
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scanpy as sc
+from scipy.sparse import spmatrix
 from sklearn.decomposition import PCA
 from sklearn.manifold import MDS, TSNE, Isomap
 
@@ -56,7 +57,8 @@ def plot_group_separation(
     project_method: str | List[str] = "pca",
     cmap=plt.cm.Dark2,
     plot=True,
-    s=10,
+    marker_size: int = None,
+    plt_kwargs: Dict[str, Any] | None = None,
 ):
 
     Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
@@ -83,6 +85,17 @@ def plot_group_separation(
     color_mapper = {l: k for k, l in enumerate(uni_labels)}
     # colors = [cmap(color_mapper[l]) for l in labels]
 
+    plt_kwargs_default = dict(s=marker_size)
+
+    if plt_kwargs is None:
+        _plt_kwargs = {}
+    else:
+        _plt_kwargs = {k: v for k, v in plt_kwargs.items()}
+
+    for k, v in plt_kwargs_default.items():
+        if k not in _plt_kwargs:
+            _plt_kwargs[k] = v
+
     for k, m in enumerate(project_method):
         proj = _pms[m](n_components=2)
         Xnd = proj.fit_transform(Xn)
@@ -90,7 +103,11 @@ def plot_group_separation(
             is_label = labels == lab
             is_label = is_label.flatten()
             ax[k].scatter(
-                Xnd[is_label, 0], Xnd[is_label, 1], c=cmap(color_mapper[lab]), label=lab, s=s,
+                Xnd[is_label, 0],
+                Xnd[is_label, 1],
+                c=cmap(color_mapper[lab]),
+                label=lab,
+                **_plt_kwargs,
             )
         ax[k].set_title("Projection Method : {}".format(m))
         ax[k].legend()

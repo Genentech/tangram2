@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List
 
 import anndata as ad
 import matplotlib.pyplot as plt
