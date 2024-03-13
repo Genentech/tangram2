@@ -43,7 +43,7 @@ def plot_top_k_distribution(
         ks = [ks]
 
     if ax is None:
-        fig, ax = plt.subplots(1, 1)
+        fig, ax = plt.subplots(1, 1, sharex=True, sharey=True)
 
     for i, k in enumerate(ks):
         T_k_max = np.sort(T_n, axis=0)
@@ -72,7 +72,7 @@ def plot_cells_per_spot(
     bins: int | None = 25,
     normalize_T: bool = True,
     plot: bool = True,
-    edgecolor="black",
+    plt_kwargs: Dict[str, Any] | None = None,
 ):
 
     T_n = _get_T(T, normalize_T)
@@ -84,15 +84,30 @@ def plot_cells_per_spot(
     cells_per_spot_soft = np.sum(T_n, axis=1)
     cells_per_spot_hard = np.sum(T_hard, axis=1)
 
+    if plt_kwargs is None:
+        _plt_kwargs = {}
+    else:
+        _plt_kwargs = {k: v for k, v in plt_kwargs.items()}
+
+    plt_kwargs_defaults = dict(edgecolor="black", facecolor="blue")
+
+    for k, v in plt_kwargs_defaults.items():
+        if k not in _plt_kwargs:
+            _plt_kwargs[k] = v
+
     fig, ax = plt.subplots(1, 2, figsize=(12, 6))
     ax[0].set_title("effective number of cells assigned to each spot (soft)")
     ax[0].hist(
-        cells_per_spot_soft.flatten(), edgecolor="black", facecolor="blue", bins=bins
+        cells_per_spot_soft.flatten(),
+        bins=bins,
+        **_plt_kwargs,
     )
 
     ax[1].set_title("absolute number of cells assigned to each spot (hard)")
     ax[1].hist(
-        cells_per_spot_hard.flatten(), edgecolor="black", facecolor="blue", bins=bins
+        cells_per_spot_hard.flatten(),
+        bins=bins,
+        **_plt_kwargs,
     )
 
     fig.tight_layout()
