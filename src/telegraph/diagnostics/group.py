@@ -25,6 +25,7 @@ def _get_X_and_labels(
         assert D.shape[0] == X.shape[0]
         assert group_col is not None
         labels = D[group_col].values
+        labels = np.array([f"{group_col}_{lab}" for lab in label])
 
     match (layer, obsm):
         case (None, None):
