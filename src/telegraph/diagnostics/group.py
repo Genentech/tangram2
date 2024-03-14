@@ -54,6 +54,7 @@ def plot_group_separation(
     D=None,
     labels=None,
     group_col: str = None,
+    group_type: Literal["discrete", "continuous"] = "discrete",
     project_method: str | List[str] = "pca",
     cmap=plt.cm.Dark2,
     plot=True,
@@ -62,6 +63,22 @@ def plot_group_separation(
 ):
 
     Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
+
+    if group_type == "discrete":
+        if not isinstance(labels[0], str):
+            if not np.all(np.mod(labels, 1) == labels):
+                raise ValueError(
+                    'labels must be categorical if "group_type" is "discrete"'
+                )
+
+    elif group_type[0:4] == "cont":
+        if isinstance(labels[0], str):
+            raise ValueError(
+                'labels must be continuous values when "group_type" is "continuous"'
+            )
+
+    else:
+        raise ValueError('"group_type" must be "continuous" or "discrete"')
 
     _pms = dict(
         pca=PCA,
