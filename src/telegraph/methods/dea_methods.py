@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 
+from . import _dea_utils as dut
 from . import policies as pol
 from . import utils as ut
 from ._methods import MethodClass
@@ -60,25 +61,34 @@ class ScanpyDEA(DEAMethodClass):
         super().__init__()
 
     @classmethod
-    @ut.check_in_out
+    # @ut.check_in_out
     def run(
         cls,
         input_dict: Dict[str, Any],
+        groups: List[str] | str = "all",
         method: str = "wilcoxon",
         sort_by: str = "pvals_adj",
         pval_cutoff: float | None = None,
         mode: Literal["pos", "neg", "both"] = "both",
-        groups: List[str] | str = "all",
         method_kwargs: Dict[str, Any] = {},
         normalize: bool = False,
         subset_features: Dict[str, List[str]] | Dict[str, str] | None = None,
         min_group_obs: int = 2,
-        split_by_base: bool = False,
+        target: List[str] | str = "both",
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
 
+        # groups = [ ('group_1,group_2)]
+
+        if target == "both":
+            _target = ["to", "from"]
+        else:
+            _target = ut.listify(target)
+
         # data frame of predicted "to" data : [n_to] x [n_from_features]
         X_to_pred = input_dict.get("X_to_pred")
+        if X_to_pred is None:
+            X_to_pred = input_dict.get("X_to")
         # anndata of "from" : [n_from] x [n_from_features]
         X_from = input_dict.get("X_from")
         # design matrix for "to" : [n_to] x [n_to_covariates]
@@ -90,7 +100,7 @@ class ScanpyDEA(DEAMethodClass):
 
         objects = dict()
 
-        if (D_to is not None) and (X_to_pred is not None):
+        if ("to" in _target) and (D_to is not None) and (X_to_pred is not None):
             pol.check_values(X_to_pred, "X_to_pred")
             pol.check_type(X_to_pred, "X_to_pred")
 
@@ -100,27 +110,10 @@ class ScanpyDEA(DEAMethodClass):
             pol.check_type(D_to, "D_to")
             pol.check_dimensions(D_to, "D_to", (n_to, None))
 
-            # data frame of predicted "to" data : [n_to] x [n_from_features]
-            if isinstance(X_to_pred, pd.DataFrame):
-                to_pred_names = input_dict["to_pred_names"]
-                to_pred_var = input_dict["to_pred_var"]
-                adata_to = ad.AnnData(
-                    X_to_pred.values,
-                    obs=pd.DataFrame(
-                        [],
-                        index=to_pred_names,
-                    ),
-                    var=pd.DataFrame([], index=to_pred_var),
-                )
-            elif isinstance(X_to_pred, ad.AnnData):
-                adata_to = X_to_pred
-            else:
-                raise NotImplementedError
-
             # update objects
-            objects["to"] = dict(D=D_to, adata=adata_to)
+            objects["to"] = dict(D=D_to, X=X_to_pred)
 
-        if (D_from is not None) and (X_from is not None):
+        if ("from" in _target) and (D_from is not None) and (X_from is not None):
             pol.check_values(X_from, "X_from")
             pol.check_type(X_from, "X_from")
 
@@ -130,131 +123,55 @@ class ScanpyDEA(DEAMethodClass):
             pol.check_type(D_from, "D_from")
             pol.check_dimensions(D_from, "D_from", (n_from, None))
 
-            objects["from"] = dict(D=D_from, adata=X_from)
+            objects["from"] = dict(D=D_from, X=X_from)
 
         out = dict()
 
         for obj_name in objects.keys():
-            D = objects[obj_name]["D"]
-            adata = objects[obj_name]["adata"]
+            D = objects[obj_name]["D"].copy()
+            X = objects[obj_name]["X"].copy()
 
-            base_groups_og = input_dict.get("base_groups", None)
+            match groups:
+                case str():
+                    _groups = [(groups)]
+                case (str(), str()):
+                    _groups = [groups]
+                case _:
+                    _groups = groups
 
-            if split_by_base:
-                if base_groups_og is not None:
-                    from itertools import chain
+            for group_pair in _groups:
 
-                    flat_base_groups = list(chain(*base_groups_og))
-                    base_cols = np.array([x in flat_base_groups for x in D.columns])
-                    add_cols = D.columns[~base_cols].tolist()
-                    base_groups = base_groups_og
-                else:
-                    raise NotImplementedError
-            else:
-                base_groups = [D.columns.tolist()]
-                add_cols = []
-                groups = "all"
+                D_new, grp_1, grp_2 = dut.scanpy_dea_labels_from_D(D, group_pair)
 
-            # subset design matrices if specified
-            if subset_features is not None:
-                if not isinstance(subset_features, dict):
-                    NotImplementedError
-                if obj_name in subset_features:
-                    base_groups = [
-                        x
-                        for x in base_groups
-                        if any(y in subset_features[obj_name] for y in x)
-                    ]
-                    add_cols = [x for x in add_cols if x in subset_features[obj_name]]
+                adata = dut.anndata_from_X_and_D(X, D_new)
 
-            # normalize data if specified
-            if normalize:
-                X_old = adata.X.copy()
-                sc.pp.normalize_total(adata, 1e4)
-                sc.pp.log1p(adata)
+                # execute DE test
+                sc.tl.rank_genes_groups(
+                    adata,
+                    groupby="label",
+                    groups=[grp_1],  # groups _must_ be a list or str, not np.ndarray
+                    reference=grp_2,
+                    method=method,
+                    **method_kwargs,
+                )
 
-            for idx in base_groups:
-                sel_cols = list(idx) + list(add_cols)
-                # get labels from design matrix
-                labels = ut.design_matrix_to_labels(D.loc[:, sel_cols])
-                # set unlabeled observations to "background"
-                labels[labels == ""] = "background"
-                uni_labels = np.unique(labels)
+                dedf = sc.get.rank_genes_groups_df(
+                    adata,
+                    group=grp_1,
+                    pval_cutoff=pval_cutoff,
+                )
 
-                # add labels as a column in adata ("from")
-                # this is to be able to use the scanpy function
-                adata.obs["_label"] = labels
+                dedf.rename(
+                    columns={
+                        "pvals": DEA.p_value.value,
+                        "pvals_adj": DEA.adj_p_value,
+                        "name": DEA.feature.value,
+                        "score": DEA.score.value,
+                    }
+                )
 
-                # make group specification align with expected scanpy input
-                if groups == "all":
-                    # if no groups specified set to "all"
-                    main_group = "all"
-                    ref_group = "rest"
-
-                    # execute DE test
-                    sc.tl.rank_genes_groups(
-                        adata,
-                        groupby="_label",
-                        groups=main_group,  # groups _must_ be a list or str, not np.ndarray
-                        reference=ref_group,
-                        method=method,
-                        **method_kwargs,
-                    )
-
-                    for lab in uni_labels:
-                        dedf = sc.get.rank_genes_groups_df(
-                            adata,
-                            group=lab,
-                            pval_cutoff=pval_cutoff,
-                        )
-                        name = f"{obj_name}_{lab}_vs_rest"
-                        out[name] = dedf
-
-                else:
-                    # iterate over groups
-                    # groups are [(grp_1_a,grp_1_b),(grp_2_a,grp_2_b)]
-                    if groups is None:
-                        if base_groups_og is not None:
-                            _groups = ut.update_default_groups(base_groups, uni_labels)
-                        else:
-                            NotImplementedError
-
-                    for group in _groups:
-                        grp_1, grp_2 = group
-
-                        # execute DE test
-                        sc.tl.rank_genes_groups(
-                            adata,
-                            groupby="_label",
-                            groups=[
-                                grp_1
-                            ],  # groups _must_ be a list or str, not np.ndarray
-                            reference=grp_2,
-                            method=method,
-                            **method_kwargs,
-                        )
-
-                        dedf = sc.get.rank_genes_groups_df(
-                            adata,
-                            group=grp_1,
-                            pval_cutoff=pval_cutoff,
-                        )
-
-                        dedf.rename(
-                            columns={
-                                "pvals": DEA.p_value.value,
-                                "pvals_adj": DEA.adj_p_value,
-                                "name": DEA.feature.value,
-                                "score": DEA.score.value,
-                            }
-                        )
-
-                        name = f"{obj_name}_{grp_1}_vs_{grp_2}"
-                        out[name] = dedf
-
-            # undo the normalization
-            if normalize:
-                adata.X = X_old
+                name = f"{obj_name}_{grp_1}_vs_{grp_2}"
+                out[name] = dedf
 
         for key in out.keys():
             dedf = out[key]
@@ -289,8 +206,10 @@ class GLMDEA(DEAMethodClass):
         target: Literal["to", "from", "both"] = "both",
         use_covariates: List[str] | str | None = None,
         drop_covariates: List[str] | str | None = None,
+        merge_covariates: List[List[str]] | None = None,
         use_pred: bool | Dict[str, bool] = True,
         subset_features: List[str] | str | None = None,
+        use_obs_with_covariates: bool = False,
         fit_intercept: bool = True,
         mht_method: str = "fdr_bh",
         **kwargs,
@@ -345,6 +264,27 @@ class GLMDEA(DEAMethodClass):
             if isinstance(X_inp, ad.AnnData):
                 X_inp = X_inp.to_df()
 
+            if merge_covariates is not None:
+                if isinstance(merge_covariates[0], str):
+                    merge_covariates = [merge_covariates]
+
+                drop_cols = []
+                for merge_cols in merge_covariates:
+                    is_new = np.all(D_inp[merge_cols].values, axis=1)
+                    new_label = np.zeros(len(D_inp))
+                    new_label[is_new] = 1
+                    new_label_name = "_".join(merge_cols)
+                    D_inp[new_label_name] = new_label
+                    drop_cols += drop_cols
+
+                    if use_covariates is not None:
+                        use_covariates = [
+                            x for x in use_covariates if x not in merge_cols
+                        ]
+                        use_covariates += [new_label_name]
+
+                    D_inp.drop(columns=drop_cols, inplace=True)
+
             # subset to specified covariates, if None then use all
             if use_covariates is not None:
                 D_inp = D_inp[ut.listify(use_covariates)]
@@ -355,13 +295,18 @@ class GLMDEA(DEAMethodClass):
                 ]
                 D_inp = D_inp[keep_cols]
 
+            if use_obs_with_covariates:
+                has_covs = np.any(D_inp.values != 0, axis=1)
+                X_inp = X_inp.iloc[has_covs, :]
+                D_inp = D_inp.iloc[has_covs, :]
+
             # check what features to test
             _features = X_inp.columns if subset_features is None else subset_features
 
             # default glm parameters
             # from: https://glum.readthedocs.io/en/latest/glm.html#glum.GeneralizedLinearRegressor (2024-01-25)
             glm_default_params = dict(
-                alpha=None,
+                alpha=0,
                 l1_ratio=0,
                 P1="identity",
                 P2="identity",
@@ -370,7 +315,7 @@ class GLMDEA(DEAMethodClass):
                 max_iter=100,
                 gradient_tol=None,
                 step_size_tol=None,
-                hessian_approx=0.0,
+                hessian_approx=0,
                 warm_start=False,
                 alpha_search=False,
                 alphas=None,
@@ -446,5 +391,9 @@ class GLMDEA(DEAMethodClass):
 
             # update output dictionary
             out.update(tgt_out)
+
+        if "DEA" in input_dict:
+            input_dict["DEA"].update(out)
+            out = input_dict["DEA"]
 
         return dict(DEA=out)
