@@ -60,6 +60,7 @@ class ThresholdGroup(GroupMethodClass):
         feature_name: List[str] | str,
         thres_t: float | Tuple[float, float] = 0.5,
         thres_x: float | Tuple[float, float] = 0.5,
+        add_complement: bool = True,
         **kwargs,
     ) -> pd.DataFrame:
 
@@ -140,6 +141,8 @@ class ThresholdGroup(GroupMethodClass):
                 columns=to_cols,
                 index=X_to_pred.index,
             )
+            if add_complement:
+                D_to[f"low_{feature}"] = 1 - D_to[f"high_{feature}"].values
 
             # instantiate "from" design matrix
             D_from = np.zeros((X_from.shape[0], 1))
@@ -156,13 +159,15 @@ class ThresholdGroup(GroupMethodClass):
             D_from[t_high, 0] = 1
 
             from_cols = [f"adj_{feature}"]
-            base_groups.append(from_cols)
+
             # convert "from" design matrix to data frame
             D_from = pd.DataFrame(
                 D_from.astype(int),
                 columns=from_cols,
                 index=X_from.obs.index,
             )
+            if add_complement:
+                D_from[f"adj_{feature}"] = 1 - D_from[f"adj_{feature}"].values
 
             # save feature specific design matrix
             Ds_from.append(D_from)
@@ -185,7 +190,10 @@ class ThresholdGroup(GroupMethodClass):
         # Note: if we specify add covariates
         # additional covariates will be appended to the design matrix
 
-        return dict(D_to=Ds_to, D_from=Ds_from, base_groups=base_groups)
+        return dict(
+            D_to=Ds_to,
+            D_from=Ds_from,
+        )
 
 
 class AssociationScore(GroupMethodClass):
@@ -426,4 +434,7 @@ class QuantileGroup(GroupMethodClass):
         # Note: if we specify add covariates
         # additional covariates will be appended to the design matrix
 
-        return dict(D_to=Ds_to, D_from=Ds_from, base_groups=base_groups)
+        return dict(
+            D_to=Ds_to,
+            D_from=Ds_from,
+        )
