@@ -49,7 +49,6 @@ def anndata_from_X_and_D(X, D):
             columns=["features"],
         )
 
-    print(np.unique(D.values))
     adata = ad.AnnData(
         X,
         obs=D,

@@ -379,7 +379,7 @@ def _adata_to_input_dict(
                 labels = adata.obs[[col]]
                 D.append(labels)
 
-    if len(D) > 1:
+    if len(D) > 0:
         D = pd.concat(D, axis=1)
         input_dict["D"] = D
 
@@ -415,7 +415,7 @@ def merge_input_dicts(*input_dicts):
     union_keys = [x for y in union_keys for x in y]
     union_keys = [x for x in union_keys if union_keys.count(x) == len(input_dicts)]
     union_keys = list(set(union_keys))
-    union_keys = [x for x in union_keys if x.startswith(("T", "X", "D "))]
+    union_keys = [x for x in union_keys if x.startswith(("T", "X", "D"))]
 
     new_input_dict = dict()
 
@@ -426,13 +426,9 @@ def merge_input_dicts(*input_dicts):
             obj = obj.iloc[:, ~obj.columns.duplicated()]
             obj = obj.to_df() if isinstance(obj, ad.AnnData) else obj
             obj_list.append(obj)
-        if key.startswith("X"):
-            obj_list = pd.concat(obj_list, axis=0).fillna(0)
-            new_input_dict[key] = obj_list
-        elif key.startswith("D"):
-            obj_list = pd.concat(obj_list, axis=0)
-            new_input_dict[key] = obj_list
-        elif key.startswith("T"):
+
+        # same operation now, but perhaps want to change in future
+        if key.startswith(("X", "T", "D")):
             obj_list = pd.concat(obj_list, axis=0).fillna(0)
             new_input_dict[key] = obj_list
         else:
