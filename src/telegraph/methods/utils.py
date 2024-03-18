@@ -352,6 +352,7 @@ def _adata_to_input_dict(
     categorical_labels: List[str] | None = None,
     continuous_labels: List[str] | None = None,
     layer: str | None = None,
+    spatial_key: str = "spatial",
 ):
 
     X = adata.to_df(layer=layer)
@@ -383,6 +384,10 @@ def _adata_to_input_dict(
         D = pd.concat(D, axis=1)
         input_dict["D"] = D
 
+    if spatial_key in adata.obsm:
+        S = adata.obsm[spatial_key]
+        input_dict["S"] = S
+
     return input_dict
 
 
@@ -405,6 +410,9 @@ def adatas_to_input(
         input_dict[f"X_{name}"] = _input_dict["X"]
         if "D" in _input_dict:
             input_dict[f"D_{name}"] = _input_dict["D"]
+
+        if "S" in _input_dict:
+            input_dit[f"S_{name}"] = _input_dict["S"]
 
     return input_dict
 
