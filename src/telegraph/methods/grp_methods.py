@@ -182,6 +182,16 @@ class ThresholdGroup(GroupMethodClass):
         pol.check_type(D_from, "D_from")
         pol.check_dimensions(D_from, "D_from", (n_from, None))
 
+        old_D_to = input_dict.get("D_to")
+        if old_D_to is not None:
+            old_D_to = old_D_to.loc[D_to.index, :]
+            D_to = pd.concat((old_D_to, D_to), axis=1)
+
+        old_D_from = input_dict.get("D_from")
+        if old_D_from is not None:
+            old_D_from = old_D_from.loc[D_from.index, :]
+            D_from = pd.concat((old_D_from, D_from), axis=1)
+
         # Note: if we specify add covariates
         # additional covariates will be appended to the design matrix
 

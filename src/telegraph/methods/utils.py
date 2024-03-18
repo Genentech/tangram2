@@ -338,3 +338,15 @@ def df2ad(in_df: pd.DataFrame) -> ad.AnnData:
     # convert a pandas dataframe to anndata
     out_ad = ad.AnnData(in_df, obs=in_df.index, var=in_df.columns)
     return out_ad
+
+
+def adata_to_input_dict(
+    adata: ad.AnnData,
+    covariate_labels: List[str] | None = None,
+    layer: str | None = None,
+):
+
+    X = adata.to_df(layer=layer)
+
+    if covariate_labels is not None:
+        pass
