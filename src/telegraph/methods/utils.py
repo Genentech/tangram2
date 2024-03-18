@@ -391,8 +391,12 @@ def _adata_to_input_dict(
         input_dict["D"] = D
 
     if spatial_key in adata.obsm:
-        S = adata.obsm[spatial_key]
-        input_dict["S"] = S
+        S = adata.obsm[spatial_key].astype(float)
+        input_dict["S"] = pd.DataFrame(
+            S,
+            index=adata.obs_names,
+            columns=["x", "y"],
+        )
 
     return input_dict
 
