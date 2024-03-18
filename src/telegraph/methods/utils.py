@@ -353,16 +353,22 @@ def _adata_to_input_dict(
     continuous_labels: List[str] | None = None,
     layer: str | None = None,
     spatial_key: str = "spatial",
+    keep_adata: bool = True,
 ):
 
-    X = adata.to_df(layer=layer)
-    if isinstance(X, spmatrix):
-        X = X.toarray()
-
+    if keep_adata:
+        if layer is not None:
+            adata.X = adata.layers[layer]
+            if isinstance(adata.X, spmatrix):
+                adata.X = adata.X.toarray()
+        X = adata
+    else:
+        X = adata.to_df(layer=layer)
+        if isinstance(X, spmatrix):
+            X = X.toarray()
     input_dict = dict(X=X)
 
     D = list()
-
     if categorical_labels is not None:
         col_names = listify(categorical_labels)
 
@@ -396,6 +402,7 @@ def adatas_to_input(
     categorical_labels: Dict[Literal["to", "from"], List[str]] | None = None,
     continuous_labels: Dict[Literal["to", "from"], List[str]] | None = None,
     layers: Dict[Literal["to", "from"], str] | None = None,
+    keep_adata: bool = True,
 ):
 
     input_dict = dict()
@@ -405,7 +412,9 @@ def adatas_to_input(
         )
         con_labels = None if continuous_labels is None else continous_labels.get(name)
         layer = None if layers is None else layers.get(name)
-        _input_dict = _adata_to_input_dict(adata, cat_labels, con_labels, layer)
+        _input_dict = _adata_to_input_dict(
+            adata, cat_labels, con_labels, layer, keep_adata=keep_adata
+        )
 
         input_dict[f"X_{name}"] = _input_dict["X"]
         if "D" in _input_dict:
