@@ -101,7 +101,6 @@ def plot_group_separation(
 
     uni_labels = np.unique(labels)
     color_mapper = {l: k for k, l in enumerate(uni_labels)}
-    # colors = [cmap(color_mapper[l]) for l in labels]
 
     plt_kwargs_default = dict(s=marker_size)
 
@@ -147,6 +146,8 @@ def test_group_separation(
     clf_params: None | Dict[str, Any] = None,
     print_res: bool = False,
     n_reps: int = 10,
+    stratify_by_labels: bool = False,
+    normalize_cmatrix: str = None,
 ):
 
     from sklearn.metrics import confusion_matrix, f1_score
@@ -173,6 +174,14 @@ def test_group_separation(
 
     for ii in range(n_reps):
         X_train, X_test, y_train, y_test = train_test_split(Xd, labels, test_size=0.2)
+    stratify = None
+    if stratify_by_labels:
+        stratify = labels
+
+    for ii in range(n_reps):
+        X_train, X_test, y_train, y_test = train_test_split(
+            Xd, labels, test_size=0.2, stratify=stratify
+        )
 
         clf = _classifier(**clf_params)
         clf.fit(X_train, y_train)
@@ -191,6 +200,8 @@ def test_group_separation(
 
     cfm_train = confusion_matrix(y_train, y_train_pred)
     cfm_test = confusion_matrix(y_test, y_test_pred)
+    cfm_train = confusion_matrix(y_train, y_train_pred, normalize=normalize_cmatrix)
+    cfm_test = confusion_matrix(y_test, y_test_pred, normalize=normalize_cmatrix)
 
     if print_res:
         print(
@@ -213,7 +224,8 @@ def test_group_separation(
 
 
 def plot_separation_confusion_matrix(
-    confusion_matrix: Dict[str, Any] | np.ndarray, plot: bool = True
+    confusion_matrix: Dict[str, Any] | np.ndarray,
+    plot: bool = True,
 ):
     from sklearn.metrics import ConfusionMatrixDisplay
 

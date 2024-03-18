@@ -55,6 +55,7 @@ def plot_top_k_distribution(
             label="top {}".format(k),
             alpha=alpha,
             edgecolor=edgecolor,
+            density=True,
         )
 
     ax.legend()
