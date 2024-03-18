@@ -109,8 +109,6 @@ class ThresholdGroup(GroupMethodClass):
         # this is to match names with specified features
         X_to_pred.columns = X_to_pred.columns.str.lower()
 
-        base_groups = []
-
         # iterate over all features
         for feature in feature_name:
 
@@ -134,7 +132,6 @@ class ThresholdGroup(GroupMethodClass):
 
             # converts design matrix to data frame
             to_cols = [f"high_{feature}"]
-            base_groups.append(to_cols)
 
             D_to = pd.DataFrame(
                 D_to.astype(int),
@@ -167,7 +164,7 @@ class ThresholdGroup(GroupMethodClass):
                 index=X_from.obs.index,
             )
             if add_complement:
-                D_from[f"adj_{feature}"] = 1 - D_from[f"adj_{feature}"].values
+                D_from[f"nadj_{feature}"] = 1 - D_from[f"adj_{feature}"].values
 
             # save feature specific design matrix
             Ds_from.append(D_from)
@@ -348,8 +345,6 @@ class QuantileGroup(GroupMethodClass):
         # this is to match names with specified features
         X_to_use.columns = X_to_use.columns.str.lower()
 
-        base_groups = []
-
         # iterate over all features
         for feature in feature_name:
 
@@ -376,7 +371,6 @@ class QuantileGroup(GroupMethodClass):
 
             # converts design matrix to data frame
             to_cols = [f"low_{feature}", f"high_{feature}"]
-            base_groups.append(to_cols)
 
             D_to = pd.DataFrame(
                 D_to.astype(int),
@@ -415,7 +409,6 @@ class QuantileGroup(GroupMethodClass):
             D_from[is_both, 1] = 0
 
             from_cols = [f"nadj_{feature}", f"adj_{feature}"]
-            base_groups.append(from_cols)
             # convert "from" design matrix to data frame
             D_from = pd.DataFrame(
                 D_from.astype(int),
