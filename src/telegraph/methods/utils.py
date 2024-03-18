@@ -427,9 +427,6 @@ def merge_input_dicts(*input_dicts):
             obj = obj.to_df() if isinstance(obj, ad.AnnData) else obj
             obj_list.append(obj)
         if key.startswith("X"):
-            # if key == 'X_to':
-            # return obj_list
-
             obj_list = pd.concat(obj_list, axis=0).fillna(0)
             new_input_dict[key] = obj_list
         elif key.startswith("D"):
