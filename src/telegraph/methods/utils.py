@@ -412,7 +412,7 @@ def adatas_to_input(
             input_dict[f"D_{name}"] = _input_dict["D"]
 
         if "S" in _input_dict:
-            input_dit[f"S_{name}"] = _input_dict["S"]
+            input_dict[f"S_{name}"] = _input_dict["S"]
 
     return input_dict
 
