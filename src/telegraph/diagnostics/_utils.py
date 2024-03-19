@@ -4,6 +4,8 @@ from typing import Dict
 
 import anndata as ad
 import numpy as np
+import pandas as pd
+from harmony import harmonize
 
 
 def easy_input(func):
@@ -35,3 +37,33 @@ def easy_input(func):
         return out
 
     return wrapper
+
+
+def harmony_helper(X, metadata, batch_key, metadata_is_D=True, n_componetns=2):
+
+    if isinstance(X, np.ndarray):
+        X_n = X.copy()
+    elif isinstance(X, pd.DataFrame):
+        X_n = X.values.copy()
+    elif isinstance(X, ad.AnnData):
+        X_n = X.X.copy()
+    else:
+        raise ValueError("X in wrong format")
+
+    labels = metadata[batch_key]
+    if metadata_is_D:
+        labels = pd.DataFrame(
+            labels.apply(
+                lambda row: "_".join(
+                    [labels.columns[i] for i in range(len(row)) if row[i] == 1]
+                ),
+                axis=1,
+            )
+        )
+        labels.columns = ["batch"]
+        batch_key = "batch"
+        print(labels)
+
+    Z = harmonize(X, labels, batch_key=batch_key)
+
+    return Z[:, 0:n_components]

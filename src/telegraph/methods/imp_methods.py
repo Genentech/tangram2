@@ -515,8 +515,9 @@ class SpaGEImputation(ImpMethodClass):
             genes = [g.lower() for g in genes]
 
         imp_genes = SpaGE(X_to, X_from, n_pv=n_pca, genes_to_predict=genes)
+
         X_to_pred = pd.concat(
-            (X_to.loc[:, X_to.columns.difference(imp_genes)], imp_genes), axis=1
+            (X_to.loc[:, X_to.columns.difference(imp_genes.columns)], imp_genes), axis=1
         )
 
         out = dict(X_to_pred=X_to_pred)

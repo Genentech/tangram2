@@ -61,6 +61,7 @@ def plot_group_separation(
     plot=True,
     marker_size: int = None,
     plt_kwargs: Dict[str, Any] | None = None,
+    batch_key: List[str] = None,
 ):
 
     Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
@@ -86,6 +87,7 @@ def plot_group_separation(
         isomap=Isomap,
         mds=MDS,
         tsne=TSNE,
+        harmony=ut.harmony_helper,
     )
 
     if not isinstance(project_method, (tuple, list)):
@@ -114,8 +116,14 @@ def plot_group_separation(
             _plt_kwargs[k] = v
 
     for k, m in enumerate(project_method):
-        proj = _pms[m](n_components=2)
-        Xnd = proj.fit_transform(Xn)
+        if m == "harmony":
+            proj = _pms[m]
+            if batch_key is None:
+                batch_key = D.columns.tolist()
+            Xnd = proj(Xn, D, batch_key=batch_key)
+        else:
+            proj = _pms[m](n_components=2)
+            Xnd = proj.fit_transform(Xn)
         for lab in uni_labels:
             is_label = labels == lab
             is_label = is_label.flatten()
