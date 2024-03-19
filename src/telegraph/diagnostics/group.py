@@ -62,9 +62,14 @@ def plot_group_separation(
     marker_size: int = None,
     plt_kwargs: Dict[str, Any] | None = None,
     batch_key: List[str] = None,
+    normalize_X: bool = False,
 ):
 
     Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
+
+    if normalize_X:
+        Xn = Xn / Xn.sum(keepdims=True, axis=1) * 1e4
+        Xn = np.log1p(Xn)
 
     if group_type == "discrete":
         if not isinstance(labels[0], str):

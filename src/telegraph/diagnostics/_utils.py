@@ -6,6 +6,8 @@ import anndata as ad
 import numpy as np
 import pandas as pd
 from harmony import harmonize
+from sklearn.decomposition import PCA
+from torch.cuda import is_available
 
 
 def easy_input(func):
@@ -39,7 +41,9 @@ def easy_input(func):
     return wrapper
 
 
-def harmony_helper(X, metadata, batch_key, metadata_is_D=True, n_componetns=2):
+def harmony_helper(
+    X, metadata, batch_key, metadata_is_D=True, n_components=2, normalize: bool = True
+):
 
     if isinstance(X, np.ndarray):
         X_n = X.copy()
@@ -49,6 +53,11 @@ def harmony_helper(X, metadata, batch_key, metadata_is_D=True, n_componetns=2):
         X_n = X.X.copy()
     else:
         raise ValueError("X in wrong format")
+
+    n_components = min(X_n.shape[1], 150)
+
+    pca = PCA(n_components=50)
+    X_n = pca.fit_transform(X_n)
 
     labels = metadata[batch_key]
     if metadata_is_D:
@@ -62,8 +71,12 @@ def harmony_helper(X, metadata, batch_key, metadata_is_D=True, n_componetns=2):
         )
         labels.columns = ["batch"]
         batch_key = "batch"
-        print(labels)
 
-    Z = harmonize(X, labels, batch_key=batch_key)
+    if is_available():
+        use_gpu = True
+    else:
+        use_gpu = False
+
+    Z = harmonize(X_n, labels, batch_key=batch_key, use_gpu=use_gpu)
 
     return Z[:, 0:n_components]
