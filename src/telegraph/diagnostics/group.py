@@ -211,8 +211,6 @@ def test_group_separation(
     f1_std_train = np.std(f1_score_train)
     f1_std_test = np.std(f1_score_test)
 
-    cfm_train = confusion_matrix(y_train, y_train_pred)
-    cfm_test = confusion_matrix(y_test, y_test_pred)
     cfm_train = confusion_matrix(y_train, y_train_pred, normalize=normalize_cmatrix)
     cfm_test = confusion_matrix(y_test, y_test_pred, normalize=normalize_cmatrix)
 
