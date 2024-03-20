@@ -99,7 +99,56 @@ def interpret_dea_features(
 
     if lmet.startswith("g:prof") or lmet.startswith("gprof"):
         out = _interpret_dea_features_gprofiler(features, **kwargs)
+        out["tg_id"] = out["query"].values
     else:
         raise NotImplementedError(f"Method {method} if not implemented yet")
 
     return out
+
+
+def plot_enrichment_results(
+    *dfs,
+    name_col="name",
+    value_col="p_value",
+    value_is_p_value=True,
+    max_name_len=None,
+    top_k=20,
+    id_col="tg_id",
+):
+
+    n_rows = len(dfs)
+    h_scale = top_k / 20
+    fig, ax = plt.subplots(n_rows, 1, figsize=(12, 6 * n_rows * h_scale))
+    if hasattr(ax, "__len__"):
+        ax.flatten()
+
+    for ii, df in enumerate(dfs):
+        id = df[id_col].values[0]
+        names = df[name_col].values.tolist()
+        if max_name_len is None:
+            max_name_len = np.inf
+        names = np.array(
+            [
+                f"{k + 1}. " + x[0 : min(max_name_len, len(x))]
+                for k, x in enumerate(names)
+            ]
+        )
+        values = df[value_col].values
+        ordr = np.argsort(values)
+        names = names[ordr]
+        values = values[ordr]
+        k = min(top_k, len(values))
+        names = names[0:k]
+        values = values[0:k]
+
+        if value_is_p_value:
+            values = -np.log(values)
+
+        ax[ii].barh(names, values, edgecolor="black", color="red")
+        ax[ii].invert_yaxis()
+        ax[ii].set_xlabel(f"-log[{value_col}]")
+        ax[ii].set_title("Analysis: {}".format(id))
+        ax[ii].spines["top"].set_visible(False)
+        ax[ii].spines["right"].set_visible(False)
+
+    plt.show()

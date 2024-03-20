@@ -27,7 +27,8 @@ def easy_input(func):
                 if x.kind == inspect.Parameter.KEYWORD_ONLY
             ]
 
-            add_args = [v for k, v in input_dict.items() if k in args_names]
+            # add_args = [v for k, v in input_dict.items() if k in args_names]
+            add_args = [input_dict[k] for k in args_names if k in input_dict]
             add_kwargs = {k: v for k, v in input_dict.items() if k in kwargs_names}
 
             new_args = list(args[1::]) + add_args
