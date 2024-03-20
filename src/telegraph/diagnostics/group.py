@@ -126,6 +126,11 @@ def plot_group_separation(
             if batch_key is None:
                 batch_key = D.columns.tolist()
             Xnd = proj(Xn, D, batch_key=batch_key)
+        elif m != "pca":
+            proj_1 = _pms["pca"](n_components=min(Xn.shape[1], 100))
+            Xnd = proj_1.fit_transform(Xn)
+            proj_2 = _pms[m](n_components=2)
+            Xnd = proj_2.fit_transform(Xnd)
         else:
             proj = _pms[m](n_components=2)
             Xnd = proj.fit_transform(Xn)
