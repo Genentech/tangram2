@@ -117,3 +117,80 @@ def plot_cells_per_spot(
         plt.show()
     else:
         return fig, ax
+
+
+@ut.easy_input
+def plot_from_feature_on_to(
+    S_to: np.ndarray | pd.DataFrame,
+    T: pd.DataFrame | np.ndarray,
+    features: pd.DataFrame | pd.Series,
+    check_index: bool = True,
+    n_cols: int = 4,
+    marker_size=10,
+):
+
+    if isinstance(S_to, pd.DataFrame) and isinstance(T, pd.DataFrame):
+
+        if check_index:
+            inter = S_to.index.intersection(T.index)
+            union = S_to.index.union(T.index)
+            assert len(union) == len(inter)
+            S_u = S_to.loc[inter, :].values
+            T_u = T.loc[inter, :].values
+
+    else:
+        if isinstance(S_to, pd.DataFrame):
+            S_u = S_to.values
+        else:
+            S_u = S_to
+        if isinstnance(T, pd.DataFrame):
+            T_u = T.values
+        else:
+            T_u = T
+
+    if isinstance(features, (pd.DataFrame, pd.Series)):
+        if len(features.shape) == 1:
+            if isinstance(features.values[0], str):
+                M_v = pd.get_dummies(features).astype(float)
+            else:
+                M_v = features.reshape(-1, 1)
+        else:
+            M_v = features
+        cat_names = M_v.columns
+    else:
+        if len(features.shape) == 1:
+            if isinstance(features[0], str):
+                M_v = pd.get_dummies(
+                    pd.DataFrame(features, columns=["feature"]),
+                ).astype(float)
+                cat_names = M_v.columns
+            else:
+                M_v = features.reshape(-1, 1)
+        else:
+            M_v = features
+            cat_names = ["feat_{}".format(x) for x in range(M_v.shape[1])]
+
+    M_u = np.dot(T, M_v)  #  [to x from ] x [from x feat]
+
+    n_cols = min(n_cols, M_u.shape[1])
+    n_rows = int(np.ceil(M_u.shape[1] / n_cols))
+    fig, ax = plt.subplots(n_rows, n_cols, figsize=(4 * n_cols, 4 * n_rows))
+
+    if hasattr(ax, "__len__"):
+        ax = ax.flatten()
+    else:
+        ax = [ax]
+
+    for k in range(M_u.shape[1]):
+
+        ax[k].scatter(S_u[:, 0], S_u[:, 1], c=M_u[:, k], s=marker_size)
+        ax[k].set_title(cat_names[k])
+        ax[k].set_xticks([])
+        ax[k].set_xticklabels([])
+        ax[k].set_yticks([])
+        ax[k].set_yticklabels([])
+
+    for axx in ax[k + 1 : :]:
+        axx.set_visible(False)
+
+    plt.show()
