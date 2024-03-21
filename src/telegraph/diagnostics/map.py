@@ -162,6 +162,8 @@ def plot_from_feature_on_to(
             if isinstance(features[0], str):
                 M_v = pd.get_dummies(
                     pd.DataFrame(features, columns=["feature"]),
+                    prefix="",
+                    prefix_sep="",
                 ).astype(float)
                 cat_names = M_v.columns
             else:
