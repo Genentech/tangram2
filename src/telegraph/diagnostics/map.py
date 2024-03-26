@@ -190,7 +190,7 @@ def plot_from_feature_on_to(
         ax[k].set_yticks([])
         ax[k].set_yticklabels([])
 
-    for axx in ax[k + 1 : :]:
+    for axx in ax[k + 1 :]:
         axx.set_visible(False)
 
     plt.show()
