@@ -440,9 +440,10 @@ def merge_input_dicts(*input_dicts):
         obj_list = list()
         for input_dict in input_dicts:
             obj = input_dict[key]
-            obj = obj.iloc[:, ~obj.columns.duplicated()]
-            obj = obj.to_df() if isinstance(obj, ad.AnnData) else obj
-            obj_list.append(obj)
+            if obj is not None:
+                obj = obj.iloc[:, ~obj.columns.duplicated()]
+                obj = obj.to_df() if isinstance(obj, ad.AnnData) else obj
+                obj_list.append(obj)
 
         # same operation now, but perhaps want to change in future
         if key.startswith(("X", "T", "D")):
