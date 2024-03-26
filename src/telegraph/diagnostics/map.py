@@ -143,7 +143,7 @@ def plot_from_feature_on_to(
             S_u = S_to.values
         else:
             S_u = S_to
-        if isinstnance(T, pd.DataFrame):
+        if isinstance(T, pd.DataFrame):
             T_u = T.values
         else:
             T_u = T

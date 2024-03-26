@@ -459,6 +459,15 @@ class QuantileGroup(GroupMethodClass):
 
 
 class DistanceBasedGroup(GroupMethodClass):
+    """Grouping Method based on distance between observations
+
+    This methods is primarily recommended when using single cell resolution spatial data (e.g.,
+    Xenium, CosMX, and Vizgen). It allows you to specify a reference feature and a quantile, all
+    cells in X_to expressing that feature at a level above the quantile will be considered as a
+    "high" group, cells below the quantile threshold are "low". The K nearest neighbors of each
+    high cell that are not in the high group will be considered as adjacent cells to that feature.
+
+    """
 
     ins = [("X_to_pred", "X_to"), "S_to"]
     outs = ["D_to", "D_from"]
@@ -481,7 +490,19 @@ class DistanceBasedGroup(GroupMethodClass):
         add_complement: bool = True,
         k=5,
         **kwargs,
-    ) -> pd.DataFrame:
+    ) -> Dict[str, pd.DataFrame]:
+        """
+
+        Args:
+            input_dict: standard input dictionary
+            feature_name: name of feature to base high/low groups on
+            q_high: quantile to separate feature expression w.r.t.
+            add_complement: include both high/low and adj/nadj groups in output design matrix
+            k: number of spatial neighbors
+        Returns:
+            Dictionary with design matrix for to (D_to)
+
+        """
         from scipy.spatial import cKDTree
 
         # anndata for predict to data
