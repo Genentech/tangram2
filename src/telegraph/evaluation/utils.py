@@ -128,3 +128,36 @@ def read_data(data_dict: Dict[str, str]) -> Dict[str, Any]:
             input_dict[new_name] = input_dict.pop(old_name)
 
     return input_dict
+
+
+def list_or_path_get(obj: str | None | List[str] = None):
+    # checks if an object is a list or a path to a file
+    # that holds a list. If path, we read the file
+    # and returns it as a list. If already a list, tuple, or
+    # pandas series we return the object (unmodified)
+
+    if obj is not None:
+        # if a string and a path read
+        if isinstance(obj, str) and osp.isfile(obj):
+            # read csv file
+            if obj.endswith(".csv"):
+                obj = pd.read_csv(obj, index_col=0)
+                obj = np.reshape(obj.values, -1)
+            # read text file
+            elif obj.endswith(".txt"):
+                with open(obj, "r") as f:
+                    obj = f.readlines()
+                    obj = [x.rstrip("\n") for x in obj]
+            else:
+                NotImplementedError
+
+            return obj
+        # return list-like objects
+        elif isinstance(obj, (list, tuple, pd.Series)):
+            return obj
+
+        else:
+            raise NotImplementedError
+
+    else:
+        return None
