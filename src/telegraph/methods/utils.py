@@ -364,8 +364,7 @@ def _adata_to_input_dict(
         X = adata
     else:
         X = adata.to_df(layer=layer)
-        if isinstance(X, spmatrix):
-            X = X.toarray()
+
     input_dict = dict(X=X)
 
     D = list()
