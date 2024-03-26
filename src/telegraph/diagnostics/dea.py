@@ -35,7 +35,7 @@ def tabulate_dea_overlap(
         elif isinstance(obj_i, set):
             sets.append(obj_i)
         else:
-            raise ValueError("Can handle input of type {}".format(type(obj_i)))
+            raise ValueError("Can't handle input of type {}".format(type(obj_i)))
 
     n_sets = len(sets)
     n_names = len(sets)
