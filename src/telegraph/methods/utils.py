@@ -410,7 +410,7 @@ def adatas_to_input(
         cat_labels = (
             None if categorical_labels is None else categorical_labels.get(name)
         )
-        con_labels = None if continuous_labels is None else continous_labels.get(name)
+        con_labels = None if continuous_labels is None else continuous_labels.get(name)
         layer = None if layers is None else layers.get(name)
         _input_dict = _adata_to_input_dict(
             adata, cat_labels, con_labels, layer, keep_adata=keep_adata
