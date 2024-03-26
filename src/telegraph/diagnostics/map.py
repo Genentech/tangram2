@@ -153,7 +153,7 @@ def plot_from_feature_on_to(
             if isinstance(features.values[0], str):
                 M_v = pd.get_dummies(features).astype(float)
             else:
-                M_v = features.reshape(-1, 1)
+                M_v = np.reshape(features, (-1, 1))
         else:
             M_v = features
         cat_names = M_v.columns
