@@ -1,6 +1,6 @@
 from abc import ABC
 from collections import OrderedDict
-from typing import Any, Dict
+from typing import Any, Callable, Dict, List
 
 import telegraph.constants as C
 import telegraph.methods.utils as ut
@@ -29,6 +29,7 @@ class IdentityFun:
 
 
 class Composite:
+
     def __init__(
         self,
         methods: Dict[str, str],
@@ -49,12 +50,8 @@ class Composite:
         available_vars = []
 
         # iterate over all methods in the specified workflow
-        for k, (method_key, _method_name) in enumerate(methods.items()):
-            # use fuzzy match for method classes if enabled
-            if use_fuzzy_match:
-                method_name = ut.get_fuzzy_key(_method_name, C.METHODS["OPTIONS"].value)
-            else:
-                method_name = _method_name
+
+        for k, (method_key, method_name) in enumerate(methods.items()):
 
             # add method to list of methods in workflow
             self.methods.append(method_name)
@@ -155,3 +152,115 @@ class WorkFlowClass(MethodClass):
     ) -> None:
         # save using "flow's" save method
         cls.flow.save(res_dict, out_dir, **kwargs)
+
+
+class Workflow:
+
+    def __init__(
+        self,
+        methods: Dict[str, Dict[str, Any]],
+        check_compatibility: bool = True,
+        met_key: str = "method",
+        prm_key: str = "params",
+    ):
+        """
+        helper to construct workflow of methods
+
+        """
+
+        self.prm_key = prm_key
+        self.met_key = met_key
+
+        for key, val in methods.items():
+            has_met = self.met_key in val
+            if not has_met:
+                raise ValueError(
+                    "please provide methods as dict(step_1 = dict({} = Callable, {} = {{prm_1,..prm_p}}), .., step_k = ...)".format(
+                        self.met_key, self.prm_key
+                    )
+                )
+            has_prm = "params" in val
+            if not has_prm:
+                val["params"] = {}
+                methods[key] = val
+
+        # list method names, for 'info' support
+        self.methods = []
+        self.methods_prms = []
+        self.methods_names = []
+
+        self.cc = check_compatibility
+
+        # variables that will be available as input to a method in the chain
+        available_vars = []
+
+        for method_name, method_obj in methods.items():
+
+            _method_fun = method_obj[self.met_key]
+            if hasattr(_method_fun, "run"):
+                method_mod = _method_fun
+                method_fun = _method_fun.run
+            elif hasattr(_method_fun, "pp"):
+                method_mod = _method_fun
+                method_fun = _method_fun.pp
+            else:
+                method_fun = _method_fun
+                method_mod = None
+
+            # get method parameters
+            if len(method_obj) == 1:
+                method_prms = {}
+            else:
+                method_prms = method_obj[self.prm_key]
+
+            self.methods.append(method_fun)
+            self.methods_prms.append(method_prms)
+            self.methods_names.append(method_name)
+
+            if self.cc and self._is_checkable(method_mod):
+                if len(available_vars) == 0:
+                    available_vars += method_mod.ins
+                    available_vars += method_mod.outs
+                else:
+                    is_comp = all([x in available_vars for x in method_mod.ins])
+                    # if not compatible raise error
+                    if not is_comp:
+                        msg = "Method {} is not compatible with prior methods in workflow".format(
+                            method_mod
+                        )
+                        raise ValueError(msg)
+
+                    available_vars += method_mod.outs
+
+    def _is_checkable(self, x):
+        if x is None:
+            return False
+        return hasattr(x, "ins") & hasattr(x, "outs")
+
+    def run(
+        self,
+        input_dict: Dict[str, Any],
+        verbose: bool = False,
+        return_dict: bool = False,
+        **kwargs,
+    ):
+
+        for method_fun, method_prms, method_name in zip(
+            self.methods, self.methods_prms, self.methods_names
+        ):
+
+            if verbose:
+                print(
+                    "\t>>running step {} with the following parameters".format(
+                        method_name
+                    )
+                )
+                if method_prms:
+                    print(method_prms)
+
+            out = method_fun(input_dict, **method_prms)
+            if out is not None:
+                input_dict.update(out)
+
+        if return_dict:
+            return input_dict

@@ -6,36 +6,67 @@ import scanpy as sc
 from scipy.sparse import spmatrix
 
 
+def chainwrapper(func):
+
+    def wrapper(cls, *args, **kwargs):
+        if isinstance(args[0], dict):
+            if len(args) > 1:
+                if isinstance(args[1], str):
+                    args[1] = [args[1]]
+            return func(cls, *args, **kwargs)
+
+        mod_args = args[0]
+        keep_args = args[1:] if len(args) > 1 else []
+        new_args = [dict(_tmp=mod_args), ["_tmp"]] + keep_args
+
+        return func(cls, *new_args, **kwargs)
+
+    return wrapper
+
+
 class PPClass(ABC):
     # Preprocessing Baseclass
-    @staticmethod
+
+    @classmethod
+    @chainwrapper
+    def run(cls, input_dict, target_objs=["X_from", "X_to"], **kwargs):
+        for obj_name in target_objs:
+            obj = input_dict.get(obj_name)
+            if obj is not None:
+                obj = cls.pp(obj, obj_name=obj_name, **kwargs)
+                if obj is not None:
+                    input_dict[obj_name] = obj
+
+    @classmethod
     @abstractmethod
-    def pp(adata: ad.AnnData, *args, **kwargs):
+    def pp(cls, input_dict, *args, **kwargs):
         pass
 
 
 class IdentityPP(PPClass):
     # Does nothing to the data (identity transform)
+    @chainwrapper
     @staticmethod
-    def pp(adata: ad.AnnData, *args, **kwargs):
-        return adata
+    def pp(obj, obj_name=None, **kwargs):
+        return None
 
 
 class NormalizeTotal(PPClass):
     # normalize total normalization
+
     @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
+    def pp(obj, obj_name=None, **kwargs):
         target_sum = kwargs.get("target_sum", None)
         if target_sum is not None:
             target_sum = float(target_sum)
-        sc.pp.normalize_total(adata, target_sum=target_sum)
+        sc.pp.normalize_total(obj, target_sum=target_sum)
 
 
 class ScanpyPCA(PPClass):
-    @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
 
-        n_obs, n_var = adata.shape
+    @staticmethod
+    def pp(obj, obj_name=None, **kwargs):
+        n_obs, n_var = obj.shape
         n_comps = kwargs.get("n_comps", None)
 
         if n_comps is not None:
@@ -45,7 +76,7 @@ class ScanpyPCA(PPClass):
                 return None
 
         sc.pp.pca(
-            data=adata,
+            data=obj,
             n_comps=kwargs.get("n_comps", None),
             svd_solver=kwargs.get("svd_solver", "arpack"),
             random_state=kwargs.get("random_state", 0),
@@ -55,146 +86,152 @@ class ScanpyPCA(PPClass):
 class StandardScanpy(PPClass):
     # common normalization in scanpy
     # NormalizeTotal + Log1p
+
     @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
-        # check if sparse matrix
-        if isinstance(adata.X, spmatrix):
-            adata.X = adata.X.toarray()
-        # change dtype to float32
-        adata.X = adata.X.astype(np.float32)
+    def pp(obj, obj_name=None, **kwargs):
+        if isinstance(obj.X, spmatrix):
+            obj.X = obj.X.toarray()
+            # change dtype to float32
+        obj.X = obj.X.astype(np.float32)
         # normalize total
         target_sum = kwargs.get("target_sum", 1e4)
+
         if target_sum is not None:
             target_sum = float(target_sum)
-        sc.pp.normalize_total(adata, target_sum=target_sum)
+        sc.pp.normalize_total(obj, target_sum=target_sum)
         # log1p transform
-        sc.pp.log1p(adata)
+        sc.pp.log1p(obj)
 
 
 class CeLEryPP(PPClass):
     # CeLEry normalization
     # Based on: https://github.com/QihuangZhang/CeLEry/blob/main/tutorial/tutorial.md
+
     @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
+    def pp(obj, obj_name=None, **kwargs):
         from CeLEry import get_zscore
 
         # check if sparse matrix
-        if isinstance(adata.X, spmatrix):
-            adata.X = adata.X.toarray()
+        if isinstance(obj.X, spmatrix):
+            obj.X = obj.X.toarray()
         # change dtype to float32 (for autograd framework)
-        adata.X = adata.X.astype(np.float32)
+        obj.X = obj.X.astype(np.float32)
         # get zscore
-        get_zscore(adata)
+        get_zscore(obj)
+
+        return obj
 
 
 class StandardTangramV1(PPClass):
     # Tangram v1 recommended normalization
-    @staticmethod
-    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+
+    @classmethod
+    def pp(cls, obj, obj_name=None, **kwargs):
         # redundant rn but might change in future
         # check input type
-        match input_type:
+        match obj_name:
             case "X_from" | "sc":
-                NormalizeTotal.pp(adata, **kwargs)
+                NormalizeTotal.pp(obj, **kwargs)
             case "X_to" | "sp":
-                NormalizeTotal.pp(adata, **kwargs)
+                NormalizeTotal.pp(obj, **kwargs)
             case _:
-                NormalizeTotal.pp(adata, **kwargs)
+                NormalizeTotal.pp(obj, **kwargs)
 
 
 class StandardTangramV2(PPClass):
     # Tangram v2 recommended normalization
     @staticmethod
-    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
+    def pp(obj, obj_name=None, **kwargs):
         # redundant rn but might change in future
         # check input type
-        match input_type:
+        match obj_name:
             case "X_from" | "sc":
-                IdentityPP.pp(adata)
+                IdentityPP.pp(obj)
             case "X_to" | "sp":
-                IdentityPP.pp(adata)
+                IdentityPP.pp(obj)
             case _:
-                IdentityPP.pp(adata)
+                IdentityPP.pp(obj)
 
 
 class StandardSpaOTsc(PPClass):
     # SpaOTsc normalization according to the manuscript
     @staticmethod
-    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
-        # redundant rn but might change in future
-        # check input type
-        match input_type:
+    def pp(obj, obj_name=None, **kwargs):
+        match obj_name:
             case "X_from" | "sc":
                 # Normalize total
                 sc.pp.normalize_total(
-                    adata, target_sum=float(kwargs.get("target_sum", 1e4))
+                    obj, target_sum=float(kwargs.get("target_sum", 1e4))
                 )
-                sc.pp.log1p(adata)
+                sc.pp.log1p(obj)
             case "X_to" | "sp":
                 sc.pp.normalize_total(
-                    adata, target_sum=float(kwargs.get("target_sum", 1e4))
+                    obj, target_sum=float(kwargs.get("target_sum", 1e4))
                 )
 
-                sc.pp.log1p(adata)
+                sc.pp.log1p(obj)
             case _:
                 # Normalize total
                 sc.pp.normalize_total(
-                    adata, target_sum=float(kwargs.get("target_sum", 1e4))
+                    obj, target_sum=float(kwargs.get("target_sum", 1e4))
                 )
-                sc.pp.log1p(adata)
+                sc.pp.log1p(obj)
 
 
 class LowercaseGenes(PPClass):
     # Method to make all genes lowercase
+
     @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
-        adata.var.index = [g.lower() for g in adata.var.index.tolist()]
+    def pp(obj, obj_name=None, **kwargs):
+        obj.var.index = [g.lower() for g in obj.var.index.tolist()]
         # remove duplicates
-        keep = ~adata.var.index.duplicated()
-        adata.var.index = adata.var.index[keep]
-        adata.X = adata[:, keep].X
+        keep = ~obj.var.index.duplicated()
+        obj.var.index = obj.var.index[keep]
+        obj.X = obj[:, keep].X
+        return obj
 
 
 class StandardMoscot(PPClass):
     # MOSCOT recommended normalization
     @staticmethod
-    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
-        match input_type:
+    def pp(obj, obj_name=None, **kwargs):
+        match obj_name:
             case "X_from" | "sc":
-                LowercaseGenes.pp(adata)
-                StandardScanpy.pp(adata, **kwargs.get("scanpy_pp", {}))
-                ScanpyPCA.pp(adata, **kwargs.get("scanpy_pca", {}))
+                LowercaseGenes.pp(obj)
+                StandardScanpy.pp(obj, **kwargs.get("scanpy_pp", {}))
+                ScanpyPCA.pp(obj, **kwargs.get("scanpy_pca", {}))
             case "X_to" | "sp":
-                LowercaseGenes.pp(adata)
-                StandardScanpy.pp(adata, **kwargs.get("scanpy_pp", {}))
-                ScanpyPCA.pp(adata, **kwargs.get("scanpy_pca", {}))
+                LowercaseGenes.pp(obj)
+                StandardScanpy.pp(obj, **kwargs.get("scanpy_pp", {}))
+                ScanpyPCA.pp(obj, **kwargs.get("scanpy_pca", {}))
             case _:
-                LowercaseGenes.pp(adata)
-                StandardScanpy.pp(adata, **kwargs.get("scanpy_pp", {}))
-                ScanpyPCA.pp(adata, **kwargs.get("scanpy_pca", {}))
+                LowercaseGenes.pp(obj)
+                StandardScanpy.pp(obj, **kwargs.get("scanpy_pp", {}))
+                ScanpyPCA.pp(obj, **kwargs.get("scanpy_pca", {}))
 
 
 class gimVIPP(PPClass):
+
     @staticmethod
-    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
-        match input_type:
+    def pp(obj, obj_name=None, **kwargs):
+        match obj_name:
             case "X_from" | "sc":
                 # Remove cells with no gene count
-                sc.pp.filter_cells(adata, min_counts=1)
+                sc.pp.filter_cells(obj, min_counts=1)
             case "X_to" | "sp":
                 # Remove cells with no gene count
-                sc.pp.filter_cells(adata, min_counts=1)
+                sc.pp.filter_cells(obj, min_counts=1)
             case _:
                 # Remove cells with no gene count
-                sc.pp.filter_cells(adata, min_counts=1)
+                sc.pp.filter_cells(obj, min_counts=1)
 
 
 class FilterGenes(PPClass):
     # Method to filter genes using scanpy's filter genes method
     @staticmethod
-    def pp(adata: ad.AnnData, **kwargs):
+    def pp(obj, obj_name=None, **kwargs):
         sc.pp.filter_genes(
-            data=adata,
+            data=obj,
             min_counts=kwargs.get("min_counts", None),
             min_cells=kwargs.get("min_cells", None),
             max_counts=kwargs.get("max_counts", None),
@@ -204,15 +241,16 @@ class FilterGenes(PPClass):
 
 class StandardSpaGE(PPClass):
     # SpaGE recommended pre-processing
+
     @staticmethod
-    def pp(adata: ad.AnnData, input_type: str | None = None, **kwargs):
-        match input_type:
+    def pp(obj, obj_name=None, **kwargs):
+        match obj_name:
             case "X_from" | "sc":
-                LowercaseGenes.pp(adata)
-                FilterGenes.pp(adata, **kwargs)
-                StandardScanpy.pp(adata, **kwargs)
+                LowercaseGenes.pp(obj)
+                FilterGenes.pp(obj, **kwargs)
+                StandardScanpy.pp(obj, **kwargs)
             case "X_to" | "sc":
-                LowercaseGenes.pp(adata)
-                StandardScanpy.pp(adata, **kwargs)
+                LowercaseGenes.pp(obj)
+                StandardScanpy.pp(obj, **kwargs)
             case _:
-                StandardScanpy.pp(adata, **kwargs)
+                StandardScanpy.pp(obj, **kwargs)
