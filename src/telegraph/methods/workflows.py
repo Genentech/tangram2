@@ -166,6 +166,37 @@ class Workflow:
         """
         helper to construct workflow of methods
 
+        Args:
+          methods: A dict of dicts with the name of each method/step. The dict is expected to be
+          formatted accordingly dict(step_1 = dict( met_key = function/class, prm_key =
+          {prm_1:prm_1_val,..., prm_p:prm_p_val}), ..., step_k = .. )
+
+          check_compatibility: if True we check if methods can be chained together
+
+          met_key: name of key to indicate method/function name in the methods dict
+
+          prm_key: name of key to indicate parameters in the methods dict
+
+
+        Returns:
+          a worfklow object that can be run via the .run method,
+          the run method is essentially a composition of the different steps listed in the methods dict.
+          the steps will be run in the order that they are listed in the dict.
+
+        Example:
+        ```
+        wf_setup = {'pp' : dict(method = tg.met.preprocess.StandardMoscot),
+                    'map': dict(method = tg.met.map_methods.TangramV1Map),
+                    'pred': dict(method =  tg.met.pred_methods.TangramV1Pred),
+                     'group': dict(method = tg.met.grp_methods.QuantileGroup,
+                                   params = {'feature_name':'cd274'}),
+        }
+
+        wf = Workflow(wf_setup)
+        wf.run(input_dict)
+
+        ```
+
         """
 
         self.prm_key = prm_key
@@ -175,7 +206,7 @@ class Workflow:
             has_met = self.met_key in val
             if not has_met:
                 raise ValueError(
-                    "please provide methods as dict(step_1 = dict({} = Callable, {} = {{prm_1,..prm_p}}), .., step_k = ...)".format(
+                    "please provide methods as dict(step_1 = dict({} = Callable, {} = {{prm_1:prm_1_val,...,prm_p:prm_p_val}}), .., step_k = ...)".format(
                         self.met_key, self.prm_key
                     )
                 )
@@ -244,6 +275,14 @@ class Workflow:
         return_dict: bool = False,
         **kwargs,
     ):
+        """run worfklow
+
+        input_dict: standard input dictionary
+        verbose: use verbose mode
+        return_dict: return the updated input_dict
+
+
+        """
 
         for method_fun, method_prms, method_name in zip(
             self.methods, self.methods_prms, self.methods_names
