@@ -16,3 +16,14 @@ repos:
     -   id: isort
         exclude: ^docs/
         args: ["--profile", "black"]
+-   repo: local
+    hooks:
+      - id: build-sphinx-docs
+        name: Build Sphinx Documentation
+        entry: ./dev/build_docs.sh
+        language: script
+        files: 'docs/|src/'
+        stages: [manual]
+
+
+
