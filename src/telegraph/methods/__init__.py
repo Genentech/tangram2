@@ -1,3 +1,8 @@
+"""
+Methods to use for inference of cell cell communication events
+"""
+
+
 # import telegraph.methods._methods as _methods
 # import telegraph.methods.dea_methods as dea
 # import telegraph.methods.grp_methods as grp

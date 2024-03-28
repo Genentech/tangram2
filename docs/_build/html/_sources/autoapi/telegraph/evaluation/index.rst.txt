@@ -4,6 +4,15 @@
 .. py:module:: telegraph.evaluation
 
 
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   tests/index.rst
+
+
 Submodules
 ----------
 .. toctree::

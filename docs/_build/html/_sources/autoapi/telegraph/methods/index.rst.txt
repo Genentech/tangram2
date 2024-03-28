@@ -3,6 +3,11 @@
 
 .. py:module:: telegraph.methods
 
+.. autoapi-nested-parse::
+
+   Methods to use for inference of cell cell communication events
+
+
 
 Subpackages
 -----------

@@ -3,6 +3,11 @@
 
 .. py:module:: telegraph.diagnostics
 
+.. autoapi-nested-parse::
+
+   Tools to inspect and assess the quality of outputs from the different steps in `telegraph`
+
+
 
 Submodules
 ----------

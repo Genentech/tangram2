@@ -10,6 +10,7 @@ Subpackages
    :titlesonly:
    :maxdepth: 3
 
+   evaluation/index.rst
    methods/index.rst
 
 

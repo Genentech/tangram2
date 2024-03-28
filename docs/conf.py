@@ -46,6 +46,7 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 autoapi_dirs = ['../src']
+autiapi_options = ['members', 'undoc-members','show-inheritance', 'show-module-summary', 'imported-members', ]
 
 
 # -- Options for HTML output -------------------------------------------------
