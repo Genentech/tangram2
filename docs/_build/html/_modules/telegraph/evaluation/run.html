@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>telegraph.evaluation.run &#8212; telegraph beta-v1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=514cf933" />
+
+    <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.evaluation.run</a></li>
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+
+  <h1>Source code for telegraph.evaluation.run</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">import</span> <span class="nn">anndata</span> <span class="k">as</span> <span class="nn">ad</span>
+
+<span class="kn">import</span> <span class="nn">telegraph.constants</span> <span class="k">as</span> <span class="nn">C</span>
+<span class="kn">from</span> <span class="nn">telegraph.evaluation</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">ut</span>
+<span class="kn">from</span> <span class="nn">telegraph.methods</span> <span class="kn">import</span> <span class="n">workflows</span> <span class="k">as</span> <span class="n">wf</span>
+
+<span class="n">OBJMAP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">sc</span><span class="o">=</span><span class="s2">&quot;X_from&quot;</span><span class="p">,</span>
+    <span class="n">sp</span><span class="o">=</span><span class="s2">&quot;X_to&quot;</span><span class="p">,</span>
+    <span class="nb">map</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="preprocess_data">
+<a class="viewcode-back" href="../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.preprocess_data">[docs]</a>
+<span class="k">def</span> <span class="nf">preprocess_data</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">pp_config</span><span class="p">,</span> <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">obj_name</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="n">obj_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;_old&quot;</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">&quot;_old&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">&quot;_old&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data_dict</span><span class="p">[</span><span class="n">obj_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+
+    <span class="k">for</span> <span class="n">obj_name</span> <span class="ow">in</span> <span class="n">pp_config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">obj_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pp_steps</span> <span class="o">=</span> <span class="n">pp_config</span><span class="p">[</span><span class="n">obj_name</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">pp_step_name</span> <span class="ow">in</span> <span class="n">pp_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">pp_step</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">PREPROCESS</span><span class="p">[</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pp_step_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pp_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">pp_step_kwargs</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">ifnonereturn</span><span class="p">(</span><span class="n">pp_steps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pp_step_name</span><span class="p">),</span> <span class="p">{})</span>
+                    <span class="n">pp_step</span><span class="o">.</span><span class="n">pp</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="n">obj_name</span><span class="p">,</span> <span class="o">**</span><span class="n">pp_step_kwargs</span><span class="p">)</span>
+        <span class="n">data_dict</span><span class="p">[</span><span class="n">obj_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">inplace</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data_dict</span></div>
+
+
+
+<div class="viewcode-block" id="build_workflow">
+<a class="viewcode-back" href="../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.build_workflow">[docs]</a>
+<span class="k">def</span> <span class="nf">build_workflow</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">use_fuzzy_match</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">method_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+    <span class="n">workflow</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">Composite</span><span class="p">(</span><span class="n">method_names</span><span class="p">,</span> <span class="n">use_fuzzy_match</span><span class="o">=</span><span class="n">use_fuzzy_match</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">workflow</span></div>
+
+
+
+<div class="viewcode-block" id="evaluate_workflow">
+<a class="viewcode-back" href="../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.evaluate_workflow">[docs]</a>
+<span class="k">def</span> <span class="nf">evaluate_workflow</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">eval_config</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">):</span>
+    <span class="n">match_objs</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">eval_config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">obj_name</span> <span class="ow">in</span> <span class="n">match_objs</span><span class="p">:</span>
+        <span class="n">out_dir_object</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir_object</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">obj_config</span> <span class="o">=</span> <span class="n">eval_config</span><span class="p">[</span><span class="n">obj_name</span><span class="p">]</span>
+        <span class="n">obj_data_config</span> <span class="o">=</span> <span class="n">obj_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">CONF</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="n">ref_data_pth</span> <span class="o">=</span> <span class="n">obj_data_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+        <span class="n">ref_data_adata_key</span> <span class="o">=</span> <span class="n">obj_data_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;adata_key&quot;</span><span class="p">)</span>
+        <span class="n">ref_data</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">read_input_object</span><span class="p">(</span><span class="n">ref_data_pth</span><span class="p">,</span> <span class="n">adata_key</span><span class="o">=</span><span class="n">ref_data_adata_key</span><span class="p">)</span>
+        <span class="n">ref_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">obj_name</span><span class="p">:</span> <span class="n">ref_data</span><span class="p">}</span>
+
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">obj_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">CONF</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">mn</span><span class="p">:</span> <span class="n">mf</span> <span class="k">for</span> <span class="n">mn</span><span class="p">,</span> <span class="n">mf</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">mn</span> <span class="ow">in</span> <span class="n">C</span><span class="o">.</span><span class="n">METRICS</span><span class="p">[</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">metric_fun</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">METRICS</span><span class="p">[</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">ifnonereturn</span><span class="p">(</span><span class="n">metrics</span><span class="p">[</span><span class="n">metric_name</span><span class="p">],</span> <span class="p">{})</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">metric_fun</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">ref_data</span><span class="p">,</span> <span class="o">**</span><span class="n">metrics</span><span class="p">[</span><span class="n">metric_name</span><span class="p">])</span>
+            <span class="n">metric_fun</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">out_dir_object</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="process_experiment">
+<a class="viewcode-back" href="../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.process_experiment">[docs]</a>
+<span class="k">def</span> <span class="nf">process_experiment</span><span class="p">(</span>
+    <span class="n">exp_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">use_fuzzy_match</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">experiment_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">root_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">save_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">data_paths</span> <span class="o">=</span> <span class="n">exp_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">CONF</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">data_paths</span> <span class="o">=</span> <span class="p">{</span><span class="n">OBJMAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="n">input_dict</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">data_paths</span><span class="p">)</span>
+
+    <span class="n">wfs</span> <span class="o">=</span> <span class="n">exp_config</span><span class="p">[</span><span class="n">C</span><span class="o">.</span><span class="n">CONF</span><span class="o">.</span><span class="n">wfs</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">wf_name</span> <span class="ow">in</span> <span class="n">wfs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">out_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">experiment_name</span><span class="p">,</span> <span class="n">wf_name</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">pp_config</span> <span class="o">=</span> <span class="n">wfs</span><span class="p">[</span><span class="n">wf_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">CONF</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">preprocess_data</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">pp_config</span><span class="p">)</span>
+
+        <span class="n">recipe</span> <span class="o">=</span> <span class="n">wfs</span><span class="p">[</span><span class="n">wf_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">CONF</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">recipe</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;must give a recipe for the workflow&quot;</span>
+        <span class="n">workflow</span> <span class="o">=</span> <span class="n">build_workflow</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">use_fuzzy_match</span><span class="p">)</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">recipe</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">save_mode</span><span class="p">:</span>
+            <span class="n">workflow</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
+
+        <span class="n">eval_conf</span> <span class="o">=</span> <span class="n">exp_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">CONF</span><span class="o">.</span><span class="n">eval</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="n">evaluate_workflow</span><span class="p">(</span>
+            <span class="n">input_dict</span><span class="p">,</span>
+            <span class="n">eval_conf</span><span class="p">,</span>
+            <span class="n">out_dir</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.run">[docs]</a>
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">root_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">save_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">use_fuzzy_match</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">for</span> <span class="n">exp_name</span><span class="p">,</span> <span class="n">exp_config</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">process_experiment</span><span class="p">(</span>
+            <span class="n">exp_config</span><span class="p">,</span>
+            <span class="n">experiment_name</span><span class="o">=</span><span class="n">exp_name</span><span class="p">,</span>
+            <span class="n">use_fuzzy_match</span><span class="o">=</span><span class="n">use_fuzzy_match</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">root_dir</span><span class="o">=</span><span class="n">root_dir</span><span class="p">,</span>
+            <span class="n">save_mode</span><span class="o">=</span><span class="n">save_mode</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.evaluation.run</a></li>
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, BRAID-MAGIC.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

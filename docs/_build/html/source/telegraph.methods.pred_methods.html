@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>telegraph.methods.pred_methods module &#8212; telegraph beta-v1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=514cf933" />
+
+    <script src="../_static/documentation_options.js?v=18fb929b"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="telegraph.methods.preprocess module" href="telegraph.methods.preprocess.html" />
+    <link rel="prev" title="telegraph.methods.policies module" href="telegraph.methods.policies.html" />
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="telegraph.methods.preprocess.html" title="telegraph.methods.preprocess module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="telegraph.methods.policies.html" title="telegraph.methods.policies module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="telegraph.html" >telegraph package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="telegraph.methods.html" accesskey="U">telegraph.methods package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.methods.pred_methods module</a></li>
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+
+  <section id="module-telegraph.methods.pred_methods">
+<span id="telegraph-methods-pred-methods-module"></span><h1>telegraph.methods.pred_methods module<a class="headerlink" href="#module-telegraph.methods.pred_methods" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.MoscotPred">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.pred_methods.</span></span><span class="sig-name descname"><span class="pre">MoscotPred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/pred_methods.html#MoscotPred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.pred_methods.MoscotPred" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#telegraph.methods.pred_methods.PredMethodClass" title="telegraph.methods.pred_methods.PredMethodClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredMethodClass</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.MoscotPred.ins">
+<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['T',</span> <span class="pre">'X_from']</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.MoscotPred.ins" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.MoscotPred.outs">
+<span class="sig-name descname"><span class="pre">outs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['X_to_pred']</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.MoscotPred.outs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.MoscotPred.run">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.pred_methods.MoscotPred.run" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.PredMethodClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.pred_methods.</span></span><span class="sig-name descname"><span class="pre">PredMethodClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/pred_methods.html#PredMethodClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.pred_methods.PredMethodClass" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MethodClass</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.PredMethodClass.ins">
+<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['T',</span> <span class="pre">'X_from']</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.PredMethodClass.ins" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.PredMethodClass.outs">
+<span class="sig-name descname"><span class="pre">outs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['X_to_pred']</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.PredMethodClass.outs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.PredMethodClass.run">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/telegraph/methods/pred_methods.html#PredMethodClass.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.pred_methods.PredMethodClass.run" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramPred">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.pred_methods.</span></span><span class="sig-name descname"><span class="pre">TangramPred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/pred_methods.html#TangramPred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.pred_methods.TangramPred" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#telegraph.methods.pred_methods.PredMethodClass" title="telegraph.methods.pred_methods.PredMethodClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredMethodClass</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramPred.ins">
+<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['T',</span> <span class="pre">'X_from']</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.TangramPred.ins" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramPred.outs">
+<span class="sig-name descname"><span class="pre">outs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['X_to_pred']</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.TangramPred.outs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramPred.run">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.pred_methods.TangramPred.run" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramPred.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.TangramPred.version" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramV1Pred">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.pred_methods.</span></span><span class="sig-name descname"><span class="pre">TangramV1Pred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/pred_methods.html#TangramV1Pred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.pred_methods.TangramV1Pred" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#telegraph.methods.pred_methods.TangramPred" title="telegraph.methods.pred_methods.TangramPred"><code class="xref py py-class docutils literal notranslate"><span class="pre">TangramPred</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramV1Pred.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.TangramV1Pred.version" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramV2Pred">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.pred_methods.</span></span><span class="sig-name descname"><span class="pre">TangramV2Pred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/pred_methods.html#TangramV2Pred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.pred_methods.TangramV2Pred" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#telegraph.methods.pred_methods.TangramPred" title="telegraph.methods.pred_methods.TangramPred"><code class="xref py py-class docutils literal notranslate"><span class="pre">TangramPred</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.pred_methods.TangramV2Pred.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></em><a class="headerlink" href="#telegraph.methods.pred_methods.TangramV2Pred.version" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">telegraph.methods.pred_methods module</a><ul>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.MoscotPred"><code class="docutils literal notranslate"><span class="pre">MoscotPred</span></code></a><ul>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.MoscotPred.ins"><code class="docutils literal notranslate"><span class="pre">MoscotPred.ins</span></code></a></li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.MoscotPred.outs"><code class="docutils literal notranslate"><span class="pre">MoscotPred.outs</span></code></a></li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.MoscotPred.run"><code class="docutils literal notranslate"><span class="pre">MoscotPred.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.PredMethodClass"><code class="docutils literal notranslate"><span class="pre">PredMethodClass</span></code></a><ul>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.PredMethodClass.ins"><code class="docutils literal notranslate"><span class="pre">PredMethodClass.ins</span></code></a></li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.PredMethodClass.outs"><code class="docutils literal notranslate"><span class="pre">PredMethodClass.outs</span></code></a></li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.PredMethodClass.run"><code class="docutils literal notranslate"><span class="pre">PredMethodClass.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramPred"><code class="docutils literal notranslate"><span class="pre">TangramPred</span></code></a><ul>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramPred.ins"><code class="docutils literal notranslate"><span class="pre">TangramPred.ins</span></code></a></li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramPred.outs"><code class="docutils literal notranslate"><span class="pre">TangramPred.outs</span></code></a></li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramPred.run"><code class="docutils literal notranslate"><span class="pre">TangramPred.run()</span></code></a></li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramPred.version"><code class="docutils literal notranslate"><span class="pre">TangramPred.version</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramV1Pred"><code class="docutils literal notranslate"><span class="pre">TangramV1Pred</span></code></a><ul>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramV1Pred.version"><code class="docutils literal notranslate"><span class="pre">TangramV1Pred.version</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramV2Pred"><code class="docutils literal notranslate"><span class="pre">TangramV2Pred</span></code></a><ul>
+<li><a class="reference internal" href="#telegraph.methods.pred_methods.TangramV2Pred.version"><code class="docutils literal notranslate"><span class="pre">TangramV2Pred.version</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="telegraph.methods.policies.html"
+                          title="previous chapter">telegraph.methods.policies module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="telegraph.methods.preprocess.html"
+                          title="next chapter">telegraph.methods.preprocess module</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/source/telegraph.methods.pred_methods.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="telegraph.methods.preprocess.html" title="telegraph.methods.preprocess module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="telegraph.methods.policies.html" title="telegraph.methods.policies module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="telegraph.html" >telegraph package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="telegraph.methods.html" >telegraph.methods package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.methods.pred_methods module</a></li>
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, BRAID-MAGIC.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>
