@@ -268,6 +268,22 @@ class Workflow:
             return False
         return hasattr(x, "ins") & hasattr(x, "outs")
 
+    def list_methods(self, include_callable: bool = True):
+        for step_name, step_fun, step_prms in zip(
+            self.methods_names, self.methods, self.methods_prms
+        ):
+            print(f"step_name : {step_name}")
+            if include_callable:
+                print(f"callable : {step_fun}")
+            print("params :")
+            if step_prms:
+                print_prms = "\n".join(
+                    ["  - {} : {}".format(k, str(v)) for k, v in step_prms.items()]
+                )
+            else:
+                print_prms = "  - default"
+            print(print_prms)
+
     def run(
         self,
         input_dict: Dict[str, Any],
