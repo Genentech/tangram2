@@ -1,0 +1,42 @@
+:py:mod:`telegraph.tests.test_utils`
+====================================
+
+.. py:module:: telegraph.tests.test_utils
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.tests.test_utils.check_out
+   telegraph.tests.test_utils.make_fake_adata
+   telegraph.tests.test_utils.make_fake_X
+   telegraph.tests.test_utils.make_fake_T
+   telegraph.tests.test_utils.make_fake_S
+   telegraph.tests.test_utils.make_fake_D
+
+
+
+.. py:function:: check_out(method, res_dict)
+
+
+.. py:function:: make_fake_adata(n_obs, n_features, n_labels, random_seed=42)
+
+
+.. py:function:: make_fake_X(n_to=10, n_from=12, n_features_to=15, n_features_from=15, n_labels_to=5, n_labels_from=3, include_pred: bool = False, **kwargs)
+
+
+.. py:function:: make_fake_T(n_to=10, n_from=12, t_row_sum: float | None = 1, t_col_sum: float | None = None, res_dict: Dict[str, Any] | None = None, return_sparse: bool = False, **kwargs)
+
+
+.. py:function:: make_fake_S(n_to=10, n_from=12, res_dict: Dict[str, Any] | None = None, return_sparse: bool = False, **kwargs)
+
+
+.. py:function:: make_fake_D(n_to=10, n_from=12, n_grp_to=3, n_grp_from=4, res_dict: Dict[str, Any] | None = None, **kwargs)
+
+

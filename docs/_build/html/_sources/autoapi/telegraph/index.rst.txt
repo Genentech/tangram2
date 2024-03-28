@@ -16,6 +16,7 @@ Subpackages
    evaluation/index.rst
    methods/index.rst
    robustness/index.rst
+   tests/index.rst
 
 
 Submodules

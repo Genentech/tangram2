@@ -6,15 +6,8 @@
 Welcome to telegraph's documentation!
 =====================================
 
-.. automodule:: telegraph.methods.dea_methods
-   :members:
-
-.. automodule:: telegraph.methods.map_methods
-   :members:
-
 .. toctree::
    :maxdepth: 4
    :caption: Contents:
 
-   source/telegraph
    modules/

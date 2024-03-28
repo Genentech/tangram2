@@ -4,6 +4,15 @@
 .. py:module:: telegraph.methods
 
 
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   models/index.rst
+
+
 Submodules
 ----------
 .. toctree::
