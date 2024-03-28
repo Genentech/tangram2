@@ -6,6 +6,7 @@
   <title>telegraph.aggregate.base &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
 
   
   <!--[if lt IE 9]>
@@ -44,6 +45,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../source/telegraph.html">telegraph package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -80,6 +82,8 @@
 <span class="kn">from</span> <span class="nn">telegraph.methods.dea_methods</span> <span class="kn">import</span> <span class="n">DEA</span>
 
 
+<div class="viewcode-block" id="_collate_results">
+<a class="viewcode-back" href="../../../autoapi/telegraph/aggregate/base/index.html#telegraph.aggregate.base._collate_results">[docs]</a>
 <span class="k">def</span> <span class="nf">_collate_results</span><span class="p">(</span><span class="o">*</span><span class="n">dea_res</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dea_res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -110,9 +114,12 @@
             <span class="n">d_i</span><span class="p">[</span><span class="n">DEA</span><span class="o">.</span><span class="n">adj_p_value</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">all_df</span>
+    <span class="k">return</span> <span class="n">all_df</span></div>
 
 
+
+<div class="viewcode-block" id="_CCT">
+<a class="viewcode-back" href="../../../autoapi/telegraph/aggregate/base/index.html#telegraph.aggregate.base._CCT">[docs]</a>
 <span class="k">def</span> <span class="nf">_CCT</span><span class="p">(</span><span class="n">pvals_raw</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="c1"># pvals_raw : [n_tests] x [1]</span>
@@ -152,7 +159,8 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">pval</span> <span class="o">=</span> <span class="n">cauchy</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">cct_stat</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">pval</span>
+    <span class="k">return</span> <span class="n">pval</span></div>
+
 
 
 <div class="viewcode-block" id="CCT">
@@ -175,6 +183,8 @@
 
 
 
+<div class="viewcode-block" id="_RRA">
+<a class="viewcode-back" href="../../../autoapi/telegraph/aggregate/base/index.html#telegraph.aggregate.base._RRA">[docs]</a>
 <span class="k">def</span> <span class="nf">_RRA</span><span class="p">(</span><span class="n">pvals_raw</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
     <span class="c1"># pvals_raw : [n_features] : [1]</span>
@@ -210,7 +220,8 @@
     <span class="c1"># clip values</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
 
 
 <div class="viewcode-block" id="RRA">

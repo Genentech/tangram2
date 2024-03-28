@@ -19,6 +19,7 @@ release = 'beta-v1'
 
 extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.doctest',
+    'autoapi.extension',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
@@ -44,6 +45,7 @@ napoleon_use_rtype = True
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+autoapi_dirs = ['../src']
 
 
 # -- Options for HTML output -------------------------------------------------

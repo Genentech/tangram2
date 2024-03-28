@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>telegraph.methods.policies &mdash; telegraph beta-v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=18fb929b"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="telegraph.methods.pred_methods" href="../pred_methods/index.html" />
+    <link rel="prev" title="telegraph.methods.map_methods" href="../map_methods/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            telegraph
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/telegraph.html">telegraph package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../datagen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../diagnostics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../evaluation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../test_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../methods/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">methods</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../test_metrics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_metrics</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../vae/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vae</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fcnn/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fcnn</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">telegraph</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.policies</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/telegraph/methods/policies/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-telegraph.methods.policies">
+<span id="telegraph-methods-policies"></span><h1><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#module-telegraph.methods.policies" title="telegraph.methods.policies"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.policies</span></code></a><a class="headerlink" href="#module-telegraph.methods.policies" title="Link to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy" title="telegraph.methods.policies.BasePolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePolicy</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyT" title="telegraph.methods.policies.PolicyT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyT</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyX" title="telegraph.methods.policies.PolicyX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyX</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyXto" title="telegraph.methods.policies.PolicyXto"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyXto</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyXtopred" title="telegraph.methods.policies.PolicyXtopred"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyXtopred</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyXfrom" title="telegraph.methods.policies.PolicyXfrom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyXfrom</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyD" title="telegraph.methods.policies.PolicyD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyD</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyDto" title="telegraph.methods.policies.PolicyDto"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyDto</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyDfrom" title="telegraph.methods.policies.PolicyDfrom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyDfrom</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyDict" title="telegraph.methods.policies.PolicyDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyDict</span></code></a></p></td>
+<td><p>Generic enumeration.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.dim_match" title="telegraph.methods.policies.dim_match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dim_match</span></code></a>(shape_1, shape_2)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.check_values" title="telegraph.methods.policies.check_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_values</span></code></a>(obj, obj_name, *args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.check_dimensions" title="telegraph.methods.policies.check_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_dimensions</span></code></a>(obj, obj_name, *args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.check_type" title="telegraph.methods.policies.check_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_type</span></code></a>(obj, obj_name, *args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.check_integer" title="telegraph.methods.policies.check_integer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_integer</span></code></a>(obj, obj_name, *args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.check_non_negative" title="telegraph.methods.policies.check_non_negative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_non_negative</span></code></a>(obj, obj_name, *args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.methods.policies.dim_match">
+<span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">dim_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#dim_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.dim_match" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.BasePolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">BasePolicy</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#BasePolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.BasePolicy" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.BasePolicy.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#telegraph.methods.policies.BasePolicy.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.BasePolicy.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#telegraph.methods.policies.BasePolicy.object_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.policies.BasePolicy.test_dimensions">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_dimensions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#BasePolicy.test_dimensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.BasePolicy.test_dimensions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.policies.BasePolicy.test_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#BasePolicy.test_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.BasePolicy.test_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.policies.BasePolicy.test_values">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#BasePolicy.test_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.BasePolicy.test_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyT">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyT</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyT" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy" title="telegraph.methods.policies.BasePolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePolicy</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyT.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'T'</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyT.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyT.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#telegraph.methods.policies.PolicyT.object_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyT.test_values">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">scipy.sparse.spmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyT.test_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyT.test_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyX">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyX</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyX" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy" title="telegraph.methods.policies.BasePolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePolicy</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyX.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'X'</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyX.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyX.test_values">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyX.test_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyX.test_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyX.test_integer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_integer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">anndata.AnnData</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyX.test_integer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyX.test_integer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyX.test_non_negative">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_non_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">scipy.sparse.spmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyX.test_non_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyX.test_non_negative" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXto">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyXto</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyXto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyXto" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyX" title="telegraph.methods.policies.PolicyX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyX</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXto.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'X_to'</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyXto.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXto.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyXto.object_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXtopred">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyXtopred</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyXtopred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyXtopred" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyX" title="telegraph.methods.policies.PolicyX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyX</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXtopred.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'X_to_pred'</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyXtopred.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXtopred.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyXtopred.object_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXfrom">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyXfrom</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyXfrom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyXfrom" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyX" title="telegraph.methods.policies.PolicyX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyX</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXfrom.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'X_from'</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyXfrom.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyXfrom.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyXfrom.object_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyD</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyD" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy" title="telegraph.methods.policies.BasePolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePolicy</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyD.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'D'</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyD.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyD.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#telegraph.methods.policies.PolicyD.object_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyD.test_values">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyD.test_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyD.test_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDto">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyDto</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyDto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyDto" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyD" title="telegraph.methods.policies.PolicyD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyD</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDto.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'D_to'</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyDto.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDfrom">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyDfrom</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyDfrom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyDfrom" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.policies.html#telegraph.methods.policies.PolicyD" title="telegraph.methods.policies.PolicyD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolicyD</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDfrom.object_name">
+<span class="sig-name descname"><span class="pre">object_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'D_to'</span></em><a class="headerlink" href="#telegraph.methods.policies.PolicyDfrom.object_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDict">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">PolicyDict</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#PolicyDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.PolicyDict" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Generic enumeration.</p>
+<p>Derive from this class to define new enumerations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDict.T">
+<span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#telegraph.methods.policies.PolicyDict.T" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDict.X_to">
+<span class="sig-name descname"><span class="pre">X_to</span></span><a class="headerlink" href="#telegraph.methods.policies.PolicyDict.X_to" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDict.X_from">
+<span class="sig-name descname"><span class="pre">X_from</span></span><a class="headerlink" href="#telegraph.methods.policies.PolicyDict.X_from" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDict.D_to">
+<span class="sig-name descname"><span class="pre">D_to</span></span><a class="headerlink" href="#telegraph.methods.policies.PolicyDict.D_to" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDict.D_from">
+<span class="sig-name descname"><span class="pre">D_from</span></span><a class="headerlink" href="#telegraph.methods.policies.PolicyDict.D_from" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.policies.PolicyDict.X_to_pred">
+<span class="sig-name descname"><span class="pre">X_to_pred</span></span><a class="headerlink" href="#telegraph.methods.policies.PolicyDict.X_to_pred" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.methods.policies.check_values">
+<span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">check_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#check_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.check_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.methods.policies.check_dimensions">
+<span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">check_dimensions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#check_dimensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.check_dimensions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.methods.policies.check_type">
+<span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">check_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#check_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.check_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.methods.policies.check_integer">
+<span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">check_integer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#check_integer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.check_integer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.methods.policies.check_non_negative">
+<span class="sig-prename descclassname"><span class="pre">telegraph.methods.policies.</span></span><span class="sig-name descname"><span class="pre">check_non_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/policies.html#check_non_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.policies.check_non_negative" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../map_methods/index.html" class="btn btn-neutral float-left" title="telegraph.methods.map_methods" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../pred_methods/index.html" class="btn btn-neutral float-right" title="telegraph.methods.pred_methods" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BRAID-MAGIC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

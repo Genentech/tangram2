@@ -1,0 +1,18 @@
+:py:mod:`telegraph.diagnostics`
+===============================
+
+.. py:module:: telegraph.diagnostics
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   _utils/index.rst
+   alignment/index.rst
+   group/index.rst
+   map/index.rst
+
+

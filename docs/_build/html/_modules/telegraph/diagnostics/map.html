@@ -6,6 +6,7 @@
   <title>telegraph.diagnostics.map &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
 
   
   <!--[if lt IE 9]>
@@ -44,6 +45,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../source/telegraph.html">telegraph package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -81,6 +83,8 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_utils</span> <span class="k">as</span> <span class="n">ut</span>
 
 
+<div class="viewcode-block" id="_get_T">
+<a class="viewcode-back" href="../../../autoapi/telegraph/diagnostics/map/index.html#telegraph.diagnostics.map._get_T">[docs]</a>
 <span class="k">def</span> <span class="nf">_get_T</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">normalize_T</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="n">T_n</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">values</span>
@@ -90,7 +94,8 @@
     <span class="k">if</span> <span class="n">normalize_T</span><span class="p">:</span>
         <span class="n">T_n</span> <span class="o">=</span> <span class="n">T_n</span> <span class="o">/</span> <span class="n">T_n</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">T_n</span>
+    <span class="k">return</span> <span class="n">T_n</span></div>
+
 
 
 <div class="viewcode-block" id="plot_top_k_distribution">

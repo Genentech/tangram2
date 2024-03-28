@@ -6,6 +6,7 @@
   <title>telegraph.datagen.cellmix.cellmix &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
 
   
   <!--[if lt IE 9]>
@@ -44,6 +45,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../source/telegraph.html">telegraph package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../autoapi/index.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -84,6 +86,8 @@
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">multivariate_hypergeom</span> <span class="k">as</span> <span class="n">mhg</span>
 
 
+<div class="viewcode-block" id="_update_adatas">
+<a class="viewcode-back" href="../../../../autoapi/telegraph/datagen/cellmix/cellmix/index.html#telegraph.datagen.cellmix.cellmix._update_adatas">[docs]</a>
 <span class="k">def</span> <span class="nf">_update_adatas</span><span class="p">(</span><span class="n">ad_sc</span><span class="p">,</span> <span class="n">ad_sp</span><span class="p">,</span> <span class="n">x_add_sc</span><span class="p">,</span> <span class="n">sc_var_names</span><span class="p">):</span>
 
     <span class="n">ad_sc_add</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span>
@@ -112,9 +116,12 @@
         <span class="p">(</span><span class="n">ad_sp</span><span class="p">,</span> <span class="n">ad_sp_add</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">,</span> <span class="n">uns_merge</span><span class="o">=</span><span class="s2">&quot;only&quot;</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="s2">&quot;unique&quot;</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">ad_sc</span><span class="p">,</span> <span class="n">ad_sp</span>
+    <span class="k">return</span> <span class="n">ad_sc</span><span class="p">,</span> <span class="n">ad_sp</span></div>
 
 
+
+<div class="viewcode-block" id="_add_interactions">
+<a class="viewcode-back" href="../../../../autoapi/telegraph/datagen/cellmix/cellmix/index.html#telegraph.datagen.cellmix.cellmix._add_interactions">[docs]</a>
 <span class="k">def</span> <span class="nf">_add_interactions</span><span class="p">(</span>
     <span class="n">adata</span><span class="p">:</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">,</span>
     <span class="n">n_effect</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -263,9 +270,12 @@
         <span class="n">is_r</span><span class="o">=</span><span class="n">r_active</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">out</span>
+    <span class="k">return</span> <span class="n">out</span></div>
 
 
+
+<div class="viewcode-block" id="_linear_grad">
+<a class="viewcode-back" href="../../../../autoapi/telegraph/datagen/cellmix/cellmix/index.html#telegraph.datagen.cellmix.cellmix._linear_grad">[docs]</a>
 <span class="k">def</span> <span class="nf">_linear_grad</span><span class="p">(</span><span class="n">crd</span><span class="p">,</span> <span class="n">mu_low</span><span class="p">,</span> <span class="n">mu_high</span><span class="p">,</span> <span class="n">rad_theta</span><span class="p">):</span>
     <span class="c1"># get line to project on,  based on angle</span>
     <span class="n">line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">rad_theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">rad_theta</span><span class="p">)])[:,</span> <span class="kc">None</span><span class="p">]</span>
@@ -281,9 +291,12 @@
     <span class="c1"># sample feature from poisson</span>
     <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">mu_proj</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">vals</span>
+    <span class="k">return</span> <span class="n">vals</span></div>
 
 
+
+<div class="viewcode-block" id="_add_gradients">
+<a class="viewcode-back" href="../../../../autoapi/telegraph/datagen/cellmix/cellmix/index.html#telegraph.datagen.cellmix.cellmix._add_gradients">[docs]</a>
 <span class="k">def</span> <span class="nf">_add_gradients</span><span class="p">(</span>
     <span class="n">adata</span><span class="p">:</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">,</span> <span class="n">n_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">return_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">):</span>
@@ -340,9 +353,12 @@
     <span class="c1"># add names to feature matrix, return both</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;grad_feature_</span><span class="si">{:0.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rad_thetas</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">x_add</span><span class="p">,</span> <span class="n">names</span>
+    <span class="k">return</span> <span class="n">x_add</span><span class="p">,</span> <span class="n">names</span></div>
 
 
+
+<div class="viewcode-block" id="_generate_coords">
+<a class="viewcode-back" href="../../../../autoapi/telegraph/datagen/cellmix/cellmix/index.html#telegraph.datagen.cellmix.cellmix._generate_coords">[docs]</a>
 <span class="k">def</span> <span class="nf">_generate_coords</span><span class="p">(</span><span class="n">p_mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">encode_spatial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="c1"># get number of spots</span>
     <span class="n">n_spots</span> <span class="o">=</span> <span class="n">p_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -377,7 +393,8 @@
         <span class="c1"># rearrange coordinates according to map</span>
         <span class="n">scrd</span> <span class="o">=</span> <span class="n">scrd</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">scrd</span>
+    <span class="k">return</span> <span class="n">scrd</span></div>
+
 
 
 <div class="viewcode-block" id="_cellmix_type_balanced">

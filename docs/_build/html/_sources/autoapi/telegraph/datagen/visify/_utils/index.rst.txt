@@ -1,0 +1,42 @@
+:py:mod:`telegraph.datagen.visify._utils`
+=========================================
+
+.. py:module:: telegraph.datagen.visify._utils
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.datagen.visify._utils._check_vals
+   telegraph.datagen.visify._utils.nbrs_to_coo
+   telegraph.datagen.visify._utils.plot_visify
+   telegraph.datagen.visify._utils.add_mul_noise
+   telegraph.datagen.visify._utils.square_sample_crd
+   telegraph.datagen.visify._utils.r_by_n
+
+
+
+.. py:function:: _check_vals(x: float | int | List[float] | List[int] | None, name: str = 'value', lower_bound: float | None = None, upper_bound: float | None = None) -> None
+
+
+.. py:function:: nbrs_to_coo(kdres: List[List[int]]) -> scipy.sparse.coo_matrix
+
+
+.. py:function:: plot_visify(og_ad: anndata.AnnData, vs_ad: anndata.AnnData, spatial_key: str = 'str', feature: str | None = None) -> Tuple[matplotlib.pyplot.Figure, matplotlib.pyplot.Axes]
+
+
+.. py:function:: add_mul_noise(data: numpy.ndarray, p_noise: float, return_all: bool = False) -> Dict[str, numpy.ndarray]
+
+
+.. py:function:: square_sample_crd(min_xy: numpy.ndarray, max_xy: numpy.ndarray, n_samples: int = 100)
+
+
+.. py:function:: r_by_n(crd_ref: numpy.ndarray, crd_query: numpy.ndarray, n_neighs: int, outlier_removal: bool = False)
+
+

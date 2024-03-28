@@ -1,0 +1,22 @@
+:py:mod:`telegraph.datagen.visify.visify`
+=========================================
+
+.. py:module:: telegraph.datagen.visify.visify
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.datagen.visify.visify.visify
+
+
+
+.. py:function:: visify(adata: anndata.AnnData, spot_dist: float | None = None, spot_diameter: float = 55, spatial_key: str = 'spatial', downsample: bool = False, return_mappable: bool = False, add_indicator: bool = False, p_lwr: float = 0.85, p_upr: float = 1, expected_cells_per_spot: int | None = None, n_query: int = 10000, p_mul: List[float] | None = None, verbose: bool = True, random_seed: int = 42) -> Tuple[anndata.AnnData, anndata.AnnData]
+
+

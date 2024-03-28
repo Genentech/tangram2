@@ -1,0 +1,26 @@
+:py:mod:`telegraph.methods._dea_utils`
+======================================
+
+.. py:module:: telegraph.methods._dea_utils
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods._dea_utils.scanpy_dea_labels_from_D
+   telegraph.methods._dea_utils.anndata_from_X_and_D
+
+
+
+.. py:function:: scanpy_dea_labels_from_D(D: pandas.DataFrame, group_pair, new_col_name='label')
+
+
+.. py:function:: anndata_from_X_and_D(X, D)
+
+

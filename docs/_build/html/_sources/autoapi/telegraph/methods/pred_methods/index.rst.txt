@@ -1,0 +1,125 @@
+:py:mod:`telegraph.methods.pred_methods`
+========================================
+
+.. py:module:: telegraph.methods.pred_methods
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.pred_methods.PredMethodClass
+   telegraph.methods.pred_methods.TangramPred
+   telegraph.methods.pred_methods.TangramV1Pred
+   telegraph.methods.pred_methods.TangramV2Pred
+   telegraph.methods.pred_methods.MoscotPred
+
+
+
+
+.. py:class:: PredMethodClass(*args, **kwargs)
+
+
+   Bases: :py:obj:`telegraph.methods._methods.MethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['T', 'X_from']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['X_to_pred']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], *args, **kwargs) -> Dict[str, Any]
+      :classmethod:
+      :abstractmethod:
+
+
+
+.. py:class:: TangramPred(*args, **kwargs)
+
+
+   Bases: :py:obj:`PredMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: version
+
+      
+
+   .. py:attribute:: ins
+      :value: ['T', 'X_from']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['X_to_pred']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], *args, spatial_key_to: str = 'spatial', spatial_key_from: str = 'spatial', **kwargs) -> Dict[str, pandas.DataFrame]
+      :classmethod:
+
+
+
+.. py:class:: TangramV1Pred(*args, **kwargs)
+
+
+   Bases: :py:obj:`TangramPred`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: version
+      :value: '1'
+
+      
+
+
+.. py:class:: TangramV2Pred(*args, **kwargs)
+
+
+   Bases: :py:obj:`TangramPred`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: version
+      :value: '2'
+
+      
+
+
+.. py:class:: MoscotPred(*args, **kwargs)
+
+
+   Bases: :py:obj:`PredMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['T', 'X_from']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['X_to_pred']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], experiment_name: str | None = None, eps=1e-12, **kwargs) -> Dict[str, pandas.DataFrame]
+      :classmethod:
+
+
+

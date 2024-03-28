@@ -1,0 +1,6 @@
+:py:mod:`telegraph.methods.info`
+================================
+
+.. py:module:: telegraph.methods.info
+
+

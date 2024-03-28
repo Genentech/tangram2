@@ -1,0 +1,31 @@
+:py:mod:`telegraph`
+===================
+
+.. py:module:: telegraph
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   aggregate/index.rst
+   datagen/index.rst
+   diagnostics/index.rst
+   evaluation/index.rst
+   methods/index.rst
+   robustness/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   _version/index.rst
+   cli/index.rst
+   constants/index.rst
+
+

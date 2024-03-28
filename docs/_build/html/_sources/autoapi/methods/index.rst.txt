@@ -1,0 +1,18 @@
+:py:mod:`methods`
+=================
+
+.. py:module:: methods
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   test_dea_methods/index.rst
+   test_grp_methods/index.rst
+   test_map_methods/index.rst
+   test_pred_methods/index.rst
+
+

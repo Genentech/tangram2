@@ -6,6 +6,7 @@
   <title>telegraph.diagnostics.group &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
 
   
   <!--[if lt IE 9]>
@@ -44,6 +45,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../source/telegraph.html">telegraph package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -85,6 +87,8 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_utils</span> <span class="k">as</span> <span class="n">ut</span>
 
 
+<div class="viewcode-block" id="_get_X_and_labels">
+<a class="viewcode-back" href="../../../autoapi/telegraph/diagnostics/group/index.html#telegraph.diagnostics.group._get_X_and_labels">[docs]</a>
 <span class="k">def</span> <span class="nf">_get_X_and_labels</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">obsm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
@@ -119,7 +123,8 @@
         <span class="k">case</span> <span class="p">(</span><span class="nb">str</span><span class="p">(),</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">Xn</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span>
+    <span class="k">return</span> <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span></div>
+
 
 
 <div class="viewcode-block" id="plot_group_separation">

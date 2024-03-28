@@ -1,0 +1,16 @@
+:py:mod:`telegraph.datagen.cellmix`
+===================================
+
+.. py:module:: telegraph.datagen.cellmix
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   cellmix/index.rst
+   cli/index.rst
+
+
