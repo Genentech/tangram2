@@ -2,7 +2,7 @@ image: python:3.9
 
 pages:
   script:
-    - pip install sphinx sphinx_rtd_theme
+    - pip install sphinx sphinx_rtd_theme sphinx-autoapi
     - cd docs
     - sphinx-build -b html . public
     - mv public ../public
