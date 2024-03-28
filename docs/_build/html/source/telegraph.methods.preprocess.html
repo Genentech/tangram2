@@ -1,192 +1,247 @@
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="../">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>telegraph.methods.preprocess module &mdash; telegraph beta-v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
-    <title>telegraph.methods.preprocess module &#8212; telegraph beta-v1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=514cf933" />
 
-    <script src="../_static/documentation_options.js?v=18fb929b"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
 
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=18fb929b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">telegraph beta-v1 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">telegraph.methods.preprocess module</a></li>
-      </ul>
-    </div>
+    <link rel="next" title="telegraph.methods.save_methods module" href="telegraph.methods.save_methods.html" />
+    <link rel="prev" title="telegraph.methods.pred_methods module" href="telegraph.methods.pred_methods.html" />
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../index.html" class="icon icon-home">
+            telegraph
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="telegraph.html">telegraph package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="telegraph.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="telegraph.aggregate.html">telegraph.aggregate package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.datagen.html">telegraph.datagen package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.diagnostics.html">telegraph.diagnostics package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.evaluation.html">telegraph.evaluation package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="telegraph.methods.html">telegraph.methods package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="telegraph.methods.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.robustness.html">telegraph.robustness package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">telegraph</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="telegraph.html">telegraph package</a></li>
+          <li class="breadcrumb-item"><a href="telegraph.methods.html">telegraph.methods package</a></li>
+      <li class="breadcrumb-item active">telegraph.methods.preprocess module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/telegraph.methods.preprocess.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
 
   <section id="module-telegraph.methods.preprocess">
-<span id="telegraph-methods-preprocess-module"></span><h1>telegraph.methods.preprocess module<a class="headerlink" href="#module-telegraph.methods.preprocess" title="Link to this heading">¶</a></h1>
+<span id="telegraph-methods-preprocess-module"></span><h1>telegraph.methods.preprocess module<a class="headerlink" href="#module-telegraph.methods.preprocess" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.CeLEryPP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">CeLEryPP</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#CeLEryPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.CeLEryPP" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">CeLEryPP</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#CeLEryPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.CeLEryPP" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.CeLEryPP.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#CeLEryPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.CeLEryPP.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#CeLEryPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.CeLEryPP.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.FilterGenes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">FilterGenes</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#FilterGenes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.FilterGenes" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">FilterGenes</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#FilterGenes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.FilterGenes" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.FilterGenes.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#FilterGenes.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.FilterGenes.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#FilterGenes.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.FilterGenes.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.IdentityPP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">IdentityPP</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#IdentityPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.IdentityPP" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">IdentityPP</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#IdentityPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.IdentityPP" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.IdentityPP.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#IdentityPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.IdentityPP.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#IdentityPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.IdentityPP.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.LowercaseGenes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">LowercaseGenes</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#LowercaseGenes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.LowercaseGenes" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">LowercaseGenes</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#LowercaseGenes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.LowercaseGenes" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.LowercaseGenes.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#LowercaseGenes.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.LowercaseGenes.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#LowercaseGenes.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.LowercaseGenes.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.NormalizeTotal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">NormalizeTotal</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#NormalizeTotal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.NormalizeTotal" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">NormalizeTotal</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#NormalizeTotal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.NormalizeTotal" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.NormalizeTotal.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#NormalizeTotal.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.NormalizeTotal.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#NormalizeTotal.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.NormalizeTotal.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.PPClass">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">PPClass</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#PPClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.PPClass" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">PPClass</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#PPClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.PPClass" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.PPClass.pp">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#PPClass.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.PPClass.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#PPClass.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.PPClass.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.ScanpyPCA">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">ScanpyPCA</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#ScanpyPCA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.ScanpyPCA" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">ScanpyPCA</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#ScanpyPCA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.ScanpyPCA" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.ScanpyPCA.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#ScanpyPCA.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.ScanpyPCA.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#ScanpyPCA.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.ScanpyPCA.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardMoscot">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardMoscot</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardMoscot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardMoscot" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardMoscot</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardMoscot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardMoscot" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardMoscot.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardMoscot.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardMoscot.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardMoscot.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardMoscot.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardScanpy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardScanpy</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardScanpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardScanpy" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardScanpy</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardScanpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardScanpy" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardScanpy.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardScanpy.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardScanpy.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardScanpy.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardScanpy.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardSpaGE">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardSpaGE</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardSpaGE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaGE" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardSpaGE</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardSpaGE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaGE" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardSpaGE.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardSpaGE.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaGE.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardSpaGE.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaGE.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardSpaOTsc">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardSpaOTsc</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardSpaOTsc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaOTsc" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardSpaOTsc</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardSpaOTsc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaOTsc" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardSpaOTsc.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardSpaOTsc.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaOTsc.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardSpaOTsc.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaOTsc.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardTangramV1">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardTangramV1</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardTangramV1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV1" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardTangramV1</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardTangramV1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV1" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardTangramV1.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardTangramV1.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV1.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardTangramV1.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV1.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardTangramV2">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardTangramV2</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardTangramV2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV2" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardTangramV2</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardTangramV2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV2" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardTangramV2.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardTangramV2.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV2.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#StandardTangramV2.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV2.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.gimVIPP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">gimVIPP</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#gimVIPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.gimVIPP" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">gimVIPP</span></span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#gimVIPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.gimVIPP" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.gimVIPP.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#gimVIPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.gimVIPP.pp" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnnData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/telegraph/methods/preprocess.html#gimVIPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.gimVIPP.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -194,114 +249,34 @@
 </section>
 
 
-            <div class="clearer"></div>
+           </div>
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <div>
-    <h3><a href="../index.html">Table of Contents</a></h3>
-    <ul>
-<li><a class="reference internal" href="#">telegraph.methods.preprocess module</a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.CeLEryPP"><code class="docutils literal notranslate"><span class="pre">CeLEryPP</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.CeLEryPP.pp"><code class="docutils literal notranslate"><span class="pre">CeLEryPP.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.FilterGenes"><code class="docutils literal notranslate"><span class="pre">FilterGenes</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.FilterGenes.pp"><code class="docutils literal notranslate"><span class="pre">FilterGenes.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.IdentityPP"><code class="docutils literal notranslate"><span class="pre">IdentityPP</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.IdentityPP.pp"><code class="docutils literal notranslate"><span class="pre">IdentityPP.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.LowercaseGenes"><code class="docutils literal notranslate"><span class="pre">LowercaseGenes</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.LowercaseGenes.pp"><code class="docutils literal notranslate"><span class="pre">LowercaseGenes.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.NormalizeTotal"><code class="docutils literal notranslate"><span class="pre">NormalizeTotal</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.NormalizeTotal.pp"><code class="docutils literal notranslate"><span class="pre">NormalizeTotal.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.PPClass"><code class="docutils literal notranslate"><span class="pre">PPClass</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.PPClass.pp"><code class="docutils literal notranslate"><span class="pre">PPClass.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.ScanpyPCA"><code class="docutils literal notranslate"><span class="pre">ScanpyPCA</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.ScanpyPCA.pp"><code class="docutils literal notranslate"><span class="pre">ScanpyPCA.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardMoscot"><code class="docutils literal notranslate"><span class="pre">StandardMoscot</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardMoscot.pp"><code class="docutils literal notranslate"><span class="pre">StandardMoscot.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardScanpy"><code class="docutils literal notranslate"><span class="pre">StandardScanpy</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardScanpy.pp"><code class="docutils literal notranslate"><span class="pre">StandardScanpy.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardSpaGE"><code class="docutils literal notranslate"><span class="pre">StandardSpaGE</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardSpaGE.pp"><code class="docutils literal notranslate"><span class="pre">StandardSpaGE.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardSpaOTsc"><code class="docutils literal notranslate"><span class="pre">StandardSpaOTsc</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardSpaOTsc.pp"><code class="docutils literal notranslate"><span class="pre">StandardSpaOTsc.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardTangramV1"><code class="docutils literal notranslate"><span class="pre">StandardTangramV1</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardTangramV1.pp"><code class="docutils literal notranslate"><span class="pre">StandardTangramV1.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardTangramV2"><code class="docutils literal notranslate"><span class="pre">StandardTangramV2</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.StandardTangramV2.pp"><code class="docutils literal notranslate"><span class="pre">StandardTangramV2.pp()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.gimVIPP"><code class="docutils literal notranslate"><span class="pre">gimVIPP</span></code></a><ul>
-<li><a class="reference internal" href="#telegraph.methods.preprocess.gimVIPP.pp"><code class="docutils literal notranslate"><span class="pre">gimVIPP.pp()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telegraph.methods.pred_methods.html" class="btn btn-neutral float-left" title="telegraph.methods.pred_methods module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="telegraph.methods.save_methods.html" class="btn btn-neutral float-right" title="telegraph.methods.save_methods module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BRAID-MAGIC.</p>
   </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/source/telegraph.methods.preprocess.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">telegraph beta-v1 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">telegraph.methods.preprocess module</a></li>
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-    &#169; Copyright 2024, BRAID-MAGIC.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
-    </div>
-  </body>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
 </html>
