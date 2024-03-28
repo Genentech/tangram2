@@ -3,20 +3,25 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+Modules
+==========
+
+.. autosummary::
+   :toctree: modules
+
+   telegraph.diagnostics
+   telegraph.methods
+   telegraph.evaluation
+   telegraph.robustness
+   telegraph.datagen.cellmix
+   telegraph.datagen.visify
+   telegraph.aggregate
+
 Welcome to telegraph's documentation!
 =====================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
    source/telegraph
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
