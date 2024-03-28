@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>telegraph.methods package &#8212; telegraph beta-v1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=514cf933" />
+
+    <script src="_static/documentation_options.js?v=18fb929b"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="telegraph.methods.dea_methods module" href="telegraph.methods.dea_methods.html" />
+    <link rel="prev" title="telegraph.evaluation.utils module" href="telegraph.evaluation.utils.html" />
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="telegraph.methods.dea_methods.html" title="telegraph.methods.dea_methods module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="telegraph.evaluation.utils.html" title="telegraph.evaluation.utils module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="telegraph.html" accesskey="U">telegraph package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.methods package</a></li>
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+
+  <section id="module-telegraph.methods">
+<span id="telegraph-methods-package"></span><h1>telegraph.methods package<a class="headerlink" href="#module-telegraph.methods" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.dea_methods.html">telegraph.methods.dea_methods module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA"><code class="docutils literal notranslate"><span class="pre">DEA</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA.adj_p_value"><code class="docutils literal notranslate"><span class="pre">DEA.adj_p_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA.agg_p_value"><code class="docutils literal notranslate"><span class="pre">DEA.agg_p_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA.coeff"><code class="docutils literal notranslate"><span class="pre">DEA.coeff</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA.feature"><code class="docutils literal notranslate"><span class="pre">DEA.feature</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA.logfold"><code class="docutils literal notranslate"><span class="pre">DEA.logfold</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA.p_value"><code class="docutils literal notranslate"><span class="pre">DEA.p_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA.score"><code class="docutils literal notranslate"><span class="pre">DEA.score</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEAMethodClass"><code class="docutils literal notranslate"><span class="pre">DEAMethodClass</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEAMethodClass.run"><code class="docutils literal notranslate"><span class="pre">DEAMethodClass.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.GLMDEA"><code class="docutils literal notranslate"><span class="pre">GLMDEA</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.GLMDEA.ins"><code class="docutils literal notranslate"><span class="pre">GLMDEA.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.GLMDEA.outs"><code class="docutils literal notranslate"><span class="pre">GLMDEA.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.GLMDEA.run"><code class="docutils literal notranslate"><span class="pre">GLMDEA.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.ScanpyDEA"><code class="docutils literal notranslate"><span class="pre">ScanpyDEA</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.ScanpyDEA.ins"><code class="docutils literal notranslate"><span class="pre">ScanpyDEA.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.ScanpyDEA.outs"><code class="docutils literal notranslate"><span class="pre">ScanpyDEA.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.ScanpyDEA.run"><code class="docutils literal notranslate"><span class="pre">ScanpyDEA.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.grp_methods.html">telegraph.methods.grp_methods module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.AssociationScore"><code class="docutils literal notranslate"><span class="pre">AssociationScore</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.AssociationScore.ins"><code class="docutils literal notranslate"><span class="pre">AssociationScore.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.AssociationScore.outs"><code class="docutils literal notranslate"><span class="pre">AssociationScore.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.AssociationScore.run"><code class="docutils literal notranslate"><span class="pre">AssociationScore.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.GroupMethodClass"><code class="docutils literal notranslate"><span class="pre">GroupMethodClass</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.GroupMethodClass.run"><code class="docutils literal notranslate"><span class="pre">GroupMethodClass.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.QuantileGroup"><code class="docutils literal notranslate"><span class="pre">QuantileGroup</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.QuantileGroup.ins"><code class="docutils literal notranslate"><span class="pre">QuantileGroup.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.QuantileGroup.outs"><code class="docutils literal notranslate"><span class="pre">QuantileGroup.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.QuantileGroup.run"><code class="docutils literal notranslate"><span class="pre">QuantileGroup.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ThresholdGroup"><code class="docutils literal notranslate"><span class="pre">ThresholdGroup</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ThresholdGroup.ins"><code class="docutils literal notranslate"><span class="pre">ThresholdGroup.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ThresholdGroup.outs"><code class="docutils literal notranslate"><span class="pre">ThresholdGroup.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ThresholdGroup.run"><code class="docutils literal notranslate"><span class="pre">ThresholdGroup.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.imp_methods.html">telegraph.methods.imp_methods module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.info.html">telegraph.methods.info module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.map_methods.html">telegraph.methods.map_methods module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.ArgMaxCorrMap"><code class="docutils literal notranslate"><span class="pre">ArgMaxCorrMap</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.ArgMaxCorrMap.ins"><code class="docutils literal notranslate"><span class="pre">ArgMaxCorrMap.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.ArgMaxCorrMap.outs"><code class="docutils literal notranslate"><span class="pre">ArgMaxCorrMap.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.ArgMaxCorrMap.run"><code class="docutils literal notranslate"><span class="pre">ArgMaxCorrMap.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.CeLEryMap"><code class="docutils literal notranslate"><span class="pre">CeLEryMap</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.CeLEryMap.cel"><code class="docutils literal notranslate"><span class="pre">CeLEryMap.cel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.CeLEryMap.ins"><code class="docutils literal notranslate"><span class="pre">CeLEryMap.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.CeLEryMap.outs"><code class="docutils literal notranslate"><span class="pre">CeLEryMap.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.CeLEryMap.run"><code class="docutils literal notranslate"><span class="pre">CeLEryMap.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.MapMethodClass"><code class="docutils literal notranslate"><span class="pre">MapMethodClass</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.MapMethodClass.run"><code class="docutils literal notranslate"><span class="pre">MapMethodClass.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.MoscotMap"><code class="docutils literal notranslate"><span class="pre">MoscotMap</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.MoscotMap.ins"><code class="docutils literal notranslate"><span class="pre">MoscotMap.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.MoscotMap.outs"><code class="docutils literal notranslate"><span class="pre">MoscotMap.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.MoscotMap.run"><code class="docutils literal notranslate"><span class="pre">MoscotMap.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.RandomMap"><code class="docutils literal notranslate"><span class="pre">RandomMap</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.RandomMap.ins"><code class="docutils literal notranslate"><span class="pre">RandomMap.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.RandomMap.outs"><code class="docutils literal notranslate"><span class="pre">RandomMap.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.RandomMap.run"><code class="docutils literal notranslate"><span class="pre">RandomMap.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.SpaOTscMap"><code class="docutils literal notranslate"><span class="pre">SpaOTscMap</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.SpaOTscMap.ins"><code class="docutils literal notranslate"><span class="pre">SpaOTscMap.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.SpaOTscMap.outs"><code class="docutils literal notranslate"><span class="pre">SpaOTscMap.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.SpaOTscMap.run"><code class="docutils literal notranslate"><span class="pre">SpaOTscMap.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramMap"><code class="docutils literal notranslate"><span class="pre">TangramMap</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramMap.ins"><code class="docutils literal notranslate"><span class="pre">TangramMap.ins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramMap.outs"><code class="docutils literal notranslate"><span class="pre">TangramMap.outs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramMap.run"><code class="docutils literal notranslate"><span class="pre">TangramMap.run()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramMap.tg"><code class="docutils literal notranslate"><span class="pre">TangramMap.tg</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramMap.version"><code class="docutils literal notranslate"><span class="pre">TangramMap.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramV1Map"><code class="docutils literal notranslate"><span class="pre">TangramV1Map</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramV1Map.version"><code class="docutils literal notranslate"><span class="pre">TangramV1Map.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramV2Map"><code class="docutils literal notranslate"><span class="pre">TangramV2Map</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramV2Map.custom_save_funcs"><code class="docutils literal notranslate"><span class="pre">TangramV2Map.custom_save_funcs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramV2Map.version"><code class="docutils literal notranslate"><span class="pre">TangramV2Map.version</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.policies.html">telegraph.methods.policies module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy"><code class="docutils literal notranslate"><span class="pre">BasePolicy</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy.object_name"><code class="docutils literal notranslate"><span class="pre">BasePolicy.object_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy.object_type"><code class="docutils literal notranslate"><span class="pre">BasePolicy.object_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy.test_dimensions"><code class="docutils literal notranslate"><span class="pre">BasePolicy.test_dimensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy.test_type"><code class="docutils literal notranslate"><span class="pre">BasePolicy.test_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.BasePolicy.test_values"><code class="docutils literal notranslate"><span class="pre">BasePolicy.test_values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyD"><code class="docutils literal notranslate"><span class="pre">PolicyD</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyD.object_name"><code class="docutils literal notranslate"><span class="pre">PolicyD.object_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyD.object_type"><code class="docutils literal notranslate"><span class="pre">PolicyD.object_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyD.test_values"><code class="docutils literal notranslate"><span class="pre">PolicyD.test_values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDfrom"><code class="docutils literal notranslate"><span class="pre">PolicyDfrom</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDfrom.object_name"><code class="docutils literal notranslate"><span class="pre">PolicyDfrom.object_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDict"><code class="docutils literal notranslate"><span class="pre">PolicyDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDict.D_from"><code class="docutils literal notranslate"><span class="pre">PolicyDict.D_from</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDict.D_to"><code class="docutils literal notranslate"><span class="pre">PolicyDict.D_to</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDict.T"><code class="docutils literal notranslate"><span class="pre">PolicyDict.T</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDict.X_from"><code class="docutils literal notranslate"><span class="pre">PolicyDict.X_from</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDict.X_to"><code class="docutils literal notranslate"><span class="pre">PolicyDict.X_to</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDict.X_to_pred"><code class="docutils literal notranslate"><span class="pre">PolicyDict.X_to_pred</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDto"><code class="docutils literal notranslate"><span class="pre">PolicyDto</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyDto.object_name"><code class="docutils literal notranslate"><span class="pre">PolicyDto.object_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyT"><code class="docutils literal notranslate"><span class="pre">PolicyT</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyT.object_name"><code class="docutils literal notranslate"><span class="pre">PolicyT.object_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyT.object_type"><code class="docutils literal notranslate"><span class="pre">PolicyT.object_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyT.test_values"><code class="docutils literal notranslate"><span class="pre">PolicyT.test_values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyX"><code class="docutils literal notranslate"><span class="pre">PolicyX</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyX.object_name"><code class="docutils literal notranslate"><span class="pre">PolicyX.object_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyX.test_integer"><code class="docutils literal notranslate"><span class="pre">PolicyX.test_integer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyX.test_non_negative"><code class="docutils literal notranslate"><span class="pre">PolicyX.test_non_negative()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyX.test_values"><code class="docutils literal notranslate"><span class="pre">PolicyX.test_values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXfrom"><code class="docutils literal notranslate"><span class="pre">PolicyXfrom</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXfrom.object_name"><code class="docutils literal notranslate"><span class="pre">PolicyXfrom.object_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXfrom.object_type"><code class="docutils literal notranslate"><span class="pre">PolicyXfrom.object_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXto"><code class="docutils literal notranslate"><span class="pre">PolicyXto</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXto.object_name"><code class="docutils literal notranslate"><span class="pre">PolicyXto.object_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXto.object_type"><code class="docutils literal notranslate"><span class="pre">PolicyXto.object_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXtopred"><code class="docutils literal notranslate"><span class="pre">PolicyXtopred</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXtopred.object_name"><code class="docutils literal notranslate"><span class="pre">PolicyXtopred.object_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.PolicyXtopred.object_type"><code class="docutils literal notranslate"><span class="pre">PolicyXtopred.object_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.check_dimensions"><code class="docutils literal notranslate"><span class="pre">check_dimensions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.check_integer"><code class="docutils literal notranslate"><span class="pre">check_integer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.check_non_negative"><code class="docutils literal notranslate"><span class="pre">check_non_negative()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.check_type"><code class="docutils literal notranslate"><span class="pre">check_type()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.check_values"><code class="docutils literal notranslate"><span class="pre">check_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.policies.html#telegraph.methods.policies.dim_match"><code class="docutils literal notranslate"><span class="pre">dim_match()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.pred_methods.html">telegraph.methods.pred_methods module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.preprocess.html">telegraph.methods.preprocess module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.CeLEryPP"><code class="docutils literal notranslate"><span class="pre">CeLEryPP</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.CeLEryPP.pp"><code class="docutils literal notranslate"><span class="pre">CeLEryPP.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.FilterGenes"><code class="docutils literal notranslate"><span class="pre">FilterGenes</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.FilterGenes.pp"><code class="docutils literal notranslate"><span class="pre">FilterGenes.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.IdentityPP"><code class="docutils literal notranslate"><span class="pre">IdentityPP</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.IdentityPP.pp"><code class="docutils literal notranslate"><span class="pre">IdentityPP.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.LowercaseGenes"><code class="docutils literal notranslate"><span class="pre">LowercaseGenes</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.LowercaseGenes.pp"><code class="docutils literal notranslate"><span class="pre">LowercaseGenes.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.NormalizeTotal"><code class="docutils literal notranslate"><span class="pre">NormalizeTotal</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.NormalizeTotal.pp"><code class="docutils literal notranslate"><span class="pre">NormalizeTotal.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.PPClass"><code class="docutils literal notranslate"><span class="pre">PPClass</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.PPClass.pp"><code class="docutils literal notranslate"><span class="pre">PPClass.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.ScanpyPCA"><code class="docutils literal notranslate"><span class="pre">ScanpyPCA</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.ScanpyPCA.pp"><code class="docutils literal notranslate"><span class="pre">ScanpyPCA.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardMoscot"><code class="docutils literal notranslate"><span class="pre">StandardMoscot</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardMoscot.pp"><code class="docutils literal notranslate"><span class="pre">StandardMoscot.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardScanpy"><code class="docutils literal notranslate"><span class="pre">StandardScanpy</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardScanpy.pp"><code class="docutils literal notranslate"><span class="pre">StandardScanpy.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardSpaGE"><code class="docutils literal notranslate"><span class="pre">StandardSpaGE</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardSpaGE.pp"><code class="docutils literal notranslate"><span class="pre">StandardSpaGE.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardSpaOTsc"><code class="docutils literal notranslate"><span class="pre">StandardSpaOTsc</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardSpaOTsc.pp"><code class="docutils literal notranslate"><span class="pre">StandardSpaOTsc.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardTangramV1"><code class="docutils literal notranslate"><span class="pre">StandardTangramV1</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardTangramV1.pp"><code class="docutils literal notranslate"><span class="pre">StandardTangramV1.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardTangramV2"><code class="docutils literal notranslate"><span class="pre">StandardTangramV2</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardTangramV2.pp"><code class="docutils literal notranslate"><span class="pre">StandardTangramV2.pp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.gimVIPP"><code class="docutils literal notranslate"><span class="pre">gimVIPP</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.gimVIPP.pp"><code class="docutils literal notranslate"><span class="pre">gimVIPP.pp()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.save_methods.html">telegraph.methods.save_methods module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.save_methods.html#telegraph.methods.save_methods.StandardSaveMethods"><code class="docutils literal notranslate"><span class="pre">StandardSaveMethods</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.save_methods.html#telegraph.methods.save_methods.StandardSaveMethods.save_df"><code class="docutils literal notranslate"><span class="pre">StandardSaveMethods.save_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="telegraph.methods.save_methods.html#telegraph.methods.save_methods.StandardSaveMethods.standard_save_funcs"><code class="docutils literal notranslate"><span class="pre">StandardSaveMethods.standard_save_funcs</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.transforms.html">telegraph.methods.transforms module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.transforms.html#telegraph.methods.transforms.soft_T_to_hard"><code class="docutils literal notranslate"><span class="pre">soft_T_to_hard()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.transforms.html#telegraph.methods.transforms.sparsify_hard_map"><code class="docutils literal notranslate"><span class="pre">sparsify_hard_map()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.utils.html">telegraph.methods.utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.ad2np"><code class="docutils literal notranslate"><span class="pre">ad2np()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.array_to_sparse_df"><code class="docutils literal notranslate"><span class="pre">array_to_sparse_df()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.check_in_out"><code class="docutils literal notranslate"><span class="pre">check_in_out()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.design_matrix_to_labels"><code class="docutils literal notranslate"><span class="pre">design_matrix_to_labels()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.df2ad"><code class="docutils literal notranslate"><span class="pre">df2ad()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.get_ad_value"><code class="docutils literal notranslate"><span class="pre">get_ad_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.get_from_dict_with_fuzzy"><code class="docutils literal notranslate"><span class="pre">get_from_dict_with_fuzzy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.get_fuzzy_key"><code class="docutils literal notranslate"><span class="pre">get_fuzzy_key()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.identity_fun"><code class="docutils literal notranslate"><span class="pre">identity_fun()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.ifnonereturn"><code class="docutils literal notranslate"><span class="pre">ifnonereturn()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.list_or_path_get"><code class="docutils literal notranslate"><span class="pre">list_or_path_get()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.listify"><code class="docutils literal notranslate"><span class="pre">listify()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.mat_cosine_similarity"><code class="docutils literal notranslate"><span class="pre">mat_cosine_similarity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.matrix_correlation"><code class="docutils literal notranslate"><span class="pre">matrix_correlation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.merge_default_dict_with_kwargs"><code class="docutils literal notranslate"><span class="pre">merge_default_dict_with_kwargs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.to_csv_gzip"><code class="docutils literal notranslate"><span class="pre">to_csv_gzip()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.update_default_groups"><code class="docutils literal notranslate"><span class="pre">update_default_groups()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telegraph.methods.workflows.html">telegraph.methods.workflows module</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">telegraph.methods package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="telegraph.evaluation.utils.html"
+                          title="previous chapter">telegraph.evaluation.utils module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="telegraph.methods.dea_methods.html"
+                          title="next chapter">telegraph.methods.dea_methods module</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/telegraph.methods.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="telegraph.methods.dea_methods.html" title="telegraph.methods.dea_methods module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="telegraph.evaluation.utils.html" title="telegraph.evaluation.utils module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="telegraph.html" >telegraph package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.methods package</a></li>
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, BRAID-MAGIC.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

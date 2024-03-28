@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>telegraph.methods.grp_methods &#8212; telegraph beta-v1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=514cf933" />
+
+    <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.methods.grp_methods</a></li>
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+
+  <h1>Source code for telegraph.methods.grp_methods</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">anndata</span> <span class="k">as</span> <span class="nn">ad</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">telegraph.methods.policies</span> <span class="k">as</span> <span class="nn">pol</span>
+<span class="kn">from</span> <span class="nn">telegraph.methods._methods</span> <span class="kn">import</span> <span class="n">MethodClass</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_grp_utils</span> <span class="k">as</span> <span class="n">gut</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">ut</span>
+
+
+<div class="viewcode-block" id="GroupMethodClass">
+<a class="viewcode-back" href="../../../telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.GroupMethodClass">[docs]</a>
+<span class="k">class</span> <span class="nc">GroupMethodClass</span><span class="p">(</span><span class="n">MethodClass</span><span class="p">):</span>
+    <span class="c1"># Group Method Baseclass</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GroupMethodClass.run">
+<a class="viewcode-back" href="../../../telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.GroupMethodClass.run">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ThresholdGroup">
+<a class="viewcode-back" href="../../../telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ThresholdGroup">[docs]</a>
+<span class="k">class</span> <span class="nc">ThresholdGroup</span><span class="p">(</span><span class="n">GroupMethodClass</span><span class="p">):</span>
+    <span class="c1"># Threshold based grouping</span>
+    <span class="c1"># we will base our grouping of the &quot;to&quot;</span>
+    <span class="c1"># observations the expression of a given feature</span>
+    <span class="c1"># the &quot;from&quot; observations are grouped based on their</span>
+    <span class="c1"># how much of their mass is mapped to the two different</span>
+    <span class="c1"># groups in the &quot;to&quot; data</span>
+
+    <span class="n">ins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X_from&quot;</span><span class="p">,</span> <span class="s2">&quot;X_to_pred&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">]</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;D_to&quot;</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@ut</span><span class="o">.</span><span class="n">check_in_out</span>
+    <span class="nd">@gut</span><span class="o">.</span><span class="n">add_covariates</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">feature_name</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">thres_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">thres_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">add_complement</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+        <span class="c1"># anndata for predict to data</span>
+        <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;X_to_pred&quot;</span><span class="p">]</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_to_pred</span><span class="p">,</span> <span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">X_to_pred</span><span class="p">,</span> <span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span>
+
+        <span class="c1"># anndata object that we map _from_</span>
+        <span class="n">X_from</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;X_from&quot;</span><span class="p">]</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_to_pred</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+
+        <span class="c1"># get map (T) : [n_to] x [n_from]</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span>
+
+        <span class="n">n_to</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_from</span> <span class="o">=</span> <span class="n">X_from</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_dimensions</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_to</span><span class="p">,</span> <span class="n">n_from</span><span class="p">))</span>
+
+        <span class="c1"># make sure feature_name is in list format</span>
+        <span class="n">feature_name</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">feature_name</span><span class="p">)</span>
+
+        <span class="c1"># get and high/low feature (x) thresholds</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thres_x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">thres_x_low</span><span class="p">,</span> <span class="n">thres_x_high</span> <span class="o">=</span> <span class="n">thres_x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">thres_x_low</span><span class="p">,</span> <span class="n">thres_x_high</span> <span class="o">=</span> <span class="n">thres_x</span><span class="p">,</span> <span class="n">thres_x</span>
+
+        <span class="c1"># get high/low map (t) thresholds</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thres_t</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">thres_t_low</span><span class="p">,</span> <span class="n">thres_t_high</span> <span class="o">=</span> <span class="n">thres_t</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">thres_t_low</span><span class="p">,</span> <span class="n">thres_t_high</span> <span class="o">=</span> <span class="n">thres_t</span><span class="p">,</span> <span class="n">thres_t</span>
+
+        <span class="c1"># create lists to store indicators of each feature</span>
+        <span class="n">Ds_from</span><span class="p">,</span> <span class="n">Ds_to</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+        <span class="c1"># set feature names in X_to_pred to lowercase</span>
+        <span class="c1"># this is to match names with specified features</span>
+        <span class="n">X_to_pred</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># iterate over all features</span>
+        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">feature_name</span><span class="p">:</span>
+
+            <span class="c1"># get feature expression, numpy format</span>
+            <span class="c1"># feature to lowercase to avoid</span>
+            <span class="c1"># case-mismatch</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="p">[</span><span class="n">feature</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="c1"># boolean vector of observations in &quot;to_pred&quot;</span>
+            <span class="c1"># that are higher than the &quot;high&quot; threshold</span>
+            <span class="n">x_high</span> <span class="o">=</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">thres_x_high</span>
+            <span class="c1"># boolean vector of observations in &quot;to_pred&quot;</span>
+            <span class="c1"># that are lower than the &quot;low&quot; threshold</span>
+            <span class="n">x_low</span> <span class="o">=</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">thres_x_low</span>
+
+            <span class="c1"># create blank &quot;to&quot; design matrix</span>
+            <span class="n">D_to</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X_to_pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="c1"># update &quot;to&quot; design matrix according to</span>
+            <span class="c1"># high/low assignments</span>
+            <span class="n">D_to</span><span class="p">[</span><span class="n">x_high</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="c1"># converts design matrix to data frame</span>
+            <span class="n">to_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;high_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+            <span class="n">D_to</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">D_to</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">to_cols</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">X_to_pred</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">add_complement</span><span class="p">:</span>
+                <span class="n">D_to</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;low_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">D_to</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;high_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="c1"># instantiate &quot;from&quot; design matrix</span>
+            <span class="n">D_from</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X_from</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+
+            <span class="c1"># get observations in &quot;from&quot; with a mass higher</span>
+            <span class="c1"># that thres_t_high assigned to the &quot;high&quot; observations</span>
+            <span class="c1"># in &quot;to&quot;</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_high</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">t_high</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">x_high</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">thres_t_high</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t_high</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+            <span class="c1"># update &quot;from&quot; design matrix</span>
+            <span class="n">D_from</span><span class="p">[</span><span class="n">t_high</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="n">from_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;adj_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+            <span class="c1"># convert &quot;from&quot; design matrix to data frame</span>
+            <span class="n">D_from</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">D_from</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">from_cols</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">X_from</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">add_complement</span><span class="p">:</span>
+                <span class="n">D_from</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;nadj_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">D_from</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;adj_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="c1"># save feature specific design matrix</span>
+            <span class="n">Ds_from</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">D_from</span><span class="p">)</span>
+            <span class="n">Ds_to</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">D_to</span><span class="p">)</span>
+
+        <span class="c1"># join indicators from all features to create single design matrix</span>
+        <span class="n">Ds_from</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">Ds_from</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">Ds_to</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">Ds_to</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Ds_to is in [n_to] x [2 x n_features]</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_dimensions</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_to</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="c1"># Ds_from is [n_from] x [2 x n_features]</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_dimensions</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_from</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="c1"># Note: if we specify add covariates</span>
+        <span class="c1"># additional covariates will be appended to the design matrix</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">D_to</span><span class="o">=</span><span class="n">Ds_to</span><span class="p">,</span>
+            <span class="n">D_from</span><span class="o">=</span><span class="n">Ds_from</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AssociationScore">
+<a class="viewcode-back" href="../../../telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.AssociationScore">[docs]</a>
+<span class="k">class</span> <span class="nc">AssociationScore</span><span class="p">(</span><span class="n">GroupMethodClass</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Association Score between</span>
+
+<span class="sd">    how strongly is observation i in &#39;from&#39; associated</span>
+<span class="sd">    with feature f in &#39;from&#39;</span>
+
+
+<span class="sd">    Calculates `Q` where, Q_{if} indicates how strongly associated</span>
+<span class="sd">    observation i in &#39;from&#39; is with feature f in &#39;to_pred&#39;.</span>
+
+
+<span class="sd">    We use the formula: $Q = T^t \cdot X_to_pred = T^t \cdot (T \cdot X_{to\_pred})$</span>
+
+<span class="sd">    The dimensions for the objects are:</span>
+
+<span class="sd">    X_from : [n_from] x [n_var] (e.g., spatial gene expression)</span>
+<span class="sd">    X_to_pred : [n_to] x [n_var] (e.g., single cell gene expression)</span>
+<span class="sd">    T : [n_to] x [n_from] (e.g., map of single cells to visium spots)</span>
+<span class="sd">    Q : [n_from] x [n_var]</span>
+
+<span class="sd">    Q should be a pd.DataFrame object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X_from&quot;</span><span class="p">,</span> <span class="s2">&quot;X_to_pred&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">]</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;D_from&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@ut</span><span class="o">.</span><span class="n">check_in_out</span>
+    <span class="nd">@gut</span><span class="o">.</span><span class="n">add_covariates</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">feature_name</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+        <span class="n">X_from</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">X_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;X_from needs to be an object&quot;</span>
+        <span class="c1"># get dataframe of &quot;X_to_pred&quot;</span>
+        <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">X_to_pred</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;X_to_pred needs to be an object&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_to_pred</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+
+        <span class="c1"># get map (T) : [n_to] x [n_from]</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span>
+
+        <span class="c1"># compute association between obs i in &#39;from&#39; with feature f in &#39;to_pred&#39;</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># convert to dataframe</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">Q</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">X_from</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">X_to_pred</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">Q</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># make sure feature_name is in list format</span>
+        <span class="n">feature_name</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">feature_name</span><span class="p">)</span>
+        <span class="c1"># make input features lowercase to make sure it matches with Q columns which are made lower case above</span>
+        <span class="n">feature_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">feature_name</span><span class="p">]</span>
+
+        <span class="c1"># only keep features specified</span>
+        <span class="k">if</span> <span class="n">feature_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">feature_not_in_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">feature_name</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Q</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">feature_not_in_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="p">),</span> <span class="s2">&quot;Features: </span><span class="si">{}</span><span class="s2"> were not found in the data&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">feature_not_in_vars</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">feature_name</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">D_from</span><span class="o">=</span><span class="n">Q</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QuantileGroup">
+<a class="viewcode-back" href="../../../telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.QuantileGroup">[docs]</a>
+<span class="k">class</span> <span class="nc">QuantileGroup</span><span class="p">(</span><span class="n">GroupMethodClass</span><span class="p">):</span>
+
+    <span class="n">ins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X_from&quot;</span><span class="p">,</span> <span class="s2">&quot;X_to&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">]</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;D_to&quot;</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@ut</span><span class="o">.</span><span class="n">check_in_out</span>
+    <span class="nd">@gut</span><span class="o">.</span><span class="n">add_covariates</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">feature_name</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">q_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">q_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+        <span class="c1"># anndata for predict to data</span>
+        <span class="n">X_to_use</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">X_to_use</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">X_to_use</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to&quot;</span><span class="p">)</span>
+            <span class="n">X_to_use_name</span> <span class="o">=</span> <span class="s2">&quot;X_to&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X_to_use_name</span> <span class="o">=</span> <span class="s2">&quot;X_to_pred&quot;</span>
+
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_to_use</span><span class="p">,</span> <span class="n">X_to_use_name</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">X_to_use</span><span class="p">,</span> <span class="n">X_to_use_name</span><span class="p">)</span>
+
+        <span class="c1"># anndata object that we map _from_</span>
+        <span class="n">X_from</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;X_from&quot;</span><span class="p">]</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_to_use</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="n">X_to_use</span> <span class="o">=</span> <span class="n">X_to_use</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+
+        <span class="c1"># get map (T) : [n_to] x [n_from]</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span>
+
+        <span class="n">n_to</span> <span class="o">=</span> <span class="n">X_to_use</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_from</span> <span class="o">=</span> <span class="n">X_from</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_dimensions</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_to</span><span class="p">,</span> <span class="n">n_from</span><span class="p">))</span>
+
+        <span class="c1"># make sure feature_name is in list format</span>
+        <span class="n">feature_name</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">feature_name</span><span class="p">)</span>
+
+        <span class="n">Ds_from</span><span class="p">,</span> <span class="n">Ds_to</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+        <span class="c1"># set feature names in X_to_use to lowercase</span>
+        <span class="c1"># this is to match names with specified features</span>
+        <span class="n">X_to_use</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">X_to_use</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># iterate over all features</span>
+        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">feature_name</span><span class="p">:</span>
+
+            <span class="c1"># get feature expression, numpy format</span>
+            <span class="c1"># feature to lowercase to avoid</span>
+            <span class="c1"># case-mismatch</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">X_to_use</span><span class="p">[</span><span class="n">feature</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">q_x_high</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">q_x</span><span class="p">)</span>
+            <span class="n">q_x_low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">q_x</span><span class="p">)</span>
+
+            <span class="c1"># boolean vector of observations in &quot;to_pred&quot;</span>
+            <span class="c1"># that are higher than the &quot;high&quot; threshold</span>
+            <span class="n">x_high</span> <span class="o">=</span> <span class="n">val</span> <span class="o">&gt;=</span> <span class="n">q_x_high</span>
+            <span class="c1"># boolean vector of observations in &quot;to_pred&quot;</span>
+            <span class="c1"># that are lower than the &quot;low&quot; threshold</span>
+            <span class="n">x_low</span> <span class="o">=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="n">q_x_low</span>
+
+            <span class="c1"># create blank &quot;to&quot; design matrix</span>
+            <span class="n">D_to</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X_to_use</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="c1"># update &quot;to&quot; design matrix according to</span>
+            <span class="c1"># high/low assignments</span>
+            <span class="n">D_to</span><span class="p">[</span><span class="n">x_low</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">D_to</span><span class="p">[</span><span class="n">x_high</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="c1"># converts design matrix to data frame</span>
+            <span class="n">to_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;low_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;high_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+            <span class="n">D_to</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">D_to</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">to_cols</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">X_to_use</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># instantiate &quot;from&quot; design matrix</span>
+            <span class="n">D_from</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X_from</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+
+            <span class="c1"># get observations in &quot;from&quot; with a mass higher</span>
+            <span class="c1"># that thres_t_high assigned to the &quot;high&quot; observations</span>
+            <span class="c1"># in &quot;to&quot;</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_high</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">T_high_sum</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">x_high</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">q_t_high</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">T_high_sum</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">q_t</span><span class="p">)</span>
+                <span class="n">t_high</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">x_high</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">q_t_high</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t_high</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_low</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">T_low_sum</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">x_low</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">q_t_low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">T_low_sum</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">q_t</span><span class="p">)</span>
+                <span class="n">t_low</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">x_low</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">q_t_low</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t_low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+            <span class="n">is_both</span> <span class="o">=</span> <span class="n">t_low</span> <span class="o">&amp;</span> <span class="n">t_high</span>
+
+            <span class="c1"># update &quot;from&quot; design matrix</span>
+            <span class="n">D_from</span><span class="p">[</span><span class="n">t_low</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">D_from</span><span class="p">[</span><span class="n">t_high</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="n">D_from</span><span class="p">[</span><span class="n">is_both</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">D_from</span><span class="p">[</span><span class="n">is_both</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">from_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;nadj_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;adj_</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+            <span class="c1"># convert &quot;from&quot; design matrix to data frame</span>
+            <span class="n">D_from</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">D_from</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">from_cols</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">X_from</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># save feature specific design matrix</span>
+            <span class="n">Ds_from</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">D_from</span><span class="p">)</span>
+            <span class="n">Ds_to</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">D_to</span><span class="p">)</span>
+
+        <span class="c1"># join indicators from all features to create single design matrix</span>
+        <span class="n">Ds_from</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">Ds_from</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">Ds_to</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">Ds_to</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Ds_to is in [n_to] x [2 x n_features]</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_dimensions</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_to</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="c1"># Ds_from is [n_from] x [2 x n_features]</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_dimensions</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_from</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="c1"># Note: if we specify add covariates</span>
+        <span class="c1"># additional covariates will be appended to the design matrix</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">D_to</span><span class="o">=</span><span class="n">Ds_to</span><span class="p">,</span>
+            <span class="n">D_from</span><span class="o">=</span><span class="n">Ds_from</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.methods.grp_methods</a></li>
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, BRAID-MAGIC.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

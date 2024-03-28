@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>telegraph.methods.dea_methods &#8212; telegraph beta-v1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=514cf933" />
+
+    <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.methods.dea_methods</a></li>
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+
+  <h1>Source code for telegraph.methods.dea_methods</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">import</span> <span class="nn">anndata</span> <span class="k">as</span> <span class="nn">ad</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">scanpy</span> <span class="k">as</span> <span class="nn">sc</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_dea_utils</span> <span class="k">as</span> <span class="n">dut</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">policies</span> <span class="k">as</span> <span class="n">pol</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">ut</span>
+<span class="kn">from</span> <span class="nn">._methods</span> <span class="kn">import</span> <span class="n">MethodClass</span>
+
+<span class="c1"># import telegraph.methods.policies as pol</span>
+<span class="c1"># from telegraph.methods._methods import MethodClass</span>
+
+
+<div class="viewcode-block" id="DEA">
+<a class="viewcode-back" href="../../../telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA">[docs]</a>
+<span class="k">class</span> <span class="nc">DEA</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">adj_p_value</span> <span class="o">=</span> <span class="s2">&quot;pvals_adj&quot;</span>
+    <span class="n">logfold</span> <span class="o">=</span> <span class="s2">&quot;log2fc&quot;</span>
+    <span class="n">p_value</span> <span class="o">=</span> <span class="s2">&quot;pvals&quot;</span>
+    <span class="n">feature</span> <span class="o">=</span> <span class="s2">&quot;feature&quot;</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="s2">&quot;score&quot;</span>
+    <span class="n">coeff</span> <span class="o">=</span> <span class="s2">&quot;score&quot;</span>
+    <span class="n">agg_p_value</span> <span class="o">=</span> <span class="s2">&quot;pvals_agg&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="DEAMethodClass">
+<a class="viewcode-back" href="../../../telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEAMethodClass">[docs]</a>
+<span class="k">class</span> <span class="nc">DEAMethodClass</span><span class="p">(</span><span class="n">MethodClass</span><span class="p">):</span>
+    <span class="c1"># DEA Method Baseclass</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DEAMethodClass.run">
+<a class="viewcode-back" href="../../../telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEAMethodClass.run">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ScanpyDEA">
+<a class="viewcode-back" href="../../../telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.ScanpyDEA">[docs]</a>
+<span class="k">class</span> <span class="nc">ScanpyDEA</span><span class="p">(</span><span class="n">DEAMethodClass</span><span class="p">):</span>
+    <span class="c1"># Scanpy DEA Method class</span>
+    <span class="c1"># allows you to execute scanpy.tl.rank_genes</span>
+    <span class="c1"># using a design matrix and input data</span>
+    <span class="n">ins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;D_from&quot;</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">,</span> <span class="s2">&quot;X_to_pred&quot;</span><span class="p">]</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DEA&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ScanpyDEA.run">
+<a class="viewcode-back" href="../../../telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.ScanpyDEA.run">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="c1"># @ut.check_in_out</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;wilcoxon&quot;</span><span class="p">,</span>
+        <span class="n">sort_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pvals_adj&quot;</span><span class="p">,</span>
+        <span class="n">pval_cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;neg&quot;</span><span class="p">,</span> <span class="s2">&quot;both&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
+        <span class="n">method_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">subset_features</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_group_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+
+        <span class="c1"># groups = [ (&#39;group_1,group_2)]</span>
+
+        <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span><span class="p">:</span>
+            <span class="n">_target</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;from&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_target</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+        <span class="c1"># data frame of predicted &quot;to&quot; data : [n_to] x [n_from_features]</span>
+        <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">X_to_pred</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to&quot;</span><span class="p">)</span>
+        <span class="c1"># anndata of &quot;from&quot; : [n_from] x [n_from_features]</span>
+        <span class="n">X_from</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+        <span class="c1"># design matrix for &quot;to&quot; : [n_to] x [n_to_covariates]</span>
+        <span class="n">D_to</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;D_to&quot;</span><span class="p">)</span>
+        <span class="c1"># design matrix for &quot;from&quot; : [n_from] x [n_from_covariates]</span>
+        <span class="n">D_from</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;D_from&quot;</span><span class="p">)</span>
+
+        <span class="n">X_from</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+
+        <span class="n">objects</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;to&quot;</span> <span class="ow">in</span> <span class="n">_target</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">D_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">X_to_pred</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_to_pred</span><span class="p">,</span> <span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">X_to_pred</span><span class="p">,</span> <span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span>
+
+            <span class="n">n_to</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_dimensions</span><span class="p">(</span><span class="n">D_to</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_to</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+            <span class="c1"># update objects</span>
+            <span class="n">objects</span><span class="p">[</span><span class="s2">&quot;to&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">D</span><span class="o">=</span><span class="n">D_to</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X_to_pred</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;from&quot;</span> <span class="ow">in</span> <span class="n">_target</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">D_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">X_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+
+            <span class="n">n_from</span> <span class="o">=</span> <span class="n">X_from</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_dimensions</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_from</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+            <span class="n">objects</span><span class="p">[</span><span class="s2">&quot;from&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">D</span><span class="o">=</span><span class="n">D_from</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X_from</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">obj_name</span> <span class="ow">in</span> <span class="n">objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">D</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="n">obj_name</span><span class="p">][</span><span class="s2">&quot;D&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="n">obj_name</span><span class="p">][</span><span class="s2">&quot;X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="k">match</span> <span class="n">groups</span><span class="p">:</span>
+                <span class="k">case</span> <span class="nb">str</span><span class="p">():</span>
+                    <span class="n">_groups</span> <span class="o">=</span> <span class="p">[(</span><span class="n">groups</span><span class="p">)]</span>
+                <span class="k">case</span> <span class="p">(</span><span class="nb">str</span><span class="p">(),</span> <span class="nb">str</span><span class="p">()):</span>
+                    <span class="n">_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">groups</span><span class="p">]</span>
+                <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                    <span class="n">_groups</span> <span class="o">=</span> <span class="n">groups</span>
+
+            <span class="k">for</span> <span class="n">group_pair</span> <span class="ow">in</span> <span class="n">_groups</span><span class="p">:</span>
+
+                <span class="n">D_new</span><span class="p">,</span> <span class="n">grp_1</span><span class="p">,</span> <span class="n">grp_2</span> <span class="o">=</span> <span class="n">dut</span><span class="o">.</span><span class="n">scanpy_dea_labels_from_D</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">group_pair</span><span class="p">)</span>
+
+                <span class="n">adata</span> <span class="o">=</span> <span class="n">dut</span><span class="o">.</span><span class="n">anndata_from_X_and_D</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">D_new</span><span class="p">)</span>
+
+                <span class="c1"># execute DE test</span>
+                <span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">rank_genes_groups</span><span class="p">(</span>
+                    <span class="n">adata</span><span class="p">,</span>
+                    <span class="n">groupby</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
+                    <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="n">grp_1</span><span class="p">],</span>  <span class="c1"># groups _must_ be a list or str, not np.ndarray</span>
+                    <span class="n">reference</span><span class="o">=</span><span class="n">grp_2</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">method_kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">dedf</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">rank_genes_groups_df</span><span class="p">(</span>
+                    <span class="n">adata</span><span class="p">,</span>
+                    <span class="n">group</span><span class="o">=</span><span class="n">grp_1</span><span class="p">,</span>
+                    <span class="n">pval_cutoff</span><span class="o">=</span><span class="n">pval_cutoff</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">dedf</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;pvals&quot;</span><span class="p">:</span> <span class="n">DEA</span><span class="o">.</span><span class="n">p_value</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="s2">&quot;pvals_adj&quot;</span><span class="p">:</span> <span class="n">DEA</span><span class="o">.</span><span class="n">adj_p_value</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">DEA</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">DEA</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grp_1</span><span class="si">}</span><span class="s2">_vs_</span><span class="si">{</span><span class="n">grp_2</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dedf</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">dedf</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;pos&quot;</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dedf</span><span class="p">[</span><span class="n">dedf</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;neg&quot;</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dedf</span><span class="p">[</span><span class="n">dedf</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">DEA</span><span class="o">=</span><span class="n">out</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GLMDEA">
+<a class="viewcode-back" href="../../../telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.GLMDEA">[docs]</a>
+<span class="k">class</span> <span class="nc">GLMDEA</span><span class="p">(</span><span class="n">DEAMethodClass</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="n">ins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;D_from&quot;</span><span class="p">,</span> <span class="s2">&quot;D_to&quot;</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">,</span> <span class="s2">&quot;X_to&quot;</span><span class="p">]</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DEA&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="GLMDEA.run">
+<a class="viewcode-back" href="../../../telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.GLMDEA.run">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">family</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;negative.binomial&quot;</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;both&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
+        <span class="n">use_covariates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_covariates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">merge_covariates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_pred</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">subset_features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_obs_with_covariates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">fit_intercept</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">mht_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;fdr_bh&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+        <span class="c1"># make method specific imports</span>
+        <span class="kn">import</span> <span class="nn">glum</span> <span class="k">as</span> <span class="nn">gl</span>
+        <span class="kn">from</span> <span class="nn">statsmodels.stats.multitest</span> <span class="kn">import</span> <span class="n">multipletests</span> <span class="k">as</span> <span class="n">mht</span>
+
+        <span class="c1"># get what object to target</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span><span class="p">:</span>
+            <span class="n">target_l</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;from&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_l</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+        <span class="c1"># instantiate output dictionary</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># iterate over target objects</span>
+        <span class="k">for</span> <span class="n">tgt</span> <span class="ow">in</span> <span class="n">target_l</span><span class="p">:</span>
+            <span class="c1"># get design matrix</span>
+            <span class="n">D</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;D_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tgt</span><span class="p">))</span>
+            <span class="c1"># assert design matrix is defined</span>
+            <span class="k">assert</span> <span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;D_</span><span class="si">{</span><span class="n">tgt</span><span class="si">}</span><span class="s2"> is not defined&quot;</span>
+
+            <span class="c1"># copy object to prevent permanent changes</span>
+            <span class="n">D_inp</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">D_inp</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;D_</span><span class="si">{</span><span class="n">tgt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">D_inp</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;D_</span><span class="si">{</span><span class="n">tgt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># get name of feature object</span>
+            <span class="n">X_name</span> <span class="o">=</span> <span class="s2">&quot;X_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span>
+            <span class="c1"># if pred should be used modify name</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_pred</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">use_pred</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                    <span class="n">X_name</span> <span class="o">+=</span> <span class="s2">&quot;_pred&quot;</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_pred</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">use_pred</span> <span class="ow">and</span> <span class="p">(</span><span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;X_</span><span class="si">{</span><span class="n">tgt</span><span class="si">}</span><span class="s2">_pred&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="n">X_name</span> <span class="o">+=</span> <span class="s2">&quot;_pred&quot;</span>
+
+            <span class="c1"># get X object</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">X_name</span><span class="p">)</span>
+            <span class="c1"># make sure X object is defined</span>
+            <span class="k">assert</span> <span class="n">X</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">X_name</span><span class="si">}</span><span class="s2"> is not defined&quot;</span>
+            <span class="c1"># copy object to prevent permanent changes</span>
+            <span class="n">X_inp</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_inp</span><span class="p">,</span> <span class="n">X_name</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">X_inp</span><span class="p">,</span> <span class="n">X_name</span><span class="p">)</span>
+
+            <span class="c1"># convert X to pandas data frame</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_inp</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+                <span class="n">X_inp</span> <span class="o">=</span> <span class="n">X_inp</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">merge_covariates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">merge_covariates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">merge_covariates</span> <span class="o">=</span> <span class="p">[</span><span class="n">merge_covariates</span><span class="p">]</span>
+
+                <span class="n">drop_cols</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">merge_cols</span> <span class="ow">in</span> <span class="n">merge_covariates</span><span class="p">:</span>
+                    <span class="n">is_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">D_inp</span><span class="p">[</span><span class="n">merge_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">new_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">D_inp</span><span class="p">))</span>
+                    <span class="n">new_label</span><span class="p">[</span><span class="n">is_new</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">new_label_name</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">merge_cols</span><span class="p">)</span>
+                    <span class="n">D_inp</span><span class="p">[</span><span class="n">new_label_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label</span>
+                    <span class="n">drop_cols</span> <span class="o">+=</span> <span class="n">drop_cols</span>
+
+                    <span class="k">if</span> <span class="n">use_covariates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">use_covariates</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">use_covariates</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">merge_cols</span>
+                        <span class="p">]</span>
+                        <span class="n">use_covariates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new_label_name</span><span class="p">]</span>
+
+                    <span class="n">D_inp</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">drop_cols</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># subset to specified covariates, if None then use all</span>
+            <span class="k">if</span> <span class="n">use_covariates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">D_inp</span> <span class="o">=</span> <span class="n">D_inp</span><span class="p">[</span><span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">use_covariates</span><span class="p">)]</span>
+            <span class="c1"># drop covariates if specified</span>
+            <span class="k">if</span> <span class="n">drop_covariates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">keep_cols</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">D</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">drop_covariates</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">D_inp</span> <span class="o">=</span> <span class="n">D_inp</span><span class="p">[</span><span class="n">keep_cols</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">use_obs_with_covariates</span><span class="p">:</span>
+                <span class="n">has_covs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">D_inp</span><span class="o">.</span><span class="n">values</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">X_inp</span> <span class="o">=</span> <span class="n">X_inp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">has_covs</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">D_inp</span> <span class="o">=</span> <span class="n">D_inp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">has_covs</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="c1"># check what features to test</span>
+            <span class="n">_features</span> <span class="o">=</span> <span class="n">X_inp</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">subset_features</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">subset_features</span>
+
+            <span class="c1"># default glm parameters</span>
+            <span class="c1"># from: https://glum.readthedocs.io/en/latest/glm.html#glum.GeneralizedLinearRegressor (2024-01-25)</span>
+            <span class="n">glm_default_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">l1_ratio</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">P1</span><span class="o">=</span><span class="s2">&quot;identity&quot;</span><span class="p">,</span>
+                <span class="n">P2</span><span class="o">=</span><span class="s2">&quot;identity&quot;</span><span class="p">,</span>
+                <span class="n">link</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                <span class="n">gradient_tol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">step_size_tol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">hessian_approx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">alpha_search</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">alphas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">n_alphas</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                <span class="n">min_alpha_ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">min_alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">start_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">selection</span><span class="o">=</span><span class="s2">&quot;cyclic&quot;</span><span class="p">,</span>
+                <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">copy_X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">check_input</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">scale_predictors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">lower_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">upper_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">A_ineq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">b_ineq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">force_all_finite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">drop_first</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">expected_information</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># update parameters from kwargs</span>
+            <span class="n">glm_params</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">merge_default_dict_with_kwargs</span><span class="p">(</span><span class="n">glm_default_params</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="c1"># add intercept</span>
+            <span class="n">glm_params</span><span class="p">[</span><span class="s2">&quot;fit_intercept&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fit_intercept</span>
+            <span class="c1"># add distribution family</span>
+            <span class="n">glm_params</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">family</span>
+
+            <span class="c1"># prepare results dictionary</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;covariate&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="n">DEA</span><span class="o">.</span><span class="n">coeff</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="n">DEA</span><span class="o">.</span><span class="n">p_value</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="n">DEA</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">}</span>
+
+            <span class="c1"># iterate over features</span>
+            <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">_features</span><span class="p">:</span>
+                <span class="c1"># prepare dependent variable</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">X_inp</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="c1"># create glm object</span>
+                <span class="n">glm</span> <span class="o">=</span> <span class="n">gl</span><span class="o">.</span><span class="n">GeneralizedLinearRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">glm_params</span><span class="p">)</span>
+                <span class="c1"># fit glm object</span>
+                <span class="n">glm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">D_inp</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+                <span class="c1"># get coefficient table</span>
+                <span class="n">coef_table</span> <span class="o">=</span> <span class="n">glm</span><span class="o">.</span><span class="n">coef_table</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">D_inp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+                <span class="c1"># transfer values to results dictionary</span>
+                <span class="n">res</span><span class="p">[</span><span class="s2">&quot;covariate&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coef_table</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">DEA</span><span class="o">.</span><span class="n">p_value</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coef_table</span><span class="p">[</span><span class="s2">&quot;p_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">DEA</span><span class="o">.</span><span class="n">coeff</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coef_table</span><span class="p">[</span><span class="s2">&quot;coef&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">DEA</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">*</span> <span class="n">coef_table</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># because we need all p-values when doing the correction</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">p_val_adj</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">mht</span><span class="p">(</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">DEA</span><span class="o">.</span><span class="n">p_value</span><span class="o">.</span><span class="n">value</span><span class="p">],</span>
+                <span class="n">method</span><span class="o">=</span><span class="n">mht_method</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># add adjusted p-values</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">DEA</span><span class="o">.</span><span class="n">adj_p_value</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_val_adj</span>
+
+            <span class="c1"># convert to dataframe</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="c1"># split by covariate</span>
+            <span class="n">tgt_out</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tgt</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">cov</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;covariate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">cov</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="n">D_inp</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">}</span>
+
+            <span class="c1"># update output dictionary</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tgt_out</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;DEA&quot;</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">:</span>
+            <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;DEA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;DEA&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">DEA</span><span class="o">=</span><span class="n">out</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">telegraph beta-v1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">telegraph.methods.dea_methods</a></li>
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, BRAID-MAGIC.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>
