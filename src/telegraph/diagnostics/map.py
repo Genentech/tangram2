@@ -15,7 +15,7 @@ def _get_T(T: pd.DataFrame | np.ndarray, normalize_T: bool = True):
         T_n = T.copy()
 
     if normalize_T:
-        T_n = T_n / (T_n.sum(axis=0, keepdims=True) + 1e-9 )
+        T_n = T_n / (T_n.sum(axis=0, keepdims=True) + 1e-9)
 
     return T_n
 
@@ -55,6 +55,7 @@ def plot_top_k_distribution(
             label="top {}".format(k),
             alpha=alpha,
             edgecolor=edgecolor,
+            density=True,
         )
 
     ax.legend()
