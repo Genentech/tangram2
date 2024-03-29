@@ -41,10 +41,10 @@ def _get_X_and_labels(
                 Xn = X
 
         case (None, str()):
-            Xn = adata.obsm[obsm]
+            Xn = X.obsm[obsm]
 
         case (str(), None):
-            Xn = adata.layers[layer]
+            Xn = X.layers[layer]
 
     return Xn, labels
 
@@ -101,7 +101,6 @@ def plot_group_separation(
 
     uni_labels = np.unique(labels)
     color_mapper = {l: k for k, l in enumerate(uni_labels)}
-
     plt_kwargs_default = dict(s=marker_size)
 
     if plt_kwargs is None:
@@ -147,7 +146,7 @@ def test_group_separation(
     print_res: bool = False,
     n_reps: int = 10,
     stratify_by_labels: bool = False,
-    normalize_cmatrix: str = None
+    normalize_cmatrix: str = None,
 ):
 
     from sklearn.metrics import confusion_matrix, f1_score
@@ -177,7 +176,9 @@ def test_group_separation(
         stratify = labels
 
     for ii in range(n_reps):
-        X_train, X_test, y_train, y_test = train_test_split(Xd, labels, test_size=0.2, stratify=stratify)
+        X_train, X_test, y_train, y_test = train_test_split(
+            Xd, labels, test_size=0.2, stratify=stratify
+        )
 
         clf = _classifier(**clf_params)
         clf.fit(X_train, y_train)
@@ -218,7 +219,8 @@ def test_group_separation(
 
 
 def plot_separation_confusion_matrix(
-    confusion_matrix: Dict[str, Any] | np.ndarray, plot: bool = True,
+    confusion_matrix: Dict[str, Any] | np.ndarray,
+    plot: bool = True,
 ):
     from sklearn.metrics import ConfusionMatrixDisplay
 

@@ -41,7 +41,7 @@ class ThresholdGroup(GroupMethodClass):
     # how much of their mass is mapped to the two different
     # groups in the "to" data
 
-    ins = ["X_from", "X_to_pred", "T"]
+    ins = ["X_from", ("X_to_pred", "X_to"), "T"]
     outs = ["D_to", "D_from"]
 
     def __init__(
@@ -65,9 +65,14 @@ class ThresholdGroup(GroupMethodClass):
     ) -> pd.DataFrame:
 
         # anndata for predict to data
-        X_to_pred = input_dict["X_to_pred"]
-        pol.check_values(X_to_pred, "X_to_pred")
-        pol.check_type(X_to_pred, "X_to_pred")
+        X_to_pred = input_dict.get("X_to_pred")
+        if X_to_pred is not None:
+            pol.check_values(X_to_pred, "X_to_pred")
+            pol.check_type(X_to_pred, "X_to_pred")
+        else:
+            X_to_pred = input_dict.get("X_to")
+            if X_to_pred is None:
+                raise ValueError('Must provide one of "X_to" or "X_to_pred"')
 
         # anndata object that we map _from_
         X_from = input_dict["X_from"]
@@ -158,10 +163,13 @@ class ThresholdGroup(GroupMethodClass):
             from_cols = [f"adj_{feature}"]
 
             # convert "from" design matrix to data frame
+            from_index = (
+                X_from.obs.index if isinstance(X_from, ad.AnnData) else X_from.index
+            )
             D_from = pd.DataFrame(
                 D_from.astype(int),
                 columns=from_cols,
-                index=X_from.obs.index,
+                index=from_index,
             )
             if add_complement:
                 D_from[f"nadj_{feature}"] = 1 - D_from[f"adj_{feature}"].values
@@ -184,12 +192,15 @@ class ThresholdGroup(GroupMethodClass):
         pol.check_type(D_from, "D_from")
         pol.check_dimensions(D_from, "D_from", (n_from, None))
 
+        D_to = gut.add_groups_to_old_D(Ds_to, input_dict, target="to")
+        D_from = gut.add_groups_to_old_D(Ds_from, input_dict, target="from")
+
         # Note: if we specify add covariates
         # additional covariates will be appended to the design matrix
 
         return dict(
-            D_to=Ds_to,
-            D_from=Ds_from,
+            D_to=D_to,
+            D_from=D_from,
         )
 
 
@@ -217,7 +228,7 @@ class AssociationScore(GroupMethodClass):
 
     """
 
-    ins = ["X_from", "X_to_pred", "T"]
+    ins = ["X_from", "T", ("X_to", "X_to_pred")]
     outs = ["D_from"]
 
     def __init__(
@@ -239,9 +250,15 @@ class AssociationScore(GroupMethodClass):
 
         X_from = input_dict.get("X_from")
         assert X_from is not None, "X_from needs to be an object"
+        if isinstance(X_from, ad.AnnData):
+            X_from = X_from.to_df()
         # get dataframe of "X_to_pred"
         X_to_pred = input_dict.get("X_to_pred")
-        assert X_to_pred is not None, "X_to_pred needs to be an object"
+        if X_to_pred is None:
+            X_to_pred = input_dict.get("X_to")
+            if X_to_pred is None:
+                raise ValueError("Must provide 'X_to' or 'X_to_pred'")
+            print("Operating with X_to")
 
         if isinstance(X_to_pred, ad.AnnData):
             X_to_pred = X_to_pred.to_df()
@@ -255,7 +272,7 @@ class AssociationScore(GroupMethodClass):
         # convert to dataframe
         Q = pd.DataFrame(
             Q,
-            index=X_from.obs.index,
+            index=X_from.index,
             columns=X_to_pred.columns,
         )
 
@@ -277,7 +294,9 @@ class AssociationScore(GroupMethodClass):
 
             Q = Q.loc[:, feature_name]
 
-        return dict(D_from=Q)
+        D_from = gut.add_groups_to_old_D(Q, input_dict, target="from")
+
+        return dict(D_from=D_from)
 
 
 class QuantileGroup(GroupMethodClass):
@@ -400,10 +419,13 @@ class QuantileGroup(GroupMethodClass):
 
             from_cols = [f"nadj_{feature}", f"adj_{feature}"]
             # convert "from" design matrix to data frame
+            from_index = (
+                X_from.obs.index if isinstance(X_from, ad.AnnData) else X_from.index
+            )
             D_from = pd.DataFrame(
                 D_from.astype(int),
                 columns=from_cols,
-                index=X_from.obs.index,
+                index=from_index,
             )
 
             # save feature specific design matrix
@@ -427,7 +449,10 @@ class QuantileGroup(GroupMethodClass):
         # Note: if we specify add covariates
         # additional covariates will be appended to the design matrix
 
+        D_to = gut.add_groups_to_old_D(Ds_to, input_dict, target="to")
+        D_from = gut.add_groups_to_old_D(Ds_from, input_dict, target="from")
+
         return dict(
-            D_to=Ds_to,
-            D_from=Ds_from,
+            D_to=D_to,
+            D_from=D_from,
         )

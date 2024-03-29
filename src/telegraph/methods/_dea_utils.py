@@ -19,7 +19,8 @@ def scanpy_dea_labels_from_D(D: pd.DataFrame, group_pair, new_col_name="label"):
     def helper(grp_i, labels):
         grp_i_l = ut.listify(grp_i)
         grp_i_fl = [x for x in grp_i_l if x in col_names]
-        assert len(grp_i_fl) > 0, "group covariates are not in design matrix"
+        if len(grp_i_fl) < 1:
+            raise ValueError("group covariates are not in design matrix")
         is_grp_i = np.all(D[grp_i_fl].values, axis=1)
         grp_i_name = "_".join(grp_i_fl)
         labels[is_grp_i] = grp_i_name
@@ -49,7 +50,6 @@ def anndata_from_X_and_D(X, D):
             columns=["features"],
         )
 
-    print(np.unique(D.values))
     adata = ad.AnnData(
         X,
         obs=D,
