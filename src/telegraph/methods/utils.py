@@ -427,8 +427,7 @@ def adatas_to_input(
 
 def merge_input_dicts(*input_dicts):
 
-    union_keys = [list(x.keys()) for x in input_dicts]
-    union_keys = [x for y in union_keys for x in y]
+    union_keys = [k for y in input_dicts for k, v in y.items() if v is not None]
     union_keys = [x for x in union_keys if union_keys.count(x) == len(input_dicts)]
     union_keys = list(set(union_keys))
     union_keys = [x for x in union_keys if x.startswith(("T", "X", "D"))]
