@@ -186,8 +186,7 @@ class LowercaseGenes(PPClass):
         obj.var.index = [g.lower() for g in obj.var.index.tolist()]
         # remove duplicates
         keep = ~obj.var.index.duplicated()
-        obj.var.index = obj.var.index[keep]
-        obj.X = obj[:, keep].X
+        obj = obj[:, keep].copy()
         return obj
 
 
@@ -197,17 +196,20 @@ class StandardMoscot(PPClass):
     def pp(obj, obj_name=None, **kwargs):
         match obj_name:
             case "X_from" | "sc":
-                LowercaseGenes.pp(obj)
+                obj = LowercaseGenes.pp(obj)
                 StandardScanpy.pp(obj, **kwargs.get("scanpy_pp", {}))
                 ScanpyPCA.pp(obj, **kwargs.get("scanpy_pca", {}))
+                return obj
             case "X_to" | "sp":
-                LowercaseGenes.pp(obj)
+                obj = LowercaseGenes.pp(obj)
                 StandardScanpy.pp(obj, **kwargs.get("scanpy_pp", {}))
                 ScanpyPCA.pp(obj, **kwargs.get("scanpy_pca", {}))
+                return obj
             case _:
-                LowercaseGenes.pp(obj)
+                obj = LowercaseGenes.pp(obj)
                 StandardScanpy.pp(obj, **kwargs.get("scanpy_pp", {}))
                 ScanpyPCA.pp(obj, **kwargs.get("scanpy_pca", {}))
+                return obj
 
 
 class gimVIPP(PPClass):
@@ -246,11 +248,13 @@ class StandardSpaGE(PPClass):
     def pp(obj, obj_name=None, **kwargs):
         match obj_name:
             case "X_from" | "sc":
-                LowercaseGenes.pp(obj)
+                obj = LowercaseGenes.pp(obj)
                 FilterGenes.pp(obj, **kwargs)
                 StandardScanpy.pp(obj, **kwargs)
+                return obj
             case "X_to" | "sc":
-                LowercaseGenes.pp(obj)
+                obj = LowercaseGenes.pp(obj)
                 StandardScanpy.pp(obj, **kwargs)
+                return obj
             case _:
                 StandardScanpy.pp(obj, **kwargs)
