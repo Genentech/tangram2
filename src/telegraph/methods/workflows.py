@@ -268,6 +268,27 @@ class Workflow:
             return False
         return hasattr(x, "ins") & hasattr(x, "outs")
 
+    def __add__(self, other):
+
+        new_methods_dict = dict()
+
+        for met_name, met_fun, met_prm in zip(
+            self.methods, self.methods_prms, self.methods_names
+        ):
+            new_methods_dict[met_name] = {self.met_key: met_fun, self.prm_key: met_prm}
+
+        for met_name, met_fun, met_prm in zip(
+            other.methods, other.methods_prms, other.methods_names
+        ):
+            new_methods_dict[met_name] = {self.met_key: met_fun, self.prm_key: met_prm}
+
+        return Workflow(
+            new_methods_dict,
+            check_compatibility=False,
+            met_key=self.met_key,
+            prm_key=self.prm_key,
+        )
+
     def list_methods(self, include_callable: bool = True):
         for step_name, step_fun, step_prms in zip(
             self.methods_names, self.methods, self.methods_prms
