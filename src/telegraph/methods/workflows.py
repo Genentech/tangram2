@@ -273,12 +273,12 @@ class Workflow:
         new_methods_dict = dict()
 
         for met_name, met_fun, met_prm in zip(
-            self.methods, self.methods_prms, self.methods_names
+            self.methods_names, self.methods, self.methods_prms
         ):
             new_methods_dict[met_name] = {self.met_key: met_fun, self.prm_key: met_prm}
 
         for met_name, met_fun, met_prm in zip(
-            other.methods, other.methods_prms, other.methods_names
+            other.methods_names, other.methods, other.methods_prms
         ):
             new_methods_dict[met_name] = {self.met_key: met_fun, self.prm_key: met_prm}
 
