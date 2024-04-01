@@ -1,0 +1,224 @@
+:py:mod:`telegraph.methods.map_methods`
+=======================================
+
+.. py:module:: telegraph.methods.map_methods
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.map_methods.MapMethodClass
+   telegraph.methods.map_methods.RandomMap
+   telegraph.methods.map_methods.ArgMaxCorrMap
+   telegraph.methods.map_methods.TangramMap
+   telegraph.methods.map_methods.TangramV1Map
+   telegraph.methods.map_methods.TangramV2Map
+   telegraph.methods.map_methods.CeLEryMap
+   telegraph.methods.map_methods.SpaOTscMap
+   telegraph.methods.map_methods.MoscotMap
+
+
+
+
+.. py:class:: MapMethodClass(*args, **kwargs)
+
+
+   Bases: :py:obj:`telegraph.methods._methods.MethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: run(X_to: Any, X_from: Any, *args, S_to: numpy.ndarray | None = None, S_from: numpy.ndarray | None = None, **kwargs) -> Dict[str, numpy.ndarray] | Dict[str, scipy.sparse.spmatrix]
+      :classmethod:
+      :abstractmethod:
+
+
+
+.. py:class:: RandomMap
+
+
+   Bases: :py:obj:`MapMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['X_to', 'X_from']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['T']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], seed: int = 1, **kwargs)
+      :classmethod:
+
+
+
+.. py:class:: ArgMaxCorrMap(*args, **kwargs)
+
+
+   Bases: :py:obj:`MapMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['X_from', 'X_to']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['T']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], **kwargs) -> Dict[str, numpy.ndarray] | Dict[str, scipy.sparse.spmatrix]
+      :classmethod:
+
+
+
+.. py:class:: TangramMap(*args, **kwargs)
+
+
+   Bases: :py:obj:`MapMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: tg
+
+      
+
+   .. py:attribute:: version
+
+      
+
+   .. py:attribute:: ins
+      :value: ['X_to', 'X_from']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['T', 'S_from']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], to_spatial_key: str = 'spatial', from_spatial_key: str = 'spatial', num_epochs: int = 1000, genes: List[str] | str | None = None, **kwargs) -> Dict[str, numpy.ndarray] | Dict[str, scipy.sparse.spmatrix]
+      :classmethod:
+
+
+
+.. py:class:: TangramV1Map(*args, **kwargs)
+
+
+   Bases: :py:obj:`TangramMap`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: version
+      :value: '1'
+
+      
+
+
+.. py:class:: TangramV2Map(*args, **kwargs)
+
+
+   Bases: :py:obj:`TangramMap`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:property:: custom_save_funcs
+      :type: Dict[str, Callable]
+      :classmethod:
+
+
+   .. py:attribute:: version
+      :value: '2'
+
+      
+
+   .. py:method:: _save_w(res_dict: Dict[str, Any], out_dir: str, **kwargs)
+      :classmethod:
+
+
+
+.. py:class:: CeLEryMap(*args, **kwargs)
+
+
+   Bases: :py:obj:`MapMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['X_to', 'X_from']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['S_from']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], hidden_dims: List[int] = [30, 25, 15], num_epochs_max: int = 100, spatial_key: str = 'spatial', **kwargs) -> Dict[str, numpy.ndarray]
+      :classmethod:
+
+
+
+.. py:class:: SpaOTscMap(*args, **kwargs)
+
+
+   Bases: :py:obj:`MapMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['X_to', 'X_from']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['T']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], to_spatial_key: str = 'spatial', seed: int | None = None, **kwargs) -> Dict[str, numpy.ndarray] | Dict[str, scipy.sparse.spmatrix]
+      :classmethod:
+
+
+
+.. py:class:: MoscotMap(*args, **kwargs)
+
+
+   Bases: :py:obj:`MapMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['X_to', 'X_from']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['T', 'moscot_solution']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], genes: List[str] | str | None = None, return_T_norm: bool = True, seed: int | None = None, **kwargs) -> Dict[str, numpy.ndarray]
+      :classmethod:
+
+
+

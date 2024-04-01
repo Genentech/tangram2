@@ -1,0 +1,215 @@
+:py:mod:`telegraph.methods.preprocess`
+======================================
+
+.. py:module:: telegraph.methods.preprocess
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.preprocess.PPClass
+   telegraph.methods.preprocess.IdentityPP
+   telegraph.methods.preprocess.NormalizeTotal
+   telegraph.methods.preprocess.ScanpyPCA
+   telegraph.methods.preprocess.StandardScanpy
+   telegraph.methods.preprocess.CeLEryPP
+   telegraph.methods.preprocess.StandardTangramV1
+   telegraph.methods.preprocess.StandardTangramV2
+   telegraph.methods.preprocess.StandardSpaOTsc
+   telegraph.methods.preprocess.LowercaseGenes
+   telegraph.methods.preprocess.StandardMoscot
+   telegraph.methods.preprocess.gimVIPP
+   telegraph.methods.preprocess.FilterGenes
+   telegraph.methods.preprocess.StandardSpaGE
+
+
+
+
+.. py:class:: PPClass
+
+
+   Bases: :py:obj:`abc.ABC`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, *args, **kwargs)
+      :staticmethod:
+      :abstractmethod:
+
+
+
+.. py:class:: IdentityPP
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, *args, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: NormalizeTotal
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: ScanpyPCA
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: StandardScanpy
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: CeLEryPP
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: StandardTangramV1
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: StandardTangramV2
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: StandardSpaOTsc
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: LowercaseGenes
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: StandardMoscot
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: gimVIPP
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: FilterGenes
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: StandardSpaGE
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+      :staticmethod:
+
+
+

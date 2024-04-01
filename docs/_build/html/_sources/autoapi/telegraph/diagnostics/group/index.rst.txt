@@ -1,0 +1,34 @@
+:py:mod:`telegraph.diagnostics.group`
+=====================================
+
+.. py:module:: telegraph.diagnostics.group
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.diagnostics.group._get_X_and_labels
+   telegraph.diagnostics.group.plot_group_separation
+   telegraph.diagnostics.group.test_group_separation
+   telegraph.diagnostics.group.plot_separation_confusion_matrix
+
+
+
+.. py:function:: _get_X_and_labels(X, D=None, labels=None, layer=None, obsm=None, group_col: str | None = None)
+
+
+.. py:function:: plot_group_separation(X, D=None, labels=None, group_col: str = None, group_type: Literal[discrete, continuous] = 'discrete', project_method: str | List[str] = 'pca', cmap=plt.cm.Dark2, plot=True, marker_size: int = None, plt_kwargs: Dict[str, Any] | None = None)
+
+
+.. py:function:: test_group_separation(X, D=None, labels=None, group_col: str = None, classifier: str = 'svm', n_pca: int = 50, clf_params: None | Dict[str, Any] = None, print_res: bool = False, n_reps: int = 10, stratify_by_labels: bool = False, normalize_cmatrix: str = None)
+
+
+.. py:function:: plot_separation_confusion_matrix(confusion_matrix: Dict[str, Any] | numpy.ndarray, plot: bool = True)
+
+

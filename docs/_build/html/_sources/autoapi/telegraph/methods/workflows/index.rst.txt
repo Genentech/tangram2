@@ -1,0 +1,75 @@
+:py:mod:`telegraph.methods.workflows`
+=====================================
+
+.. py:module:: telegraph.methods.workflows
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.workflows.IdentityFun
+   telegraph.methods.workflows.Composite
+   telegraph.methods.workflows.WorkFlowClass
+
+
+
+
+.. py:class:: IdentityFun
+
+
+   Identify Function
+
+   Has all the method of a 'MethodClass'
+   but applies to transformation to the data,
+   i.e., it returns the input data unchanged
+   upon calling 'run'
+
+
+   .. py:method:: run(*args, **kwargs)
+      :classmethod:
+
+
+   .. py:method:: save(*args, **kwargs)
+      :classmethod:
+
+
+
+.. py:class:: Composite(methods: Dict[str, str], use_fuzzy_match: bool = False, check_compatibility: bool = True)
+
+
+   .. py:method:: run(input_dict: Dict[str, Any], **kwargs)
+
+
+   .. py:method:: save(res_dict: Dict[str, Any], out_dir: str, **kwargs)
+
+
+
+.. py:class:: WorkFlowClass(*args, **kwargs)
+
+
+   Bases: :py:obj:`telegraph.methods._methods.MethodClass`
+
+   Workflow baseclass
+
+   to be used when we want to
+   hardcode a composable (recipe) workflow
+
+
+   .. py:attribute:: flow
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], **kwargs)
+      :classmethod:
+
+
+   .. py:method:: save(res_dict: Dict[str, Any], out_dir: str, **kwargs) -> None
+      :classmethod:
+
+
+

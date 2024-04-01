@@ -215,7 +215,7 @@ class AssociationScore(GroupMethodClass):
     observation i in 'from' is with feature f in 'to_pred'.
 
 
-    We use the formula: $Q = T^t \cdot X_to_pred = T^t \cdot (T \cdot X_{to\_pred})$
+    We use the formula: :math:`Q = T^t \cdot X_to_pred = T^t \cdot (T \cdot X_{to\_pred})`
 
     The dimensions for the objects are:
 

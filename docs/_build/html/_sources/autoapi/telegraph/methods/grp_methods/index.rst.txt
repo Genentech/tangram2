@@ -1,0 +1,124 @@
+:py:mod:`telegraph.methods.grp_methods`
+=======================================
+
+.. py:module:: telegraph.methods.grp_methods
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.grp_methods.GroupMethodClass
+   telegraph.methods.grp_methods.ThresholdGroup
+   telegraph.methods.grp_methods.AssociationScore
+   telegraph.methods.grp_methods.QuantileGroup
+
+
+
+
+.. py:class:: GroupMethodClass(*args, **kwargs)
+
+
+   Bases: :py:obj:`telegraph.methods._methods.MethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: run(input_dict: Dict[str, Any], *args, **kwargs) -> Dict[str, pandas.DataFrame]
+      :classmethod:
+      :abstractmethod:
+
+
+
+.. py:class:: ThresholdGroup(*args, **kwargs)
+
+
+   Bases: :py:obj:`GroupMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['X_from', 'X_to_pred', 'T']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['D_to', 'D_from']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, thres_t: float | Tuple[float, float] = 0.5, thres_x: float | Tuple[float, float] = 0.5, add_complement: bool = True, **kwargs) -> pandas.DataFrame
+      :classmethod:
+
+
+
+.. py:class:: AssociationScore(*args, **kwargs)
+
+
+   Bases: :py:obj:`GroupMethodClass`
+
+   Association Score between
+
+   how strongly is observation i in 'from' associated
+   with feature f in 'from'
+
+
+   Calculates `Q` where, Q_{if} indicates how strongly associated
+   observation i in 'from' is with feature f in 'to_pred'.
+
+
+   We use the formula: :math:`Q = T^t \cdot X_to_pred = T^t \cdot (T \cdot X_{to\_pred})`
+
+   The dimensions for the objects are:
+
+   X_from : [n_from] x [n_var] (e.g., spatial gene expression)
+   X_to_pred : [n_to] x [n_var] (e.g., single cell gene expression)
+   T : [n_to] x [n_from] (e.g., map of single cells to visium spots)
+   Q : [n_from] x [n_var]
+
+   Q should be a pd.DataFrame object
+
+
+   .. py:attribute:: ins
+      :value: ['X_from', 'X_to_pred', 'T']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['D_from']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str | None = None, **kwargs) -> pandas.DataFrame
+      :classmethod:
+
+
+
+.. py:class:: QuantileGroup(*args, **kwargs)
+
+
+   Bases: :py:obj:`GroupMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['X_from', 'X_to', 'T']
+
+      
+
+   .. py:attribute:: outs
+      :value: ['D_to', 'D_from']
+
+      
+
+   .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, q_t: float | Tuple[float, float] = 0.25, q_x: float | Tuple[float, float] = 0.25, **kwargs) -> pandas.DataFrame
+      :classmethod:
+
+
+

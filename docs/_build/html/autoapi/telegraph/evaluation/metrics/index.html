@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>telegraph.evaluation.metrics &mdash; telegraph beta-v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+
+
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=18fb929b"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="telegraph.evaluation.run" href="../run/index.html" />
+    <link rel="prev" title="telegraph.evaluation.tests" href="../tests/index.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            telegraph
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../datagen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../diagnostics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../methods/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.tests</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">telegraph</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation.metrics</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/telegraph/evaluation/metrics/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="module-telegraph.evaluation.metrics">
+<span id="telegraph-evaluation-metrics"></span><h1><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#module-telegraph.evaluation.metrics" title="telegraph.evaluation.metrics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation.metrics</span></code></a><a class="headerlink" href="#module-telegraph.evaluation.metrics" title="Link to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MetricClass" title="telegraph.evaluation.metrics.MetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricClass</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.PrintMetric" title="telegraph.evaluation.metrics.PrintMetric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrintMetric</span></code></a></p></td>
+<td><p>Print Metric</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MapMetricClass" title="telegraph.evaluation.metrics.MapMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapMetricClass</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.PredMetricClass" title="telegraph.evaluation.metrics.PredMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PredMetricClass</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.DEAMetricClass" title="telegraph.evaluation.metrics.DEAMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMetricClass</span></code></a></p></td>
+<td><p>DEA Metric Baseclass</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.HardMapMetricClass" title="telegraph.evaluation.metrics.HardMapMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardMapMetricClass</span></code></a></p></td>
+<td><p>Metric class for hard maps (T)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MapJaccardDist" title="telegraph.evaluation.metrics.MapJaccardDist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapJaccardDist</span></code></a></p></td>
+<td><p>Metric class for hard maps (T)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MapAccuracy" title="telegraph.evaluation.metrics.MapAccuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapAccuracy</span></code></a></p></td>
+<td><p>Metric class for hard maps (T)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MapF1" title="telegraph.evaluation.metrics.MapF1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapF1</span></code></a></p></td>
+<td><p>Metric class for hard maps (T)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MapRMSE" title="telegraph.evaluation.metrics.MapRMSE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapRMSE</span></code></a></p></td>
+<td><p>RMSE for spatial coordinates</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.PredLeaveOutScore" title="telegraph.evaluation.metrics.PredLeaveOutScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PredLeaveOutScore</span></code></a></p></td>
+<td><p>Leave out(Held out) set score for Pred result</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.DEAHyperGeom" title="telegraph.evaluation.metrics.DEAHyperGeom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAHyperGeom</span></code></a></p></td>
+<td><p>Hypergeometric Test for DEA result</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.DEAAuc" title="telegraph.evaluation.metrics.DEAAuc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAAuc</span></code></a></p></td>
+<td><p>AUC for DEA result</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MetricClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">MetricClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MetricClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MetricClass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MetricClass.metric_type">
+<span class="sig-name descname"><span class="pre">metric_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.MetricClass.metric_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MetricClass.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.MetricClass.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MetricClass.make_standard_out">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_standard_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MetricClass.make_standard_out"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MetricClass.make_standard_out" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MetricClass.score">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MetricClass.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MetricClass.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MetricClass.save">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MetricClass.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MetricClass.save" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PrintMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">PrintMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#PrintMetric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.PrintMetric" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MetricClass" title="telegraph.evaluation.metrics.MetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricClass</span></code></a></p>
+<p>Print Metric</p>
+<p>Simply prints the results,
+no metric is calculated.
+Intended for development
+purposes</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PrintMetric.metric_type">
+<span class="sig-name descname"><span class="pre">metric_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dev'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.PrintMetric.metric_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PrintMetric.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'print'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.PrintMetric.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PrintMetric.get_gt">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_gt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#PrintMetric.get_gt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.PrintMetric.get_gt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PrintMetric.score">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#PrintMetric.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.PrintMetric.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PrintMetric.save">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#PrintMetric.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.PrintMetric.save" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapMetricClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">MapMetricClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapMetricClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapMetricClass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MetricClass" title="telegraph.evaluation.metrics.MetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricClass</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapMetricClass.metric_type">
+<span class="sig-name descname"><span class="pre">metric_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'map'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.MapMetricClass.metric_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PredMetricClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">PredMetricClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#PredMetricClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.PredMetricClass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MetricClass" title="telegraph.evaluation.metrics.MetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricClass</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PredMetricClass.metric_type">
+<span class="sig-name descname"><span class="pre">metric_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pred'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.PredMetricClass.metric_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAMetricClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">DEAMetricClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#DEAMetricClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.DEAMetricClass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MetricClass" title="telegraph.evaluation.metrics.MetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricClass</span></code></a></p>
+<p>DEA Metric Baseclass</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAMetricClass.metric_type">
+<span class="sig-name descname"><span class="pre">metric_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dea'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.DEAMetricClass.metric_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAMetricClass.get_gt">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_gt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#DEAMetricClass.get_gt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.DEAMetricClass.get_gt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.HardMapMetricClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">HardMapMetricClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#HardMapMetricClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.HardMapMetricClass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MapMetricClass" title="telegraph.evaluation.metrics.MapMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapMetricClass</span></code></a></p>
+<p>Metric class for hard maps (T)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.HardMapMetricClass._pp">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#HardMapMetricClass._pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.HardMapMetricClass._pp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.HardMapMetricClass._make_T_hard">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_make_T_hard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_hard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hard_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'argmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#HardMapMetricClass._make_T_hard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.HardMapMetricClass._make_T_hard" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapJaccardDist">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">MapJaccardDist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapJaccardDist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapJaccardDist" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.HardMapMetricClass" title="telegraph.evaluation.metrics.HardMapMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardMapMetricClass</span></code></a></p>
+<p>Metric class for hard maps (T)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapJaccardDist.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'jaccard'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.MapJaccardDist.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapJaccardDist.score">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapJaccardDist.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapJaccardDist.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapAccuracy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">MapAccuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapAccuracy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapAccuracy" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.HardMapMetricClass" title="telegraph.evaluation.metrics.HardMapMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardMapMetricClass</span></code></a></p>
+<p>Metric class for hard maps (T)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapAccuracy.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'accuracy'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.MapAccuracy.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapAccuracy.score">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapAccuracy.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapAccuracy.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapF1">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">MapF1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapF1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapF1" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.HardMapMetricClass" title="telegraph.evaluation.metrics.HardMapMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HardMapMetricClass</span></code></a></p>
+<p>Metric class for hard maps (T)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapF1.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'f1'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.MapF1.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapF1.score">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapF1.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapF1.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapRMSE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">MapRMSE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapRMSE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapRMSE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.MapMetricClass" title="telegraph.evaluation.metrics.MapMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapMetricClass</span></code></a></p>
+<p>RMSE for spatial coordinates</p>
+<p>calculates the RMSE between the true
+and the predicted spatial
+coordinates of ‘from’.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapRMSE.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rmse'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.MapRMSE.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.MapRMSE.score">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#MapRMSE.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.MapRMSE.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PredLeaveOutScore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">PredLeaveOutScore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#PredLeaveOutScore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.PredLeaveOutScore" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.PredMetricClass" title="telegraph.evaluation.metrics.PredMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PredMetricClass</span></code></a></p>
+<p>Leave out(Held out) set score for Pred result</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PredLeaveOutScore.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'loov'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.PredLeaveOutScore.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.PredLeaveOutScore.score">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#PredLeaveOutScore.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.PredLeaveOutScore.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAHyperGeom">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">DEAHyperGeom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#DEAHyperGeom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.DEAHyperGeom" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.DEAMetricClass" title="telegraph.evaluation.metrics.DEAMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMetricClass</span></code></a></p>
+<p>Hypergeometric Test for DEA result</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAHyperGeom.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hypergeom'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.DEAHyperGeom.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAHyperGeom.score">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#DEAHyperGeom.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.DEAHyperGeom.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAAuc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.metrics.</span></span><span class="sig-name descname"><span class="pre">DEAAuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#DEAAuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.DEAAuc" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.DEAMetricClass" title="telegraph.evaluation.metrics.DEAMetricClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMetricClass</span></code></a></p>
+<p>AUC for DEA result</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAAuc.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'AU'</span></em><a class="headerlink" href="#telegraph.evaluation.metrics.DEAAuc.metric_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.evaluation.metrics.DEAAuc.score">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/metrics.html#DEAAuc.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.metrics.DEAAuc.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tests/index.html" class="btn btn-neutral float-left" title="telegraph.evaluation.tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../run/index.html" class="btn btn-neutral float-right" title="telegraph.evaluation.run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BRAID-MAGIC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>

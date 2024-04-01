@@ -1,0 +1,22 @@
+:py:mod:`telegraph.diagnostics._utils`
+======================================
+
+.. py:module:: telegraph.diagnostics._utils
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.diagnostics._utils.easy_input
+
+
+
+.. py:function:: easy_input(func)
+
+
