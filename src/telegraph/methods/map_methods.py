@@ -68,6 +68,8 @@ class RandomMap(MapMethodClass):
             X_to = input_dict.get("Z_to")
             # anndata object that we map _from_
             X_from = input_dict.get("Z_from")
+            X_to = ut.df2ad(X_to)
+            X_from = ut.df2ad(X_from)
         else:
             # anndata object that we map _to_
             X_to = input_dict["X_to"]
