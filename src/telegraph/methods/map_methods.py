@@ -32,11 +32,8 @@ class MapMethodClass(MethodClass):
     @abstractmethod
     def run(
         cls,
-        X_to: Any,
-        X_from: Any,
-        *args,
-        S_to: np.ndarray | None = None,
-        S_from: np.ndarray | None = None,
+        input_dict: Dict[str, Any],
+        use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         pass
@@ -61,18 +58,25 @@ class RandomMap(MapMethodClass):
         input_dict: Dict[str, Any],
         seed: int = 1,
         experiment_name: str | None = None,
+        use_emb: bool = False,
         **kwargs,
     ):
         # set random seed for reproducibility
         rng = np.random.default_rng(seed)
 
-        # anndata object that we map _to_
-        X_to = input_dict["X_to"]
-        pol.check_values(X_to, "X_to")
-
-        # anndata object that we map _from_
-        X_from = input_dict["X_from"]
-        pol.check_values(X_from, "X_from")
+        if use_emb:
+            X_to = input_dict.get("Z_to")
+            # anndata object that we map _from_
+            X_from = input_dict.get("Z_from")
+            X_to = ut.df2ad(X_to)
+            X_from = ut.df2ad(X_from)
+        else:
+            # anndata object that we map _to_
+            X_to = input_dict["X_to"]
+            pol.check_values(X_to, "X_to")
+            # anndata object that we map _from_
+            X_from = input_dict["X_from"]
+            pol.check_values(X_from, "X_from")
 
         # get names of observations
         to_names = X_to.obs_names
@@ -129,15 +133,25 @@ class ArgMaxCorrMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         experiment_name: str | None = None,
+        use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
-        # anndata of "to"
-        X_to = input_dict["X_to"]
-        pol.check_values(X_to, "X_to")
 
-        # anndata of "from"
-        X_from = input_dict["X_from"]
-        pol.check_values(X_from, "X_from")
+        if use_emb:
+            # get embedding to
+            X_to = input_dict.get("Z_to")
+            # get embedding from
+            X_from = input_dict.get("Z_from")
+            X_to = ut.df2ad(X_to)
+            X_from = ut.df2ad(X_from)
+
+        else:
+            # anndata object that we map _to_
+            X_to = input_dict.get("X_to")
+            pol.check_values(X_to, "X_to")
+            # anndata object that we map _from_
+            X_from = input_dict.get("X_from")
+            pol.check_values(X_from, "X_from")
 
         # get names of observations
         to_names = X_to.obs_names
@@ -193,8 +207,8 @@ class TangramMap(MapMethodClass):
     # version number
     version = None
 
-    ins = ["X_to", "X_from"]
-    outs = ["T", "S_from"]
+    ins = [("X_to", "Z_to"), ("X_from", "Z_from")]
+    outs = ["T"]
 
     def __init__(
         self,
@@ -214,6 +228,7 @@ class TangramMap(MapMethodClass):
         num_epochs: int = 1000,
         genes: List[str] | str | None = None,
         experiment_name: str | None = None,
+        use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
@@ -224,23 +239,25 @@ class TangramMap(MapMethodClass):
         else:
             raise NotImplementedError
 
+        if use_emb:
+            X_to = input_dict.get("Z_to")
+            # anndata object that we map _from_
+            X_from = input_dict.get("Z_from")
+        else:
+            # anndata object that we map _to_
+            X_to = input_dict["X_to"]
+            pol.check_values(X_to, "X_to")
+            # anndata object that we map _from_
+            X_from = input_dict["X_from"]
+            pol.check_values(X_from, "X_from")
+
+        ad_to = ut.df2ad(X_to)
+        ad_from = ut.df2ad(X_from)
+
         # n_obs in "from"
-        n_cols = input_dict["X_from"].shape[0]
+        n_cols = ad_from.shape[0]
         # n_obs in "to"
-        n_rows = input_dict["X_to"].shape[0]
-
-        # anndata of "from"
-        ad_from = input_dict["X_from"]
-        pol.check_values(ad_from, "X_from")
-        pol.check_type(ad_from, "X_from")
-
-        # anndata of "to"
-        ad_to = input_dict["X_to"]
-        pol.check_values(ad_to, "X_to")
-        pol.check_type(ad_to, "X_to")
-
-        # spatial coordinates of "to"
-        S_to = ad_to.obsm[to_spatial_key].astype(float)
+        n_rows = ad_to.shape[0]
 
         # get marker genes from tangram
         if genes is not None:
@@ -314,10 +331,16 @@ class TangramMap(MapMethodClass):
         # get the map T (here [n_from] x [n_to])
         T_soft = ad_map.X.astype(float)
         # predict coordinates of observations in "from" by weighted average
-        S_from = T_soft @ S_to
 
         # output dict
         out = dict()
+        if to_spatial_key in ad_to.obsm:
+            # spatial coordinates of "to"
+            S_to = ad_to.obsm[to_spatial_key].astype(float)
+            # spatial coordinates for "from" : [n_from] x [n_spatial_dims]
+            S_from = T_soft @ S_to
+            out["S_from"] = S_from
+            out["S_to"] = S_to
 
         # observation names for "to"
         to_names = ad_to.obs.index.values.tolist()
@@ -325,8 +348,6 @@ class TangramMap(MapMethodClass):
         from_names = ad_from.obs.index.values.tolist()
         # transpose map (T) to be in expected format [n_to] x [n_from]
         out["T"] = ut.array_to_sparse_df(T_soft.T, index=to_names, columns=from_names)
-        # spatial coordinates for "from" : [n_from] x [n_spatial_dims]
-        out["S_from"] = S_from
 
         # anndata with rescaled (with coefficient) "from" data
         out["X_from_scaled"] = X_from_scaled
@@ -461,24 +482,34 @@ class SpaOTscMap(MapMethodClass):
         to_spatial_key: str = "spatial",
         experiment_name: str | None = None,
         seed: int | None = None,
+        use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
         from spaotsc import SpaOTsc
 
-        # anndata of "from"
-        ad_from = input_dict["X_from"]
-        pol.check_values(ad_from, "X_from")
-        pol.check_type(ad_from, "X_from")
+        if use_emb:
+            X_to = input_dict.get("Z_to")
+            # anndata object that we map _from_
+            X_from = input_dict.get("Z_from")
+        else:
+            # anndata object that we map _to_
+            X_to = input_dict["X_to"]
+            pol.check_values(X_to, "X_to")
+            # anndata object that we map _from_
+            X_from = input_dict["X_from"]
+            pol.check_values(X_from, "X_from")
 
-        # anndata of "to"
-        ad_to = input_dict["X_to"]
-        pol.check_values(ad_to, "X_to")
-        pol.check_type(ad_to, "X_to")
+        ad_to = ut.df2ad(X_to)
+        ad_from = ut.df2ad(X_from)
 
         # spatial coordinates of "to"
-        S_to = ad_to.obsm[to_spatial_key]
-        # anndata object that we map _to_
+        if to_spatial_key in ad_to:
+            S_to = ad_to.obsm[to_spatial_key]
+        elif "S_to" in input_dict:
+            S_to = input_dict["S_to"]
+        else:
+            raise ValueError('spatial coordinates must be provided for "to" object')
 
         if seed is not None:
             import ot
@@ -603,6 +634,7 @@ class MoscotMap(MapMethodClass):
         experiment_name: str | None = None,
         return_T_norm: bool = True,
         seed: int | None = None,
+        use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray]:
 
@@ -612,21 +644,29 @@ class MoscotMap(MapMethodClass):
         if seed is not None:
             np.random.seed(seed)
 
-        # single cell anndata
-        X_from = input_dict["X_from"]
-        # spatial anndata
-        X_to = input_dict["X_to"]
+        if use_emb:
+            X_to = input_dict.get("Z_to")
+            # anndata object that we map _from_
+            X_from = input_dict.get("Z_from")
+            S_to = input_dict.get("S_to")
+            X_to = ut.df2ad(X_to)
+            X_from = ut.df2ad(X_from)
+            X_to.obsm["spatial"] = S_to
 
-        pol.check_values(X_to, "X_to")
-        pol.check_type(X_to, "X_to")
-
-        # anndata object that we map _from_
-        pol.check_values(X_from, "X_from")
-        pol.check_type(X_from, "X_from")
+        else:
+            # anndata object that we map _to_
+            X_to = input_dict["X_to"]
+            pol.check_values(X_to, "X_to")
+            # anndata object that we map _from_
+            X_from = input_dict["X_from"]
+            pol.check_values(X_from, "X_from")
 
         # get genes
         if genes is not None:
             genes = ut.list_or_path_get(genes)
+            in_from = set(genes).intersection(set(X_from.var_names))
+            in_to = set(genes).intersection(set(X_to.var_names))
+            genes = list(in_from.intersection(in_to))
 
         # TODO: this does not run
         prep_kwargs = kwargs.get("prepare", {})

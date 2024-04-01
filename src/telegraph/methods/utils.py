@@ -342,9 +342,13 @@ def listify(obj: W) -> List[W]:
     return obj
 
 
-def df2ad(in_df: pd.DataFrame) -> ad.AnnData:
+def df2ad(in_df: pd.DataFrame | ad.AnnData) -> ad.AnnData:
     # convert a pandas dataframe to anndata
-    out_ad = ad.AnnData(in_df, obs=in_df.index, var=in_df.columns)
+    if isinstance(in_df, ad.AnnData):
+        return in_df
+    obs = pd.DataFrame([], index=in_df.index)
+    var = pd.DataFrame([], index=in_df.columns)
+    out_ad = ad.AnnData(in_df, obs=obs, var=var)
     return out_ad
 
 
