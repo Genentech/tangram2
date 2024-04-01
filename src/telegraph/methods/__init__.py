@@ -2,6 +2,15 @@
 Methods to use for inference of cell cell communication events
 """
 
+from . import dea_methods as dea
+from . import grp_methods as grp
+from . import imp_methods as imp
+from . import map_methods as map
+from . import models as mdl
+from . import pred_methods as prd
+from . import preprocess as pp
+from . import transforms as tf
+from . import workflows as wf
 
 # import telegraph.methods._methods as _methods
 # import telegraph.methods.dea_methods as dea
