@@ -1,6 +1,6 @@
 import gzip
 import os.path as osp
-from functools import reduce
+from functools import reduce, wraps
 from typing import Any, Dict, List, Literal, Tuple, TypeVar
 
 import anndata as ad
@@ -82,6 +82,7 @@ def check_in_out(func):
 
     """
 
+    @wraps(func)
     def inner(cls, input_dict: Dict[str, Any], **kwargs):
 
         vars_not_in_input = [x for x in cls.ins if x not in input_dict]
