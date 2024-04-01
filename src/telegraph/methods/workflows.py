@@ -160,22 +160,22 @@ class Workflow:
         self,
         methods: Dict[str, Dict[str, Any]],
         check_compatibility: bool = True,
-        met_key: str = "method",
-        prm_key: str = "params",
+        methods_key: str = "method",
+        params_key: str = "params",
     ):
         """
         helper to construct workflow of methods
 
         Args:
           methods: A dict of dicts with the name of each method/step. The dict is expected to be
-          formatted accordingly dict(step_1 = dict( met_key = function/class, prm_key =
+          formatted accordingly dict(step_1 = dict( methods_key = function/class, params_key =
           {prm_1:prm_1_val,..., prm_p:prm_p_val}), ..., step_k = .. )
 
           check_compatibility: if True we check if methods can be chained together
 
-          met_key: name of key to indicate method/function name in the methods dict
+          methods_key: name of key to indicate method/function name in the methods dict
 
-          prm_key: name of key to indicate parameters in the methods dict
+          params_key: name of key to indicate parameters in the methods dict
 
 
         Returns:
@@ -199,15 +199,15 @@ class Workflow:
 
         """
 
-        self.prm_key = prm_key
-        self.met_key = met_key
+        self.params_key = params_key
+        self.methods_key = methods_key
 
         for key, val in methods.items():
-            has_met = self.met_key in val
+            has_met = self.methods_key in val
             if not has_met:
                 raise ValueError(
                     "please provide methods as dict(step_1 = dict({} = Callable, {} = {{prm_1:prm_1_val,...,prm_p:prm_p_val}}), .., step_k = ...)".format(
-                        self.met_key, self.prm_key
+                        self.methods_key, self.params_key
                     )
                 )
             has_prm = "params" in val
@@ -227,7 +227,7 @@ class Workflow:
 
         for method_name, method_obj in methods.items():
 
-            _method_fun = method_obj[self.met_key]
+            _method_fun = method_obj[self.methods_key]
             if hasattr(_method_fun, "run"):
                 method_mod = _method_fun
                 method_fun = _method_fun.run
@@ -242,7 +242,7 @@ class Workflow:
             if len(method_obj) == 1:
                 method_prms = {}
             else:
-                method_prms = method_obj[self.prm_key]
+                method_prms = method_obj[self.params_key]
 
             self.methods.append(method_fun)
             self.methods_prms.append(method_prms)
@@ -269,25 +269,34 @@ class Workflow:
         return hasattr(x, "ins") & hasattr(x, "outs")
 
     def __add__(self, other):
-
-        new_methods_dict = dict()
-
-        for met_name, met_fun, met_prm in zip(
-            self.methods_names, self.methods, self.methods_prms
-        ):
-            new_methods_dict[met_name] = {self.met_key: met_fun, self.prm_key: met_prm}
-
-        for met_name, met_fun, met_prm in zip(
-            other.methods_names, other.methods, other.methods_prms
-        ):
-            new_methods_dict[met_name] = {self.met_key: met_fun, self.prm_key: met_prm}
-
+        combined_methods = {
+            **self._construct_method_dict(
+                methods_key=self.methods_key, params_key=self.params_key
+            ),
+            **other._construct_method_dict(
+                methods_key=self.methods_key, params_key=self.params_key
+            ),
+        }
         return Workflow(
-            new_methods_dict,
+            combined_methods,
             check_compatibility=False,
-            met_key=self.met_key,
-            prm_key=self.prm_key,
+            methods_key=self.methods_key,
+            params_key=self.params_key,
         )
+
+    def _construct_method_dict(
+        self, methods_key: str | None = None, params_key: str | None = None
+    ):
+
+        methods_key = self.methods_key if methods_key is None else methods_key
+        params_key = self.params_key if params_key is None else params_key
+
+        return {
+            name: {methods_key: method, params_key: params}
+            for name, method, params in zip(
+                self.method_names, self.methods, self.method_params
+            )
+        }
 
     def list_methods(self, include_callable: bool = True):
         for step_name, step_fun, step_prms in zip(
