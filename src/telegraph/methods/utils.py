@@ -364,8 +364,7 @@ def _adata_to_input_dict(
         X = adata
     else:
         X = adata.to_df(layer=layer)
-        if isinstance(X, spmatrix):
-            X = X.toarray()
+
     input_dict = dict(X=X)
 
     D = list()
@@ -414,7 +413,7 @@ def adatas_to_input(
         cat_labels = (
             None if categorical_labels is None else categorical_labels.get(name)
         )
-        con_labels = None if continuous_labels is None else continous_labels.get(name)
+        con_labels = None if continuous_labels is None else continuous_labels.get(name)
         layer = None if layers is None else layers.get(name)
         _input_dict = _adata_to_input_dict(
             adata, cat_labels, con_labels, layer, keep_adata=keep_adata
@@ -432,8 +431,7 @@ def adatas_to_input(
 
 def merge_input_dicts(*input_dicts):
 
-    union_keys = [list(x.keys()) for x in input_dicts]
-    union_keys = [x for y in union_keys for x in y]
+    union_keys = [k for y in input_dicts for k, v in y.items() if v is not None]
     union_keys = [x for x in union_keys if union_keys.count(x) == len(input_dicts)]
     union_keys = list(set(union_keys))
     union_keys = [x for x in union_keys if x.startswith(("T", "X", "D"))]
@@ -443,10 +441,11 @@ def merge_input_dicts(*input_dicts):
     for key in union_keys:
         obj_list = list()
         for input_dict in input_dicts:
-            obj = input_dict[key]
-            obj = obj.iloc[:, ~obj.columns.duplicated()]
-            obj = obj.to_df() if isinstance(obj, ad.AnnData) else obj
-            obj_list.append(obj)
+            obj = input_dict.get(key)
+            if obj is not None:
+                obj = obj.to_df() if isinstance(obj, ad.AnnData) else obj
+                obj = obj.iloc[:, ~obj.columns.duplicated()]
+                obj_list.append(obj)
 
         # same operation now, but perhaps want to change in future
         if key.startswith(("X", "T", "D")):
