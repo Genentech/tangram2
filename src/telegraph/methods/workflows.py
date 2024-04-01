@@ -253,13 +253,15 @@ class Workflow:
                     available_vars += method_mod.ins
                     available_vars += method_mod.outs
                 else:
-                    is_comp = all([x in available_vars for x in method_mod.ins])
-                    # if not compatible raise error
-                    if not is_comp:
-                        msg = "Method {} is not compatible with prior methods in workflow".format(
-                            method_mod
-                        )
-                        raise ValueError(msg)
+                    for obj in method_mod.ins:
+                        if isinstance(obj, (list, tuple)):
+                            any_in_input = any([x in available_vars for x in obj])
+                            # if not compatible raise error
+                            if not any_in_input:
+                                msg = "Method {} is not compatible with prior methods in workflow".format(
+                                    method_mod
+                                )
+                                raise ValueError(msg)
 
                     available_vars += method_mod.outs
 

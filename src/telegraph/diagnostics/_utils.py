@@ -42,6 +42,21 @@ def easy_input(func):
     return wrapper
 
 
+def pick_x_d(X_to, D_to, X_from, D_from, target):
+    if target == "to":
+        if X_to is not None:
+            X, D = X_to, D_to
+        else:
+            target = "from"
+
+    if target == "from":
+        if X_from is not None:
+            X, D = X_from, D_from
+        else:
+            raise ValuError("One of X_to/X_from has to be provided.")
+    return X, D
+
+
 def harmony_helper(
     X,
     metadata,

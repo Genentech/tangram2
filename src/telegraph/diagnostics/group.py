@@ -51,9 +51,12 @@ def _get_X_and_labels(
 
 @ut.easy_input
 def plot_group_separation(
-    X,
-    D=None,
+    X_to=None,
+    D_to=None,
+    X_from=None,
+    D_from=None,
     labels=None,
+    target: str = "to",
     group_col: str = None,
     group_type: Literal["discrete", "continuous"] = "discrete",
     project_method: str | List[str] = "pca",
@@ -64,6 +67,8 @@ def plot_group_separation(
     batch_key: List[str] = None,
     normalize_X: bool = False,
 ):
+
+    X, D = ut.pick_x_d(X_to, D_to, X_from, D_from, target)
 
     Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
 
@@ -154,9 +159,12 @@ def plot_group_separation(
 
 @ut.easy_input
 def test_group_separation(
-    X,
-    D=None,
+    X_to=None,
+    D_to=None,
+    X_from=None,
+    D_from=None,
     labels=None,
+    target: str = "to",
     group_col: str = None,
     classifier: str = "svm",
     n_pca: int = 50,
@@ -170,6 +178,8 @@ def test_group_separation(
     from sklearn.metrics import confusion_matrix, f1_score
     from sklearn.model_selection import train_test_split
     from sklearn.svm import SVC
+
+    X, D = ut.pick_x_d(X_to, D_to, X_from, D_from, target)
 
     Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
 
