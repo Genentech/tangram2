@@ -35,13 +35,13 @@ def tabulate_dea_overlap(
         elif isinstance(obj_i, set):
             sets.append(obj_i)
         else:
-            raise ValueError("Can handle input of type {}".format(type(obj_i)))
+            raise ValueError("Can't handle input of type {}".format(type(obj_i)))
 
     n_sets = len(sets)
     n_names = len(sets)
 
     if n_sets != n_names:
-        names = ["Set {}".append(x) for x in range(n_sets)]
+        names = [f"Set {x}" for x in range(n_sets)]
 
     omat = np.zeros((n_sets, n_sets), dtype=int)
     for i, set_i in enumerate(sets):
@@ -106,7 +106,7 @@ def interpret_dea_features(
     return out
 
 
-def plot_enrichment_results(
+def plot_top_k_enrichment_results(
     *dfs,
     name_col="name",
     value_col="p_value",
@@ -115,6 +115,22 @@ def plot_enrichment_results(
     top_k=20,
     id_col="tg_id",
 ):
+    """Plot top K enrichement results
+
+    Will plot the top_k enrichment results from an enrichment analysis (e.g., provided by the
+    function `interpret_dea_features`).
+
+    Args:
+        dfs: pd.DataFrame (unlimited number)
+        name_col: column where the geneset/pathway name can be found
+        value_col: column where the values to sort by/pick top k from can be found
+        value_is_p_value: whether values are p-values or not
+        max_name_len: maximal number of characters of geneset/pathway name to be printed in plot
+        top_k: number of top pathways to plot
+        id_col: column to split analysis by
+    Returns:
+        Plots the top K genesets/pathways using matplotlib
+    """
 
     n_rows = len(dfs)
     h_scale = top_k / 20
@@ -150,5 +166,7 @@ def plot_enrichment_results(
         ax[ii].set_title("Analysis: {}".format(id))
         ax[ii].spines["top"].set_visible(False)
         ax[ii].spines["right"].set_visible(False)
+
+    fig.tight_layout()
 
     plt.show()

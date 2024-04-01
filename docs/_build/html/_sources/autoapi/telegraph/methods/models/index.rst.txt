@@ -1,0 +1,16 @@
+:py:mod:`telegraph.methods.models`
+==================================
+
+.. py:module:: telegraph.methods.models
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   fcnn/index.rst
+   vae/index.rst
+
+

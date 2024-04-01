@@ -43,7 +43,12 @@ def easy_input(func):
 
 
 def harmony_helper(
-    X, metadata, batch_key, metadata_is_D=True, n_components=2, normalize: bool = True
+    X,
+    metadata,
+    batch_key,
+    metadata_is_D=True,
+    n_components=2,
+    normalize: bool = True,
 ):
 
     if isinstance(X, np.ndarray):
@@ -53,11 +58,14 @@ def harmony_helper(
     elif isinstance(X, ad.AnnData):
         X_n = X.X.copy()
     else:
-        raise ValueError("X in wrong format")
+        raise ValueError(
+            "X in wrong format. Provide X as either of {np.ndarray,pd.DataFrame,ad.AnnData}"
+        )
 
-    n_components = min(X_n.shape[1], 150)
+    _n_components = min(X_n.shape[1], n_components)
 
-    pca = PCA(n_components=50)
+    pca = PCA(n_components=_n_components)
+
     X_n = pca.fit_transform(X_n)
 
     labels = metadata[batch_key]

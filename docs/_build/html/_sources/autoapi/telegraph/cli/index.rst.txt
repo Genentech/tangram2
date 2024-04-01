@@ -1,0 +1,30 @@
+:py:mod:`telegraph.cli`
+=======================
+
+.. py:module:: telegraph.cli
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.cli.cli
+   telegraph.cli.eval
+   telegraph.cli.test
+
+
+
+.. py:function:: cli()
+
+
+.. py:function:: eval(config: str, out_dir, save_mode: bool = False, debug: bool = True)
+
+
+.. py:function:: test()
+
+

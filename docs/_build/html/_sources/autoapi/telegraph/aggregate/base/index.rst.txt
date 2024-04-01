@@ -1,0 +1,38 @@
+:py:mod:`telegraph.aggregate.base`
+==================================
+
+.. py:module:: telegraph.aggregate.base
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.aggregate.base._collate_results
+   telegraph.aggregate.base._CCT
+   telegraph.aggregate.base.CCT
+   telegraph.aggregate.base._RRA
+   telegraph.aggregate.base.RRA
+
+
+
+.. py:function:: _collate_results(*dea_res)
+
+
+.. py:function:: _CCT(pvals_raw, weights=None)
+
+
+.. py:function:: CCT(*dea_res, weights=None)
+
+
+.. py:function:: _RRA(pvals_raw, **kwargs)
+
+
+.. py:function:: RRA(*dea_res, weights=None, **kwargs)
+
+

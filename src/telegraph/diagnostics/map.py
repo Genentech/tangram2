@@ -15,7 +15,7 @@ def _get_T(T: pd.DataFrame | np.ndarray, normalize_T: bool = True):
         T_n = T.copy()
 
     if normalize_T:
-        T_n = T_n / T_n.sum(axis=0, keepdims=True)
+        T_n = T_n / (T_n.sum(axis=0, keepdims=True) + 1e-9)
 
     return T_n
 
@@ -143,7 +143,7 @@ def plot_from_feature_on_to(
             S_u = S_to.values
         else:
             S_u = S_to
-        if isinstnance(T, pd.DataFrame):
+        if isinstance(T, pd.DataFrame):
             T_u = T.values
         else:
             T_u = T
@@ -153,7 +153,7 @@ def plot_from_feature_on_to(
             if isinstance(features.values[0], str):
                 M_v = pd.get_dummies(features).astype(float)
             else:
-                M_v = features.reshape(-1, 1)
+                M_v = np.reshape(features, (-1, 1))
         else:
             M_v = features
         cat_names = M_v.columns
@@ -192,7 +192,7 @@ def plot_from_feature_on_to(
         ax[k].set_yticks([])
         ax[k].set_yticklabels([])
 
-    for axx in ax[k + 1 : :]:
+    for axx in ax[k + 1 :]:
         axx.set_visible(False)
 
     plt.show()

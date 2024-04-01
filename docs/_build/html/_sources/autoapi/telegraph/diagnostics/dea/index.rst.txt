@@ -1,0 +1,55 @@
+:py:mod:`telegraph.diagnostics.dea`
+===================================
+
+.. py:module:: telegraph.diagnostics.dea
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.diagnostics.dea._parse_feature_list_or_dea_df
+   telegraph.diagnostics.dea.tabulate_dea_overlap
+   telegraph.diagnostics.dea.plot_dea_overlap
+   telegraph.diagnostics.dea._interpret_dea_features_gprofiler
+   telegraph.diagnostics.dea.interpret_dea_features
+   telegraph.diagnostics.dea.plot_top_k_enrichment_results
+
+
+
+.. py:function:: _parse_feature_list_or_dea_df(obj, to_lower: bool = False)
+
+
+.. py:function:: tabulate_dea_overlap(*inputs) -> pandas.DataFrame
+
+
+.. py:function:: plot_dea_overlap(*inputs, cmap=plt.cm.autumn_r)
+
+
+.. py:function:: _interpret_dea_features_gprofiler(features, **kwargs)
+
+
+.. py:function:: interpret_dea_features(input: pandas.DataFrame | List[str], method: Literal[g:Profiler] = 'g:Profiler', **kwargs)
+
+
+.. py:function:: plot_top_k_enrichment_results(*dfs, name_col='name', value_col='p_value', value_is_p_value=True, max_name_len=None, top_k=20, id_col='tg_id')
+
+   Plot top K enrichement results
+
+   Will plot the top_k enrichment results from an enrichment analysis (e.g., provided by the
+   function `interpret_dea_features`).
+
+   :param dfs: pd.DataFrame (unlimited number)
+   :param name_col: column where the geneset/pathway name can be found
+   :param value_col: column where the values to sort by/pick top k from can be found
+   :param value_is_p_value: whether values are p-values or not
+   :param max_name_len: maximal number of characters of geneset/pathway name to be printed in plot
+   :param top_k: number of top pathways to plot
+   :param id_col: column to split analysis by
+
+   :returns: Plots the top K genesets/pathways using matplotlib

@@ -1,0 +1,279 @@
+:py:mod:`telegraph.methods.policies`
+====================================
+
+.. py:module:: telegraph.methods.policies
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.policies.BasePolicy
+   telegraph.methods.policies.PolicyT
+   telegraph.methods.policies.PolicyX
+   telegraph.methods.policies.PolicyXto
+   telegraph.methods.policies.PolicyXtopred
+   telegraph.methods.policies.PolicyXfrom
+   telegraph.methods.policies.PolicyD
+   telegraph.methods.policies.PolicyDto
+   telegraph.methods.policies.PolicyDfrom
+   telegraph.methods.policies.PolicyDict
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.policies.dim_match
+   telegraph.methods.policies.check_values
+   telegraph.methods.policies.check_dimensions
+   telegraph.methods.policies.check_type
+   telegraph.methods.policies.check_integer
+   telegraph.methods.policies.check_non_negative
+
+
+
+.. py:function:: dim_match(shape_1, shape_2)
+
+
+.. py:class:: BasePolicy
+
+
+   Bases: :py:obj:`abc.ABC`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: ''
+
+      
+
+   .. py:attribute:: object_type
+
+      
+
+   .. py:method:: test_dimensions(obj, exp_shape, obj_shape: List[int] | None = None, **kwargs) -> None
+      :classmethod:
+
+
+   .. py:method:: test_type(obj: Any, exp_type: Any | None = None)
+      :classmethod:
+
+
+   .. py:method:: test_values(obj, *args, **kwargs)
+      :classmethod:
+      :abstractmethod:
+
+
+
+.. py:class:: PolicyT
+
+
+   Bases: :py:obj:`BasePolicy`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: 'T'
+
+      
+
+   .. py:attribute:: object_type
+
+      
+
+   .. py:method:: test_values(obj: numpy.ndarray | scipy.sparse.spmatrix)
+      :classmethod:
+
+
+
+.. py:class:: PolicyX
+
+
+   Bases: :py:obj:`BasePolicy`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: 'X'
+
+      
+
+   .. py:method:: test_values(*args, **kwargs)
+      :classmethod:
+
+
+   .. py:method:: test_integer(obj: pandas.DataFrame | anndata.AnnData)
+      :classmethod:
+
+
+   .. py:method:: test_non_negative(obj: numpy.ndarray | scipy.sparse.spmatrix)
+      :classmethod:
+
+
+
+.. py:class:: PolicyXto
+
+
+   Bases: :py:obj:`PolicyX`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: 'X_to'
+
+      
+
+   .. py:attribute:: object_type
+      :value: ()
+
+      
+
+
+.. py:class:: PolicyXtopred
+
+
+   Bases: :py:obj:`PolicyX`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: 'X_to_pred'
+
+      
+
+   .. py:attribute:: object_type
+      :value: ()
+
+      
+
+
+.. py:class:: PolicyXfrom
+
+
+   Bases: :py:obj:`PolicyX`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: 'X_from'
+
+      
+
+   .. py:attribute:: object_type
+      :value: ()
+
+      
+
+
+.. py:class:: PolicyD
+
+
+   Bases: :py:obj:`BasePolicy`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: 'D'
+
+      
+
+   .. py:attribute:: object_type
+
+      
+
+   .. py:method:: test_values(*args, **kwargs)
+      :classmethod:
+
+
+
+.. py:class:: PolicyDto
+
+
+   Bases: :py:obj:`PolicyD`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: 'D_to'
+
+      
+
+
+.. py:class:: PolicyDfrom
+
+
+   Bases: :py:obj:`PolicyD`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: object_name
+      :value: 'D_to'
+
+      
+
+
+.. py:class:: PolicyDict
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   Generic enumeration.
+
+   Derive from this class to define new enumerations.
+
+   .. py:attribute:: T
+
+      
+
+   .. py:attribute:: X_to
+
+      
+
+   .. py:attribute:: X_from
+
+      
+
+   .. py:attribute:: D_to
+
+      
+
+   .. py:attribute:: D_from
+
+      
+
+   .. py:attribute:: X_to_pred
+
+      
+
+
+.. py:function:: check_values(obj, obj_name: str, *args, **kwargs)
+
+
+.. py:function:: check_dimensions(obj, obj_name: str, *args, **kwargs)
+
+
+.. py:function:: check_type(obj, obj_name: str, *args, **kwargs)
+
+
+.. py:function:: check_integer(obj, obj_name: str, *args, **kwargs)
+
+
+.. py:function:: check_non_negative(obj, obj_name: str, *args, **kwargs)
+
+

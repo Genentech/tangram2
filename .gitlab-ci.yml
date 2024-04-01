@@ -1,0 +1,13 @@
+image: python:3.10
+
+pages:
+  script:
+    - pip install sphinx sphinx_rtd_theme sphinx-autoapi myst_parser
+    - cd docs
+    - sphinx-build -b html . public
+    - mv public ../public
+  artifacts:
+    paths:
+      - public
+  only:
+    - main

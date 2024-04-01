@@ -1,0 +1,43 @@
+:py:mod:`telegraph.methods`
+===========================
+
+.. py:module:: telegraph.methods
+
+.. autoapi-nested-parse::
+
+   Methods to use for inference of cell cell communication events
+
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   models/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   _dea_utils/index.rst
+   _grp_utils/index.rst
+   _methods/index.rst
+   dea_methods/index.rst
+   grp_methods/index.rst
+   imp_methods/index.rst
+   info/index.rst
+   map_methods/index.rst
+   policies/index.rst
+   pred_methods/index.rst
+   preprocess/index.rst
+   save_methods/index.rst
+   transforms/index.rst
+   utils/index.rst
+   workflows/index.rst
+
+

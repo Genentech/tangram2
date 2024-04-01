@@ -1,0 +1,42 @@
+:py:mod:`telegraph.evaluation.utils`
+====================================
+
+.. py:module:: telegraph.evaluation.utils
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.evaluation.utils.ifnonereturn
+   telegraph.evaluation.utils.read_input_object
+   telegraph.evaluation.utils.read_data
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.evaluation.utils.W
+
+
+.. py:data:: W
+
+   
+
+.. py:function:: ifnonereturn(obj, return_object: None)
+
+
+.. py:function:: read_input_object(path: str, return_array: bool = False, layer=None, return_df: bool = True, adata_key: str = None, **kwargs)
+
+
+.. py:function:: read_data(data_dict: Dict[str, str]) -> Dict[str, Any]
+
+
