@@ -41,10 +41,10 @@ def _get_X_and_labels(
                 Xn = X
 
         case (None, str()):
-            Xn = adata.obsm[obsm]
+            Xn = X.obsm[obsm]
 
         case (str(), None):
-            Xn = adata.layers[layer]
+            Xn = X.layers[layer]
 
     return Xn, labels
 
@@ -108,7 +108,6 @@ def plot_group_separation(
 
     uni_labels = np.unique(labels)
     color_mapper = {l: k for k, l in enumerate(uni_labels)}
-
     plt_kwargs_default = dict(s=marker_size)
 
     if plt_kwargs is None:
@@ -190,8 +189,6 @@ def test_group_separation(
     f1_score_train = list()
     f1_score_test = list()
 
-    for ii in range(n_reps):
-        X_train, X_test, y_train, y_test = train_test_split(Xd, labels, test_size=0.2)
     stratify = None
     if stratify_by_labels:
         stratify = labels
