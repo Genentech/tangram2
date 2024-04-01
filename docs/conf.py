@@ -27,7 +27,9 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon',]
+    'sphinx.ext.napoleon',
+    'myst_parser',
+    ]
 
 # Napoleon settings
 napoleon_google_docstring = True

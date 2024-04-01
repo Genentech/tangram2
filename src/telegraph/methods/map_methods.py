@@ -60,6 +60,7 @@ class RandomMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         seed: int = 1,
+        experiment_name: str | None = None,
         **kwargs,
     ):
         # set random seed for reproducibility
@@ -127,6 +128,7 @@ class ArgMaxCorrMap(MapMethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
+        experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
         # anndata of "to"
@@ -211,6 +213,7 @@ class TangramMap(MapMethodClass):
         from_spatial_key: str = "spatial",
         num_epochs: int = 1000,
         genes: List[str] | str | None = None,
+        experiment_name: str | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
@@ -237,7 +240,7 @@ class TangramMap(MapMethodClass):
         pol.check_type(ad_to, "X_to")
 
         # spatial coordinates of "to"
-        S_to = ad_to.obsm[to_spatial_key]
+        S_to = ad_to.obsm[to_spatial_key].astype(float)
 
         # get marker genes from tangram
         if genes is not None:
@@ -247,7 +250,7 @@ class TangramMap(MapMethodClass):
         tg.pp_adatas(ad_from, ad_to, genes=genes)
         mode = kwargs.pop("mode", "cells")
         wandb_config = kwargs.pop("wandb_config", {})
-        wandb_config["step_prefix"] = kwargs.get("experiment_name")
+        wandb_config["step_prefix"] = experiment_name
 
         random_state = kwargs.get("random_state")
         if random_state is None:
@@ -309,7 +312,7 @@ class TangramMap(MapMethodClass):
             NotImplementedError
 
         # get the map T (here [n_from] x [n_to])
-        T_soft = ad_map.X
+        T_soft = ad_map.X.astype(float)
         # predict coordinates of observations in "from" by weighted average
         S_from = T_soft @ S_to
 
@@ -456,6 +459,7 @@ class SpaOTscMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         to_spatial_key: str = "spatial",
+        experiment_name: str | None = None,
         seed: int | None = None,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
@@ -596,6 +600,7 @@ class MoscotMap(MapMethodClass):
         cls,
         input_dict: Dict[str, Any],
         genes: List[str] | str | None = None,
+        experiment_name: str | None = None,
         return_T_norm: bool = True,
         seed: int | None = None,
         **kwargs,

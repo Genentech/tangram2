@@ -10,4 +10,5 @@ Welcome to telegraph's documentation!
    :maxdepth: 4
    :caption: Contents:
 
+   source/install
    modules/

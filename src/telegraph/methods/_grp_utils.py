@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Literal, Tuple
 
 import numpy as np
 import pandas as pd
@@ -96,3 +96,14 @@ def add_covariates(func, *args, **kwargs):
         return res_dict
 
     return wrapper
+
+
+def add_groups_to_old_D(new_D, input_dict, target: Literal["to", "from"]):
+
+    old_D = input_dict.get(f"D_{target}")
+    if old_D is not None:
+        old_D = old_D.loc[new_D.index, :]
+        new_D = pd.concat((old_D, new_D), axis=1)
+        return new_D
+    else:
+        return new_D

@@ -1,7 +1,7 @@
 import gzip
 import os.path as osp
-from functools import reduce
-from typing import Any, Dict, List, Tuple, TypeVar
+from functools import reduce, wraps
+from typing import Any, Dict, List, Literal, Tuple, TypeVar
 
 import anndata as ad
 import numpy as np
@@ -82,13 +82,21 @@ def check_in_out(func):
 
     """
 
+    @wraps(func)
     def inner(cls, input_dict: Dict[str, Any], **kwargs):
 
         vars_not_in_input = [x for x in cls.ins if x not in input_dict]
 
-        assert not vars_not_in_input, "{} were not in the input_dict".format(
-            ", ".join(vars_not_in_input)
-        )
+        for obj in cls.ins:
+            if isinstance(obj, (list, tuple)):
+                any_in_input = any([x in input_dict for x in obj])
+                if not any_in_input:
+                    raise ValueError(
+                        "None of {} were in the input".format(", ".join(obj))
+                    )
+            else:
+                if obj not in input_dict:
+                    raise ValueError("{} was not in the input".format(obj))
 
         return func(cls, input_dict, **kwargs)
 
@@ -338,3 +346,113 @@ def df2ad(in_df: pd.DataFrame) -> ad.AnnData:
     # convert a pandas dataframe to anndata
     out_ad = ad.AnnData(in_df, obs=in_df.index, var=in_df.columns)
     return out_ad
+
+
+def _adata_to_input_dict(
+    adata: ad.AnnData,
+    categorical_labels: List[str] | None = None,
+    continuous_labels: List[str] | None = None,
+    layer: str | None = None,
+    spatial_key: str = "spatial",
+    keep_adata: bool = True,
+):
+
+    if keep_adata:
+        if layer is not None:
+            adata.X = adata.layers[layer]
+            if isinstance(adata.X, spmatrix):
+                adata.X = adata.X.toarray()
+        X = adata
+    else:
+        X = adata.to_df(layer=layer)
+
+    input_dict = dict(X=X)
+
+    D = list()
+    if categorical_labels is not None:
+        col_names = listify(categorical_labels)
+
+        for col in col_names:
+            if col in adata.obs:
+                labels = adata.obs[col]
+                labels = pd.get_dummies(labels).astype(float)
+                D.append(labels)
+
+    if continuous_labels is not None:
+        col_names = listify(continuous_labels)
+
+        for col in col_names:
+            if col in adata.obs:
+                labels = adata.obs[[col]]
+                D.append(labels)
+
+    if len(D) > 0:
+        D = pd.concat(D, axis=1)
+        input_dict["D"] = D
+
+    if spatial_key in adata.obsm:
+        S = adata.obsm[spatial_key].astype(float)
+        input_dict["S"] = pd.DataFrame(
+            S,
+            index=adata.obs_names,
+            columns=["x", "y"],
+        )
+
+    return input_dict
+
+
+def adatas_to_input(
+    adatas: Dict[Literal["to", "from"], ad.AnnData],
+    categorical_labels: Dict[Literal["to", "from"], List[str]] | None = None,
+    continuous_labels: Dict[Literal["to", "from"], List[str]] | None = None,
+    layers: Dict[Literal["to", "from"], str] | None = None,
+    keep_adata: bool = True,
+):
+
+    input_dict = dict()
+    for name, adata in adatas.items():
+        cat_labels = (
+            None if categorical_labels is None else categorical_labels.get(name)
+        )
+        con_labels = None if continuous_labels is None else continuous_labels.get(name)
+        layer = None if layers is None else layers.get(name)
+        _input_dict = _adata_to_input_dict(
+            adata, cat_labels, con_labels, layer, keep_adata=keep_adata
+        )
+
+        input_dict[f"X_{name}"] = _input_dict["X"]
+        if "D" in _input_dict:
+            input_dict[f"D_{name}"] = _input_dict["D"]
+
+        if "S" in _input_dict:
+            input_dict[f"S_{name}"] = _input_dict["S"]
+
+    return input_dict
+
+
+def merge_input_dicts(*input_dicts):
+
+    union_keys = [k for y in input_dicts for k, v in y.items() if v is not None]
+    union_keys = [x for x in union_keys if union_keys.count(x) == len(input_dicts)]
+    union_keys = list(set(union_keys))
+    union_keys = [x for x in union_keys if x.startswith(("T", "X", "D"))]
+
+    new_input_dict = dict()
+
+    for key in union_keys:
+        obj_list = list()
+        for input_dict in input_dicts:
+            obj = input_dict.get(key)
+            if obj is not None:
+                obj = obj.to_df() if isinstance(obj, ad.AnnData) else obj
+                obj = obj.iloc[:, ~obj.columns.duplicated()]
+                obj_list.append(obj)
+
+        # same operation now, but perhaps want to change in future
+        if key.startswith(("X", "T", "D")):
+            obj_list = pd.concat(obj_list, axis=0).fillna(0)
+            new_input_dict[key] = obj_list
+        else:
+            raise ValueError("Merge not available for {}".format(key))
+
+    return new_input_dict
