@@ -1,1 +1,1 @@
-from . import alignment, group, map
+from . import alignment, dea, group, map, pred

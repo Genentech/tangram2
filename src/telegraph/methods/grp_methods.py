@@ -456,3 +456,103 @@ class QuantileGroup(GroupMethodClass):
             D_to=D_to,
             D_from=D_from,
         )
+
+
+class DistanceBasedGroup(GroupMethodClass):
+    """Grouping Method based on distance between observations
+
+    This methods is primarily recommended when using single cell resolution spatial data (e.g.,
+    Xenium, CosMX, and Vizgen). It allows you to specify a reference feature and a quantile, all
+    cells in X_to expressing that feature at a level above the quantile will be considered as a
+    "high" group, cells below the quantile threshold are "low". The K nearest neighbors of each
+    high cell that are not in the high group will be considered as adjacent cells to that feature.
+
+    """
+
+    ins = [("X_to_pred", "X_to"), "S_to"]
+    outs = ["D_to", "D_from"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    @ut.check_in_out
+    @gut.add_covariates
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        feature_name: List[str] | str,
+        q_high: float | Tuple[float, float] = 0.95,
+        add_complement: bool = True,
+        k=5,
+        **kwargs,
+    ) -> Dict[str, pd.DataFrame]:
+        """
+
+        Args:
+            input_dict: standard input dictionary
+            feature_name: name of feature to base high/low groups on
+            q_high: quantile to separate feature expression w.r.t.
+            add_complement: include both high/low and adj/nadj groups in output design matrix
+            k: number of spatial neighbors
+        Returns:
+            Dictionary with design matrix for to (D_to)
+
+        """
+        from scipy.spatial import cKDTree
+
+        # anndata for predict to data
+        X_to_obj = input_dict.get("X_to_pred")
+        if X_to_obj is not None:
+            pol.check_values(X_to_obj, "X_to_pred")
+            pol.check_type(X_to_obj, "X_to_pred")
+        else:
+            X_to_obj = input_dict.get("X_to")
+            if X_to_obj is None:
+                raise ValueError('Must provide one of "X_to" or "X_to_pred"')
+
+        n_obs = X_to_obj.shape[0]
+
+        S_to = input_dict.get("S_to")
+        if S_to is None:
+            raise ValueError("'S_to' must be given")
+
+        feature_name = ut.listify(feature_name)
+        D_to = pd.DataFrame(
+            [],
+            index=(
+                X_to_obj.obs_names
+                if isinstance(X_to_obj, ad.AnnData)
+                else X_to_obj.index
+            ),
+        )
+
+        for feature_i in feature_name:
+
+            if isinstance(X_to_obj, ad.AnnData):
+                fv_i = X_to_obj.obs_vector(feature_i)
+            else:
+                fv_i = X_to_obj[feature_i].values
+
+            assert len(S_to) == n_obs, "S_to and X_to_{pred} is not of the same size"
+
+            q_val_i = np.quantile(fv_i, q_high)
+            is_high_i = fv_i >= q_val_i
+            kd = cKDTree(S_to[~is_high_i])
+            is_low_i = np.where(~is_high_i)[0]
+            _, idxs_i = kd.query(S_to[is_high_i], k=k)
+            idxs_i = np.unique(idxs_i.flatten())
+            idxs_i = is_low_i[idxs_i]
+
+            indicator_i = np.zeros(n_obs)
+            indicator_i[idxs_i] = 1
+            D_to[f"adj_{feature_i}"] = indicator_i
+            D_to[f"high_{feature_i}"] = is_high_i.astype(float)
+            if add_complement:
+                D_to[f"nadj_{feature_i}"] = 1 - indicator_i
+
+        return dict(D_to=D_to)

@@ -61,9 +61,15 @@ def plot_group_separation(
     plot=True,
     marker_size: int = None,
     plt_kwargs: Dict[str, Any] | None = None,
+    batch_key: List[str] = None,
+    normalize_X: bool = False,
 ):
 
     Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
+
+    if normalize_X:
+        Xn = Xn / Xn.sum(keepdims=True, axis=1) * 1e4
+        Xn = np.log1p(Xn)
 
     if group_type == "discrete":
         if not isinstance(labels[0], str):
@@ -86,6 +92,7 @@ def plot_group_separation(
         isomap=Isomap,
         mds=MDS,
         tsne=TSNE,
+        harmony=ut.harmony_helper,
     )
 
     if not isinstance(project_method, (tuple, list)):
@@ -113,8 +120,19 @@ def plot_group_separation(
             _plt_kwargs[k] = v
 
     for k, m in enumerate(project_method):
-        proj = _pms[m](n_components=2)
-        Xnd = proj.fit_transform(Xn)
+        if m == "harmony":
+            proj = _pms[m]
+            if batch_key is None:
+                batch_key = D.columns.tolist()
+            Xnd = proj(Xn, D, batch_key=batch_key)
+        elif m != "pca":
+            proj_1 = _pms["pca"](n_components=min(Xn.shape[1], 100))
+            Xnd = proj_1.fit_transform(Xn)
+            proj_2 = _pms[m](n_components=2)
+            Xnd = proj_2.fit_transform(Xnd)
+        else:
+            proj = _pms[m](n_components=2)
+            Xnd = proj.fit_transform(Xn)
         for lab in uni_labels:
             is_label = labels == lab
             is_label = is_label.flatten()
