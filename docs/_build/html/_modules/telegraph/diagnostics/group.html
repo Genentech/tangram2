@@ -45,6 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
 </ul>
 
@@ -118,10 +119,10 @@
                 <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span>
 
         <span class="k">case</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">()):</span>
-            <span class="n">Xn</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="n">obsm</span><span class="p">]</span>
+            <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="n">obsm</span><span class="p">]</span>
 
         <span class="k">case</span> <span class="p">(</span><span class="nb">str</span><span class="p">(),</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">Xn</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
+            <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span></div>
 
@@ -141,9 +142,15 @@
     <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">marker_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">plt_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_key</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">normalize_X</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">_get_X_and_labels</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">group_col</span><span class="o">=</span><span class="n">group_col</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">normalize_X</span><span class="p">:</span>
+        <span class="n">Xn</span> <span class="o">=</span> <span class="n">Xn</span> <span class="o">/</span> <span class="n">Xn</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e4</span>
+        <span class="n">Xn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">Xn</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">group_type</span> <span class="o">==</span> <span class="s2">&quot;discrete&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
@@ -166,6 +173,7 @@
         <span class="n">isomap</span><span class="o">=</span><span class="n">Isomap</span><span class="p">,</span>
         <span class="n">mds</span><span class="o">=</span><span class="n">MDS</span><span class="p">,</span>
         <span class="n">tsne</span><span class="o">=</span><span class="n">TSNE</span><span class="p">,</span>
+        <span class="n">harmony</span><span class="o">=</span><span class="n">ut</span><span class="o">.</span><span class="n">harmony_helper</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">project_method</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
@@ -181,7 +189,6 @@
 
     <span class="n">uni_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
     <span class="n">color_mapper</span> <span class="o">=</span> <span class="p">{</span><span class="n">l</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">uni_labels</span><span class="p">)}</span>
-
     <span class="n">plt_kwargs_default</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">marker_size</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">plt_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -194,8 +201,19 @@
             <span class="n">_plt_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">project_method</span><span class="p">):</span>
-        <span class="n">proj</span> <span class="o">=</span> <span class="n">_pms</span><span class="p">[</span><span class="n">m</span><span class="p">](</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">Xnd</span> <span class="o">=</span> <span class="n">proj</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">Xn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="s2">&quot;harmony&quot;</span><span class="p">:</span>
+            <span class="n">proj</span> <span class="o">=</span> <span class="n">_pms</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">batch_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">batch_key</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">Xnd</span> <span class="o">=</span> <span class="n">proj</span><span class="p">(</span><span class="n">Xn</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">batch_key</span><span class="o">=</span><span class="n">batch_key</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">m</span> <span class="o">!=</span> <span class="s2">&quot;pca&quot;</span><span class="p">:</span>
+            <span class="n">proj_1</span> <span class="o">=</span> <span class="n">_pms</span><span class="p">[</span><span class="s2">&quot;pca&quot;</span><span class="p">](</span><span class="n">n_components</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">Xn</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">100</span><span class="p">))</span>
+            <span class="n">Xnd</span> <span class="o">=</span> <span class="n">proj_1</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">Xn</span><span class="p">)</span>
+            <span class="n">proj_2</span> <span class="o">=</span> <span class="n">_pms</span><span class="p">[</span><span class="n">m</span><span class="p">](</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">Xnd</span> <span class="o">=</span> <span class="n">proj_2</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">Xnd</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">proj</span> <span class="o">=</span> <span class="n">_pms</span><span class="p">[</span><span class="n">m</span><span class="p">](</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">Xnd</span> <span class="o">=</span> <span class="n">proj</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">Xn</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">uni_labels</span><span class="p">:</span>
             <span class="n">is_label</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="n">lab</span>
             <span class="n">is_label</span> <span class="o">=</span> <span class="n">is_label</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -230,7 +248,7 @@
     <span class="n">print_res</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">n_reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">stratify_by_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">normalize_cmatrix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">normalize_cmatrix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">f1_score</span>
@@ -260,7 +278,9 @@
         <span class="n">stratify</span> <span class="o">=</span> <span class="n">labels</span>
 
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_reps</span><span class="p">):</span>
-        <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">Xd</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="n">stratify</span><span class="p">)</span>
+        <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+            <span class="n">Xd</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="n">stratify</span>
+        <span class="p">)</span>
 
         <span class="n">clf</span> <span class="o">=</span> <span class="n">_classifier</span><span class="p">(</span><span class="o">**</span><span class="n">clf_params</span><span class="p">)</span>
         <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
@@ -304,7 +324,8 @@
 <div class="viewcode-block" id="plot_separation_confusion_matrix">
 <a class="viewcode-back" href="../../../source/telegraph.diagnostics.group.html#telegraph.diagnostics.group.plot_separation_confusion_matrix">[docs]</a>
 <span class="k">def</span> <span class="nf">plot_separation_confusion_matrix</span><span class="p">(</span>
-    <span class="n">confusion_matrix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">confusion_matrix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">ConfusionMatrixDisplay</span>
 

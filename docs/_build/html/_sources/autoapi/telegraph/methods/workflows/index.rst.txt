@@ -15,6 +15,7 @@ Classes
    telegraph.methods.workflows.IdentityFun
    telegraph.methods.workflows.Composite
    telegraph.methods.workflows.WorkFlowClass
+   telegraph.methods.workflows.Workflow
 
 
 
@@ -62,7 +63,7 @@ Classes
 
    .. py:attribute:: flow
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], **kwargs)
       :classmethod:
@@ -73,3 +74,25 @@ Classes
 
 
 
+.. py:class:: Workflow(methods: Dict[str, Dict[str, Any]], check_compatibility: bool = True, methods_key: str = 'method', params_key: str = 'params')
+
+
+   .. py:method:: _is_checkable(x)
+
+
+   .. py:method:: __add__(other)
+
+
+   .. py:method:: _construct_method_dict(methods_key: str | None = None, params_key: str | None = None)
+
+
+   .. py:method:: list_methods(include_callable: bool = True)
+
+
+   .. py:method:: run(input_dict: Dict[str, Any], verbose: bool = False, return_dict: bool = False, **kwargs)
+
+      run worfklow
+
+      input_dict: standard input dictionary
+      verbose: use verbose mode
+      return_dict: return the updated input_dict

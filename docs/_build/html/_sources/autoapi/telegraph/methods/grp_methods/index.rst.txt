@@ -16,6 +16,7 @@ Classes
    telegraph.methods.grp_methods.ThresholdGroup
    telegraph.methods.grp_methods.AssociationScore
    telegraph.methods.grp_methods.QuantileGroup
+   telegraph.methods.grp_methods.DistanceBasedGroup
 
 
 
@@ -43,14 +44,14 @@ Classes
    inheritance.
 
    .. py:attribute:: ins
-      :value: ['X_from', 'X_to_pred', 'T']
+      :value: ['X_from', ('X_to_pred', 'X_to'), 'T']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['D_to', 'D_from']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, thres_t: float | Tuple[float, float] = 0.5, thres_x: float | Tuple[float, float] = 0.5, add_complement: bool = True, **kwargs) -> pandas.DataFrame
       :classmethod:
@@ -85,14 +86,14 @@ Classes
 
 
    .. py:attribute:: ins
-      :value: ['X_from', 'X_to_pred', 'T']
+      :value: ['X_from', 'T', ('X_to', 'X_to_pred')]
 
-      
+
 
    .. py:attribute:: outs
       :value: ['D_from']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str | None = None, **kwargs) -> pandas.DataFrame
       :classmethod:
@@ -110,15 +111,49 @@ Classes
    .. py:attribute:: ins
       :value: ['X_from', 'X_to', 'T']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['D_to', 'D_from']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, q_t: float | Tuple[float, float] = 0.25, q_x: float | Tuple[float, float] = 0.25, **kwargs) -> pandas.DataFrame
       :classmethod:
 
 
 
+.. py:class:: DistanceBasedGroup(*args, **kwargs)
+
+
+   Bases: :py:obj:`GroupMethodClass`
+
+   Grouping Method based on distance between observations
+
+   This methods is primarily recommended when using single cell resolution spatial data (e.g.,
+   Xenium, CosMX, and Vizgen). It allows you to specify a reference feature and a quantile, all
+   cells in X_to expressing that feature at a level above the quantile will be considered as a
+   "high" group, cells below the quantile threshold are "low". The K nearest neighbors of each
+   high cell that are not in the high group will be considered as adjacent cells to that feature.
+
+
+   .. py:attribute:: ins
+      :value: [('X_to_pred', 'X_to'), 'S_to']
+
+
+
+   .. py:attribute:: outs
+      :value: ['D_to', 'D_from']
+
+
+
+   .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, q_high: float | Tuple[float, float] = 0.95, add_complement: bool = True, k=5, **kwargs) -> Dict[str, pandas.DataFrame]
+      :classmethod:
+
+      :param input_dict: standard input dictionary
+      :param feature_name: name of feature to base high/low groups on
+      :param q_high: quantile to separate feature expression w.r.t.
+      :param add_complement: include both high/low and adj/nadj groups in output design matrix
+      :param k: number of spatial neighbors
+
+      :returns: Dictionary with design matrix for to (D_to)

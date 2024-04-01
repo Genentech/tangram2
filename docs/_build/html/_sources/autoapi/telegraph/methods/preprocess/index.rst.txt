@@ -29,6 +29,17 @@ Classes
 
 
 
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.preprocess.chainwrapper
+
+
+
+.. py:function:: chainwrapper(func)
+
 
 .. py:class:: PPClass
 
@@ -38,8 +49,12 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, *args, **kwargs)
-      :staticmethod:
+   .. py:method:: run(input_dict, target_objs=['X_from', 'X_to'], **kwargs)
+      :classmethod:
+
+
+   .. py:method:: pp(input_dict, *args, **kwargs)
+      :classmethod:
       :abstractmethod:
 
 
@@ -52,7 +67,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, *args, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -65,7 +80,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -78,7 +93,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -91,7 +106,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -104,7 +119,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -117,8 +132,8 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
-      :staticmethod:
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
+      :classmethod:
 
 
 
@@ -130,7 +145,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -143,7 +158,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -156,7 +171,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -169,7 +184,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -182,7 +197,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -195,7 +210,7 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
 
 
@@ -208,8 +223,5 @@ Classes
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:method:: pp(adata: anndata.AnnData, input_type: str | None = None, **kwargs)
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
-
-
-

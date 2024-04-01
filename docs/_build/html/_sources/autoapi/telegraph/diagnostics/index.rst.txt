@@ -17,7 +17,7 @@ Submodules
 
    _utils/index.rst
    alignment/index.rst
+   dea/index.rst
    group/index.rst
    map/index.rst
-
-
+   pred/index.rst

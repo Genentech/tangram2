@@ -1,0 +1,24 @@
+:py:mod:`telegraph.diagnostics.pred`
+====================================
+
+.. py:module:: telegraph.diagnostics.pred
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.diagnostics.pred.casify
+   telegraph.diagnostics.pred.plot_pred_vs_obs
+
+
+
+.. py:function:: casify(x, ref)
+
+
+.. py:function:: plot_pred_vs_obs(X_to, X_to_pred, S_to, feature_names, marker_size=0.1, log_values=False, cmap=plt.cm.magma)

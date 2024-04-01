@@ -45,6 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
 </ul>
 
@@ -96,7 +97,8 @@
     <span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="n">grp_i</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
         <span class="n">grp_i_l</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">grp_i</span><span class="p">)</span>
         <span class="n">grp_i_fl</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">grp_i_l</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">col_names</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">grp_i_fl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;group covariates are not in design matrix&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">grp_i_fl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;group covariates are not in design matrix&quot;</span><span class="p">)</span>
         <span class="n">is_grp_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">grp_i_fl</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">grp_i_name</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">grp_i_fl</span><span class="p">)</span>
         <span class="n">labels</span><span class="p">[</span><span class="n">is_grp_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">grp_i_name</span>
@@ -129,7 +131,6 @@
             <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
     <span class="n">adata</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span>
         <span class="n">X</span><span class="p">,</span>
         <span class="n">obs</span><span class="o">=</span><span class="n">D</span><span class="p">,</span>

@@ -9,11 +9,11 @@
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
 
-  
+
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../../_static/documentation_options.js?v=18fb929b"></script>
@@ -24,17 +24,17 @@
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="telegraph.methods.imp_methods" href="../imp_methods/index.html" />
-    <link rel="prev" title="telegraph.methods.dea_methods" href="../dea_methods/index.html" /> 
+    <link rel="prev" title="telegraph.methods.dea_methods" href="../dea_methods/index.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
 
-          
-          
+
+
           <a href="../../../../index.html" class="icon icon-home">
             telegraph
               <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
@@ -49,6 +49,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
@@ -94,7 +95,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <section id="module-telegraph.methods.grp_methods">
 <span id="telegraph-methods-grp-methods"></span><h1><a class="reference internal" href="../../../../source/telegraph.methods.grp_methods.html#module-telegraph.methods.grp_methods" title="telegraph.methods.grp_methods"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.grp_methods</span></code></a><a class="headerlink" href="#module-telegraph.methods.grp_methods" title="Link to this heading"></a></h1>
 <section id="module-contents">
@@ -114,6 +115,9 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.QuantileGroup" title="telegraph.methods.grp_methods.QuantileGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QuantileGroup</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.DistanceBasedGroup" title="telegraph.methods.grp_methods.DistanceBasedGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DistanceBasedGroup</span></code></a></p></td>
+<td><p>Grouping Method based on distance between observations</p></td>
 </tr>
 </tbody>
 </table>
@@ -138,7 +142,7 @@ inheritance.</p>
 inheritance.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="telegraph.methods.grp_methods.ThresholdGroup.ins">
-<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['X_from',</span> <span class="pre">'X_to_pred',</span> <span class="pre">'T']</span></em><a class="headerlink" href="#telegraph.methods.grp_methods.ThresholdGroup.ins" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['X_from',</span> <span class="pre">('X_to_pred',</span> <span class="pre">'X_to'),</span> <span class="pre">'T']</span></em><a class="headerlink" href="#telegraph.methods.grp_methods.ThresholdGroup.ins" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -171,7 +175,7 @@ Q : [n_from] x [n_var]</p>
 <p>Q should be a pd.DataFrame object</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="telegraph.methods.grp_methods.AssociationScore.ins">
-<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['X_from',</span> <span class="pre">'X_to_pred',</span> <span class="pre">'T']</span></em><a class="headerlink" href="#telegraph.methods.grp_methods.AssociationScore.ins" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['X_from',</span> <span class="pre">'T',</span> <span class="pre">('X_to',</span> <span class="pre">'X_to_pred')]</span></em><a class="headerlink" href="#telegraph.methods.grp_methods.AssociationScore.ins" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -209,6 +213,47 @@ inheritance.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.grp_methods.DistanceBasedGroup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.grp_methods.</span></span><span class="sig-name descname"><span class="pre">DistanceBasedGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/grp_methods.html#DistanceBasedGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.grp_methods.DistanceBasedGroup" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.GroupMethodClass" title="telegraph.methods.grp_methods.GroupMethodClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GroupMethodClass</span></code></a></p>
+<p>Grouping Method based on distance between observations</p>
+<p>This methods is primarily recommended when using single cell resolution spatial data (e.g.,
+Xenium, CosMX, and Vizgen). It allows you to specify a reference feature and a quantile, all
+cells in X_to expressing that feature at a level above the quantile will be considered as a
+“high” group, cells below the quantile threshold are “low”. The K nearest neighbors of each
+high cell that are not in the high group will be considered as adjacent cells to that feature.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.grp_methods.DistanceBasedGroup.ins">
+<span class="sig-name descname"><span class="pre">ins</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[('X_to_pred',</span> <span class="pre">'X_to'),</span> <span class="pre">'S_to']</span></em><a class="headerlink" href="#telegraph.methods.grp_methods.DistanceBasedGroup.ins" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods.grp_methods.DistanceBasedGroup.outs">
+<span class="sig-name descname"><span class="pre">outs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['D_to',</span> <span class="pre">'D_from']</span></em><a class="headerlink" href="#telegraph.methods.grp_methods.DistanceBasedGroup.outs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.grp_methods.DistanceBasedGroup.run">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_high</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_complement</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#telegraph.methods.grp_methods.DistanceBasedGroup.run" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dict</strong> – standard input dictionary</p></li>
+<li><p><strong>feature_name</strong> – name of feature to base high/low groups on</p></li>
+<li><p><strong>q_high</strong> – quantile to separate feature expression w.r.t.</p></li>
+<li><p><strong>add_complement</strong> – include both high/low and adj/nadj groups in output design matrix</p></li>
+<li><p><strong>k</strong> – number of spatial neighbors</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with design matrix for to (D_to)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 </section>
@@ -230,7 +275,7 @@ inheritance.</p>
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -241,7 +286,7 @@ inheritance.</p>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>

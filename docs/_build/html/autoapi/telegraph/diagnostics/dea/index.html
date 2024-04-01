@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>telegraph.diagnostics.dea &mdash; telegraph beta-v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+
+
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=18fb929b"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="telegraph.diagnostics.group" href="../group/index.html" />
+    <link rel="prev" title="telegraph.diagnostics.alignment" href="../alignment/index.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+          <a href="../../../../index.html" class="icon icon-home">
+            telegraph
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../datagen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../evaluation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../methods/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.tests</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">telegraph</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics.dea</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/telegraph/diagnostics/dea/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="module-telegraph.diagnostics.dea">
+<span id="telegraph-diagnostics-dea"></span><h1><a class="reference internal" href="#module-telegraph.diagnostics.dea" title="telegraph.diagnostics.dea"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics.dea</span></code></a><a class="headerlink" href="#module-telegraph.diagnostics.dea" title="Link to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.diagnostics.dea._parse_feature_list_or_dea_df" title="telegraph.diagnostics.dea._parse_feature_list_or_dea_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_feature_list_or_dea_df</span></code></a>(obj[, to_lower])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.diagnostics.dea.tabulate_dea_overlap" title="telegraph.diagnostics.dea.tabulate_dea_overlap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tabulate_dea_overlap</span></code></a>(→ pandas.DataFrame)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.diagnostics.dea.plot_dea_overlap" title="telegraph.diagnostics.dea.plot_dea_overlap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_dea_overlap</span></code></a>(*inputs[, cmap])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.diagnostics.dea._interpret_dea_features_gprofiler" title="telegraph.diagnostics.dea._interpret_dea_features_gprofiler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_interpret_dea_features_gprofiler</span></code></a>(features, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.diagnostics.dea.interpret_dea_features" title="telegraph.diagnostics.dea.interpret_dea_features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpret_dea_features</span></code></a>(input, method, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.diagnostics.dea.plot_top_k_enrichment_results" title="telegraph.diagnostics.dea.plot_top_k_enrichment_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_top_k_enrichment_results</span></code></a>(*dfs[, name_col, ...])</p></td>
+<td><p>Plot top K enrichement results</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.diagnostics.dea._parse_feature_list_or_dea_df">
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics.dea.</span></span><span class="sig-name descname"><span class="pre">_parse_feature_list_or_dea_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/dea.html#_parse_feature_list_or_dea_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics.dea._parse_feature_list_or_dea_df" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.diagnostics.dea.tabulate_dea_overlap">
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics.dea.</span></span><span class="sig-name descname"><span class="pre">tabulate_dea_overlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.DataFrame</span></span></span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/dea.html#tabulate_dea_overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics.dea.tabulate_dea_overlap" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.diagnostics.dea.plot_dea_overlap">
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics.dea.</span></span><span class="sig-name descname"><span class="pre">plot_dea_overlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">plt.cm.autumn_r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/dea.html#plot_dea_overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics.dea.plot_dea_overlap" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.diagnostics.dea._interpret_dea_features_gprofiler">
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics.dea.</span></span><span class="sig-name descname"><span class="pre">_interpret_dea_features_gprofiler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/dea.html#_interpret_dea_features_gprofiler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics.dea._interpret_dea_features_gprofiler" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.diagnostics.dea.interpret_dea_features">
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics.dea.</span></span><span class="sig-name descname"><span class="pre">interpret_dea_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">input:</span> <span class="pre">pandas.DataFrame</span> <span class="pre">|</span> <span class="pre">List[str],</span> <span class="pre">method:</span> <span class="pre">Literal[g:Profiler]</span> <span class="pre">=</span> <span class="pre">'g:Profiler',</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/dea.html#interpret_dea_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics.dea.interpret_dea_features" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.diagnostics.dea.plot_top_k_enrichment_results">
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics.dea.</span></span><span class="sig-name descname"><span class="pre">plot_top_k_enrichment_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">dfs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'p_value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_p_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_name_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tg_id'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/dea.html#plot_top_k_enrichment_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics.dea.plot_top_k_enrichment_results" title="Link to this definition"></a></dt>
+<dd><p>Plot top K enrichement results</p>
+<p>Will plot the top_k enrichment results from an enrichment analysis (e.g., provided by the
+function <cite>interpret_dea_features</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dfs</strong> – pd.DataFrame (unlimited number)</p></li>
+<li><p><strong>name_col</strong> – column where the geneset/pathway name can be found</p></li>
+<li><p><strong>value_col</strong> – column where the values to sort by/pick top k from can be found</p></li>
+<li><p><strong>value_is_p_value</strong> – whether values are p-values or not</p></li>
+<li><p><strong>max_name_len</strong> – maximal number of characters of geneset/pathway name to be printed in plot</p></li>
+<li><p><strong>top_k</strong> – number of top pathways to plot</p></li>
+<li><p><strong>id_col</strong> – column to split analysis by</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Plots the top K genesets/pathways using matplotlib</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../alignment/index.html" class="btn btn-neutral float-left" title="telegraph.diagnostics.alignment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../group/index.html" class="btn btn-neutral float-right" title="telegraph.diagnostics.group" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BRAID-MAGIC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>
