@@ -11,4 +11,4 @@ pages:
       - public
   only:
     - main
-    - docs*
+    - /^docs_.*$/
