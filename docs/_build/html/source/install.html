@@ -9,11 +9,11 @@
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
 
-
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-
+  
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../_static/documentation_options.js?v=18fb929b"></script>
@@ -23,17 +23,17 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="API Reference" href="../autoapi/index.html" />
-    <link rel="prev" title="Welcome to telegraph’s documentation!" href="../index.html" />
+    <link rel="prev" title="Welcome to the home of telegraph" href="../index.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
 
-
-
+          
+          
           <a href="../index.html" class="icon icon-home">
             telegraph
               <img src="../_static/logo.png" class="logo" alt="Logo"/>
@@ -49,8 +49,13 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#clone-this-repository">1. Clone this repository</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-using-poetry">2. Install using poetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clone-the-gitlab-repository">Clone the GitLab repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-using-poetry">Install using poetry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-and-acitvate-environment">Create and acitvate environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-repository-for-package-access">Configure repository for package access</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optional-test-for-success">[Optional] : Test for success</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
@@ -79,45 +84,56 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-
+             
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <p>To install the <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> pipeline, do:</p>
-<section id="clone-this-repository">
-<h2>1. Clone this repository<a class="headerlink" href="#clone-this-repository" title="Link to this heading"></a></h2>
-<p>Clone your repository into a folder of your choice (<code class="docutils literal notranslate"><span class="pre">REPO_FOLDER</span></code>)</p>
+<section id="clone-the-gitlab-repository">
+<h2>Clone the GitLab repository<a class="headerlink" href="#clone-the-gitlab-repository" title="Link to this heading"></a></h2>
+<p>Clone the <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> <a class="reference external" href="https://code.roche.com/rb-aiml-cv-spatial/cci-explore/validation/pipeline">repository</a> into a folder of your choice (<code class="docutils literal notranslate"><span class="pre">REPO_FOLDER</span></code>)</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>REPO_FOLDER
-git<span class="w"> </span>clone<span class="w"> </span>git@ssh.code.roche.com:rb-aiml-cv-spatial/cci-explore/validation/pipeline.git
-<span class="nb">cd</span><span class="w"> </span>pipeline
+git<span class="w"> </span>clone<span class="w"> </span>git@ssh.code.roche.com:rb-aiml-cv-spatial/cci-explore/validation/pipeline.git<span class="w"> </span>telegraph
+<span class="nb">cd</span><span class="w"> </span>telegraph
 </pre></div>
 </div>
 </section>
 <section id="install-using-poetry">
-<h2>2. Install using poetry<a class="headerlink" href="#install-using-poetry" title="Link to this heading"></a></h2>
+<h2>Install using poetry<a class="headerlink" href="#install-using-poetry" title="Link to this heading"></a></h2>
 <p>Since we ingest multiple methods with a complex set of dependencies, we decided
 to use <a class="reference external" href="https://python-poetry.org/">poetry</a> for packaging and dependency
 management. Make sure you have poetry installed before proceeding.</p>
-<p>Another recommendation is that you use our pre-defined conda environment and
-install the package with poetry within this environment. To do this, do:</p>
+<section id="create-and-acitvate-environment">
+<h3>Create and acitvate environment<a class="headerlink" href="#create-and-acitvate-environment" title="Link to this heading"></a></h3>
+<p>We recommend you using a package manager to not break dependencies. We provide
+an anaconda environment, to use this do:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
 conda<span class="w"> </span>activate<span class="w"> </span>telegraph
 </pre></div>
 </div>
-<p>If you are working in a remote server, you might have to load your
+<p><strong>Note</strong>: If you are working on a remote server, you might have to load your
 Anaconda/conda module, this might look something like:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>ml<span class="w"> </span>load<span class="w"> </span>Anaconda3/2021.0
 </pre></div>
 </div>
-<p>To circumvent dependency issues, we host “forked” versions of certain CCC
-packages. These packages are deposited into Roche’s gitlab server, meaning that
-an extra layer of security exist and you need a username+password to access
-these repositories. Fortunately, we’ve provided you with a config file that
-takes care of all of this, all you need to run it with your gitlab username as
-an argument.</p>
+</section>
+<section id="configure-repository-for-package-access">
+<h3>Configure repository for package access<a class="headerlink" href="#configure-repository-for-package-access" title="Link to this heading"></a></h3>
+<p>To circumvent dependency issues, we host “forked” versions of certain packages
+packages. These packages are deposited into Roche’s GitLab server, this means
+you also have to run an additional configuration script.</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>.<span class="w"> </span>config.sh<span class="w"> </span>YOUR_GITLAB_USERNAME
 poetry<span class="w"> </span>install
 </pre></div>
 </div>
+</section>
+<section id="optional-test-for-success">
+<h3>[Optional] : Test for success<a class="headerlink" href="#optional-test-for-success" title="Link to this heading"></a></h3>
+<p>If you want to test whether <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> has been successfully installed, you can do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;import telegraph as tg&quot;</span>
+</pre></div>
+</div>
+<p>If this command executes successfully, you are good to go.</p>
+</section>
 </section>
 </section>
 
@@ -125,7 +141,7 @@ poetry<span class="w"> </span>install
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to telegraph’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to the home of telegraph" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../autoapi/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
@@ -138,7 +154,7 @@ poetry<span class="w"> </span>install
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-
+   
 
 </footer>
         </div>
@@ -149,7 +165,7 @@ poetry<span class="w"> </span>install
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
+  </script> 
 
 </body>
 </html>

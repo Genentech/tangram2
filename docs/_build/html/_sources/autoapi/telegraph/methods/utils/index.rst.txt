@@ -47,7 +47,7 @@ Attributes
 
 .. py:data:: W
 
-
+   
 
 .. py:function:: array_to_sparse_df(arr: numpy.ndarray, index: None | List[str] = None, columns: None | List[str] = None)
 
@@ -107,7 +107,7 @@ Attributes
 .. py:function:: listify(obj: W) -> List[W]
 
 
-.. py:function:: df2ad(in_df: pandas.DataFrame) -> anndata.AnnData
+.. py:function:: df2ad(in_df: pandas.DataFrame | anndata.AnnData) -> anndata.AnnData
 
 
 .. py:function:: _adata_to_input_dict(adata: anndata.AnnData, categorical_labels: List[str] | None = None, continuous_labels: List[str] | None = None, layer: str | None = None, spatial_key: str = 'spatial', keep_adata: bool = True)
@@ -117,3 +117,5 @@ Attributes
 
 
 .. py:function:: merge_input_dicts(*input_dicts)
+
+

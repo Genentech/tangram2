@@ -16,6 +16,7 @@ Functions
    telegraph.evaluation.utils.ifnonereturn
    telegraph.evaluation.utils.read_input_object
    telegraph.evaluation.utils.read_data
+   telegraph.evaluation.utils.list_or_path_get
 
 
 
@@ -38,5 +39,8 @@ Attributes
 
 
 .. py:function:: read_data(data_dict: Dict[str, str]) -> Dict[str, Any]
+
+
+.. py:function:: list_or_path_get(obj: str | None | List[str] = None)
 
 
