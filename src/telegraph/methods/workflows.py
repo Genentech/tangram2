@@ -7,6 +7,18 @@ import telegraph.methods.utils as ut
 from telegraph.methods._methods import MethodClass
 
 
+def flatten_het_list(input_list):
+    flattened_list = []
+    for element in input_list:
+        if isinstance(element, list):
+            # If the element is a list, extend the flattened list with the flattened element
+            flattened_list.extend(flatten_list(element))
+        else:
+            # If the element is not a list, append it directly to the flattened list
+            flattened_list.append(element)
+    return flattened_list
+
+
 class IdentityFun:
     """Identify Function
 
@@ -67,7 +79,7 @@ class Composite:
                     self._methods[method_key] = method_fun
                     # update available variables
                     if self.cc:
-                        available_vars += method_fun.ins
+                        available_vars += flatten_het_list(method_fun.ins)
                         available_vars += method_fun.outs
 
                 # if not first method to be added

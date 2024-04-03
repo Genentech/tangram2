@@ -434,7 +434,7 @@ def adatas_to_input(
     return input_dict
 
 
-def merge_input_dicts(*input_dicts):
+def merge_input_dicts(*input_dicts, join_style: Literal["inner", "outer"] = "outer"):
 
     union_keys = [k for y in input_dicts for k, v in y.items() if v is not None]
     union_keys = [x for x in union_keys if union_keys.count(x) == len(input_dicts)]
@@ -454,7 +454,7 @@ def merge_input_dicts(*input_dicts):
 
         # same operation now, but perhaps want to change in future
         if key.startswith(("X", "T", "D")):
-            obj_list = pd.concat(obj_list, axis=0).fillna(0)
+            obj_list = pd.concat(obj_list, axis=0, join=join_style).fillna(0)
             new_input_dict[key] = obj_list
         else:
             raise ValueError("Merge not available for {}".format(key))
