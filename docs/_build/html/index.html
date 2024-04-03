@@ -4,16 +4,17 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to telegraph’s documentation! &mdash; telegraph beta-v1 documentation</title>
+  <title>Welcome to the home of telegraph &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="_static/_static/custom.css" />
 
-
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-
+  
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=18fb929b"></script>
@@ -22,17 +23,17 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="source/install.html" />
+    <link rel="next" title="Installation" href="source/install.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
 
-
-
+          
+          
           <a href="#" class="icon icon-home">
             telegraph
               <img src="_static/logo.png" class="logo" alt="Logo"/>
@@ -65,7 +66,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to telegraph’s documentation!</li>
+      <li class="breadcrumb-item active">Welcome to the home of telegraph</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -74,15 +75,49 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-
-  <section id="welcome-to-telegraph-s-documentation">
-<h1>Welcome to telegraph’s documentation!<a class="headerlink" href="#welcome-to-telegraph-s-documentation" title="Link to this heading"></a></h1>
+             
+  <section id="welcome-to-the-home-of-telegraph">
+<h1>Welcome to the home of telegraph<a class="headerlink" href="#welcome-to-the-home-of-telegraph" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">telegraph</span></code> is a computational framework for cell cell communcation (CCC)
+inference. It’s designed to be highly modular and versatile while also providing
+tools for inspection, comparison, evaluation, and interpretation of the output.
+In contrast to many existing frameworks for CCC we’ve also put an emphasis on
+multimodal datasets where we have both spatial and scRNA-seq data.</p>
+<p>A sample of the tasks <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> accomodates methods for are:
+- Identification of interacting cells in a data set (grouping of cells)
+- Identify the downstream events of a given ligand-receptor interaction
+- Comparing interaction patterns across conditions
+- Evaluate method performance on ground truth data
+- Interpretation of the idenfified interaction events</p>
+<p>We provide you with a flexible API designed for custom analysis in mind, if
+you’re familiar with frameworks such as <code class="docutils literal notranslate"><span class="pre">scanpy</span></code> this package has a very similar
+interface.</p>
+<p>Our framework is organized into multiple submodules, with the following short descriptions:</p>
+<ul class="simple">
+<li><p>Methods module (<code class="docutils literal notranslate"><span class="pre">methods</span></code>)
+- Run, chain, and combine multiple different SOTA methods</p></li>
+<li><p>Diagnostics module (<code class="docutils literal notranslate"><span class="pre">diagnostics</span></code>)
+- Inspect, Interpret, visualize, and compre outputs from each step</p></li>
+<li><p>Datagen module (<code class="docutils literal notranslate"><span class="pre">datagen</span></code>)
+- Generate synthetic data for HP tuning and evaluation</p></li>
+<li><p>Evaluation module (<code class="docutils literal notranslate"><span class="pre">evaluation</span></code>)
+- Evaluate and compare performance on ground truth</p></li>
+<li><p>Aggregation module (<code class="docutils literal notranslate"><span class="pre">aggregate</span></code>)
+- Aggregate results from multiple workflows to get a consensus output</p></li>
+</ul>
+<p>You’ll very soon find a few example tutorials here showing how to use <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> for your analysis.</p>
+<p><strong>Note:</strong> <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> is still under development, keep this in mind as you use the package and please report any issues to our gitlab page.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/install.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="source/install.html#clone-this-repository">1. Clone this repository</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/install.html#install-using-poetry">2. Install using poetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/install.html#clone-the-gitlab-repository">Clone the GitLab repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/install.html#install-using-poetry">Install using poetry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="source/install.html#create-and-acitvate-environment">Create and acitvate environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source/install.html#configure-repository-for-package-access">Configure repository for package access</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source/install.html#optional-test-for-success">[Optional] : Test for success</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
@@ -127,7 +162,7 @@
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-
+   
 
 </footer>
         </div>
@@ -138,7 +173,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
+  </script> 
 
 </body>
 </html>

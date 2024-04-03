@@ -14,6 +14,7 @@ Functions
 .. autoapisummary::
 
    telegraph.diagnostics._utils.easy_input
+   telegraph.diagnostics._utils.pick_x_d
    telegraph.diagnostics._utils.harmony_helper
 
 
@@ -21,4 +22,9 @@ Functions
 .. py:function:: easy_input(func)
 
 
+.. py:function:: pick_x_d(X_to, D_to, X_from, D_from, target)
+
+
 .. py:function:: harmony_helper(X, metadata, batch_key, metadata_is_D=True, n_components=2, normalize: bool = True)
+
+

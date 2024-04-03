@@ -30,3 +30,5 @@ Functions
 
 
 .. py:function:: plot_from_feature_on_to(S_to: numpy.ndarray | pandas.DataFrame, T: pandas.DataFrame | numpy.ndarray, features: pandas.DataFrame | pandas.Series, check_index: bool = True, n_cols: int = 4, marker_size=10)
+
+

@@ -1,47 +1,57 @@
-## Installation
+# Installation
 To install the `telegraph` pipeline, do:
 
-### 1. Clone this repository
+## Clone the GitLab repository
 
-Clone your repository into a folder of your choice (`REPO_FOLDER`)
+Clone the `telegraph` [repository](https://code.roche.com/rb-aiml-cv-spatial/cci-explore/validation/pipeline) into a folder of your choice (`REPO_FOLDER`)
 
 ```sh
 cd REPO_FOLDER
-git clone git@ssh.code.roche.com:rb-aiml-cv-spatial/cci-explore/validation/pipeline.git
-cd pipeline
+git clone git@ssh.code.roche.com:rb-aiml-cv-spatial/cci-explore/validation/pipeline.git telegraph
+cd telegraph
 ```
 
-### 2. Install using poetry
+## Install using poetry
 
 Since we ingest multiple methods with a complex set of dependencies, we decided
 to use [poetry](https://python-poetry.org/) for packaging and dependency
 management. Make sure you have poetry installed before proceeding.
 
-Another recommendation is that you use our pre-defined conda environment and
-install the package with poetry within this environment. To do this, do:
+### Create and acitvate environment
+
+We recommend you using a package manager to not break dependencies. We provide
+an anaconda environment, to use this do:
+
 
 ```sh
 conda env create -f environment.yml
 conda activate telegraph
 ```
 
-If you are working in a remote server, you might have to load your
+**Note**: If you are working on a remote server, you might have to load your
 Anaconda/conda module, this might look something like:
 
 ```sh
 ml load Anaconda3/2021.0
 ```
 
+### Configure repository for package access
 
-To circumvent dependency issues, we host "forked" versions of certain CCC
-packages. These packages are deposited into Roche's gitlab server, meaning that
-an extra layer of security exist and you need a username+password to access
-these repositories. Fortunately, we've provided you with a config file that
-takes care of all of this, all you need to run it with your gitlab username as
-an argument.
+To circumvent dependency issues, we host "forked" versions of certain packages
+packages. These packages are deposited into Roche's GitLab server, this means
+you also have to run an additional configuration script.
 
 
 ```sh
 . config.sh YOUR_GITLAB_USERNAME
 poetry install
 ```
+
+### [Optional] : Test for success
+If you want to test whether `telegraph` has been successfully installed, you can do:
+
+```python
+python -c "import telegraph as tg"
+```
+
+If this command executes successfully, you are good to go.
