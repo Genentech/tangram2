@@ -12,7 +12,7 @@ tools for inspection, comparison, evaluation, and interpretation of the output.
 In contrast to many existing frameworks for CCC we've also put an emphasis on
 multimodal datasets where we have both spatial and scRNA-seq data.
 
-A sample of the tasks `telegraph` accomodates methods for are:
+A sample of the tasks ``telegraph`` accomodates methods for are:
 - Identification of interacting cells in a data set (grouping of cells)
 - Identify the downstream events of a given ligand-receptor interaction
 - Comparing interaction patterns across conditions
@@ -20,7 +20,7 @@ A sample of the tasks `telegraph` accomodates methods for are:
 - Interpretation of the idenfified interaction events
 
 We provide you with a flexible API designed for custom analysis in mind, if
-you're familiar with frameworks such as `scanpy` this package has a very similar
+you're familiar with frameworks such as ``scanpy`` this package has a very similar
 interface.
 
 
@@ -38,11 +38,15 @@ Our framework is organized into multiple submodules, with the following short de
   - Aggregate results from multiple workflows to get a consensus output
 
 
-**Note:** `telegraph` is still under development, keep this in mind as you use the package and please report any issues to our gitlab page.
+You'll very soon find a few example tutorials here showing how to use ``telegraph`` for your analysis.
+
+**Note:** ``telegraph`` is still under development, keep this in mind as you use the package and please report any issues to our gitlab page.
+
+
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
    source/install

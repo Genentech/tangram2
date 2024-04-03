@@ -9,11 +9,11 @@
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
 
-  
+
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=18fb929b"></script>
@@ -22,17 +22,17 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="source/install.html" /> 
+    <link rel="next" title="Installation" href="source/install.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
 
-          
-          
+
+
           <a href="#" class="icon icon-home">
             telegraph
               <img src="_static/logo.png" class="logo" alt="Logo"/>
@@ -74,7 +74,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <section id="welcome-to-the-home-of-telegraph">
 <h1>Welcome to the home of telegraph<a class="headerlink" href="#welcome-to-the-home-of-telegraph" title="Link to this heading"></a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">telegraph</span></code> is a computational framework for cell cell communcation (CCC)
@@ -82,14 +82,14 @@ inference. It’s designed to be highly modular and versatile while also providi
 tools for inspection, comparison, evaluation, and interpretation of the output.
 In contrast to many existing frameworks for CCC we’ve also put an emphasis on
 multimodal datasets where we have both spatial and scRNA-seq data.</p>
-<p>A sample of the tasks <cite>telegraph</cite> accomodates methods for are:
+<p>A sample of the tasks <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> accomodates methods for are:
 - Identification of interacting cells in a data set (grouping of cells)
 - Identify the downstream events of a given ligand-receptor interaction
 - Comparing interaction patterns across conditions
 - Evaluate method performance on ground truth data
 - Interpretation of the idenfified interaction events</p>
 <p>We provide you with a flexible API designed for custom analysis in mind, if
-you’re familiar with frameworks such as <cite>scanpy</cite> this package has a very similar
+you’re familiar with frameworks such as <code class="docutils literal notranslate"><span class="pre">scanpy</span></code> this package has a very similar
 interface.</p>
 <p>Our framework is organized into multiple submodules, with the following short descriptions:</p>
 <ul class="simple">
@@ -104,17 +104,41 @@ interface.</p>
 <li><p>Aggregation module (<code class="docutils literal notranslate"><span class="pre">aggregate</span></code>)
 - Aggregate results from multiple workflows to get a consensus output</p></li>
 </ul>
-<p><strong>Note:</strong> <cite>telegraph</cite> is still under development, keep this in mind as you use the package and please report any issues to our gitlab page.</p>
+<p>You’ll very soon find a few example tutorials here showing how to use <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> for your analysis.</p>
+<p><strong>Note:</strong> <code class="docutils literal notranslate"><span class="pre">telegraph</span></code> is still under development, keep this in mind as you use the package and please report any issues to our gitlab page.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="source/install.html#clone-the-gitlab-repository">Clone the GitLab repository</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/install.html#install-using-poetry">Install using poetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/install.html#install-using-poetry">Install using poetry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="source/install.html#create-and-acitvate-environment">Create and acitvate environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source/install.html#configure-repository-for-package-access">Configure repository for package access</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source/install.html#optional-test-for-success">[Optional] : Test for success</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/telegraph/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/telegraph/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/telegraph/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/datagen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/diagnostics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/evaluation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/methods/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.tests</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/telegraph/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/_version/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph._version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/cli/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.cli</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/telegraph/constants/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.constants</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -137,7 +161,7 @@ interface.</p>
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -148,7 +172,7 @@ interface.</p>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>
