@@ -407,7 +407,7 @@ def _cellmix_type_balanced(
                 # remove cells at spot i from pool
                 type_dict[k] = type_dict[k][n::]
                 # add cells expression to spot expression
-                x_mat[ii, :] = X[spot_i_idxs, :].sum(axis=0)
+                x_mat[ii, :] += X[spot_i_idxs, :].sum(axis=0)
 
     # create anndata object for spot data
     ad_sp = ad.AnnData(
@@ -416,29 +416,16 @@ def _cellmix_type_balanced(
         var=ad_sc.var,
     )
 
-    # flatten the index list
-    idx_list_flat = reduce(lambda x, y: x + y, [x for x in idx_list])
-    # only get those cells assigned to spots
-    ad_sc = ad_sc[idx_list_flat].copy()
+    row_target = [x for y in idx_list for x in y]
+    row_self = [[k] * len(x) for k, x in enumerate(idx_list)]
+    row_self = [x for y in row_self for x in y]
 
-    # adjust assigned indices to match order of subsetted ad_sc
-    cumsum = np.append([0], np.cumsum(spot_cell_count))
-    idx_list_adj = [
-        np.arange(cumsum[ii], cumsum[ii + 1]).tolist() for ii in range(n_spots)
-    ]
+    ad_sc = ad_sc[row_target, :].copy()
+    row_target = [x for x in range(len(row_target))]
 
-    # flatten index lists
-    cell_to_spot = reduce(
-        lambda x, y: x + y, [[k] * len(v) for k, v in enumerate(idx_list)]
-    )
-    idx_list_flat = reduce(lambda x, y: x + y, [x for x in idx_list_adj])
-
-    # rename (because I'm lazy)
-    row_self = cell_to_spot
-    row_target = idx_list_flat
     shape = np.array((len(ad_sp), len(ad_sc)))
 
-    # Note : [(s,t) for s,t in zip(row_self,row_target)]
+    # No: [(s,t) for s,t in zip(row_self,row_target)]
     # will tell you (spot,cell) pairing for ad_sp, ad_sc
 
     # add grond truth mapping to spatial anndata object
@@ -460,8 +447,8 @@ def _cellmix_type_balanced(
     )
 
     # which spot does cell j map to
-    ad_sc.obs["spot_id"] = cell_to_spot
-    ad_sc.obsm["spatial"] = ad_sp.obsm["spatial"][cell_to_spot]
+    ad_sc.obs["spot_id"] = row_self
+    ad_sc.obsm["spatial"] = ad_sp.obsm["spatial"][row_self]
     ad_sc.obsm["spatial_hires"] = ad_sc.obsm["spatial"] + np.random.normal(0, 0.1)
 
     if n_spatial_grad is not None:
