@@ -19,6 +19,17 @@ Classes
 
 
 
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   telegraph.methods.workflows.flatten_het_list
+
+
+
+.. py:function:: flatten_het_list(input_list)
+
 
 .. py:class:: IdentityFun
 
@@ -63,7 +74,7 @@ Classes
 
    .. py:attribute:: flow
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], **kwargs)
       :classmethod:
@@ -96,8 +107,3 @@ Classes
       input_dict: standard input dictionary
       verbose: use verbose mode
       return_dict: return the updated input_dict
-
-
-
-
-
