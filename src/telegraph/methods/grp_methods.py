@@ -394,8 +394,9 @@ class QuantileGroup(GroupMethodClass):
         # this is to match names with specified features
         X_to_use.columns = X_to_use.columns.str.lower()
 
-        tix = subset_idxs["to"]
-        fix = subset_idxs["from"]
+        tix = np.where(subset_idxs["to"])[0]
+        fix = np.where(subset_idxs["from"])[0]
+
         T = T.values[tix, :][:, fix]
 
         # iterate over all features
@@ -452,14 +453,17 @@ class QuantileGroup(GroupMethodClass):
             else:
                 t_low = np.zeros(T.shape[1]).astype(bool)
 
-            is_both = t_low & t_high
+            is_both = np.where(t_low & t_high)[0]
 
             # update "from" design matrix
-            D_from[fix, :][t_low, 0] = 1
-            D_from[fix, :][t_high, 1] = 1
+            t_low = np.where(t_low)[0]
+            t_high = np.where(t_high)[0]
 
-            D_from[fix, :][is_both, 0] = 0
-            D_from[fix, :][is_both, 1] = 0
+            D_from[fix[t_low], 0] = 1
+            D_from[fix[t_high], 1] = 1
+
+            D_from[fix[is_both], 0] = 0
+            D_from[fix[is_both], 1] = 0
 
             from_cols = [f"{from_prefix}nadj_{feature}", f"{from_prefix}adj_{feature}"]
             # convert "from" design matrix to data frame
