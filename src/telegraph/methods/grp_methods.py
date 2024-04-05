@@ -306,7 +306,7 @@ class QuantileGroup(GroupMethodClass):
 
     @classmethod
     @ut.check_in_out
-    # @gut.add_covariates
+    @gut.add_covariates
     def run(
         cls,
         input_dict: Dict[str, Any],
