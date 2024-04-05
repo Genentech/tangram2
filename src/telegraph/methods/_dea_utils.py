@@ -5,6 +5,28 @@ import pandas as pd
 from . import utils as ut
 
 
+class DEA(Enum):
+    adj_p_value = "pvals_adj"
+    logfold = "log2fc"
+    p_value = "pvals"
+    feature = "feature"
+    score = "score"
+    coeff = "score"
+    agg_p_value = "pvals_agg"
+
+
+def get_empty_dea_df():
+    return pd.DataFrame(
+        [],
+        columns=[
+            DEA.p_value.value,
+            DEA.adj_p_value.value,
+            DEA.feature_value.value,
+            DEA.score.value,
+        ],
+    )
+
+
 def scanpy_dea_labels_from_D(D: pd.DataFrame, group_pair, new_col_name="label"):
 
     col_names = D.columns.tolist()
