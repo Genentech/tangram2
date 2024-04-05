@@ -306,13 +306,14 @@ class QuantileGroup(GroupMethodClass):
 
     @classmethod
     @ut.check_in_out
-    @gut.add_covariates
+    # @gut.add_covariates
     def run(
         cls,
         input_dict: Dict[str, Any],
         feature_name: List[str] | str,
         q_t: float | Tuple[float, float] = 0.25,
         q_x: float | Tuple[float, float] = 0.25,
+        subset_covs: Dict[str, List[str]] | None = None,
         **kwargs,
     ) -> pd.DataFrame:
 
@@ -345,6 +346,45 @@ class QuantileGroup(GroupMethodClass):
         pol.check_values(T, "T")
         pol.check_dimensions(T, "T", (n_to, n_from))
 
+        to_prefix = ""
+        from_prefix = ""
+        subset_idxs = {
+            "to": np.ones(X_to_use.shape[0]).astype(bool),
+            "from": np.ones(X_from.shape[0]).astype(bool),
+        }
+
+        from_index = (
+            X_from.obs.index if isinstance(X_from, ad.AnnData) else X_from.index
+        )
+
+        to_index = (
+            X_to_use.obs.index if isinstance(X_to_use, ad.AnnData) else X_to_use.index
+        )
+
+        if subset_covs is not None:
+            subset_names = dict()
+            for target, covs in subset_covs.items():
+                D_old = input_dict.get("D_{}".format(target))
+                subset_names[target] = []
+                if D_old is not None:
+                    subset_idx = subset_idxs.pop(target)
+                    for cov in covs:
+                        if cov in D_old.columns:
+                            subset_idx *= D_old[cov].values.astype(bool)
+                            subset_names[target].append(cov)
+                    subset_idxs[target] = subset_idx
+            if "to" in subset_names:
+                to_prefix += "_".join(subset_names["to"])
+                if len(to_prefix) > 0:
+                    to_predix += "_"
+                X_to_use = X_to_use[subset_idxs["to"]]
+
+            if "from" in subset_names:
+                from_prefix += "_".join(subset_names["from"])
+                if len(from_prefix) > 0:
+                    from_prefix += "_"
+                X_from = X_from[subset_idxs["from"]]
+
         # make sure feature_name is in list format
         feature_name = ut.listify(feature_name)
 
@@ -353,6 +393,10 @@ class QuantileGroup(GroupMethodClass):
         # set feature names in X_to_use to lowercase
         # this is to match names with specified features
         X_to_use.columns = X_to_use.columns.str.lower()
+
+        tix = subset_idxs["to"]
+        fix = subset_idxs["from"]
+        T = T.values[tix, :][:, fix]
 
         # iterate over all features
         for feature in feature_name:
@@ -372,56 +416,54 @@ class QuantileGroup(GroupMethodClass):
             x_low = val <= q_x_low
 
             # create blank "to" design matrix
-            D_to = np.zeros((X_to_use.shape[0], 2))
+            D_to = np.zeros((n_to, 2))
             # update "to" design matrix according to
             # high/low assignments
-            D_to[x_low, 0] = 1
-            D_to[x_high, 1] = 1
+            D_to[tix, :][x_low, 0] = 1
+            D_to[tix, :][x_high, 1] = 1
 
             # converts design matrix to data frame
-            to_cols = [f"low_{feature}", f"high_{feature}"]
+            to_cols = [f"{to_prefix}low_{feature}", f"{to_prefix}high_{feature}"]
 
             D_to = pd.DataFrame(
                 D_to.astype(int),
                 columns=to_cols,
-                index=X_to_use.index,
+                index=to_index,
             )
 
             # instantiate "from" design matrix
-            D_from = np.zeros((X_from.shape[0], 2))
+            D_from = np.zeros((n_from, 2))
 
             # get observations in "from" with a mass higher
             # that thres_t_high assigned to the "high" observations
             # in "to"
 
             if np.sum(x_high) > 0:
-                T_high_sum = T.values[x_high, :].sum(axis=0)
+                T_high_sum = T[x_high, :].sum(axis=0)
                 q_t_high = np.quantile(T_high_sum, 1 - q_t)
-                t_high = T.values[x_high, :].sum(axis=0) >= q_t_high
+                t_high = T[x_high, :].sum(axis=0) >= q_t_high
             else:
                 t_high = np.zeros(T.shape[1]).astype(bool)
 
             if np.sum(x_low) > 0:
-                T_low_sum = T.values[x_low, :].sum(axis=0)
+                T_low_sum = T[x_low, :].sum(axis=0)
                 q_t_low = np.quantile(T_low_sum, 1 - q_t)
-                t_low = T.values[x_low, :].sum(axis=0) >= q_t_low
+                t_low = T[x_low, :].sum(axis=0) >= q_t_low
             else:
                 t_low = np.zeros(T.shape[1]).astype(bool)
 
             is_both = t_low & t_high
 
             # update "from" design matrix
-            D_from[t_low, 0] = 1
-            D_from[t_high, 1] = 1
+            D_from[fix, :][t_low, 0] = 1
+            D_from[fix, :][t_high, 1] = 1
 
-            D_from[is_both, 0] = 0
-            D_from[is_both, 1] = 0
+            D_from[fix, :][is_both, 0] = 0
+            D_from[fix, :][is_both, 1] = 0
 
-            from_cols = [f"nadj_{feature}", f"adj_{feature}"]
+            from_cols = [f"{from_prefix}nadj_{feature}", f"{from_prefix}adj_{feature}"]
             # convert "from" design matrix to data frame
-            from_index = (
-                X_from.obs.index if isinstance(X_from, ad.AnnData) else X_from.index
-            )
+
             D_from = pd.DataFrame(
                 D_from.astype(int),
                 columns=from_cols,
