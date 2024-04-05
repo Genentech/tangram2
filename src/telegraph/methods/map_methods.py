@@ -164,8 +164,10 @@ class ArgMaxCorrMap(MapMethodClass):
 
         col_idx = np.arange(n_cols).astype(int)
 
+        overlap = list(set(X_to.var_names).intersection(set(X_from.var_names)))
+
         # get correlation between all observations in "to" and "from"
-        sim = ut.matrix_correlation(X_to.X.T, X_from.X.T)
+        sim = ut.matrix_correlation(X_to[:, overlap].X.T, X_from[:, overlap].X.T)
         # set nan to max anticorrelation
         sim[np.isnan(sim)] = -np.inf
         # make probabilistic
