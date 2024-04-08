@@ -21,6 +21,9 @@ Classes
    telegraph.methods.map_methods.CeLEryMap
    telegraph.methods.map_methods.SpaOTscMap
    telegraph.methods.map_methods.MoscotMap
+   telegraph.methods.map_methods.SimpleMapBase
+   telegraph.methods.map_methods.SimpleMap
+   telegraph.methods.map_methods.SimpleScaleMap
 
 
 
@@ -50,12 +53,12 @@ Classes
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['T']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], seed: int = 1, experiment_name: str | None = None, use_emb: bool = False, **kwargs)
       :classmethod:
@@ -73,12 +76,12 @@ Classes
    .. py:attribute:: ins
       :value: ['X_from', 'X_to']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['T']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], experiment_name: str | None = None, use_emb: bool = False, **kwargs) -> Dict[str, numpy.ndarray] | Dict[str, scipy.sparse.spmatrix]
       :classmethod:
@@ -95,21 +98,21 @@ Classes
 
    .. py:attribute:: tg
 
-      
+
 
    .. py:attribute:: version
 
-      
+
 
    .. py:attribute:: ins
       :value: [('X_to', 'Z_to'), ('X_from', 'Z_from')]
 
-      
+
 
    .. py:attribute:: outs
       :value: ['T']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], to_spatial_key: str = 'spatial', from_spatial_key: str = 'spatial', num_epochs: int = 1000, genes: List[str] | str | None = None, experiment_name: str | None = None, use_emb: bool = False, **kwargs) -> Dict[str, numpy.ndarray] | Dict[str, scipy.sparse.spmatrix]
       :classmethod:
@@ -127,7 +130,7 @@ Classes
    .. py:attribute:: version
       :value: '1'
 
-      
+
 
 
 .. py:class:: TangramV2Map(*args, **kwargs)
@@ -146,7 +149,7 @@ Classes
    .. py:attribute:: version
       :value: '2'
 
-      
+
 
    .. py:method:: _save_w(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
@@ -164,12 +167,12 @@ Classes
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['S_from']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], hidden_dims: List[int] = [30, 25, 15], num_epochs_max: int = 100, spatial_key: str = 'spatial', **kwargs) -> Dict[str, numpy.ndarray]
       :classmethod:
@@ -187,12 +190,12 @@ Classes
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['T']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], to_spatial_key: str = 'spatial', experiment_name: str | None = None, seed: int | None = None, use_emb: bool = False, **kwargs) -> Dict[str, numpy.ndarray] | Dict[str, scipy.sparse.spmatrix]
       :classmethod:
@@ -210,15 +213,83 @@ Classes
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['T', 'moscot_solution']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], genes: List[str] | str | None = None, experiment_name: str | None = None, return_T_norm: bool = True, seed: int | None = None, use_emb: bool = False, **kwargs) -> Dict[str, numpy.ndarray]
       :classmethod:
 
 
 
+.. py:class:: SimpleMapBase
+
+
+   Bases: :py:obj:`MapMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: ['X_to', 'X_from']
+
+
+
+   .. py:attribute:: outs
+      :value: ['T']
+
+
+
+   .. py:method:: model()
+      :classmethod:
+      :abstractmethod:
+
+
+   .. py:method:: get_out(*args, **kwargs)
+      :classmethod:
+      :abstractmethod:
+
+
+   .. py:method:: _get_T(model, to_names, from_names)
+      :classmethod:
+
+
+   .. py:method:: run(input_dict: Dict[str, Any], seed: int = 1, experiment_name: str | None = None, use_emb: bool = False, num_epochs: int = 1000, verbose: bool = False, device: str = 'cuda:0', learning_rate: float = 0.001, train_genes: List[str] | None = None, normalize: bool = False, temperature: float = 0.01, **kwargs)
+      :classmethod:
+
+
+
+.. py:class:: SimpleMap(*args, **kwargs)
+
+
+   Bases: :py:obj:`SimpleMapBase`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: model(*args, **kwargs)
+      :classmethod:
+
+
+   .. py:method:: get_out(model, to_names, from_names, **kwargs)
+      :classmethod:
+
+
+
+.. py:class:: SimpleScaleMap(*args, **kwargs)
+
+
+   Bases: :py:obj:`SimpleMapBase`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: model(*args, **kwargs)
+      :classmethod:
+
+
+   .. py:method:: get_out(model, to_names, from_names, var_names, **kwargs)
+      :classmethod:
