@@ -7,6 +7,7 @@ import anndata as ad
 import numpy as np
 import pandas as pd
 import scanpy as sc
+import torch as t
 from scipy.sparse import coo_matrix, spmatrix
 from scipy.spatial import cKDTree
 from scipy.spatial.distance import cdist
@@ -17,6 +18,7 @@ import telegraph.methods.policies as pol
 import telegraph.methods.transforms as tf
 import telegraph.methods.utils as ut
 from telegraph.methods._methods import MethodClass
+from telegraph.methods.models import vanilla as vn
 
 
 class MapMethodClass(MethodClass):
@@ -723,5 +725,155 @@ class MoscotMap(MapMethodClass):
         pol.check_type(T, "T")
         pol.check_values(T, "T")
         pol.check_dimensions(T, "T", (n_rows, n_cols))
+
+        return out
+
+
+class SimpleMapBase(MapMethodClass):
+    # class that randomly maps object in "from"
+    # to locations in "to"
+
+    ins = ["X_to", "X_from"]
+    outs = ["T"]
+
+    def __init__(
+        self,
+    ):
+        super().__init__()
+
+    @classmethod
+    @abstractmethod
+    def model(
+        cls,
+    ):
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_out(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def _get_T(cls, model, to_names, from_names):
+        T = model.T
+        T = ut.array_to_sparse_df(T, index=to_names, columns=from_names)
+        return T
+
+    @classmethod
+    @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        seed: int = 1,
+        experiment_name: str | None = None,
+        use_emb: bool = False,
+        num_epochs: int = 1000,
+        verbose: bool = False,
+        device: str = "cuda:0",
+        learning_rate: float = 0.001,
+        train_genes: List[str] | None = None,
+        normalize: bool = False,
+        temperature: float = 1e-2,
+        **kwargs,
+    ):
+        if verbose:
+            import tqdm
+
+            iterator = tqdm.tqdm(range(num_epochs))
+        else:
+            iterator = range(num_epochs)
+
+        if use_emb:
+            X_to = input_dict.get("Z_to")
+            # anndata object that we map _from_
+            X_from = input_dict.get("Z_from")
+        else:
+            # anndata object that we map _to_
+            X_to = input_dict["X_to"]
+            pol.check_values(X_to, "X_to")
+            # anndata object that we map _from_
+            X_from = input_dict["X_from"]
+            pol.check_values(X_from, "X_from")
+
+        if isinstance(X_to, ad.AnnData):
+            X_to = X_to.to_df()
+
+        if isinstance(X_from, ad.AnnData):
+            X_from = X_from.to_df()
+
+        inter = X_from.columns.intersection(X_to.columns)
+
+        if train_genes is not None:
+            inter = pd.Index(train_genes).intersection(inter)
+
+        from_names = X_from.index
+        to_names = X_to.index
+
+        X_from = X_from.loc[:, inter].values
+        X_to = X_to.loc[:, inter].values
+
+        if normalize:
+            X_from = X_from / (X_from.sum(axis=0) + 1e-10)
+            X_to = X_to / (X_to.sum(axis=0) + 1e-10)
+
+        if "cuda" in device:
+            device = device if t.cuda.is_available() else "cpu"
+
+        if seed is not None:
+            t.manual_seed(seed)
+
+        model = cls.model(X_to, X_from, device=device, temperature=temperature)
+        optimizer = t.optim.Adam(model.parameters(), lr=learning_rate)  # Adam optimizer
+
+        for epoch in iterator:
+
+            model.train()  # Set the model to training mode
+
+            loss = model.loss()
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+        out = cls.get_out(
+            model, to_names=to_names, from_names=from_names, var_names=inter
+        )
+
+        return out
+
+
+class SimpleMap(SimpleMapBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
+    @classmethod
+    def model(cls, *args, **kwargs):
+        return vn.SimpleMap(*args, **kwargs)
+
+    @classmethod
+    def get_out(cls, model, to_names, from_names, **kwargs):
+        T = cls._get_T(model, to_names, from_names)
+        out = dict(
+            T=T,
+        )
+        return out
+
+
+class SimpleScaleMap(SimpleMapBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
+    @classmethod
+    def model(cls, *args, **kwargs):
+        return vn.SimpleScaleMap(*args, **kwargs)
+
+    @classmethod
+    def get_out(cls, model, to_names, from_names, var_names, **kwargs):
+
+        T = cls._get_T(model, to_names, from_names)
+        W = model.W
+        W = pd.DataFrame(W.flatten(), index=var_names, columns=["coef"])
+
+        out = dict(T=T, gene_coef=W)
 
         return out

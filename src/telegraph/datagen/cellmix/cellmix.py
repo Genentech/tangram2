@@ -347,6 +347,7 @@ def _cellmix_type_balanced(
     spot_type_count = np.clip(
         np.random.poisson(n_types_per_spot, size=n_spots), a_min=1, a_max=n_labels
     )
+    print(spot_type_count.mean())
 
     # split cell inidices (row) by their label and shuffle cell order to break dependency
     type_dict = {
@@ -379,23 +380,33 @@ def _cellmix_type_balanced(
         # get number of types at spot i
         n_types = spot_type_count[ii]
 
-        # create probability vector for type sampling
-        probs_type = np.ones(n_labels)
-        # only cell types with a sufficient number of cells are eligible for sampling
-        probs_type[n_cells_in_type < n_cells] = 0
-        probs_type /= probs_type.sum()
+        # # create probability vector for type sampling
+        # probs_type = np.ones(n_labels)
+        # # only cell types with a sufficient number of cells are eligible for sampling
+        # probs_type[n_cells_in_type < n_cells] = 0
+        # probs_type /= probs_type.sum()
 
-        # sample which types that should be at spot i
-        types_i = np.random.choice(
-            n_labels, replace=False, size=int(n_types), p=probs_type
-        )
+        # # sample which types that should be at spot i
+        # types_i = np.random.choice(
+        #     n_labels, replace=False, size=int(n_types), p=probs_type
+        # )
 
         # create probability for cell sampling
-        probs = np.zeros(n_labels)
-        probs[types_i] = 1 / np.sum(len(types_i))
-        # sample which how many of each of the selected types that reside at this spot
-        type_idx = np.random.multinomial(n_cells, pvals=probs)
-        p_mat[ii, :] = type_idx / type_idx.sum()
+        # probs = np.zeros(n_labels)
+        # probs[types_i] = 1 / np.sum(len(types_i))
+        # # sample which how many of each of the selected types that reside at this spot
+        # type_idx = np.random.multinomial(n_cells, pvals=probs)
+        # p_mat[ii, :] = type_idx / type_idx.sum()
+        type_has_cells = n_cells_in_type > n_cells
+        n_good = np.sum(type_has_cells)
+
+        if n_good > n_types:
+            mask_idx = np.random.choice(n_good, size=n_good - n_types, replace=False)
+            og_idx = np.where(type_has_cells)[0]
+            n_cells_in_type[og_idx[mask_idx]] = 0
+
+        type_idx = mhg.rvs(n_cells_in_type, n=n_cells)
+        p_mat[ii, :] = type_idx
 
         # assign cells to spot
         for k, n in enumerate(type_idx):
