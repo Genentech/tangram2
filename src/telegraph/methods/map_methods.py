@@ -504,11 +504,11 @@ class SpaOTscMap(MapMethodClass):
 
         if isinstance(X_to, pd.DataFrame):
             ad_to = ut.df2ad(X_to)
-        if isinstance(X_to, ad.Anndata):
+        if isinstance(X_to, ad.AnnData):
             ad_to = X_to
         if isinstance(X_from, pd.DataFrame):
             ad_from = ut.df2ad(X_from)
-        if isinstance(X_from, ad.Anndata):
+        if isinstance(X_from, ad.AnnData):
             ad_from = X_from
 
         # spatial coordinates of "to"
