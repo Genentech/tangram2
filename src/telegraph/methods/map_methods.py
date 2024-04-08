@@ -502,8 +502,10 @@ class SpaOTscMap(MapMethodClass):
             X_from = input_dict["X_from"]
             pol.check_values(X_from, "X_from")
 
-        ad_to = ut.df2ad(X_to)
-        ad_from = ut.df2ad(X_from)
+        if isinstance(X_to, pd.DataFrame):
+            ad_to = ut.df2ad(X_to)
+        if isinstance(X_from, pd.DataFrame):
+            ad_from = ut.df2ad(X_from)
 
         # spatial coordinates of "to"
         if to_spatial_key in ad_to:
