@@ -512,7 +512,7 @@ class SpaOTscMap(MapMethodClass):
             ad_from = X_from
 
         # spatial coordinates of "to"
-        if to_spatial_key in ad_to:
+        if to_spatial_key in ad_to.obsm:
             S_to = ad_to.obsm[to_spatial_key]
         elif "S_to" in input_dict:
             S_to = input_dict["S_to"]
