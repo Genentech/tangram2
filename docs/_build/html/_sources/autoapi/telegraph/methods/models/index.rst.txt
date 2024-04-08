@@ -12,5 +12,4 @@ Submodules
 
    fcnn/index.rst
    vae/index.rst
-
-
+   vanilla/index.rst
