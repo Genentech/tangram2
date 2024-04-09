@@ -11,20 +11,11 @@ import scanpy as sc
 from . import _dea_utils as dut
 from . import policies as pol
 from . import utils as ut
+from ._dea_utils import DEA
 from ._methods import MethodClass
 
 # import telegraph.methods.policies as pol
 # from telegraph.methods._methods import MethodClass
-
-
-class DEA(Enum):
-    adj_p_value = "pvals_adj"
-    logfold = "log2fc"
-    p_value = "pvals"
-    feature = "feature"
-    score = "score"
-    coeff = "score"
-    agg_p_value = "pvals_agg"
 
 
 class DEAMethodClass(MethodClass):
@@ -144,31 +135,38 @@ class ScanpyDEA(DEAMethodClass):
                 D_new, grp_1, grp_2 = dut.scanpy_dea_labels_from_D(D, group_pair)
 
                 adata = dut.anndata_from_X_and_D(X, D_new)
+                labels = adata.obs["label"].values
 
-                # execute DE test
-                sc.tl.rank_genes_groups(
-                    adata,
-                    groupby="label",
-                    groups=[grp_1],  # groups _must_ be a list or str, not np.ndarray
-                    reference=grp_2,
-                    method=method,
-                    **method_kwargs,
-                )
+                if (grp_1 in labels) and ((grp_2 in labels) or (grp_2 == "rest")):
+                    # execute DE test
+                    sc.tl.rank_genes_groups(
+                        adata,
+                        groupby="label",
+                        groups=[
+                            grp_1
+                        ],  # groups _must_ be a list or str, not np.ndarray
+                        reference=grp_2,
+                        method=method,
+                        **method_kwargs,
+                    )
 
-                dedf = sc.get.rank_genes_groups_df(
-                    adata,
-                    group=grp_1,
-                    pval_cutoff=pval_cutoff,
-                )
+                    dedf = sc.get.rank_genes_groups_df(
+                        adata,
+                        group=grp_1,
+                        pval_cutoff=pval_cutoff,
+                    )
 
-                dedf.rename(
-                    columns={
-                        "pvals": DEA.p_value.value,
-                        "pvals_adj": DEA.adj_p_value,
-                        "name": DEA.feature.value,
-                        "score": DEA.score.value,
-                    }
-                )
+                    dedf.rename(
+                        columns={
+                            "pvals": DEA.p_value.value,
+                            "pvals_adj": DEA.adj_p_value,
+                            "name": DEA.feature.value,
+                            "score": DEA.score.value,
+                        }
+                    )
+
+                else:
+                    dedf = dut.get_empty_dea_df()
 
                 name = f"{obj_name}_{grp_1}_vs_{grp_2}"
                 out[name] = dedf
