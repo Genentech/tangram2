@@ -10,6 +10,7 @@ import telegraph.methods.policies as pol
 from telegraph.methods._methods import MethodClass
 
 from . import _grp_utils as gut
+from . import transforms as tf
 from . import utils as ut
 
 
@@ -502,6 +503,114 @@ class QuantileGroup(GroupMethodClass):
             D_to=D_to,
             D_from=D_from,
         )
+
+
+class SpotBasedGroup(GroupMethodClass):
+    ins = ["X_from", "T"]
+    outs = ["D_to", "D_from"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        feature_name: List[str] | str,
+        p_thres: float = 0.8,
+        add_complement: bool = True,
+    ) -> Dict[str, pd.DataFrame]:
+
+        from sklearn.decomposition import PCA
+        from sklearn.mixture import GaussianMixture as gmm
+
+        X_from = input_dict.get("X_from")
+        if X_from is None:
+            raise ValueError("Must provide X_from for SpotBaseGroup to work")
+
+        pol.check_values(X_from, "X_from")
+        if isinstance(X_from, ad.AnnData):
+            X_from = X_from.to_df()
+
+        T = input_dict.get("T")
+        pol.check_values(T, "T")
+        cidx = np.argmax(T.values, axis=0)
+        n_obs = T.shape[1]
+
+        D_from = pd.DataFrame(
+            [],
+            index=(
+                X_from.obs_names if isinstance(X_from, ad.AnnData) else X_from.index
+            ),
+        )
+
+        def _cluster_helper(_vals, p_thres, pca=False):
+            vals = _vals.copy()
+            cluster_model = gmm(n_components=2)
+
+            if len(vals.shape) == 1:
+                vals = vals[:, None]
+
+            if pca:
+                vals = PCA(n_components=25).fit_transform(vals)
+
+            cluster_model.fit(vals)
+            clu_prob = cluster_model.predict_proba(vals)
+
+            if pca:
+                clu_weights = cluster_model.weights_.flatten()
+                clu_ordr = np.argsort(clu_weights)[0]
+            else:
+                clu_means = cluster_model.means_.flatten()
+                clu_ordr = np.argsort(clu_means)[-1]
+
+            clu_prob = clu_prob[:, clu_ordr].flatten()
+            return clu_prob > p_thres, clu_prob < 1 - p_thres
+
+        # def _cluster_helper(_vals,*args,**kwargs):
+        #     vals = _vals.copy().flatten()
+        #     ordr = np.argsort(vals)[::-1]
+        #     og_ordr = np.argsort(ordr)
+        #     y = np.cumsum(vals[ordr])
+        #     y_0,y_1 = y.min(),y.max()
+        #     delta = int(len(y) / 1000)
+        #     y_s = y[np.arange(0 ,len(y), delta)]
+        #     x_1 = len(y_s)
+        #     lin = y_0 + (y_1 - y_0) / (x_1) * np.linspace(0,x_1, 1000)
+
+        #     from scipy.spatial.distance import cdist
+
+        #     ip = np.argmax(np.min(cdist(lin[:,None],y_s[:,None]),axis=0))
+
+        #     return y[og_ordr] <= y_s[ip]
+
+        for feature_i in ut.listify(feature_name):
+
+            if isinstance(X_from, ad.AnnData):
+                fv_i = X_from.obs_vector(feature_i)
+            else:
+                fv_i = X_from[feature_i].values
+
+            is_high_i, is_low_i = _cluster_helper(fv_i, p_thres)
+            idx_high_i = np.unique(cidx[is_high_i])
+            in_high_spot = np.isin(cidx, idx_high_i)
+            idx_rec_elegible_i = np.where(in_high_spot & (~is_high_i))[0]
+            indicator_i = np.zeros(n_obs)
+
+            indicator_i[idx_rec_elegible_i] = 1
+            D_from[f"adj_{feature_i}"] = indicator_i
+            D_from[f"nadj_{feature_i}"] = (~in_high_spot).astype(float)
+            D_from[f"high_{feature_i}"] = is_high_i.astype(float)
+            D_from[f"low_{feature_i}"] = is_low_i.astype(float)
+
+        D_from = gut.add_groups_to_old_D(D_from, input_dict, target="from")
+
+        return dict(D_from=D_from)
 
 
 class DistanceBasedGroup(GroupMethodClass):

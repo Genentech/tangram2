@@ -395,3 +395,59 @@ class GLMDEA(DEAMethodClass):
             out = input_dict["DEA"]
 
         return dict(DEA=out)
+
+
+class LRDEA(DEAMethodClass):
+    # Scanpy DEA Method class
+    # allows you to execute scanpy.tl.rank_genes
+    # using a design matrix and input data
+    ins = ["D_from", "X_from"]
+    outs = ["DEA"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    # @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        pred_name: str,
+        sort_by: str = "pvals_adj",
+        pval_cutoff: float | None = None,
+        # subset_features: Dict[str, List[str]] | Dict[str, str] | None = None,
+        random_state: int = 0,
+        C: float = 1,
+        max_iter: int = 100,
+        **kwargs,
+    ) -> Dict[str, Dict[str, pd.DataFrame]]:
+        from sklearn.linear_model import LogisticRegression as LR
+
+        D_from = input_dict.get("D_from")
+        X_from = input_dict.get("X_from")
+        if isinstance(X_from, ad.AnnData):
+            X_from = X_from.to_df()
+
+        lr = LR(
+            random_state=random_state,
+            penalty="l1",
+            solver="saga",
+            C=C,
+            max_iter=max_iter,
+        )
+        lr = lr.fit(X_from.values, D_from[pred_name].values.astype(float))
+
+        coef = lr.coef_.flatten()
+
+        dea = pd.DataFrame(
+            {
+                DEA.score.value: coef,
+                DEA.feature.value: X_from.columns.tolist(),
+            }
+        )
+
+        return dict(DEA=dea)
