@@ -26,6 +26,7 @@ def _update_adatas(ad_sc, ad_sp, x_add_sc, sc_var_names):
     x_add_sp = np.zeros((len(ad_sp), x_add_sc.shape[1]))
 
     spot_id = ad_sc.obs["spot_id"]
+
     for ii in np.unique(spot_id):
         x_add_sp[ii] = np.sum(x_add_sc[spot_id == ii], axis=0)
 
@@ -85,13 +86,14 @@ def _add_interactions(
 
     # get gene mean counts
     mus = X.mean(axis=0).flatten()
+    mus = mus[mus > 0]
+
     # get mean counts larger than zero
-    mus = mus[mus > 0].flatten()
 
     # get top quantile of mean counts (gene)
-    q_t = np.quantile(mus, 0.95)
+    q_t = np.quantile(mus, 0.99)
     # get high quantile of mean counts (gene)
-    q_h = np.quantile(mus, 0.75)
+    q_h = np.quantile(mus, 0.95)
     # get low quantile of mean counts (gene)
     q_l = np.quantile(mus, 0.25)
     # get mean counts (gene)
@@ -100,7 +102,7 @@ def _add_interactions(
     log_q_m = np.log(q_m)
 
     # anon. function to sample the coefficient in the GLM for activated features
-    sample_active_coef = lambda: np.log(np.random.uniform(q_h, q_t)) - log_q_m
+    sample_active_coef = lambda: np.log(np.random.uniform(5 * q_h, 5 * q_t)) - log_q_m
 
     # intercept for S's (base level expression)
     s_intercept = float(np.log(np.random.uniform(q_l, q_h)))
@@ -174,6 +176,7 @@ def _add_interactions(
     x_s = np.random.poisson(np.exp(log_lambda_s))
     # sample effect expression [n_obs] x [n_effect]
     x_e = np.random.poisson(np.exp(log_lambda_e))
+    print(x_e.max())
 
     # add new expression
     x_new = np.hstack((x_s, x_e))
@@ -451,7 +454,9 @@ def _cellmix_type_balanced(
     # which spot does cell j map to
     ad_sc.obs["spot_id"] = row_self
     ad_sc.obsm["spatial"] = ad_sp.obsm["spatial"][row_self]
-    ad_sc.obsm["spatial_hires"] = ad_sc.obsm["spatial"] + np.random.normal(0, 0.1)
+    ad_sc.obsm["spatial_hires"] = ad_sc.obsm["spatial"] + np.random.normal(
+        0, 0.1, size=(len(ad_sc), 2)
+    )
 
     if n_spatial_grad is not None:
         x_add, names_add = _add_gradients(
@@ -544,6 +549,7 @@ def cellmix(
     n_spatial_grad: None | int = None,
     n_interactions: bool | None = None,
     effect_size: int = 10,
+    p_signal_spots: float = 0.5,
 ):
     """pretty wrapper for cellmix"""
 
@@ -560,6 +566,7 @@ def cellmix(
             n_spatial_grad=n_spatial_grad,
             n_interactions=n_interactions,
             effect_size=effect_size,
+            p_signal_spots=p_signal_spots,
         )
 
         ad_sp = _downsample(ad_sp, downsample)
