@@ -434,7 +434,14 @@ def adatas_to_input(
     return input_dict
 
 
-def merge_input_dicts(*input_dicts, join_style: Literal["inner", "outer"] = "outer"):
+def merge_input_dicts(
+    *input_dicts,
+    join_style: Literal[
+        "inner",
+        "outer",
+    ] = "outer",
+    special_join_style: Dict[str, str] | None = None,
+):
 
     union_keys = [k for y in input_dicts for k, v in y.items() if v is not None]
     union_keys = [x for x in union_keys if union_keys.count(x) == len(input_dicts)]
@@ -442,6 +449,11 @@ def merge_input_dicts(*input_dicts, join_style: Literal["inner", "outer"] = "out
     union_keys = [x for x in union_keys if x.startswith(("T", "X", "D"))]
 
     new_input_dict = dict()
+
+    join_style_dict = {key: join_style for key in union_keys}
+    if special_join_style is not None:
+        for key, val in special_join_style.items():
+            special_join_style[key] = val
 
     for key in union_keys:
         obj_list = list()
@@ -453,8 +465,9 @@ def merge_input_dicts(*input_dicts, join_style: Literal["inner", "outer"] = "out
                 obj_list.append(obj)
 
         # same operation now, but perhaps want to change in future
+
         if key.startswith(("X", "T", "D")):
-            obj_list = pd.concat(obj_list, axis=0, join=join_style).fillna(0)
+            obj_list = pd.concat(obj_list, axis=0, join=join_style_dict[key]).fillna(0)
             new_input_dict[key] = obj_list
         else:
             raise ValueError("Merge not available for {}".format(key))
