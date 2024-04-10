@@ -176,7 +176,6 @@ def _add_interactions(
     x_s = np.random.poisson(np.exp(log_lambda_s))
     # sample effect expression [n_obs] x [n_effect]
     x_e = np.random.poisson(np.exp(log_lambda_e))
-    print(x_e.max())
 
     # add new expression
     x_new = np.hstack((x_s, x_e))
