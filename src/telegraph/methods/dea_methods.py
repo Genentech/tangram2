@@ -395,3 +395,94 @@ class GLMDEA(DEAMethodClass):
             out = input_dict["DEA"]
 
         return dict(DEA=out)
+
+
+class LRDEA(DEAMethodClass):
+    ins = [("D_from", "D_to"), ("X_from", "X_to", "X_to_pred")]
+    outs = ["DEA"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    # @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        covariates: Dict[str, str] | str | List[str],
+        sort_by: str = "pvals_adj",
+        pval_cutoff: float | None = None,
+        # subset_features: Dict[str, List[str]] | Dict[str, str] | None = None,
+        random_state: int = 0,
+        C: float = 1,
+        max_iter: int = 100,
+        target: Literal["both", "to", "from"] = "from" ** kwargs,
+    ) -> Dict[str, Dict[str, pd.DataFrame]]:
+
+        from sklearn.linear_model import LogisticRegression as LR
+
+        if target == "both":
+            _target = ["to", "from"]
+            if not isinstance(covariates, dict):
+                raise ValueError(
+                    "If using both to and from as targets, provide covariates in a dict"
+                )
+        else:
+            _target = target
+            if isinstance(covariates, str):
+                covariates = {_target: [covariates]}
+            elif isinstance(covariates, list):
+                covariates = {_target: covariates}
+
+        for tgt, val in covariates.items():
+            if isinstance(val, str):
+                covariates[key] = [val]
+
+        out = dict()
+
+        for tgt in _target:
+            D_tgt = input_dict.get("D_{}".format(tgt))
+
+            if D_tgt is None:
+                raise ValueError("Could not find D_{} in the input_dict".format(tgt))
+
+            X_tgt = input_dict.get("X_{}")
+            if X_tgt is None:
+                X_tgt = input_dict.get("X_{}_pred")
+            if X_tgt is None:
+                raise ValueError(
+                    "Could not find X_{} or X_{}_pred in the input_dict".format(
+                        tgt, tgt
+                    )
+                )
+
+            if isinstance(X_tgt, ad.AnnData):
+                X_tgt = X_tgt.to_df()
+
+            for cov in covariates[tgt]:
+                lr = LR(
+                    random_state=random_state,
+                    penalty="l1",
+                    solver="saga",
+                    C=C,
+                    max_iter=max_iter,
+                )
+
+                lr = lr.fit(X_tgt.values, D_tgt[cov].values.astype(float))
+
+                coef = lr.coef_.flatten()
+
+                dea = pd.DataFrame(
+                    {
+                        DEA.score.value: coef,
+                        DEA.feature.value: X_tgt.columns.tolist(),
+                    }
+                )
+
+                out[f"{tgt}_{cov}"] = dea
+
+            return dict(DEA=out)
