@@ -116,4 +116,4 @@ Attributes
 .. py:function:: adatas_to_input(adatas: Dict[Literal[to, from], anndata.AnnData], categorical_labels: Dict[Literal[to, from], List[str]] | None = None, continuous_labels: Dict[Literal[to, from], List[str]] | None = None, layers: Dict[Literal[to, from], str] | None = None, keep_adata: bool = True)
 
 
-.. py:function:: merge_input_dicts(*input_dicts, join_style: Literal[inner, outer] = 'outer')
+.. py:function:: merge_input_dicts(*input_dicts, join_style: Literal[inner, outer] = 'outer', special_join_style: Dict[str, str] | None = None)
