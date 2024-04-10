@@ -23,7 +23,7 @@ def get_empty_dea_df():
         columns=[
             DEA.p_value.value,
             DEA.adj_p_value.value,
-            DEA.feature_value.value,
+            DEA.feature.value,
             DEA.score.value,
         ],
     )
