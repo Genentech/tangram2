@@ -420,7 +420,8 @@ class LRDEA(DEAMethodClass):
         random_state: int = 0,
         C: float = 1,
         max_iter: int = 100,
-        target: Literal["both", "to", "from"] = "from" ** kwargs,
+        target: Literal["both", "to", "from"] = "from",
+        **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
 
         from sklearn.linear_model import LogisticRegression as LR
