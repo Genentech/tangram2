@@ -572,23 +572,6 @@ class SpotBasedGroup(GroupMethodClass):
             clu_prob = clu_prob[:, clu_ordr].flatten()
             return clu_prob > p_thres, clu_prob < 1 - p_thres
 
-        # def _cluster_helper(_vals,*args,**kwargs):
-        #     vals = _vals.copy().flatten()
-        #     ordr = np.argsort(vals)[::-1]
-        #     og_ordr = np.argsort(ordr)
-        #     y = np.cumsum(vals[ordr])
-        #     y_0,y_1 = y.min(),y.max()
-        #     delta = int(len(y) / 1000)
-        #     y_s = y[np.arange(0 ,len(y), delta)]
-        #     x_1 = len(y_s)
-        #     lin = y_0 + (y_1 - y_0) / (x_1) * np.linspace(0,x_1, 1000)
-
-        #     from scipy.spatial.distance import cdist
-
-        #     ip = np.argmax(np.min(cdist(lin[:,None],y_s[:,None]),axis=0))
-
-        #     return y[og_ordr] <= y_s[ip]
-
         for feature_i in ut.listify(feature_name):
 
             if isinstance(X_from, ad.AnnData):
