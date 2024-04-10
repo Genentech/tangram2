@@ -24,7 +24,7 @@
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="telegraph.methods._grp_utils" href="../_grp_utils/index.html" />
-    <link rel="prev" title="telegraph.methods.models.vae" href="../models/vae/index.html" />
+    <link rel="prev" title="telegraph.methods.models.vanilla" href="../models/vanilla/index.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -97,21 +97,82 @@
            <div itemprop="articleBody">
 
   <section id="module-telegraph.methods._dea_utils">
-<span id="telegraph-methods-dea-utils"></span><h1><a class="reference internal" href="#module-telegraph.methods._dea_utils" title="telegraph.methods._dea_utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods._dea_utils</span></code></a><a class="headerlink" href="#module-telegraph.methods._dea_utils" title="Link to this heading"></a></h1>
+<span id="telegraph-methods-dea-utils"></span><h1><a class="reference internal" href="../../../../modules/telegraph.methods._dea_utils.html#module-telegraph.methods._dea_utils" title="telegraph.methods._dea_utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods._dea_utils</span></code></a><a class="headerlink" href="#module-telegraph.methods._dea_utils" title="Link to this heading"></a></h1>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods._dea_utils.DEA" title="telegraph.methods._dea_utils.DEA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEA</span></code></a></p></td>
+<td><p>Generic enumeration.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="functions">
 <h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods._dea_utils.scanpy_dea_labels_from_D" title="telegraph.methods._dea_utils.scanpy_dea_labels_from_D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scanpy_dea_labels_from_D</span></code></a>(D, group_pair[, new_col_name])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods._dea_utils.get_empty_dea_df" title="telegraph.methods._dea_utils.get_empty_dea_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_empty_dea_df</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.methods._dea_utils.anndata_from_X_and_D" title="telegraph.methods._dea_utils.anndata_from_X_and_D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">anndata_from_X_and_D</span></code></a>(X, D)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.methods._dea_utils.scanpy_dea_labels_from_D" title="telegraph.methods._dea_utils.scanpy_dea_labels_from_D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scanpy_dea_labels_from_D</span></code></a>(D, group_pair[, new_col_name])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods._dea_utils.anndata_from_X_and_D" title="telegraph.methods._dea_utils.anndata_from_X_and_D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">anndata_from_X_and_D</span></code></a>(X, D)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.DEA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods._dea_utils.</span></span><span class="sig-name descname"><span class="pre">DEA</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/_dea_utils.html#DEA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods._dea_utils.DEA" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Generic enumeration.</p>
+<p>Derive from this class to define new enumerations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.DEA.adj_p_value">
+<span class="sig-name descname"><span class="pre">adj_p_value</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pvals_adj'</span></em><a class="headerlink" href="#telegraph.methods._dea_utils.DEA.adj_p_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.DEA.logfold">
+<span class="sig-name descname"><span class="pre">logfold</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'log2fc'</span></em><a class="headerlink" href="#telegraph.methods._dea_utils.DEA.logfold" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.DEA.p_value">
+<span class="sig-name descname"><span class="pre">p_value</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pvals'</span></em><a class="headerlink" href="#telegraph.methods._dea_utils.DEA.p_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.DEA.feature">
+<span class="sig-name descname"><span class="pre">feature</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'feature'</span></em><a class="headerlink" href="#telegraph.methods._dea_utils.DEA.feature" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.DEA.score">
+<span class="sig-name descname"><span class="pre">score</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'score'</span></em><a class="headerlink" href="#telegraph.methods._dea_utils.DEA.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.DEA.coeff">
+<span class="sig-name descname"><span class="pre">coeff</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'score'</span></em><a class="headerlink" href="#telegraph.methods._dea_utils.DEA.coeff" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.DEA.agg_p_value">
+<span class="sig-name descname"><span class="pre">agg_p_value</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pvals_agg'</span></em><a class="headerlink" href="#telegraph.methods._dea_utils.DEA.agg_p_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.methods._dea_utils.get_empty_dea_df">
+<span class="sig-prename descclassname"><span class="pre">telegraph.methods._dea_utils.</span></span><span class="sig-name descname"><span class="pre">get_empty_dea_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/_dea_utils.html#get_empty_dea_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods._dea_utils.get_empty_dea_df" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.methods._dea_utils.scanpy_dea_labels_from_D">
 <span class="sig-prename descclassname"><span class="pre">telegraph.methods._dea_utils.</span></span><span class="sig-name descname"><span class="pre">scanpy_dea_labels_from_D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_pair</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'label'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/_dea_utils.html#scanpy_dea_labels_from_D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods._dea_utils.scanpy_dea_labels_from_D" title="Link to this definition"></a></dt>
@@ -130,7 +191,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../models/vae/index.html" class="btn btn-neutral float-left" title="telegraph.methods.models.vae" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../models/vanilla/index.html" class="btn btn-neutral float-left" title="telegraph.methods.models.vanilla" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../_grp_utils/index.html" class="btn btn-neutral float-right" title="telegraph.methods._grp_utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

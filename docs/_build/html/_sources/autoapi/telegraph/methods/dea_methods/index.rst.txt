@@ -12,57 +12,11 @@ Classes
 
 .. autoapisummary::
 
-   telegraph.methods.dea_methods.DEA
    telegraph.methods.dea_methods.DEAMethodClass
    telegraph.methods.dea_methods.ScanpyDEA
    telegraph.methods.dea_methods.GLMDEA
 
 
-
-
-.. py:class:: DEA
-
-
-   Bases: :py:obj:`enum.Enum`
-
-   Generic enumeration.
-
-   Derive from this class to define new enumerations.
-
-   .. py:attribute:: adj_p_value
-      :value: 'pvals_adj'
-
-      
-
-   .. py:attribute:: logfold
-      :value: 'log2fc'
-
-      
-
-   .. py:attribute:: p_value
-      :value: 'pvals'
-
-      
-
-   .. py:attribute:: feature
-      :value: 'feature'
-
-      
-
-   .. py:attribute:: score
-      :value: 'score'
-
-      
-
-   .. py:attribute:: coeff
-      :value: 'score'
-
-      
-
-   .. py:attribute:: agg_p_value
-      :value: 'pvals_agg'
-
-      
 
 
 .. py:class:: DEAMethodClass(*args, **kwargs)
@@ -90,12 +44,12 @@ Classes
    .. py:attribute:: ins
       :value: ['D_from', 'D_to', 'X_from', 'X_to_pred']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['DEA']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], groups: List[str] | str = 'all', method: str = 'wilcoxon', sort_by: str = 'pvals_adj', pval_cutoff: float | None = None, mode: Literal[pos, neg, both] = 'both', method_kwargs: Dict[str, Any] = {}, normalize: bool = False, subset_features: Dict[str, List[str]] | Dict[str, str] | None = None, min_group_obs: int = 2, target: List[str] | str = 'both', **kwargs) -> Dict[str, Dict[str, pandas.DataFrame]]
       :classmethod:
@@ -113,15 +67,12 @@ Classes
    .. py:attribute:: ins
       :value: ['D_from', 'D_to', 'X_from', 'X_to']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['DEA']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], family: str = 'negative.binomial', target: Literal[to, from, both] = 'both', use_covariates: List[str] | str | None = None, drop_covariates: List[str] | str | None = None, merge_covariates: List[List[str]] | None = None, use_pred: bool | Dict[str, bool] = True, subset_features: List[str] | str | None = None, use_obs_with_covariates: bool = False, fit_intercept: bool = True, mht_method: str = 'fdr_bh', **kwargs) -> Dict[str, Dict[str, pandas.DataFrame]]
       :classmethod:
-
-
-

@@ -46,12 +46,12 @@ Classes
    .. py:attribute:: ins
       :value: ['X_from', ('X_to_pred', 'X_to'), 'T']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['D_to', 'D_from']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, thres_t: float | Tuple[float, float] = 0.5, thres_x: float | Tuple[float, float] = 0.5, add_complement: bool = True, **kwargs) -> pandas.DataFrame
       :classmethod:
@@ -88,12 +88,12 @@ Classes
    .. py:attribute:: ins
       :value: ['X_from', 'T', ('X_to', 'X_to_pred')]
 
-      
+
 
    .. py:attribute:: outs
       :value: ['D_from']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str | None = None, **kwargs) -> pandas.DataFrame
       :classmethod:
@@ -111,14 +111,14 @@ Classes
    .. py:attribute:: ins
       :value: ['X_from', 'X_to', 'T']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['D_to', 'D_from']
 
-      
 
-   .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, q_t: float | Tuple[float, float] = 0.25, q_x: float | Tuple[float, float] = 0.25, **kwargs) -> pandas.DataFrame
+
+   .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, q_t: float | Tuple[float, float] = 0.25, q_x: float | Tuple[float, float] = 0.25, subset_covs: Dict[str, List[str]] | None = None, **kwargs) -> pandas.DataFrame
       :classmethod:
 
 
@@ -140,12 +140,12 @@ Classes
    .. py:attribute:: ins
       :value: [('X_to_pred', 'X_to'), 'S_to']
 
-      
+
 
    .. py:attribute:: outs
       :value: ['D_to', 'D_from']
 
-      
+
 
    .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, q_high: float | Tuple[float, float] = 0.95, add_complement: bool = True, k=5, **kwargs) -> Dict[str, pandas.DataFrame]
       :classmethod:
@@ -157,6 +157,3 @@ Classes
       :param k: number of spatial neighbors
 
       :returns: Dictionary with design matrix for to (D_to)
-
-
-
