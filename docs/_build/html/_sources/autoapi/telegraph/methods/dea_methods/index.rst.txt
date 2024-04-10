@@ -15,6 +15,7 @@ Classes
    telegraph.methods.dea_methods.DEAMethodClass
    telegraph.methods.dea_methods.ScanpyDEA
    telegraph.methods.dea_methods.GLMDEA
+   telegraph.methods.dea_methods.LRDEA
 
 
 
@@ -75,4 +76,27 @@ Classes
 
 
    .. py:method:: run(input_dict: Dict[str, Any], family: str = 'negative.binomial', target: Literal[to, from, both] = 'both', use_covariates: List[str] | str | None = None, drop_covariates: List[str] | str | None = None, merge_covariates: List[List[str]] | None = None, use_pred: bool | Dict[str, bool] = True, subset_features: List[str] | str | None = None, use_obs_with_covariates: bool = False, fit_intercept: bool = True, mht_method: str = 'fdr_bh', **kwargs) -> Dict[str, Dict[str, pandas.DataFrame]]
+      :classmethod:
+
+
+
+.. py:class:: LRDEA(*args, **kwargs)
+
+
+   Bases: :py:obj:`DEAMethodClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: ins
+      :value: [('D_from', 'D_to'), ('X_from', 'X_to', 'X_to_pred')]
+
+
+
+   .. py:attribute:: outs
+      :value: ['DEA']
+
+
+
+   .. py:method:: run(input_dict: Dict[str, Any], covariates: Dict[str, str] | str | List[str], sort_by: str = 'pvals_adj', pval_cutoff: float | None = None, random_state: int = 0, C: float = 1, max_iter: int = 100, target: Literal[both, to, from] = 'from'**kwargs) -> Dict[str, Dict[str, pandas.DataFrame]]
       :classmethod:

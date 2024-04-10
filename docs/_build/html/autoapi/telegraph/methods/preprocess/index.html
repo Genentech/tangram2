@@ -113,10 +113,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods.preprocess.NormalizeTotal" title="telegraph.methods.preprocess.NormalizeTotal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NormalizeTotal</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.methods.preprocess.ScanpyPCA" title="telegraph.methods.preprocess.ScanpyPCA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScanpyPCA</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.methods.preprocess.Log1p" title="telegraph.methods.preprocess.Log1p"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Log1p</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods.preprocess.StandardScanpy" title="telegraph.methods.preprocess.StandardScanpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StandardScanpy</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods.preprocess.ScanpyPCA" title="telegraph.methods.preprocess.ScanpyPCA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScanpyPCA</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.methods.preprocess.StandardScanpy" title="telegraph.methods.preprocess.StandardScanpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StandardScanpy</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods.preprocess.RegressType" title="telegraph.methods.preprocess.RegressType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegressType</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#telegraph.methods.preprocess.CeLEryPP" title="telegraph.methods.preprocess.CeLEryPP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CeLEryPP</span></code></a></p></td>
@@ -160,192 +166,218 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.chainwrapper">
-<span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">chainwrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#chainwrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.chainwrapper" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">chainwrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.chainwrapper" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.PPClass">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">PPClass</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#PPClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.PPClass" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">PPClass</span></span><a class="headerlink" href="#telegraph.methods.preprocess.PPClass" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.PPClass.run">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_objs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['X_from',</span> <span class="pre">'X_to']</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#PPClass.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.PPClass.run" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_objs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['X_from',</span> <span class="pre">'X_to']</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.PPClass.run" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.PPClass.pp">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#PPClass.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.PPClass.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.PPClass.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.IdentityPP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">IdentityPP</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#IdentityPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.IdentityPP" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">IdentityPP</span></span><a class="headerlink" href="#telegraph.methods.preprocess.IdentityPP" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.IdentityPP.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#IdentityPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.IdentityPP.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.IdentityPP.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.NormalizeTotal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">NormalizeTotal</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#NormalizeTotal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.NormalizeTotal" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">NormalizeTotal</span></span><a class="headerlink" href="#telegraph.methods.preprocess.NormalizeTotal" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.NormalizeTotal.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#NormalizeTotal.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.NormalizeTotal.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.NormalizeTotal.pp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.preprocess.Log1p">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">Log1p</span></span><a class="headerlink" href="#telegraph.methods.preprocess.Log1p" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.preprocess.Log1p.pp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.Log1p.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.ScanpyPCA">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">ScanpyPCA</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#ScanpyPCA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.ScanpyPCA" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">ScanpyPCA</span></span><a class="headerlink" href="#telegraph.methods.preprocess.ScanpyPCA" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.ScanpyPCA.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#ScanpyPCA.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.ScanpyPCA.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.ScanpyPCA.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardScanpy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardScanpy</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardScanpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardScanpy" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardScanpy</span></span><a class="headerlink" href="#telegraph.methods.preprocess.StandardScanpy" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardScanpy.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardScanpy.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardScanpy.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.StandardScanpy.pp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="telegraph.methods.preprocess.RegressType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">RegressType</span></span><a class="headerlink" href="#telegraph.methods.preprocess.RegressType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="telegraph.methods.preprocess.RegressType.pp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'from'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.RegressType.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.CeLEryPP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">CeLEryPP</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#CeLEryPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.CeLEryPP" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">CeLEryPP</span></span><a class="headerlink" href="#telegraph.methods.preprocess.CeLEryPP" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.CeLEryPP.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#CeLEryPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.CeLEryPP.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.CeLEryPP.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardTangramV1">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardTangramV1</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardTangramV1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV1" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardTangramV1</span></span><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV1" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardTangramV1.pp">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardTangramV1.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV1.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV1.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardTangramV2">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardTangramV2</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardTangramV2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV2" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardTangramV2</span></span><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV2" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardTangramV2.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardTangramV2.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV2.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.StandardTangramV2.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardSpaOTsc">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardSpaOTsc</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardSpaOTsc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaOTsc" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardSpaOTsc</span></span><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaOTsc" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardSpaOTsc.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardSpaOTsc.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaOTsc.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaOTsc.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.LowercaseGenes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">LowercaseGenes</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#LowercaseGenes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.LowercaseGenes" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">LowercaseGenes</span></span><a class="headerlink" href="#telegraph.methods.preprocess.LowercaseGenes" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.LowercaseGenes.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#LowercaseGenes.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.LowercaseGenes.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.LowercaseGenes.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardMoscot">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardMoscot</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardMoscot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardMoscot" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardMoscot</span></span><a class="headerlink" href="#telegraph.methods.preprocess.StandardMoscot" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardMoscot.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardMoscot.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardMoscot.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.StandardMoscot.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.gimVIPP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">gimVIPP</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#gimVIPP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.gimVIPP" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">gimVIPP</span></span><a class="headerlink" href="#telegraph.methods.preprocess.gimVIPP" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.gimVIPP.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#gimVIPP.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.gimVIPP.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.gimVIPP.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.FilterGenes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">FilterGenes</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#FilterGenes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.FilterGenes" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">FilterGenes</span></span><a class="headerlink" href="#telegraph.methods.preprocess.FilterGenes" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.FilterGenes.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#FilterGenes.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.FilterGenes.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.FilterGenes.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardSpaGE">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardSpaGE</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardSpaGE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaGE" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.preprocess.</span></span><span class="sig-name descname"><span class="pre">StandardSpaGE</span></span><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaGE" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.preprocess.PPClass" title="telegraph.methods.preprocess.PPClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.preprocess.StandardSpaGE.pp">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/preprocess.html#StandardSpaGE.pp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaGE.pp" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.preprocess.StandardSpaGE.pp" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

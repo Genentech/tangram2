@@ -15,8 +15,10 @@ Classes
    telegraph.methods.preprocess.PPClass
    telegraph.methods.preprocess.IdentityPP
    telegraph.methods.preprocess.NormalizeTotal
+   telegraph.methods.preprocess.Log1p
    telegraph.methods.preprocess.ScanpyPCA
    telegraph.methods.preprocess.StandardScanpy
+   telegraph.methods.preprocess.RegressType
    telegraph.methods.preprocess.CeLEryPP
    telegraph.methods.preprocess.StandardTangramV1
    telegraph.methods.preprocess.StandardTangramV2
@@ -85,6 +87,19 @@ Functions
 
 
 
+.. py:class:: Log1p
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(obj, obj_name=None, **kwargs)
+      :staticmethod:
+
+
+
 .. py:class:: ScanpyPCA
 
 
@@ -107,6 +122,19 @@ Functions
    inheritance.
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
+      :staticmethod:
+
+
+
+.. py:class:: RegressType
+
+
+   Bases: :py:obj:`PPClass`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: pp(obj, obj_name='from', normalize: bool = False, **kwargs)
       :staticmethod:
 
 
@@ -225,6 +253,3 @@ Functions
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
-
-
-

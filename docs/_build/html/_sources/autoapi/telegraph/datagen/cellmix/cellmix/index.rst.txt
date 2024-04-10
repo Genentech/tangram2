@@ -53,8 +53,6 @@ Functions
 
 
 
-.. py:function:: cellmix(ad_sc: anndata.AnnData, n_spots: int, n_cells_per_spot: int = 10, n_types_per_spot: int = 3, label_col: str | None = None, downsample: List[float] | float | None = None, encode_spatial: bool = False, n_spatial_grad: None | int = None, n_interactions: bool | None = None, effect_size: int = 10)
+.. py:function:: cellmix(ad_sc: anndata.AnnData, n_spots: int, n_cells_per_spot: int = 10, n_types_per_spot: int = 3, label_col: str | None = None, downsample: List[float] | float | None = None, encode_spatial: bool = False, n_spatial_grad: None | int = None, n_interactions: bool | None = None, effect_size: int = 10, p_signal_spots: float = 0.5)
 
    pretty wrapper for cellmix
-
-
