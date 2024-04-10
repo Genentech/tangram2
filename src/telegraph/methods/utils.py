@@ -453,7 +453,7 @@ def merge_input_dicts(
     join_style_dict = {key: join_style for key in union_keys}
     if special_join_style is not None:
         for key, val in special_join_style.items():
-            join_styl_dict[key] = val
+            join_style_dict[key] = val
 
     for key in union_keys:
         obj_list = list()
