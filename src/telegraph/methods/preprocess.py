@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import anndata as ad
 import numpy as np
+import pandas as pd
 import scanpy as sc
 from scipy.sparse import spmatrix
 
@@ -62,6 +63,18 @@ class NormalizeTotal(PPClass):
         sc.pp.normalize_total(obj, target_sum=target_sum)
 
 
+class Log1p(PPClass):
+    # normalize total normalization
+
+    @staticmethod
+    def pp(obj, obj_name=None, **kwargs):
+        if isinstance(obj, ad.AnnData):
+            obj.X = np.log1p(obj.X)
+        elif isinstance(obj, pd.DataFrame):
+            obj = np.log1p(obj)
+        return obj
+
+
 class ScanpyPCA(PPClass):
 
     @staticmethod
@@ -101,6 +114,41 @@ class StandardScanpy(PPClass):
         sc.pp.normalize_total(obj, target_sum=target_sum)
         # log1p transform
         sc.pp.log1p(obj)
+
+
+class RegressType(PPClass):
+    # common normalization in scanpy
+    # NormalizeTotal + Log1p
+
+    @staticmethod
+    def pp(obj, obj_name="from", normalize: bool = False, **kwargs):
+        from sklearn.cluster import KMeans
+        from sklearn.decomposition import PCA
+
+        if isinstance(obj, ad.AnnData):
+            obj = obj.to_df()
+
+        obs_names = obj.index
+        var_names = obj.columns
+
+        if normalize:
+            obj = obj.astype(np.float32)
+            obj = obj / (obj.sum(axis=0) + 1e-8) * 1e4
+            obj = np.log1p(obj)
+
+        n_components = kwargs.get("n_components")
+        pca = PCA(n_components=n_components)
+        emb = pca.fit_transform(obj)
+        n_clusters = kwargs.get("n_clusters", 20)
+        km = KMeans(n_clusters=n_clusters)
+        cidx = km.fit_predict(emb)
+
+        group_means = np.array([obj[cidx == i].mean(axis=0) for i in np.unique(cidx)])
+        expanded_means = group_means[cidx]
+
+        obj_centered = obj - expanded_means
+        obj_centered = pd.DataFrame(obj_centered, index=obs_names, columns=var_names)
+        return obj_centered
 
 
 class CeLEryPP(PPClass):
