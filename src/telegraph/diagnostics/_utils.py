@@ -66,13 +66,19 @@ def _get_X_and_labels(
     if labels is not None:
         assert labels.shape[0] == X.shape[0]
 
-    print("eeeeh")
-
     if D is not None:
         assert D.shape[0] == X.shape[0]
         assert group_col is not None
-        labels = D[group_col].values.flatten()
-        labels = np.array([f"{group_col}_{lab}" for lab in labels])
+        if len(group_col) == 1:
+            labels = D[group_col].values.flatten()
+            labels = np.array([f"{group_col}_{lab}" for lab in labels])
+        else:
+            labels = (
+                D[group_col]
+                .apply(lambda row: ", ".join(row.index[row == 1]), axis=1)
+                .values
+            )
+            labels[labels == ""] = "background"
 
         if isinstance(X, ad.AnnData):
             if obsm is None:

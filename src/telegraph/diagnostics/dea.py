@@ -177,7 +177,7 @@ def plot_top_k_enrichment_results(
 
 @ut.easy_input
 def plot_signature_enrichment(
-    group_col: str,
+    group_col: str = None,
     *,
     X_to=None,
     D_to=None,
@@ -190,6 +190,7 @@ def plot_signature_enrichment(
     score_name: str | None = None,
     subset_cols: List[str] | None = None,
     subset_mode: Literal["intersection", "union"] = "intersection",
+    hide_background: bool = False,
 ):
 
     from scanpy.pl import violin
@@ -206,6 +207,10 @@ def plot_signature_enrichment(
 
     Xn = Xn.iloc[keep_idx]
     labels = labels[keep_idx]
+
+    if hide_background:
+        Xn = Xn.iloc[labels != "background"]
+        labels = labels[labels != "background"]
 
     _adata = ad.AnnData(
         Xn,
