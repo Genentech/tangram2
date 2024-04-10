@@ -479,7 +479,7 @@ class LRDEA(DEAMethodClass):
                 dea = pd.DataFrame(
                     {
                         DEA.score.value: coef,
-                        DEA.feature.value: X_from.columns.tolist(),
+                        DEA.feature.value: X_tgt.columns.tolist(),
                     }
                 )
 
