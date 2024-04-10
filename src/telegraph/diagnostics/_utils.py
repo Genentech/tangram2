@@ -6,6 +6,7 @@ import anndata as ad
 import numpy as np
 import pandas as pd
 from harmony import harmonize
+from scipy.sparse import spmatrix
 from sklearn.decomposition import PCA
 from torch.cuda import is_available
 
@@ -13,9 +14,17 @@ from torch.cuda import is_available
 def easy_input(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if isinstance(args[0], dict):
-            input_dict = args[0]
+        if len(args) < 1:
+            first_arg = list(kwargs.values())[0]
+        else:
+            first_arg = args[0]
+
+        if isinstance(first_arg, dict):
+
+            input_dict = first_arg
+
             sig = inspect.signature(func)
+
             args_names = [
                 x.name
                 for x in sig.parameters.values()
@@ -29,6 +38,7 @@ def easy_input(func):
 
             # add_args = [v for k, v in input_dict.items() if k in args_names]
             add_args = [input_dict[k] for k in args_names if k in input_dict]
+
             add_kwargs = {k: v for k, v in input_dict.items() if k in kwargs_names}
 
             new_args = list(args[1::]) + add_args
@@ -42,6 +52,70 @@ def easy_input(func):
     return wrapper
 
 
+def _get_X_and_labels(
+    X,
+    D=None,
+    labels=None,
+    layer=None,
+    obsm=None,
+    group_col: str | None = None,
+):
+
+    assert any([D is not None, labels is not None])
+
+    if labels is not None:
+        assert labels.shape[0] == X.shape[0]
+
+    print("eeeeh")
+
+    if D is not None:
+        assert D.shape[0] == X.shape[0]
+        assert group_col is not None
+        labels = D[group_col].values.flatten()
+        labels = np.array([f"{group_col}_{lab}" for lab in labels])
+
+        if isinstance(X, ad.AnnData):
+            if obsm is None:
+                Xn = X.to_df(layer=layer)
+            else:
+                Xn = X.obsm[obsm]
+                if isinstance(Xn, np.ndarray):
+                    Xn = pd.DataFrame(Xn, index=X.obs_names)
+
+    return Xn, labels
+
+
+def _subset_helper(D=None, labels=None, subset_cols=None, subset_mode=None):
+
+    if subset_cols is None:
+        keep_idx = np.ones(len(D)) if D is not None else np.ones(len(labels))
+        return keep_idx.astype(bool)
+
+    subset_mode = "u" if subset_mode.startswith("uni") else "i"
+
+    if D is not None:
+        if subset_cols is not None:
+            if isinstance(subset_cols, str):
+                subset_cols = [subset_cols]
+
+            if subset_mode == "i":
+                keep_idx = np.ones(len(D))
+                for col in subset_cols:
+                    ind = D[col].values.astype(float).flatten()
+                    keep_idx *= ind
+                keep_idx = keep_idx.astype(bool)
+            else:
+                keep_idx = np.zeros(len(D))
+                for col in subset_cols:
+                    ind = D[col].values.astype(float).flatten()
+                    keep_idx += ind
+                keep_idx = keep_idx > 0
+    elif labels is not None:
+        keep_idx = labels == subset_cols
+
+    return keep_idx
+
+
 def pick_x_d(X_to, D_to, X_from, D_from, target):
     if target == "to":
         if X_to is not None:
@@ -53,7 +127,7 @@ def pick_x_d(X_to, D_to, X_from, D_from, target):
         if X_from is not None:
             X, D = X_from, D_from
         else:
-            raise ValuError("One of X_to/X_from has to be provided.")
+            raise ValueError("One of X_to/X_from has to be provided.")
     return X, D
 
 
