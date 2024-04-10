@@ -366,6 +366,7 @@ def _cellmix_type_balanced(
     x_mat = np.zeros((n_spots, n_var))
     # matrix for cell type proportions
     p_mat = np.zeros((n_spots, n_labels))
+    n_mat = np.zeros_like(p_mat)
 
     # get sc data expression for fast access, anndata issue
     X = ad_sc.X
@@ -382,23 +383,6 @@ def _cellmix_type_balanced(
         # get number of types at spot i
         n_types = spot_type_count[ii]
 
-        # # create probability vector for type sampling
-        # probs_type = np.ones(n_labels)
-        # # only cell types with a sufficient number of cells are eligible for sampling
-        # probs_type[n_cells_in_type < n_cells] = 0
-        # probs_type /= probs_type.sum()
-
-        # # sample which types that should be at spot i
-        # types_i = np.random.choice(
-        #     n_labels, replace=False, size=int(n_types), p=probs_type
-        # )
-
-        # create probability for cell sampling
-        # probs = np.zeros(n_labels)
-        # probs[types_i] = 1 / np.sum(len(types_i))
-        # # sample which how many of each of the selected types that reside at this spot
-        # type_idx = np.random.multinomial(n_cells, pvals=probs)
-        # p_mat[ii, :] = type_idx / type_idx.sum()
         type_has_cells = n_cells_in_type > n_cells
         n_good = np.sum(type_has_cells)
 
@@ -408,7 +392,8 @@ def _cellmix_type_balanced(
             n_cells_in_type[og_idx[mask_idx]] = 0
 
         type_idx = mhg.rvs(n_cells_in_type, n=n_cells)
-        p_mat[ii, :] = type_idx
+        n_mat[ii, :] = type_idx
+        p_mat[ii, :] = type_idx / type_idx.sum()
 
         # assign cells to spot
         for k, n in enumerate(type_idx):
@@ -438,7 +423,7 @@ def _cellmix_type_balanced(
 
     shape = np.array((len(ad_sp), len(ad_sc)))
 
-    # No: [(s,t) for s,t in zip(row_self,row_target)]
+    # Note: [(s,t) for s,t in zip(row_self,row_target)]
     # will tell you (spot,cell) pairing for ad_sp, ad_sc
 
     # add grond truth mapping to spatial anndata object
@@ -455,6 +440,12 @@ def _cellmix_type_balanced(
     # add cell type proportions
     ad_sp.obsm["ct_proportions"] = pd.DataFrame(
         p_mat,
+        index=ad_sp.obs.index,
+        columns=uni_labels,
+    )
+
+    ad_sp.obsm["ct_counts"] = pd.DataFrame(
+        n_mat,
         index=ad_sp.obs.index,
         columns=uni_labels,
     )
