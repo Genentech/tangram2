@@ -97,70 +97,24 @@
            <div itemprop="articleBody">
 
   <section id="module-telegraph.methods.dea_methods">
-<span id="telegraph-methods-dea-methods"></span><h1><a class="reference internal" href="#module-telegraph.methods.dea_methods" title="telegraph.methods.dea_methods"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.dea_methods</span></code></a><a class="headerlink" href="#module-telegraph.methods.dea_methods" title="Link to this heading"></a></h1>
+<span id="telegraph-methods-dea-methods"></span><h1><a class="reference internal" href="../../../../source/telegraph.methods.dea_methods.html#module-telegraph.methods.dea_methods" title="telegraph.methods.dea_methods"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.dea_methods</span></code></a><a class="headerlink" href="#module-telegraph.methods.dea_methods" title="Link to this heading"></a></h1>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <section id="classes">
 <h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods.dea_methods.DEA" title="telegraph.methods.dea_methods.DEA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEA</span></code></a></p></td>
-<td><p>Generic enumeration.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.methods.dea_methods.DEAMethodClass" title="telegraph.methods.dea_methods.DEAMethodClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMethodClass</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEAMethodClass" title="telegraph.methods.dea_methods.DEAMethodClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMethodClass</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods.dea_methods.ScanpyDEA" title="telegraph.methods.dea_methods.ScanpyDEA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScanpyDEA</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.ScanpyDEA" title="telegraph.methods.dea_methods.ScanpyDEA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScanpyDEA</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.methods.dea_methods.GLMDEA" title="telegraph.methods.dea_methods.GLMDEA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GLMDEA</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.GLMDEA" title="telegraph.methods.dea_methods.GLMDEA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GLMDEA</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py class">
-<dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEA">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.dea_methods.</span></span><span class="sig-name descname"><span class="pre">DEA</span></span><a class="reference internal" href="../../../../_modules/telegraph/methods/dea_methods.html#DEA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.dea_methods.DEA" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
-<p>Generic enumeration.</p>
-<p>Derive from this class to define new enumerations.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEA.adj_p_value">
-<span class="sig-name descname"><span class="pre">adj_p_value</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pvals_adj'</span></em><a class="headerlink" href="#telegraph.methods.dea_methods.DEA.adj_p_value" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEA.logfold">
-<span class="sig-name descname"><span class="pre">logfold</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'log2fc'</span></em><a class="headerlink" href="#telegraph.methods.dea_methods.DEA.logfold" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEA.p_value">
-<span class="sig-name descname"><span class="pre">p_value</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pvals'</span></em><a class="headerlink" href="#telegraph.methods.dea_methods.DEA.p_value" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEA.feature">
-<span class="sig-name descname"><span class="pre">feature</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'feature'</span></em><a class="headerlink" href="#telegraph.methods.dea_methods.DEA.feature" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEA.score">
-<span class="sig-name descname"><span class="pre">score</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'score'</span></em><a class="headerlink" href="#telegraph.methods.dea_methods.DEA.score" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEA.coeff">
-<span class="sig-name descname"><span class="pre">coeff</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'score'</span></em><a class="headerlink" href="#telegraph.methods.dea_methods.DEA.coeff" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEA.agg_p_value">
-<span class="sig-name descname"><span class="pre">agg_p_value</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pvals_agg'</span></em><a class="headerlink" href="#telegraph.methods.dea_methods.DEA.agg_p_value" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.dea_methods.DEAMethodClass">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.dea_methods.</span></span><span class="sig-name descname"><span class="pre">DEAMethodClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/dea_methods.html#DEAMethodClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.dea_methods.DEAMethodClass" title="Link to this definition"></a></dt>
@@ -177,7 +131,7 @@ inheritance.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.dea_methods.ScanpyDEA">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.dea_methods.</span></span><span class="sig-name descname"><span class="pre">ScanpyDEA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/dea_methods.html#ScanpyDEA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.dea_methods.ScanpyDEA" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#telegraph.methods.dea_methods.DEAMethodClass" title="telegraph.methods.dea_methods.DEAMethodClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMethodClass</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEAMethodClass" title="telegraph.methods.dea_methods.DEAMethodClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMethodClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py attribute">
@@ -200,7 +154,7 @@ inheritance.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.dea_methods.GLMDEA">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.dea_methods.</span></span><span class="sig-name descname"><span class="pre">GLMDEA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/methods/dea_methods.html#GLMDEA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.dea_methods.GLMDEA" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#telegraph.methods.dea_methods.DEAMethodClass" title="telegraph.methods.dea_methods.DEAMethodClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMethodClass</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../../../../source/telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEAMethodClass" title="telegraph.methods.dea_methods.DEAMethodClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEAMethodClass</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py attribute">

@@ -26,6 +26,7 @@ def _update_adatas(ad_sc, ad_sp, x_add_sc, sc_var_names):
     x_add_sp = np.zeros((len(ad_sp), x_add_sc.shape[1]))
 
     spot_id = ad_sc.obs["spot_id"]
+
     for ii in np.unique(spot_id):
         x_add_sp[ii] = np.sum(x_add_sc[spot_id == ii], axis=0)
 
@@ -85,13 +86,14 @@ def _add_interactions(
 
     # get gene mean counts
     mus = X.mean(axis=0).flatten()
+    mus = mus[mus > 0]
+
     # get mean counts larger than zero
-    mus = mus[mus > 0].flatten()
 
     # get top quantile of mean counts (gene)
-    q_t = np.quantile(mus, 0.95)
+    q_t = np.quantile(mus, 0.99)
     # get high quantile of mean counts (gene)
-    q_h = np.quantile(mus, 0.75)
+    q_h = np.quantile(mus, 0.95)
     # get low quantile of mean counts (gene)
     q_l = np.quantile(mus, 0.25)
     # get mean counts (gene)
@@ -100,7 +102,7 @@ def _add_interactions(
     log_q_m = np.log(q_m)
 
     # anon. function to sample the coefficient in the GLM for activated features
-    sample_active_coef = lambda: np.log(np.random.uniform(q_h, q_t)) - log_q_m
+    sample_active_coef = lambda: np.log(np.random.uniform(5 * q_h, 5 * q_t)) - log_q_m
 
     # intercept for S's (base level expression)
     s_intercept = float(np.log(np.random.uniform(q_l, q_h)))
@@ -347,6 +349,7 @@ def _cellmix_type_balanced(
     spot_type_count = np.clip(
         np.random.poisson(n_types_per_spot, size=n_spots), a_min=1, a_max=n_labels
     )
+    print(spot_type_count.mean())
 
     # split cell inidices (row) by their label and shuffle cell order to break dependency
     type_dict = {
@@ -363,6 +366,7 @@ def _cellmix_type_balanced(
     x_mat = np.zeros((n_spots, n_var))
     # matrix for cell type proportions
     p_mat = np.zeros((n_spots, n_labels))
+    n_mat = np.zeros_like(p_mat)
 
     # get sc data expression for fast access, anndata issue
     X = ad_sc.X
@@ -379,22 +383,16 @@ def _cellmix_type_balanced(
         # get number of types at spot i
         n_types = spot_type_count[ii]
 
-        # create probability vector for type sampling
-        probs_type = np.ones(n_labels)
-        # only cell types with a sufficient number of cells are eligible for sampling
-        probs_type[n_cells_in_type < n_cells] = 0
-        probs_type /= probs_type.sum()
+        type_has_cells = n_cells_in_type > n_cells
+        n_good = np.sum(type_has_cells)
 
-        # sample which types that should be at spot i
-        types_i = np.random.choice(
-            n_labels, replace=False, size=int(n_types), p=probs_type
-        )
+        if n_good > n_types:
+            mask_idx = np.random.choice(n_good, size=n_good - n_types, replace=False)
+            og_idx = np.where(type_has_cells)[0]
+            n_cells_in_type[og_idx[mask_idx]] = 0
 
-        # create probability for cell sampling
-        probs = np.zeros(n_labels)
-        probs[types_i] = 1 / np.sum(len(types_i))
-        # sample which how many of each of the selected types that reside at this spot
-        type_idx = np.random.multinomial(n_cells, pvals=probs)
+        type_idx = mhg.rvs(n_cells_in_type, n=n_cells)
+        n_mat[ii, :] = type_idx
         p_mat[ii, :] = type_idx / type_idx.sum()
 
         # assign cells to spot
@@ -425,7 +423,7 @@ def _cellmix_type_balanced(
 
     shape = np.array((len(ad_sp), len(ad_sc)))
 
-    # No: [(s,t) for s,t in zip(row_self,row_target)]
+    # Note: [(s,t) for s,t in zip(row_self,row_target)]
     # will tell you (spot,cell) pairing for ad_sp, ad_sc
 
     # add grond truth mapping to spatial anndata object
@@ -446,10 +444,18 @@ def _cellmix_type_balanced(
         columns=uni_labels,
     )
 
+    ad_sp.obsm["ct_counts"] = pd.DataFrame(
+        n_mat,
+        index=ad_sp.obs.index,
+        columns=uni_labels,
+    )
+
     # which spot does cell j map to
     ad_sc.obs["spot_id"] = row_self
     ad_sc.obsm["spatial"] = ad_sp.obsm["spatial"][row_self]
-    ad_sc.obsm["spatial_hires"] = ad_sc.obsm["spatial"] + np.random.normal(0, 0.1)
+    ad_sc.obsm["spatial_hires"] = ad_sc.obsm["spatial"] + np.random.normal(
+        0, 0.1, size=(len(ad_sc), 2)
+    )
 
     if n_spatial_grad is not None:
         x_add, names_add = _add_gradients(
@@ -542,6 +548,7 @@ def cellmix(
     n_spatial_grad: None | int = None,
     n_interactions: bool | None = None,
     effect_size: int = 10,
+    p_signal_spots: float = 0.5,
 ):
     """pretty wrapper for cellmix"""
 
@@ -558,6 +565,7 @@ def cellmix(
             n_spatial_grad=n_spatial_grad,
             n_interactions=n_interactions,
             effect_size=effect_size,
+            p_signal_spots=p_signal_spots,
         )
 
         ad_sp = _downsample(ad_sp, downsample)
