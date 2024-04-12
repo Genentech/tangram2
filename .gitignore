@@ -11,4 +11,5 @@ poetry.lock
 flycheck_run.py
 src/cccv/evaluation/_old_run.py
 .ipynb_checkpoints/
+rsc_local/
 *.el
