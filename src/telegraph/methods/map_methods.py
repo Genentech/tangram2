@@ -721,7 +721,7 @@ class MoscotMap(MapMethodClass):
 
         if return_T_norm:
             T_norm = T_soft / T_soft.sum(axis=0)  # .reshape(-1, 1)
-            out["T_norm"] = T_norm
+            out["T_norm"] = ut.array_to_sparse_df(T_norm)
 
         T = out["T"]
 
