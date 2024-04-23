@@ -13,3 +13,4 @@ src/cccv/evaluation/_old_run.py
 .ipynb_checkpoints/
 *.el
 rsc/
+rsc_local/
