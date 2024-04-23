@@ -1,5 +1,6 @@
 import telegraph.aggregate as agg
 import telegraph.datagen as datagen
+import telegraph.dev as dev
 import telegraph.diagnostics as dig
 import telegraph.evaluation as ev
 import telegraph.methods as met

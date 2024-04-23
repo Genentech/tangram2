@@ -4,6 +4,8 @@ import anndata as ad
 import lightning as L
 import numpy as np
 import pandas as pd
+import torch as t
+from lightning.pytorch.callbacks import RichProgressBar
 from pytorch_lightning.loggers import WandbLogger
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
@@ -62,7 +64,12 @@ class CVAEVanilla(MethodClass):
 
         logger = WandbLogger() if use_wandb else None
 
-        trainer = L.Trainer(max_epochs=n_epochs, log_every_n_steps=None, logger=logger)
+        trainer = L.Trainer(
+            max_epochs=n_epochs,
+            log_every_n_steps=None,
+            logger=logger,
+            callbacks=RichProgressBar(),
+        )
 
         model_args = dict(
             x_dim=train_data.n_X_var,
@@ -78,9 +85,17 @@ class CVAEVanilla(MethodClass):
         )
 
         pred = trainer.predict(model=model, dataloaders=pred_dataloader)
-        pred = np.vstack([x[1].cpu().numpy() for x in pred])
+        Z = np.vstack([x[1].cpu().numpy() for x in pred])
 
-        return pred
+        with t.no_grad():
+            X_hat = np.vstack(
+                [
+                    model.corrected_features(x, c).cpu().numpy()
+                    for x, c in pred_dataloader
+                ]
+            )
+
+        return X_hat, Z
 
     @classmethod
     def stratify(
@@ -89,6 +104,7 @@ class CVAEVanilla(MethodClass):
         embedding: np.ndarray,
         label_values: np.ndarray,
         target_label: str,
+        source_label: str = None,
         signal_name: str = "signal",
         min_group_count: int = 20,
         **kwargs,
@@ -98,27 +114,36 @@ class CVAEVanilla(MethodClass):
         from sklearn.cluster import KMeans
 
         x = signal_values
-        is_ct = np.where(label_values == target_label)[0]
-        km = KMeans(n_clusters=2)
+        is_target = np.where(label_values == target_label)[0]
+        km = KMeans(n_clusters=2, n_init="auto")
 
-        clu_idx = km.fit_predict(x[:, None])
-        clu_cnt = km.cluster_centers_.flatten()
-        ordr = np.argsort(clu_cnt)
-        low_clu = ordr[0]
-        high_clu = ordr[-1]
-
-        is_high = clu_idx == high_clu
-        is_low = clu_idx == low_clu
+        if source_label is None:
+            clu_idx = km.fit_predict(x[:, None])
+            clu_cnt = km.cluster_centers_.flatten()
+            ordr = np.argsort(clu_cnt)
+            low_clu = ordr[0]
+            high_clu = ordr[-1]
+            is_high = clu_idx == high_clu
+            is_low = clu_idx == low_clu
+        else:
+            is_source = np.where(label_values == source_label)[0]
+            clu_idx = km.fit_predict(x[is_source, None])
+            clu_cnt = km.cluster_centers_.flatten()
+            ordr = np.argsort(clu_cnt)
+            low_clu = ordr[0]
+            high_clu = ordr[-1]
+            is_high = is_source[clu_idx == high_clu]
+            is_low = is_source[clu_idx == low_clu]
 
         Z = embedding
-        kd = cKDTree(Z[is_ct])
+        kd = cKDTree(Z[is_target])
         _, high_idxs = kd.query(Z[is_high], k=5)
         high_idxs = np.unique(high_idxs.flatten())
-        high_idxs = is_ct[high_idxs]
+        high_idxs = is_target[high_idxs]
 
         v_sr = np.array(["background"] * len(x), dtype=object)
         v_sr[is_high] = "sender"
-        v_sr[is_ct] = "non-receiver"
+        v_sr[is_target] = "non-receiver"
         v_sr[high_idxs] = "receiver"
 
         return v_sr
@@ -127,9 +152,9 @@ class CVAEVanilla(MethodClass):
     def run_with_adata(
         cls,
         adata: ad.AnnData,
-        signal_and_label: List[Tuple[str, str]],
+        signal_and_label: List[Tuple[str, str]] | List[Tuple[str, str, str]],
         label_col: str,
-        batch_col: str | None,
+        batch_col: str | None = None,
         use_existing_emb: bool = False,
         emb_key: str = "X_cvae",
         min_group_count: int = 20,
@@ -150,23 +175,31 @@ class CVAEVanilla(MethodClass):
             C_col = C.columns
             C = C.values
 
-            E = cls.embedd(X, C, **kwargs)
+            X_hat, E = cls.embedd(X, C, **kwargs)
             adata.obsm["X_cvae"] = E
+            adata.layers["X_rec"] = X_hat
 
         if isinstance(signal_and_label[0], str):
             signal_and_label = [signal_and_label]
 
         labels = adata.obs[label_col].values
 
-        for signal_name, target_label in signal_and_label:
+        for signal_name, *st_labels in signal_and_label:
             if signal_name not in X_col:
                 continue
+
+            if len(st_labels) == 2:
+                target_label, source_label = st_labels
+            else:
+                source_label, target_label = None, st_labels[0]
+
             signal_values = adata.obs_vector(signal_name).flatten()
             signal_indicator = cls.stratify(
                 signal_values,
                 embedding=E,
                 label_values=labels,
                 target_label=target_label,
+                source_label=source_label,
                 signal_name=signal_name,
             )
 

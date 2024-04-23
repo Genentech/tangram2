@@ -77,6 +77,14 @@ class CVAE(L.LightningModule):
         h3 = F.relu(self.fc3(h0))
         return self.fc4(h3)
 
+    def corrected_features(self, x, c):
+        mu, log_var = self.encode(x, c)
+        z = self.reparameterize(mu, log_var)
+        c_new = t.zeros_like(c)
+        x_pred = self.decode(z, c_new)
+
+        return x_pred
+
     def forward(self, input):
         x, c = input
         mu, log_var = self.encode(x, c)
