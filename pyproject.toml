@@ -68,6 +68,7 @@ celerypy = {git  = 'https://code.roche.com/rb-aiml-cv-spatial/cci-explore/import
 spaotsc = {git = 'https://code.roche.com/rb-aiml-cv-spatial/cci-explore/imported-methods/gne_spaotsc.git'}
 tangram2 = {git = 'https://code.roche.com/tangramgroup/Tangram2.git'}
 spage = {git = 'https://code.roche.com/rb-aiml-cv-spatial/cci-explore/imported-methods/gne_spage.git'}
+cellphonedb = {git = 'https://code.roche.com/rb-aiml-cv-spatial/cci-explore/imported-methods/gne_cellphonedb.git'}
 moscot = "^0.3.3"
 igraph = "^0.10.0"
 pot = "^0.9.1"

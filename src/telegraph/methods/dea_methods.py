@@ -1,7 +1,7 @@
 import os.path as osp
 from abc import abstractmethod
 from enum import Enum
-from typing import Any, Dict, List, Literal
+from typing import Any, Dict, List, Literal, Tuple
 
 import anndata as ad
 import numpy as np
@@ -208,7 +208,7 @@ class GLMDEA(DEAMethodClass):
         use_pred: bool | Dict[str, bool] = True,
         subset_features: List[str] | str | None = None,
         use_obs_with_covariates: bool = False,
-        fit_intercept: bool = True,
+        fit_intercept: bool = False,
         mht_method: str = "fdr_bh",
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
@@ -285,7 +285,22 @@ class GLMDEA(DEAMethodClass):
 
             # subset to specified covariates, if None then use all
             if use_covariates is not None:
-                D_inp = D_inp[ut.listify(use_covariates)]
+                adj_use_covariates = ut.listify(use_covariates)
+                if isinstance(adj_use_covariates[0], list):
+                    adj_use_covariates = [
+                        x[0:-1] if isinstance(x, list) else [x]
+                        for x in adj_use_covariates
+                    ]
+                    adj_use_covariates = [x for y in adj_use_covariates for x in y]
+                    left_out_covariates = {
+                        x[0]: x[1] for x in use_covariates if len(x) == 2
+                    }
+                else:
+                    adj_use_covariates = use_covariates
+                    left_out_covariates = {}
+
+                D_inp = D_inp[adj_use_covariates]
+
             # drop covariates if specified
             if drop_covariates is not None:
                 keep_cols = [
@@ -341,6 +356,9 @@ class GLMDEA(DEAMethodClass):
             glm_params = ut.merge_default_dict_with_kwargs(glm_default_params, kwargs)
             # add intercept
             glm_params["fit_intercept"] = fit_intercept
+            # glm_params['fit_intercept'] = True
+            # D_inp['intercept'] = 1
+
             # add distribution family
             glm_params["family"] = family
 

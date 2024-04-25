@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from sklearn.metrics import roc_auc_score, roc_curve
 
 
 def _parse_feature_list_or_dea_df(obj, to_lower: bool = False):
@@ -18,6 +19,106 @@ def _parse_feature_list_or_dea_df(obj, to_lower: bool = False):
         features = obj
 
     return [obj_trans(x) for x in features]
+
+
+def compute_dea_auroc(
+    dea_df: pd.DataFrame,
+    effect: List[str],
+    score_by: str = "logfoldchanges",
+    pval_cutoff: float = None,
+    min_overlap: int | None = None,
+    abs_transform: bool = False,
+    use_best_up_down: bool = False,
+    only_use_overlap: bool = True,
+    ascending: bool = True,
+    name_col: str = "names",
+    pval_col: str = "pvals_adj",
+):
+
+    out = dict(fpr=[], tpr=[], num_effect=len(effect), auroc=0)
+
+    dedf = dea_df.copy()
+
+    if pval_cutoff is not None:
+        dedf = dedf[dedf[pval_col].values < pval_cutoff]
+
+    if score_by not in dedf.columns:
+        print(f"WARNING : {sort_by} not found in the columns of the dea object")
+        return out
+    else:
+        if abs_transform:
+            adj_score_key = f"abs_{score_by}"
+            dedf[adj_score_key] = np.abs(dedf[score_by].values)
+        else:
+            adj_score_key = score_by
+
+    y_true = np.array([x in effect for x in dedf[name_col].values]).astype(int)
+
+    if len(np.unique(y_true)) < 2:
+        print("No overlap between effect and threshold")
+        return out
+
+    if min_overlap is not None:
+        if np.sum(y_true) < min_overlap:
+            return out
+
+    y_score = dedf[adj_score_key].values
+
+    if not only_use_overlap:
+        e_set = set(effect)
+        n_set = set(dedf[name_col].values.tolist())
+        n_e_diff = n_set.difference(e_set)
+        n_diff = len(n_e_diff)
+        y_true = np.append(y_true, np.ones(n_diff))
+        y_score = np.append(y_score, y_score.min() * np.ones(n_diff))
+
+    # up-reg
+    fpr_up, tpr_up, _ = roc_curve(y_true, y_score)
+    auroc_up = roc_auc_score(y_true, y_score)
+    # down-reg
+
+    if use_best_up_down and not abs_transform:
+        fpr_down, tpr_down, _ = roc_curve(y_true, -y_score)
+        auroc_down = roc_auc_score(y_true, -y_score)
+    else:
+        auroc_down = -np.inf
+
+    if auroc_up > auroc_down:
+        fpr, tpr, auroc = (fpr_up, tpr_up, auroc_up)
+    else:
+        fpr, tpr, auroc = (fpr_down, tpr_down, auroc_down)
+
+    out["fpr"] = fpr
+    out["tpr"] = tpr
+    out["auroc"] = auroc
+
+    return out
+
+
+def plot_dea_auroc(
+    dea_auroc_res: Dict[str, Any],
+    side_size: float = 4,
+    title: str = None,
+    ax: plt.Axes | None = None,
+    return_fig_ax: bool = False,
+):
+
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(side_size, side_size))
+    else:
+        fig = None
+
+    ax.plot(dea_auroc_res["fpr"], dea_auroc_res["tpr"], ".-")
+    auroc = dea_auroc_res["auroc"]
+    n_effect = dea_auroc_res["num_effect"]
+
+    ax.set_title(f"{title} \n AUROC: {auroc:0.2f} | #effect : {n_effect}")
+    ax.plot([0, 1], [0, 1], linestyle="dashed")
+
+    fig.tight_layout()
+
+    if return_fig_ax:
+        return fig, ax
 
 
 def tabulate_dea_overlap(

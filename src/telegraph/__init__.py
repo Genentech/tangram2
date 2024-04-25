@@ -3,6 +3,7 @@ import telegraph.datagen as datagen
 import telegraph.dev as dev
 import telegraph.diagnostics as dig
 import telegraph.evaluation as ev
+import telegraph.external as ext
 import telegraph.methods as met
 import telegraph.robustness as rbs
 import telegraph.tests as tests
