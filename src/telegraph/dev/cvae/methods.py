@@ -212,4 +212,6 @@ class CVAEVanilla(MethodClass):
         feature_name: List[str] | str,
         add_complement: bool = True,
     ) -> Dict[str, pd.DataFrame]:
-        pass
+        raise NotImplemented(
+            "The CVAEVanilla has not been implemented for telegraph workflow use yet"
+        )
