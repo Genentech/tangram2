@@ -209,8 +209,8 @@ class CVAEVanilla(MethodClass):
     def run(
         cls,
         input_dict: Dict[str, Any],
-        feature_name: List[str] | str,
-        add_complement: bool = True,
+        *args,
+        **kwargs,
     ) -> Dict[str, pd.DataFrame]:
         raise NotImplemented(
             "The CVAEVanilla has not been implemented for telegraph workflow use yet"

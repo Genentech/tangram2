@@ -505,3 +505,134 @@ class LRDEA(DEAMethodClass):
                 out[f"{tgt}_{cov}"] = dea
 
             return dict(DEA=out)
+
+
+class RandomFeatureDEA(DEAMethodClass):
+    ins = [("X_from", "X_to", "X_to_pred")]
+    outs = ["DEA"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    def get_random_dea(cls, names, lfc_min_max: Tuple[float, float] = (-2, 2)):
+
+        n_obs = len(names)
+        pvals = np.random.uniform(0, 1, size=n_obs)
+        lfc_min, lfc_max = lfc_min_max
+        lfc = np.random.uniform(lfc_min, lfc_max, size=n_obs)
+
+        dedf = pd.DataFrame(
+            {
+                DEA.feature.value: names,
+                DEA.logfold.value: lfc,
+                DEA.adj_p_value.value: pvals,
+            },
+        )
+
+        return dedf
+
+    @classmethod
+    def run_with_adata(
+        cls,
+        adata: ad.AnnData,
+    ):
+
+        names = adata.var_names.tolist()
+        dedf = cls.get_random_dea(
+            names,
+        )
+        return dedf
+
+    @classmethod
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        *args,
+        **kwargs,
+    ):
+        raise NotImplemented(
+            "The RandomFeatureDEA  method has not been implemented for telegraph workflow use yet"
+        )
+
+
+class HVGFeatureDEA(DEAMethodClass):
+    ins = [("X_from", "X_to", "X_to_pred")]
+    outs = ["DEA"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    def get_hvg_dea(cls, X_df, n_bins: int = 20):
+        # Inspired by scanpy.pp.highly_variable_genes
+
+        names = X_df.columns
+        mean = X_df.values.mean(axis=0)
+        var = X_df.values.var(axis=0, ddof=1)
+
+        mean[mean == 0] = 1e-12
+        dispersion = var / mean
+        mean = np.log1p(mean)
+        dispersion[dispersion == 0] = np.nan
+        dispersion = np.log(dispersion)
+
+        df = pd.DataFrame(
+            {"means": mean, "vars": var, "dispersions": dispersion},
+            index=names,
+        )
+        df["mean_bin"] = pd.cut(df["means"], bins=n_bins)
+        df_stats = df.groupby("mean_bin", observed=True)["dispersions"].agg(
+            avg="mean", dev="std"
+        )
+
+        one_gene_per_bin = df_stats["dev"].isnull()
+        gen_indices = np.flatnonzero(one_gene_per_bin.loc[df["mean_bin"]])
+
+        if len(gen_indices) > 0:
+            df_stats.loc[one_gene_per_bin, "dev"] = df_stats.loc[
+                one_gene_per_bin, "avg"
+            ]
+            df_stats.loc[one_gene_per_bin, "avg"] = 0
+
+        df_stats = df_stats.loc[df["mean_bin"]].set_index(df.index)
+
+        norm_dispersion = (
+            df["dispersions"].values - df_stats["avg"].values
+        ) / df_stats["dev"].values
+
+        dedf = pd.DataFrame(
+            {
+                DEA.feature.value: names,
+                DEA.score.value: norm_dispersion,
+                "means": df["means"],
+            },
+        )
+        dedf[DEA.adj_p_value.value] = np.nan
+
+        return dedf
+
+    @classmethod
+    def run_with_adata(cls, adata: ad.AnnData, layer: str | None = None):
+
+        dedf = cls.get_hvg_dea(adata.to_df(layer=layer))
+        return dedf
+
+    @classmethod
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        *args,
+        **kwargs,
+    ):
+        raise NotImplemented(
+            "The RandomFeatureDEA  method has not been implemented for telegraph workflow use yet"
+        )

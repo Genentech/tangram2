@@ -1,6 +1,6 @@
 import os.path as osp
 from abc import abstractmethod
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Literal, Tuple
 
 import anndata as ad
 import numpy as np
@@ -694,3 +694,180 @@ class DistanceBasedGroup(GroupMethodClass):
                 D_to[f"nadj_{feature_i}"] = 1 - indicator_i
 
         return dict(D_to=D_to)
+
+
+class RandomGroup(GroupMethodClass):
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    def _get_random_groups(
+        cls,
+        groups: List[str],
+        size: int,
+        probs: np.ndarray | None = None,
+    ):
+
+        if probs is not None:
+            if len(probs) != len(groups):
+                raise ValueError("length of probs must be same as length of groups")
+            else:
+                probs = np.ones(len(groups)) / len(groups)
+
+        return np.random.choice(groups, p=probs, size=size, replace=True)
+
+    @classmethod
+    def run_with_adata(
+        cls,
+        adata: ad.AnnData,
+        groups: List[str],
+        subset_col: str | None = None,
+        label_col: str = "random_groups",
+        subset_labels: str | List[str] = None,
+        background_label="background",
+        probs: np.ndarray | None = None,
+    ):
+
+        if subset_col is not None:
+            labels = adata.obs[subset_col]
+
+            if subset_labels is None:
+                raise ValueError(
+                    "If you specify a subset column you must also specify which labels to subset {subset_labels}"
+                )
+
+            if not hasattr(subset_labels, "__len__"):
+                labels = [labels]
+            is_label = np.where(np.isin(labels, subset_labels))[0]
+
+        else:
+            is_label = np.arange(len(adata))
+
+        n_obs = len(adata)
+        n_sub_obs = len(is_label)
+
+        new_label_array = np.array([background_label] * n_obs, dtype=object)
+        new_labels = cls._get_random_groups(groups, size=n_sub_obs, probs=probs)
+        new_label_array[is_label] = new_labels
+
+        adata.obs[label_col] = new_label_array
+
+    @classmethod
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        *args,
+        **kwargs,
+    ) -> Dict[str, pd.DataFrame]:
+        raise NotImplemented(
+            "The RanomGroup Method has not yet been implemented for the telegraph workflow",
+        )
+
+
+class ClusterGroup(GroupMethodClass):
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    def _get_cluster_groups(
+        cls,
+        X: np.ndarray,
+        n_clusters: int = 2,
+        groups: str | List[str] = None,
+        method: Literal["kmeans"] = "kmeans",
+    ):
+
+        from sklearn import cluster as clu
+        from sklearn.decomposition import PCA
+
+        if groups is not None:
+            n_clusters = len(groups)
+            clu_map = {k: g for k, g in enumerate(groups)}
+        else:
+            clu_map = {k: k for k in range(n_clusters)}
+
+        if X.shape[1] > 50:
+            E = PCA(n_components=50).fit_transform(X)
+        else:
+            E = X
+
+        clu_algs = {
+            "kmeans": clu.KMeans,
+            "mean_shift": clu.MeanShift,
+            "spectral": clu.SpectralClustering,
+        }
+
+        clu_alg = clu_algs.get(method)
+        if clu_algs is None:
+            raise ValueError(
+                "We do not support the clustering method {}".format(method)
+            )
+
+        clu_idx = clu_alg(n_clusters=n_clusters).fit_predict(E)
+        clu_idx = np.array([clu_map[k] for k in clu_idx])
+
+        return clu_idx
+
+    @classmethod
+    def run_with_adata(
+        cls,
+        adata: ad.AnnData,
+        groups: List[str],
+        subset_col: str | None = None,
+        label_col: str = "random_groups",
+        subset_labels: str | List[str] = None,
+        background_label="background",
+        layer: str | None = None,
+        cluster_method: str = "kmeans",
+        n_clusters: int = 2,
+    ):
+
+        if subset_col is not None:
+            labels = adata.obs[subset_col]
+
+            if subset_labels is None:
+                raise ValueError(
+                    "If you specify a subset column you must also specify which labels to subset {subset_labels}"
+                )
+
+            if not hasattr(subset_labels, "__len__"):
+                labels = [labels]
+            is_label = np.where(np.isin(labels, subset_labels))[0]
+
+        else:
+            is_label = np.arange(len(adata))
+
+        n_obs = len(adata)
+        n_sub_obs = len(is_label)
+
+        new_label_array = np.array([background_label] * n_obs, dtype=object)
+
+        new_labels = cls._get_cluster_groups(
+            adata.to_df(layer=layer).values[is_label],
+            groups=groups,
+            method=cluster_method,
+            n_clusters=n_clusters,
+        )
+
+        new_label_array[is_label] = new_labels
+
+        adata.obs[label_col] = new_label_array
+
+    @classmethod
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        *args,
+        **kwargs,
+    ) -> Dict[str, pd.DataFrame]:
+        raise NotImplemented(
+            "The ClusterGroup Method has not yet been implemented for the telegraph workflow",
+        )
