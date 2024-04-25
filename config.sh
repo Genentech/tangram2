@@ -15,3 +15,6 @@ poetry config http-basic.gne_spage $IMPORTS_USERNAME $IMPORTS_TOKEN
 
 poetry config repositories.gne_tangram2 https://code.roche.com/tangramgroup/Tangram2.git
 poetry config http-basic.gne_tangram2 $IMPORTS_USERNAME "glpat-q3r_6pd-zqTwiNHL9yXg"
+
+poetry config repositories.gne_cellphonedb https://code.roche.com/rb-aiml-cv-spatial/cci-explore/imported-methods/gne_cellphonedb.git
+poetry config http-basic.gne_cellphonedb $IMPORTS_USERNAME $IMPORTS_TOKEN
