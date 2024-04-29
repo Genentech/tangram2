@@ -732,20 +732,7 @@ class RandomGroup(GroupMethodClass):
         probs: np.ndarray | None = None,
     ):
 
-        if subset_col is not None:
-            labels = adata.obs[subset_col]
-
-            if subset_labels is None:
-                raise ValueError(
-                    "If you specify a subset column you must also specify which labels to subset {subset_labels}"
-                )
-
-            if not hasattr(subset_labels, "__len__"):
-                labels = [labels]
-            is_label = np.where(np.isin(labels, subset_labels))[0]
-
-        else:
-            is_label = np.arange(len(adata))
+        is_label = ut.get_adata_subset_idx(adata, subset_col, subset_labels)
 
         n_obs = len(adata)
         n_sub_obs = len(is_label)
@@ -830,20 +817,7 @@ class ClusterGroup(GroupMethodClass):
         n_clusters: int = 2,
     ):
 
-        if subset_col is not None:
-            labels = adata.obs[subset_col]
-
-            if subset_labels is None:
-                raise ValueError(
-                    "If you specify a subset column you must also specify which labels to subset {subset_labels}"
-                )
-
-            if not hasattr(subset_labels, "__len__"):
-                labels = [labels]
-            is_label = np.where(np.isin(labels, subset_labels))[0]
-
-        else:
-            is_label = np.arange(len(adata))
+        is_label = ut.get_adata_subset_idx(adata, subset_col, subset_labels)
 
         n_obs = len(adata)
         n_sub_obs = len(is_label)

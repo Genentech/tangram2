@@ -621,9 +621,16 @@ class HVGFeatureDEA(DEAMethodClass):
         return dedf
 
     @classmethod
-    def run_with_adata(cls, adata: ad.AnnData, layer: str | None = None):
+    def run_with_adata(
+        cls,
+        adata: ad.AnnData,
+        subset_col: str,
+        subset_labels: str | List[str] | None = None,
+        layer: str | None = None,
+    ):
 
-        dedf = cls.get_hvg_dea(adata.to_df(layer=layer))
+        is_label = ut.get_adata_subset_idx(adata, subset_col, subset_labels)
+        dedf = cls.get_hvg_dea(adata[is_label].to_df(layer=layer))
         return dedf
 
     @classmethod

@@ -12,6 +12,28 @@ from scipy.sparse import spmatrix
 W = TypeVar("W")
 
 
+def get_adata_subset_idx(
+    subset_col: str | None = None, subset_labels: str | List[str] = None
+):
+
+    if subset_col is not None:
+        labels = adata.obs[subset_col]
+
+        if subset_labels is None:
+            raise ValueError(
+                "If you specify a subset column you must also specify which labels to subset {subset_labels}"
+            )
+
+        if not hasattr(subset_labels, "__len__"):
+            labels = [labels]
+        is_label = np.where(np.isin(labels, subset_labels))[0]
+
+    else:
+        is_label = np.arange(len(adata))
+
+    return is_label
+
+
 def array_to_sparse_df(
     arr: np.ndarray, index: None | List[str] = None, columns: None | List[str] = None
 ):
