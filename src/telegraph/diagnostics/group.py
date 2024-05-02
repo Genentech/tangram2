@@ -12,45 +12,9 @@ from sklearn.manifold import MDS, TSNE, Isomap
 from . import _utils as ut
 
 
-def _get_X_and_labels(
-    X, D=None, labels=None, layer=None, obsm=None, group_col: str | None = None
-):
-
-    assert any([D is not None, labels is not None])
-
-    if labels is not None:
-        assert labels.shape[0] == X.shape[0]
-
-    if D is not None:
-        assert D.shape[0] == X.shape[0]
-        assert group_col is not None
-        labels = D[group_col].values
-        labels = np.array([f"{group_col}_{lab}" for lab in labels])
-
-    match (layer, obsm):
-        case (None, None):
-            if isinstance(X, ad.AnnData):
-                if isinstance(X.X, spmatrix):
-                    Xn = X.X.toarray()
-                else:
-                    Xn = X.X
-
-            elif isinstance(X, pd.DataFrame):
-                Xn = X.values
-            elif isinstance(X, np.ndarray):
-                Xn = X
-
-        case (None, str()):
-            Xn = X.obsm[obsm]
-
-        case (str(), None):
-            Xn = X.layers[layer]
-
-    return Xn, labels
-
-
 @ut.easy_input
 def plot_group_separation(
+    *,
     X_to=None,
     D_to=None,
     X_from=None,
@@ -59,6 +23,8 @@ def plot_group_separation(
     target: str = "to",
     group_col: str = None,
     group_type: Literal["discrete", "continuous"] = "discrete",
+    subset_cols: List[str] | None = None,
+    subset_mode: Literal["intersection", "union"] = "intersection",
     project_method: str | List[str] = "pca",
     cmap=plt.cm.Dark2,
     plot=True,
@@ -69,14 +35,20 @@ def plot_group_separation(
 ):
 
     X, D = ut.pick_x_d(X_to, D_to, X_from, D_from, target)
+    keep_idx = ut._subset_helper(
+        D=D, labels=labels, subset_cols=subset_cols, subset_mode=subset_mode
+    )
 
-    Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
+    Xn, labels = ut._get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
+    Xn = Xn.values
+    Xn = Xn[keep_idx]
+    labels = labels[keep_idx]
 
     if normalize_X:
         Xn = Xn / Xn.sum(keepdims=True, axis=1) * 1e4
         Xn = np.log1p(Xn)
 
-    if group_type == "discrete":
+    if group_type.startswith("dis"):
         if not isinstance(labels[0], str):
             if not np.all(np.mod(labels, 1) == labels):
                 raise ValueError(
@@ -159,6 +131,7 @@ def plot_group_separation(
 
 @ut.easy_input
 def test_group_separation(
+    *,
     X_to=None,
     D_to=None,
     X_from=None,
@@ -166,6 +139,8 @@ def test_group_separation(
     labels=None,
     target: str = "to",
     group_col: str = None,
+    subset_cols: List[str] | None = None,
+    subset_mode: Literal["intersection", "union"] = "intersection",
     classifier: str = "svm",
     n_pca: int = 50,
     clf_params: None | Dict[str, Any] = None,
@@ -181,7 +156,15 @@ def test_group_separation(
 
     X, D = ut.pick_x_d(X_to, D_to, X_from, D_from, target)
 
-    Xn, labels = _get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
+    keep_idx = ut._subset_helper(
+        D=D, labels=labels, subset_cols=subset_cols, subset_mode=subset_mode
+    )
+
+    Xn, labels = ut._get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
+    Xn = Xn.values
+
+    Xn = Xn[keep_idx]
+    labels = labels[keep_idx]
 
     n_obs, n_var = X.shape
     n_pca = min(n_var, n_pca)

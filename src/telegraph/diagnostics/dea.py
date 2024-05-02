@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Literal
 
+import anndata as ad
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -10,6 +11,8 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
+
+from . import _utils as ut
 
 
 def _parse_feature_list_or_dea_df(obj, to_lower: bool = False):
@@ -316,3 +319,53 @@ def plot_top_k_enrichment_results(
     fig.tight_layout()
 
     plt.show()
+
+
+@ut.easy_input
+def plot_signature_enrichment(
+    group_col: str = None,
+    *,
+    X_to=None,
+    D_to=None,
+    X_from=None,
+    D_from=None,
+    labels=None,
+    feature_list: List[str] = None,
+    target: Literal["to", "from"] = "to",
+    signature_score_params: Dict[str, Any] = {},
+    score_name: str | None = None,
+    subset_cols: List[str] | None = None,
+    subset_mode: Literal["intersection", "union"] = "intersection",
+    hide_background: bool = False,
+):
+
+    from scanpy.pl import violin
+    from scanpy.tl import score_genes
+
+    if feature_list is None:
+        raise ValueError("a feature list must be provided")
+
+    X, D = ut.pick_x_d(X_to, D_to, X_from, D_from, target)
+    keep_idx = ut._subset_helper(
+        D=D, labels=labels, subset_cols=subset_cols, subset_mode=subset_mode
+    )
+    Xn, labels = ut._get_X_and_labels(X, D=D, labels=labels, group_col=group_col)
+
+    Xn = Xn.iloc[keep_idx]
+    labels = labels[keep_idx]
+
+    if hide_background:
+        Xn = Xn.iloc[labels != "background"]
+        labels = labels[labels != "background"]
+
+    _adata = ad.AnnData(
+        Xn,
+        obs=pd.DataFrame([], index=Xn.index),
+        var=pd.DataFrame([], index=Xn.columns),
+    )
+
+    _adata.obs["label"] = labels
+
+    score_name = "score" if score_name is None else score_name
+    score_genes(_adata, gene_list=feature_list, score_name=score_name)
+    violin(_adata, keys=score_name, groupby="label")
