@@ -13,7 +13,9 @@ W = TypeVar("W")
 
 
 def get_adata_subset_idx(
-    subset_col: str | None = None, subset_labels: str | List[str] = None
+    adata: ad.AnnData,
+    subset_col: str | None = None,
+    subset_labels: str | List[str] = None,
 ):
 
     if subset_col is not None:

@@ -4,7 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import roc_auc_score, roc_curve
+from sklearn.metrics import (
+    average_precision_score,
+    precision_recall_curve,
+    roc_auc_score,
+    roc_curve,
+)
 
 
 def _parse_feature_list_or_dea_df(obj, to_lower: bool = False):
@@ -21,10 +26,30 @@ def _parse_feature_list_or_dea_df(obj, to_lower: bool = False):
     return [obj_trans(x) for x in features]
 
 
-def compute_dea_auroc(
+def _rank_curve(y_true, y_score):
+    ordr = np.argsort(y_score)[::-1]
+    y_true = y_true[ordr]
+
+    n_pos = np.cumsum(y_true)
+    n_tot = np.arange(len(y_true)) + 1
+    max_ix = np.argmax(n_pos == n_pos.max())
+    n_pos = n_pos[0:max_ix]
+    n_tot = n_tot[0:max_ix]
+
+    return n_tot, n_pos, None
+
+
+def _rank_score(y_true, y_score):
+    n_tot, n_pos, _ = _rank_curve(y_true, y_score)
+    score = np.mean(n_pos / n_tot)
+    return score
+
+
+def compute_dea_score(
     dea_df: pd.DataFrame,
     effect: List[str],
     score_by: str = "logfoldchanges",
+    score_cutoff: float | None = None,
     pval_cutoff: float = None,
     min_overlap: int | None = None,
     abs_transform: bool = False,
@@ -33,9 +58,22 @@ def compute_dea_auroc(
     ascending: bool = True,
     name_col: str = "names",
     pval_col: str = "pvals_adj",
+    au_type: Literal["auroc", "aupr", "rank"] = "auroc",
 ):
 
-    out = dict(fpr=[], tpr=[], num_effect=len(effect), auroc=0)
+    au_types = dict(
+        auroc=[roc_auc_score, roc_curve],
+        aupr=[
+            average_precision_score,
+            precision_recall_curve,
+        ],
+        rank=[_rank_score, _rank_curve],
+    )
+
+    score_fun, curve_fun = au_types[au_type]
+
+    out = dict(fpr=[], tpr=[], num_effect=len(effect))
+    out[au_type] = 0
 
     dedf = dea_df.copy()
 
@@ -51,6 +89,9 @@ def compute_dea_auroc(
             dedf[adj_score_key] = np.abs(dedf[score_by].values)
         else:
             adj_score_key = score_by
+
+    if score_cutoff is not None:
+        dedf = dedf[dedf[score_by].values > score_cutoff]
 
     y_true = np.array([x in effect for x in dedf[name_col].values]).astype(int)
 
@@ -73,10 +114,10 @@ def compute_dea_auroc(
         y_score = np.append(y_score, y_score.min() * np.ones(n_diff))
 
     # up-reg
-    fpr_up, tpr_up, _ = roc_curve(y_true, y_score)
-    auroc_up = roc_auc_score(y_true, y_score)
-    # down-reg
+    fpr_up, tpr_up, _ = curve_fun(y_true, y_score)
+    auroc_up = score_fun(y_true, y_score)
 
+    # down-reg
     if use_best_up_down and not abs_transform:
         fpr_down, tpr_down, _ = roc_curve(y_true, -y_score)
         auroc_down = roc_auc_score(y_true, -y_score)
@@ -90,7 +131,7 @@ def compute_dea_auroc(
 
     out["fpr"] = fpr
     out["tpr"] = tpr
-    out["auroc"] = auroc
+    out[au_type] = auroc
 
     return out
 
@@ -108,8 +149,10 @@ def plot_dea_auroc(
     else:
         fig = None
 
+    au_type = [x for x in ["auroc", "aupr"] if x in dea_auroc_res][0]
+
     ax.plot(dea_auroc_res["fpr"], dea_auroc_res["tpr"], ".-")
-    auroc = dea_auroc_res["auroc"]
+    auroc = dea_auroc_res[au_type]
     n_effect = dea_auroc_res["num_effect"]
 
     ax.set_title(f"{title} \n AUROC: {auroc:0.2f} | #effect : {n_effect}")
@@ -238,6 +281,8 @@ def plot_top_k_enrichment_results(
     fig, ax = plt.subplots(n_rows, 1, figsize=(12, 6 * n_rows * h_scale))
     if hasattr(ax, "__len__"):
         ax.flatten()
+    else:
+        ax = [ax]
 
     for ii, df in enumerate(dfs):
         id = df[id_col].values[0]

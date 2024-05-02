@@ -14,6 +14,7 @@ def run(
     cpdb_file_path: str,
     counts_data: str = "hgnc_symbol",
     output_dir: str | None = None,
+    layer: str | None = None,
     require_receptor: bool = False,
     require_ligand: bool = True,
 ) -> pd.DataFrame:
@@ -26,6 +27,10 @@ def run(
     (ligand). The value is the CellPhoneDB mean results.
 
     """
+
+    if layer is not None:
+        adata.layers["_old"] = adata.X.copy()
+        adata.X = adata[layer].copy()
 
     with tempfile.TemporaryDirectory() as tmpdir:
         df = adata.obs[[label_col]].copy()
@@ -42,8 +47,11 @@ def run(
             output_path=output_dir if output_dir is not None else tmpdir,
         )
 
+    if layer is not None:
+        adata.X = adata.layers["_old"].copy()
+
     cpdb = cpdb_results["significant_means_result"]
-    sub_cpdb = cpdb[["gene_a", "gene_b"] + [x for x in cpdb.columns if "|T" in x]]
+    sub_cpdb = cpdb[["gene_a", "gene_b"] + [x for x in cpdb.columns if "|" in x]]
 
     signal_and_label = []
     for k, row in sub_cpdb.iterrows():
@@ -59,6 +67,10 @@ def run(
         signal_and_label,
         columns=["ligand", "receptor", "target", "source", "value"],
     )
+
+    out["_uni_col"] = out["ligand"] + "_" + out["target"] + "_" + out["source"]
+    out = out.drop_duplicates(subset=["_uni_col"])
+    out.drop(columns=["_uni_col"], inplace=True)
 
     if require_ligand:
         out = out.iloc[out.ligand.values != "nan", :].copy()
