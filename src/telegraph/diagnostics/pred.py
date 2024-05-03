@@ -54,29 +54,21 @@ def plot_pred_vs_obs(
         vmin = np.min((val_pred.min(), val_og.min()))
 
         for col, val in enumerate([val_og, val_pred]):
-            is_upper = val > np.mean(val)
+            val_ordr = np.argsort(val)[::-1]
+
             og_sc = ax[row, col].scatter(
-                S_to.values[~is_upper, 0],
-                S_to.values[~is_upper, 1],
-                c=val[~is_upper],
-                cmap=cmap,
-                s=marker_size,
-                vmin=vmin,
-                vmax=vmax,
-            )
-            pr_sc = ax[row, col].scatter(
-                S_to.values[is_upper, 0],
-                S_to.values[is_upper, 1],
-                c=val[is_upper],
+                S_to.values[val_ordr, 0],
+                S_to.values[val_ordr, 1],
+                c=val[val_ordr],
                 cmap=cmap,
                 s=marker_size,
                 vmin=vmin,
                 vmax=vmax,
             )
 
+            fig.colorbar(og_sc, ax=ax[row, col])
+
         ax[row, 0].set_title("Observed : {}".format(feature_name))
         ax[row, 1].set_title("Predicted : {}".format(feature_name))
-        fig.colorbar(og_sc, ax=ax[row, 0])
-        fig.colorbar(pr_sc, ax=ax[row, 1])
 
     plt.show()

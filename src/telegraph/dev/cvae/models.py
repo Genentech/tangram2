@@ -54,17 +54,22 @@ class CVAE(L.LightningModule):
 
         self.p = dropout
         # Encoder
-        self.fc1 = t.nn.Linear(self.x_dim + self.c_dim, hidden_dim)
+        self.fc1_x = t.nn.Linear(self.x_dim, hidden_dim)
+        self.fc1_c = t.nn.Linear(self.c_dim, hidden_dim, bias=False)
         self.fc21 = t.nn.Linear(hidden_dim, z_dim)  # Mean μ
         self.fc22 = t.nn.Linear(hidden_dim, z_dim)  # Log variance σ^2
 
         # Decoder
-        self.fc3 = t.nn.Linear(self.z_dim + self.c_dim, hidden_dim)
+        self.fc3_z = t.nn.Linear(self.z_dim, hidden_dim)
+        self.fc3_c = t.nn.Linear(self.c_dim, hidden_dim, bias=False)
         self.fc4 = t.nn.Linear(hidden_dim, self.x_dim)
 
     def encode(self, x, c):
-        h0 = t.cat([x, c], dim=1)
-        h1 = F.relu(self.fc1(h0))
+        # h0 = t.cat([x, c], dim=1)
+        h0_x = self.fc1_x(x)
+        h0_c = self.fc1_c(c)
+        h0 = h0_x + h0_c
+        h1 = F.relu(h0)
         return self.fc21(h1), self.fc22(h1)
 
     def reparameterize(self, mu, log_var):
@@ -73,8 +78,11 @@ class CVAE(L.LightningModule):
         return mu + eps * std
 
     def decode(self, z, c):
-        h0 = t.cat([z, c], dim=1)
-        h3 = F.relu(self.fc3(h0))
+
+        h0_z = self.fc3_z(z)
+        h0_c = self.fc3_c(c)
+        h0 = h0_z + h0_c
+        h3 = F.relu(h0)
         return self.fc4(h3)
 
     def corrected_features(self, x, c):

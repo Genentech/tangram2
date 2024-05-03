@@ -70,8 +70,8 @@ def _get_X_and_labels(
         assert D.shape[0] == X.shape[0]
         assert group_col is not None
         if len(group_col) == 1:
-            labels = D[group_col].values.flatten()
-            labels = np.array([f"{group_col}_{lab}" for lab in labels])
+            labels = D[group_col[0]].values.flatten()
+            labels = np.array([f"{group_col[0]}_{lab}" for lab in labels])
         else:
             labels = (
                 D[group_col]
@@ -122,9 +122,12 @@ def _subset_helper(D=None, labels=None, subset_cols=None, subset_mode=None):
     return keep_idx
 
 
-def pick_x_d(X_to, D_to, X_from, D_from, target):
+def pick_x_d(X_to, D_to, X_from, D_from, target, use_pred=False, X_to_pred=None):
     if target == "to":
-        if X_to is not None:
+        if use_pred and X_to_pred is not None:
+            X, D = X_to_pred, D_to
+
+        elif X_to is not None:
             X, D = X_to, D_to
         else:
             target = "from"

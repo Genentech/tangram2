@@ -169,6 +169,8 @@ class ScanpyDEA(DEAMethodClass):
                     dedf = dut.get_empty_dea_df()
 
                 name = f"{obj_name}_{grp_1}_vs_{grp_2}"
+                print(dedf)
+
                 out[name] = dedf
 
         for key in out.keys():
@@ -631,6 +633,7 @@ class HVGFeatureDEA(DEAMethodClass):
 
         is_label = ut.get_adata_subset_idx(adata, subset_col, subset_labels)
         dedf = cls.get_hvg_dea(adata[is_label].to_df(layer=layer))
+        dedf = dedf.iloc[~dedf["score"].isna().values]
         return dedf
 
     @classmethod

@@ -152,12 +152,15 @@ class CVAEVanilla(MethodClass):
     def run_with_adata(
         cls,
         adata: ad.AnnData,
-        signal_and_label: List[Tuple[str, str]] | List[Tuple[str, str, str]],
         label_col: str,
         batch_col: str | None = None,
+        signal_and_label: (
+            List[Tuple[str, str]] | List[Tuple[str, str, str]] | None
+        ) = None,
         use_existing_emb: bool = False,
         emb_key: str = "X_cvae",
         min_group_count: int = 20,
+        inter_key: str = "ixn",
         **kwargs,
     ):
 
@@ -178,32 +181,41 @@ class CVAEVanilla(MethodClass):
             X_hat, E = cls.embedd(X, C, **kwargs)
             adata.obsm["X_cvae"] = E
             adata.layers["X_rec"] = X_hat
+        if signal_and_label is not None:
 
-        if isinstance(signal_and_label[0], str):
-            signal_and_label = [signal_and_label]
+            if isinstance(signal_and_label[0], str):
+                signal_and_label = [signal_and_label]
 
-        labels = adata.obs[label_col].values
+            labels = adata.obs[label_col].values
 
-        for signal_name, *st_labels in signal_and_label:
-            if signal_name not in X_col:
-                continue
+            inter_df = pd.DataFrame([], index=adata.obs_names)
 
-            if len(st_labels) == 2:
-                target_label, source_label = st_labels
-            else:
-                source_label, target_label = None, st_labels[0]
+            for signal_name, *st_labels in signal_and_label:
+                if signal_name not in X_col:
+                    continue
 
-            signal_values = adata.obs_vector(signal_name).flatten()
-            signal_indicator = cls.stratify(
-                signal_values,
-                embedding=E,
-                label_values=labels,
-                target_label=target_label,
-                source_label=source_label,
-                signal_name=signal_name,
-            )
+                if len(st_labels) == 2:
+                    target_label, source_label = st_labels
+                else:
+                    source_label, target_label = None, st_labels[0]
 
-            adata.obs[f"ixn_{signal_name}_{target_label}"] = signal_indicator
+                signal_values = adata.obs_vector(signal_name).flatten()
+                signal_indicator = cls.stratify(
+                    signal_values,
+                    embedding=E,
+                    label_values=labels,
+                    target_label=target_label,
+                    source_label=source_label,
+                    signal_name=signal_name,
+                )
+                if source_label is None:
+                    obs_col_name = f"ixn_{signal_name}_{target_label}_any"
+                else:
+                    obs_col_name = f"ixn_{signal_name}_{target_label}_{source_label}"
+
+                inter_df[obs_col_name] = signal_indicator
+
+            adata.obsm[inter_key] = inter_df
 
     @classmethod
     def run(

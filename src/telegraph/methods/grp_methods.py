@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Literal, Tuple
 import anndata as ad
 import numpy as np
 import pandas as pd
+from sklearn.cluster import KMeans
 
 import telegraph.methods.policies as pol
 from telegraph.methods._methods import MethodClass
@@ -619,13 +620,14 @@ class DistanceBasedGroup(GroupMethodClass):
 
     @classmethod
     @ut.check_in_out
-    @gut.add_covariates
+    # @gut.add_covariates
     def run(
         cls,
         input_dict: Dict[str, Any],
         feature_name: List[str] | str,
         q_high: float | Tuple[float, float] = 0.95,
         add_complement: bool = True,
+        subset_receiver: List[str] | str | None = None,
         k=5,
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
@@ -660,6 +662,9 @@ class DistanceBasedGroup(GroupMethodClass):
             raise ValueError("'S_to' must be given")
 
         feature_name = ut.listify(feature_name)
+
+        D_to_old = input_dict.get("D_to")
+
         D_to = pd.DataFrame(
             [],
             index=(
@@ -668,6 +673,15 @@ class DistanceBasedGroup(GroupMethodClass):
                 else X_to_obj.index
             ),
         )
+
+        if D_to_old is not None and subset_receiver is not None:
+            is_receiver = np.zeros(len(X_to_obj))
+            subset_receiver = ut.listify(subset_receiver)
+            for sub in subset_receiver:
+                is_receiver += D_to_old[sub].values
+            is_receiver = is_receiver > 0
+        else:
+            is_receiver = np.ones(len(X_to_obj)).astype(bool)
 
         for feature_i in feature_name:
 
@@ -678,22 +692,40 @@ class DistanceBasedGroup(GroupMethodClass):
 
             assert len(S_to) == n_obs, "S_to and X_to_{pred} is not of the same size"
 
-            q_val_i = np.quantile(fv_i, q_high)
-            is_high_i = fv_i >= q_val_i
-            kd = cKDTree(S_to[~is_high_i])
-            is_low_i = np.where(~is_high_i)[0]
-            _, idxs_i = kd.query(S_to[is_high_i], k=k)
+            km = KMeans(n_clusters=2)
+            clu_idx = km.fit_predict(fv_i[:, None])
+            clu_cnt = km.cluster_centers_.flatten()
+            ordr = np.argsort(clu_cnt)
+            low_clu = ordr[0]
+            high_clu = ordr[-1]
+            is_high_i = clu_idx == high_clu
+
+            is_target = np.where(~is_high_i)[0]
+
+            kd = cKDTree(S_to.values[is_target])
+
+            _, idxs_i = kd.query(S_to.values[is_high_i], k=k)
             idxs_i = np.unique(idxs_i.flatten())
-            idxs_i = is_low_i[idxs_i]
+            idxs_i = is_target[idxs_i]
+            idxs_i = np.intersect1d(idxs_i, np.where(is_receiver)[0])
 
             indicator_i = np.zeros(n_obs)
             indicator_i[idxs_i] = 1
             D_to[f"adj_{feature_i}"] = indicator_i
-            D_to[f"high_{feature_i}"] = is_high_i.astype(float)
+            D_to[f"high_{feature_i}"] = is_high_i.astype(int)
             if add_complement:
-                D_to[f"nadj_{feature_i}"] = 1 - indicator_i
+                complement = 1 - indicator_i
+                complement *= is_receiver.astype(float)
+                complement[is_high_i] = 0
+                D_to[f"nadj_{feature_i}"] = complement
 
-        return dict(D_to=D_to)
+        if D_to_old is not None:
+            overlap = [x for x in D_to.columns if x in D_to_old.columns]
+            if len(overlap) > 1:
+                D_to_old.drop(columns=overlap, inplace=True)
+            D_to_new = pd.concat((D_to_old, D_to), axis=1)
+
+        return dict(D_to=D_to_new)
 
 
 class RandomGroup(GroupMethodClass):

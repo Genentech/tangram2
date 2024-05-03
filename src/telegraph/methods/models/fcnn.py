@@ -66,7 +66,7 @@ class FCNNImp(L.LightningModule):
 
         for k in range(1, len(self.n_hidden)):
             if self.ln:
-                layers.append(nn.LayerNorm(self.n_hidden[k]))
+                layers.append(nn.LayerNorm(self.n_hidden[k - 1]))
             layers.append(nn.SELU())
             layers.append(nn.Dropout(self.p))
             layers.append(nn.Linear(self.n_hidden[k - 1], self.n_hidden[k]))
