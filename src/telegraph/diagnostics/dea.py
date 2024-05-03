@@ -329,6 +329,7 @@ def plot_signature_enrichment(
     D_to=None,
     X_from=None,
     D_from=None,
+    X_to_pred=None,
     labels=None,
     feature_list: List[str] = None,
     target: Literal["to", "from"] = "to",
@@ -337,6 +338,7 @@ def plot_signature_enrichment(
     subset_cols: List[str] | None = None,
     subset_mode: Literal["intersection", "union"] = "intersection",
     hide_background: bool = False,
+    use_pred: bool = False,
 ):
 
     from scanpy.pl import violin
@@ -345,7 +347,7 @@ def plot_signature_enrichment(
     if feature_list is None:
         raise ValueError("a feature list must be provided")
 
-    X, D = ut.pick_x_d(X_to, D_to, X_from, D_from, target)
+    X, D = ut.pick_x_d(X_to, D_to, X_from, D_from, target, use_pred, X_to_pred)
     keep_idx = ut._subset_helper(
         D=D, labels=labels, subset_cols=subset_cols, subset_mode=subset_mode
     )
@@ -368,4 +370,4 @@ def plot_signature_enrichment(
 
     score_name = "score" if score_name is None else score_name
     score_genes(_adata, gene_list=feature_list, score_name=score_name)
-    violin(_adata, keys=score_name, groupby="label")
+    violin(_adata, keys=score_name, groupby="label", rotation=90)

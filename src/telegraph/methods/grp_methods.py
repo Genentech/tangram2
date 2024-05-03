@@ -693,7 +693,6 @@ class DistanceBasedGroup(GroupMethodClass):
             assert len(S_to) == n_obs, "S_to and X_to_{pred} is not of the same size"
 
             km = KMeans(n_clusters=2)
-            print("kmeeeans bruh")
             clu_idx = km.fit_predict(fv_i[:, None])
             clu_cnt = km.cluster_centers_.flatten()
             ordr = np.argsort(clu_cnt)
