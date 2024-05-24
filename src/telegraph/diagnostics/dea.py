@@ -58,7 +58,7 @@ def compute_dea_score(
     abs_transform: bool = False,
     use_best_up_down: bool = False,
     only_use_overlap: bool = True,
-    ascending: bool = True,
+    reverse: bool = True,
     name_col: str = "names",
     pval_col: str = "pvals_adj",
     au_type: Literal["auroc", "aupr", "rank"] = "auroc",
@@ -99,8 +99,12 @@ def compute_dea_score(
     y_true = np.array([x in effect for x in dedf[name_col].values]).astype(int)
 
     if len(np.unique(y_true)) < 2:
-        print("No overlap between effect and threshold")
-        return out
+        if np.sum(y_true) > 1:
+            out[au_type] = 1
+            return out
+        else:
+            print("No overlap between effect and results")
+            return out
 
     if min_overlap is not None:
         if np.sum(y_true) < min_overlap:
@@ -115,6 +119,9 @@ def compute_dea_score(
         n_diff = len(n_e_diff)
         y_true = np.append(y_true, np.ones(n_diff))
         y_score = np.append(y_score, y_score.min() * np.ones(n_diff))
+
+    if reverse:
+        y_score = -y_score
 
     # up-reg
     fpr_up, tpr_up, _ = curve_fun(y_true, y_score)
