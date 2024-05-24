@@ -102,7 +102,7 @@ def _add_interactions(
     log_q_m = np.log(q_m)
 
     # anon. function to sample the coefficient in the GLM for activated features
-    sample_active_coef = lambda: np.log(np.random.uniform(5 * q_h, 5 * q_t)) - log_q_m
+    sample_active_coef = lambda: np.log(np.random.uniform(2 * q_h, 2 * q_t)) - log_q_m
 
     # intercept for S's (base level expression)
     s_intercept = float(np.log(np.random.uniform(q_l, q_h)))
@@ -349,7 +349,6 @@ def _cellmix_type_balanced(
     spot_type_count = np.clip(
         np.random.poisson(n_types_per_spot, size=n_spots), a_min=1, a_max=n_labels
     )
-    print(spot_type_count.mean())
 
     # split cell inidices (row) by their label and shuffle cell order to break dependency
     type_dict = {

@@ -46,7 +46,6 @@ class PPClass(ABC):
 
 class IdentityPP(PPClass):
     # Does nothing to the data (identity transform)
-    @chainwrapper
     @staticmethod
     def pp(obj, obj_name=None, **kwargs):
         return None
