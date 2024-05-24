@@ -169,7 +169,6 @@ class ScanpyDEA(DEAMethodClass):
                     dedf = dut.get_empty_dea_df()
 
                 name = f"{obj_name}_{grp_1}_vs_{grp_2}"
-                print(dedf)
 
                 out[name] = dedf
 

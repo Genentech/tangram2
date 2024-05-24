@@ -309,8 +309,7 @@ class TangramMap(MapMethodClass):
                 method_params[key] = value
 
         if cls.version == "2":
-            method_params
-            method_params["wandb_log"] = (kwargs.pop("wandb_log", False),)
+            method_params["wandb_log"] = kwargs.pop("wandb_log", False)
             method_params["wandb_config"] = wandb_config
 
         # map cells in "from" to "to"
