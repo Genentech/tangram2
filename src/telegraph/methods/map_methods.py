@@ -20,6 +20,8 @@ import telegraph.methods.utils as ut
 from telegraph.methods._methods import MethodClass
 from telegraph.methods.models import vanilla as vn
 
+from . import _map_utils as mut
+
 
 class MapMethodClass(MethodClass):
     # Base Class for MapMethods
@@ -268,7 +270,9 @@ class TangramMap(MapMethodClass):
             genes = ut.list_or_path_get(genes)
 
         # preprocess anndata for mapping
-        tg.pp_adatas(ad_from, ad_to, genes=genes)
+        mut.pp_adatas(
+            ad_from, ad_to, genes=genes, use_filter=kwargs.get("use_filter", True)
+        )
         mode = kwargs.pop("mode", "cells")
         wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name

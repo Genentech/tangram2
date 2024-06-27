@@ -387,11 +387,15 @@ class PredLeaveOutScore(PredMetricClass):
 
     @classmethod
     def score(cls, res_dict: Dict[str, Any], ref_dict: None = None, **kwargs) -> float:
-        X_to = res_dict.get("X_to")
+        X_to = res_dict.get("X_to").copy()
         assert X_to is not None, "X_to needs to be in input dictionary"
+        if isinstance(X_to, ad.AnnData):
+            X_to = X_to.to_df()
 
-        X_to_pred = res_dict.get("X_to_pred")
+        X_to_pred = res_dict.get("X_to_pred").copy()
         assert X_to_pred is not None, "X_to_pred needs to be in input dictionary"
+        if isinstance(X_to_pred, ad.AnnData):
+            X_to_pred = X_to_pred.to_df()
 
         if isinstance(X_to_pred, ad.AnnData):
             X_to_pred = X_to_pred.to_df()
@@ -402,6 +406,10 @@ class PredLeaveOutScore(PredMetricClass):
         train_genes = kwargs.get("train_genes", None)
         use_lowercase = kwargs.get("use_lowercase", False)
 
+        if use_lowercase:
+            X_to_pred.columns = [x.lower() for x in X_to_pred.columns]
+            X_to.columns = [x.lower() for x in X_to.columns]
+
         if (test_genes is None) and (train_genes is None):
             raise AssertionError("Input either train/test gene set")
         elif test_genes is not None:
@@ -409,19 +417,21 @@ class PredLeaveOutScore(PredMetricClass):
             if use_lowercase:
                 test_genes = [g.lower() for g in test_genes]
             eval_genes = list(
-                set(test_genes).intersection(X_to.var.index.tolist(), X_to_pred.columns)
+                set(test_genes).intersection(X_to.columns.tolist(), X_to_pred.columns)
             )
         else:
             train_genes = ut.list_or_path_get(train_genes)
             if use_lowercase:
                 train_genes = [g.lower() for g in train_genes]
-            test_genes = [g for g in X_to.var.index.tolist() if g not in train_genes]
+            test_genes = [g for g in X_to.columns.tolist() if g not in train_genes]
             eval_genes = list(set(test_genes).intersection(X_to_pred.columns))
 
-        gex_true = X_to[:, eval_genes].X.toarray()
+        gex_true = X_to.loc[:, eval_genes].values
         gex_pred = X_to_pred.loc[:, eval_genes].values
 
-        norm_sq = np.linalg.norm(gex_true, axis=1) * np.linalg.norm(gex_pred, axis=1)
+        norm_sq = (
+            np.linalg.norm(gex_true, axis=1) * np.linalg.norm(gex_pred, axis=1) + 1e-8
+        )
         cos_sim = (gex_true * gex_pred).sum(axis=1) / norm_sq
         mean_cos_sim = np.nanmean(cos_sim)
         out = cls.make_standard_out(mean_cos_sim)

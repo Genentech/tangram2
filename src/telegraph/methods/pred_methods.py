@@ -1,6 +1,6 @@
 import os.path as osp
 from abc import abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Literal
 
 import anndata as ad
 import numpy as np
@@ -238,3 +238,70 @@ class MoscotPred(PredMethodClass):
         )
 
         return out
+
+
+class MeanPred(PredMethodClass):
+    ins = [("X_from", "X_to")]
+    outs = ["X_to_pred"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        experiment_name: str | None = None,
+        target: Literal["to", "from"] = "to",
+        train_genes: str | None = None,
+        test_genes: str | None = None,
+        casing: Literal["upper", "lower"] | None = None,
+        **kwargs,
+    ) -> Dict[str, pd.DataFrame]:
+
+        if target == "from":
+            X_use = input_dict.get("X_from")
+        else:
+            X_use = input_dict.get("X_to")
+
+        if X_use is None:
+            raise ValueError(
+                "X_{} is None, must be adata or pandas dataframe".format(target)
+            )
+
+        if isinstance(X_use, ad.AnnData):
+            X_use = X_use.to_df()
+
+        match casing:
+            case "upper":
+                X_use.columns = [x.upper() for x in X_use.columns]
+            case "lower":
+                X_use.columns = [x.lower() for x in X_use.columns]
+
+        if (train_genes is None) and (test_genes is None):
+            raise ValueError("both train and test genes cannot be None")
+
+        all_genes = X_use.columns.tolist()
+
+        if test_genes is None:
+            train_genes = set(all_genes).intersection(train_genes)
+            test_genes = set(all_genes).difference(train_genes)
+        elif train_genes is None:
+            test_genes = set(all_genes).intersection(test_genes)
+            train_genes = set(all_genes).difference(test_genes)
+
+        X_mean = X_use[train_genes].values.mean(axis=1, keepdims=True)
+        X_pred = pd.DataFrame(
+            np.repeat(X_mean, len(test_genes), axis=1),
+            index=X_use.index,
+            columns=test_genes,
+        )
+
+        X_pred = pd.concat((X_use[train_genes], X_pred), axis=1)
+
+        return {f"X_{target}_pred": X_pred}
