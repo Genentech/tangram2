@@ -1,3 +1,4 @@
+import copy
 from abc import ABC
 from collections import OrderedDict
 from typing import Any, Callable, Dict, List
@@ -228,9 +229,7 @@ class Workflow:
                 methods[key] = val
 
         # list method names, for 'info' support
-        self.methods = []
-        self.methods_prms = []
-        self.methods_names = []
+        self.methods = dict()
 
         self.cc = check_compatibility
 
@@ -256,9 +255,7 @@ class Workflow:
             else:
                 method_prms = method_obj[self.params_key]
 
-            self.methods.append(method_fun)
-            self.methods_prms.append(method_prms)
-            self.methods_names.append(method_name)
+            self.methods[method_name] = [method_fun, method_prms]
 
             if self.cc and self._is_checkable(method_mod):
                 if len(available_vars) == 0:
@@ -277,26 +274,31 @@ class Workflow:
 
                     available_vars += method_mod.outs
 
+            self._methods = copy.deepcopy(self.methods)
+
     def _is_checkable(self, x):
         if x is None:
             return False
         return hasattr(x, "ins") & hasattr(x, "outs")
 
     def __add__(self, other):
-        combined_methods = {
-            **self._construct_method_dict(
-                methods_key=self.methods_key, params_key=self.params_key
-            ),
-            **other._construct_method_dict(
-                methods_key=self.methods_key, params_key=self.params_key
-            ),
-        }
+        ### update
+
+        combined_methods = (
+            self._construct_method_dict() | other._construct_method_dict()
+        )
+
         return Workflow(
             combined_methods,
             check_compatibility=False,
             methods_key=self.methods_key,
             params_key=self.params_key,
         )
+
+    def reset_steps(
+        self,
+    ):
+        self.methods = copy.deepcopy(self._methods)
 
     def _construct_method_dict(
         self, methods_key: str | None = None, params_key: str | None = None
@@ -305,17 +307,15 @@ class Workflow:
         methods_key = self.methods_key if methods_key is None else methods_key
         params_key = self.params_key if params_key is None else params_key
 
-        return {
-            name: {methods_key: method, params_key: params}
-            for name, method, params in zip(
-                self.method_names, self.methods, self.method_params
-            )
+        method_dict = {
+            name: {methods_key: method_fun, params_key: method_params}
+            for name, (method_fun, method_params) in self.methods.items()
         }
 
+        return method_dict
+
     def list_methods(self, include_callable: bool = True):
-        for step_name, step_fun, step_prms in zip(
-            self.methods_names, self.methods, self.methods_prms
-        ):
+        for step_name, (step_fun, step_prms) in self.methods.items():
             print(f"step_name : {step_name}")
             if include_callable:
                 print(f"callable : {step_fun}")
@@ -327,6 +327,27 @@ class Workflow:
             else:
                 print_prms = "  - default"
             print(print_prms)
+
+    def update_step(
+        self,
+        step_name,
+        step_fun: Callable | None = None,
+        step_params: Dict[str, Any] | None = None,
+    ):
+        if step_name not in self.methods:
+            print("step not present in methods")
+            return None
+        if step_fun is None:
+            step_fun, _ = self.methods[step_name]
+
+        _, step_params_old = self.methods[step_name]
+
+        if step_params is None:
+            step_params = step_params_old
+        else:
+            step_params = step_params_old | step_params
+
+        self.methods[step_name] = [step_fun, step_params]
 
     def run(
         self,
@@ -344,9 +365,7 @@ class Workflow:
 
         """
 
-        for method_fun, method_prms, method_name in zip(
-            self.methods, self.methods_prms, self.methods_names
-        ):
+        for method_name, (method_fun, method_prms) in self.methods.items():
 
             if verbose:
                 print(

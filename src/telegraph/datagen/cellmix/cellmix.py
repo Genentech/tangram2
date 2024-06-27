@@ -1,6 +1,6 @@
 from functools import reduce
 from random import random, shuffle
-from typing import List
+from typing import List, Tuple
 
 import anndata as ad
 import numpy as np
@@ -54,6 +54,7 @@ def _add_interactions(
     signal_name: str | None = None,
     return_names: bool = True,
     subset_features: List[str] | None = None,
+    active_coef: float | Tuple[float, float] | None = None,
 ):
 
     if isinstance(signal_name, str):
@@ -102,7 +103,18 @@ def _add_interactions(
     log_q_m = np.log(q_m)
 
     # anon. function to sample the coefficient in the GLM for activated features
-    sample_active_coef = lambda: np.log(np.random.uniform(2 * q_h, 2 * q_t)) - log_q_m
+    if active_coef is None:
+        active_coef = (2 * q_h - log_q_m, 2 * q_t - log_q_m)
+    elif isinstance(active_coef, (tuple, list)):
+        assert (
+            len(active_coef) == 2
+        ), "active_coef must be either single number or tuple (low,high)"
+    elif isinstance(active_coef, (float, int)):
+        active_coef = (active_coef, active_coef)
+
+    sample_active_coef = lambda: np.log(
+        np.random.uniform(active_coef[0], active_coef[1])
+    )
 
     # intercept for S's (base level expression)
     s_intercept = float(np.log(np.random.uniform(q_l, q_h)))
@@ -321,6 +333,7 @@ def _cellmix_type_balanced(
     n_interactions: int | None = None,
     effect_size: int = 10,
     p_signal_spots: float = 0.5,
+    signal_effect_scaling: float | Tuple[float, float] | None = None,
 ):
     """creates 'mixed' data akin to spot-based data that will have a pre-specified
     average number of cell types per spot as well as pre-defined number of cells per spot
@@ -475,7 +488,9 @@ def _cellmix_type_balanced(
                 p_active_spots=p_signal_spots,
                 spot_data=True,
                 signal_name=str(ii),
+                active_coef=signal_effect_scaling,
             )
+
             x_int_i = int_res["x"]
             var_names_int_i = int_res["var_names"]
             xs_int.append(x_int_i)
@@ -548,6 +563,7 @@ def cellmix(
     n_interactions: bool | None = None,
     effect_size: int = 10,
     p_signal_spots: float = 0.5,
+    signal_effect_scaling: float | Tuple[float, float] | None = None,
 ):
     """pretty wrapper for cellmix"""
 
@@ -565,6 +581,7 @@ def cellmix(
             n_interactions=n_interactions,
             effect_size=effect_size,
             p_signal_spots=p_signal_spots,
+            signal_effect_scaling=signal_effect_scaling,
         )
 
         ad_sp = _downsample(ad_sp, downsample)
