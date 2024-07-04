@@ -1,18 +1,16 @@
-:py:mod:`telegraph.tests.methods`
-=================================
+telegraph.tests.methods
+=======================
 
 .. py:module:: telegraph.tests.methods
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   test_dea_methods/index.rst
-   test_grp_methods/index.rst
-   test_map_methods/index.rst
-   test_pred_methods/index.rst
-
-
+   /autoapi/telegraph/tests/methods/test_dea_methods/index
+   /autoapi/telegraph/tests/methods/test_grp_methods/index
+   /autoapi/telegraph/tests/methods/test_map_methods/index
+   /autoapi/telegraph/tests/methods/test_pred_methods/index

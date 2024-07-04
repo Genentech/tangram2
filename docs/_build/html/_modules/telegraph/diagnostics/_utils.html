@@ -6,31 +6,32 @@
   <title>telegraph.diagnostics._utils &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0cff9c03" />
 
-  
+
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
 
-          
-          
+
+
           <a href="../../../index.html" class="icon icon-home">
             telegraph
               <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
@@ -72,7 +73,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <h1>Source code for telegraph.diagnostics._utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
@@ -82,6 +83,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">harmony</span> <span class="kn">import</span> <span class="n">harmonize</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">spmatrix</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
 <span class="kn">from</span> <span class="nn">torch.cuda</span> <span class="kn">import</span> <span class="n">is_available</span>
 
@@ -91,9 +93,17 @@
 <span class="k">def</span> <span class="nf">easy_input</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">input_dict</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">first_arg</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">first_arg</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_arg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+
+            <span class="n">input_dict</span> <span class="o">=</span> <span class="n">first_arg</span>
+
             <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
             <span class="n">args_names</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">x</span><span class="o">.</span><span class="n">name</span>
                 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
@@ -107,6 +117,7 @@
 
             <span class="c1"># add_args = [v for k, v in input_dict.items() if k in args_names]</span>
             <span class="n">add_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">args_names</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">]</span>
+
             <span class="n">add_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs_names</span><span class="p">}</span>
 
             <span class="n">new_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">::])</span> <span class="o">+</span> <span class="n">add_args</span>
@@ -121,11 +132,90 @@
 
 
 
+<div class="viewcode-block" id="_get_X_and_labels">
+<a class="viewcode-back" href="../../../autoapi/telegraph/diagnostics/_utils/index.html#telegraph.diagnostics._utils._get_X_and_labels">[docs]</a>
+<span class="k">def</span> <span class="nf">_get_X_and_labels</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">obsm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="k">assert</span> <span class="nb">any</span><span class="p">([</span><span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">D</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">group_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_col</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">group_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">lab</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">D</span><span class="p">[</span><span class="n">group_col</span><span class="p">]</span>
+                <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">row</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">values</span>
+            <span class="p">)</span>
+            <span class="n">labels</span><span class="p">[</span><span class="n">labels</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;background&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">obsm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">layer</span><span class="o">=</span><span class="n">layer</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="n">obsm</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Xn</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">Xn</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Xn</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">obs_names</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span></div>
+
+
+
+<div class="viewcode-block" id="_subset_helper">
+<a class="viewcode-back" href="../../../autoapi/telegraph/diagnostics/_utils/index.html#telegraph.diagnostics._utils._subset_helper">[docs]</a>
+<span class="k">def</span> <span class="nf">_subset_helper</span><span class="p">(</span><span class="n">D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subset_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subset_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">subset_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">D</span><span class="p">))</span> <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">keep_idx</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">subset_mode</span> <span class="o">=</span> <span class="s2">&quot;u&quot;</span> <span class="k">if</span> <span class="n">subset_mode</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;uni&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;i&quot;</span>
+
+    <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">subset_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subset_cols</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">subset_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">subset_cols</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">subset_mode</span> <span class="o">==</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span>
+                <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">D</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">subset_cols</span><span class="p">:</span>
+                    <span class="n">ind</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                    <span class="n">keep_idx</span> <span class="o">*=</span> <span class="n">ind</span>
+                <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">keep_idx</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">D</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">subset_cols</span><span class="p">:</span>
+                    <span class="n">ind</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                    <span class="n">keep_idx</span> <span class="o">+=</span> <span class="n">ind</span>
+                <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">keep_idx</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="n">subset_cols</span>
+
+    <span class="k">return</span> <span class="n">keep_idx</span></div>
+
+
+
 <div class="viewcode-block" id="pick_x_d">
 <a class="viewcode-back" href="../../../autoapi/telegraph/diagnostics/_utils/index.html#telegraph.diagnostics._utils.pick_x_d">[docs]</a>
-<span class="k">def</span> <span class="nf">pick_x_d</span><span class="p">(</span><span class="n">X_to</span><span class="p">,</span> <span class="n">D_to</span><span class="p">,</span> <span class="n">X_from</span><span class="p">,</span> <span class="n">D_from</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">pick_x_d</span><span class="p">(</span><span class="n">X_to</span><span class="p">,</span> <span class="n">D_to</span><span class="p">,</span> <span class="n">X_from</span><span class="p">,</span> <span class="n">D_from</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">use_pred</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">X_to_pred</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;to&quot;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">X_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_pred</span> <span class="ow">and</span> <span class="n">X_to_pred</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="p">,</span> <span class="n">D_to</span>
+
+        <span class="k">elif</span> <span class="n">X_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">X</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">X_to</span><span class="p">,</span> <span class="n">D_to</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;from&quot;</span>
@@ -134,7 +224,7 @@
         <span class="k">if</span> <span class="n">X_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">X</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">X_from</span><span class="p">,</span> <span class="n">D_from</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ValuError</span><span class="p">(</span><span class="s2">&quot;One of X_to/X_from has to be provided.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One of X_to/X_from has to be provided.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">D</span></div>
 
 
@@ -204,7 +294,7 @@
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -215,7 +305,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>

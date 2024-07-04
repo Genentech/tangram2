@@ -1,14 +1,11 @@
-:py:mod:`telegraph.methods.preprocess`
-======================================
+telegraph.methods.preprocess
+============================
 
 .. py:module:: telegraph.methods.preprocess
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -30,44 +27,48 @@ Classes
    telegraph.methods.preprocess.StandardSpaGE
 
 
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    telegraph.methods.preprocess.chainwrapper
 
 
+Module Contents
+---------------
 
 .. py:function:: chainwrapper(func)
 
-
 .. py:class:: PPClass
-
 
    Bases: :py:obj:`abc.ABC`
 
+
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: run(input_dict, target_objs=['X_from', 'X_to'], **kwargs)
       :classmethod:
 
 
+
    .. py:method:: pp(input_dict, *args, **kwargs)
       :classmethod:
+
       :abstractmethod:
 
 
 
 .. py:class:: IdentityPP
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -76,11 +77,12 @@ Functions
 
 .. py:class:: NormalizeTotal
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -89,11 +91,12 @@ Functions
 
 .. py:class:: Log1p
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -102,11 +105,12 @@ Functions
 
 .. py:class:: ScanpyPCA
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -115,11 +119,12 @@ Functions
 
 .. py:class:: StandardScanpy
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -128,11 +133,12 @@ Functions
 
 .. py:class:: RegressType
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name='from', normalize: bool = False, **kwargs)
       :staticmethod:
@@ -141,11 +147,12 @@ Functions
 
 .. py:class:: CeLEryPP
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -154,11 +161,12 @@ Functions
 
 .. py:class:: StandardTangramV1
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :classmethod:
@@ -167,11 +175,12 @@ Functions
 
 .. py:class:: StandardTangramV2
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -180,11 +189,12 @@ Functions
 
 .. py:class:: StandardSpaOTsc
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -193,11 +203,12 @@ Functions
 
 .. py:class:: LowercaseGenes
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -206,11 +217,12 @@ Functions
 
 .. py:class:: StandardMoscot
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -219,11 +231,12 @@ Functions
 
 .. py:class:: gimVIPP
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -232,11 +245,12 @@ Functions
 
 .. py:class:: FilterGenes
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:
@@ -245,11 +259,12 @@ Functions
 
 .. py:class:: StandardSpaGE
 
-
    Bases: :py:obj:`PPClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:method:: pp(obj, obj_name=None, **kwargs)
       :staticmethod:

@@ -6,7 +6,7 @@
   <title>telegraph.methods.workflows &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0cff9c03" />
 
 
@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -75,7 +75,8 @@
            <div itemprop="articleBody">
 
   <h1>Source code for telegraph.methods.workflows</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
@@ -84,6 +85,8 @@
 <span class="kn">from</span> <span class="nn">telegraph.methods._methods</span> <span class="kn">import</span> <span class="n">MethodClass</span>
 
 
+<div class="viewcode-block" id="flatten_het_list">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.flatten_het_list">[docs]</a>
 <span class="k">def</span> <span class="nf">flatten_het_list</span><span class="p">(</span><span class="n">input_list</span><span class="p">):</span>
     <span class="n">flattened_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">:</span>
@@ -93,9 +96,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># If the element is not a list, append it directly to the flattened list</span>
             <span class="n">flattened_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">flattened_list</span>
+    <span class="k">return</span> <span class="n">flattened_list</span></div>
 
 
+
+<div class="viewcode-block" id="IdentityFun">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.IdentityFun">[docs]</a>
 <span class="k">class</span> <span class="nc">IdentityFun</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify Function</span>
 
@@ -106,17 +112,26 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="IdentityFun.run">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.IdentityFun.run">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># return empty dictionary for compatibility</span>
-        <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
 
+
+<div class="viewcode-block" id="IdentityFun.save">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.IdentityFun.save">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># save nothing</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+</div>
 
 
+
+<div class="viewcode-block" id="Composite">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.Composite">[docs]</a>
 <span class="k">class</span> <span class="nc">Composite</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -176,6 +191,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
+<div class="viewcode-block" id="Composite.run">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.Composite.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -193,17 +210,24 @@
             <span class="c1"># update input dict</span>
             <span class="n">input_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">input_dict</span>
+        <span class="k">return</span> <span class="n">input_dict</span></div>
 
+
+<div class="viewcode-block" id="Composite.save">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.Composite.save">[docs]</a>
     <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">res_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">out_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># save each of the outputs from</span>
         <span class="c1"># every element</span>
 
         <span class="c1"># iterate over methods in workflow</span>
         <span class="k">for</span> <span class="n">method_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span><span class="p">[</span><span class="n">method_key</span><span class="p">]</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">res_dict</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span><span class="p">[</span><span class="n">method_key</span><span class="p">]</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">res_dict</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
 
 
+
+<div class="viewcode-block" id="WorkFlowClass">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.WorkFlowClass">[docs]</a>
 <span class="k">class</span> <span class="nc">WorkFlowClass</span><span class="p">(</span><span class="n">MethodClass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Workflow baseclass</span>
 
@@ -218,6 +242,8 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+<div class="viewcode-block" id="WorkFlowClass.run">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.WorkFlowClass.run">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -230,8 +256,11 @@
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">out</span>
+        <span class="k">return</span> <span class="n">out</span></div>
 
+
+<div class="viewcode-block" id="WorkFlowClass.save">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.WorkFlowClass.save">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -240,9 +269,13 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># save using &quot;flow&#39;s&quot; save method</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">flow</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">res_dict</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">flow</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">res_dict</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
 
 
+
+<div class="viewcode-block" id="Workflow">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.Workflow">[docs]</a>
 <span class="k">class</span> <span class="nc">Workflow</span><span class="p">:</span>
 
 <div class="viewcode-block" id="Workflow.__init__">
@@ -307,9 +340,7 @@
                 <span class="n">methods</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
 
         <span class="c1"># list method names, for &#39;info&#39; support</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">methods</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">methods_prms</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">methods_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">methods</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cc</span> <span class="o">=</span> <span class="n">check_compatibility</span>
 
@@ -335,9 +366,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">method_prms</span> <span class="o">=</span> <span class="n">method_obj</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">params_key</span><span class="p">]</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method_fun</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">methods_prms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method_prms</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">methods_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">[</span><span class="n">method_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">method_fun</span><span class="p">,</span> <span class="n">method_prms</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cc</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_checkable</span><span class="p">(</span><span class="n">method_mod</span><span class="p">):</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -354,30 +383,46 @@
                                 <span class="p">)</span>
                                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-                    <span class="n">available_vars</span> <span class="o">+=</span> <span class="n">method_mod</span><span class="o">.</span><span class="n">outs</span></div>
+                    <span class="n">available_vars</span> <span class="o">+=</span> <span class="n">method_mod</span><span class="o">.</span><span class="n">outs</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="Workflow._is_checkable">
+<a class="viewcode-back" href="../../../autoapi/telegraph/methods/workflows/index.html#telegraph.methods.workflows.Workflow._is_checkable">[docs]</a>
     <span class="k">def</span> <span class="nf">_is_checkable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;ins&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;outs&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;ins&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;outs&quot;</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="Workflow.__add__">
+<a class="viewcode-back" href="../../../autoapi/telegraph/methods/workflows/index.html#telegraph.methods.workflows.Workflow.__add__">[docs]</a>
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="n">combined_methods</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_construct_method_dict</span><span class="p">(</span>
-                <span class="n">methods_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">methods_key</span><span class="p">,</span> <span class="n">params_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_key</span>
-            <span class="p">),</span>
-            <span class="o">**</span><span class="n">other</span><span class="o">.</span><span class="n">_construct_method_dict</span><span class="p">(</span>
-                <span class="n">methods_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">methods_key</span><span class="p">,</span> <span class="n">params_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_key</span>
-            <span class="p">),</span>
-        <span class="p">}</span>
+        <span class="c1">### update</span>
+
+        <span class="n">combined_methods</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_construct_method_dict</span><span class="p">()</span> <span class="o">|</span> <span class="n">other</span><span class="o">.</span><span class="n">_construct_method_dict</span><span class="p">()</span>
+        <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">Workflow</span><span class="p">(</span>
             <span class="n">combined_methods</span><span class="p">,</span>
             <span class="n">check_compatibility</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">methods_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">methods_key</span><span class="p">,</span>
             <span class="n">params_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params_key</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="Workflow.reset_steps">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.Workflow.reset_steps">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset_steps</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">methods</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_methods</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Workflow._construct_method_dict">
+<a class="viewcode-back" href="../../../autoapi/telegraph/methods/workflows/index.html#telegraph.methods.workflows.Workflow._construct_method_dict">[docs]</a>
     <span class="k">def</span> <span class="nf">_construct_method_dict</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">methods_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
@@ -385,17 +430,18 @@
         <span class="n">methods_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_key</span> <span class="k">if</span> <span class="n">methods_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">methods_key</span>
         <span class="n">params_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_key</span> <span class="k">if</span> <span class="n">params_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">params_key</span>
 
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="n">methods_key</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span> <span class="n">params_key</span><span class="p">:</span> <span class="n">params</span><span class="p">}</span>
-            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">method_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_params</span>
-            <span class="p">)</span>
+        <span class="n">method_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="n">methods_key</span><span class="p">:</span> <span class="n">method_fun</span><span class="p">,</span> <span class="n">params_key</span><span class="p">:</span> <span class="n">method_params</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">method_fun</span><span class="p">,</span> <span class="n">method_params</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
 
+        <span class="k">return</span> <span class="n">method_dict</span></div>
+
+
+<div class="viewcode-block" id="Workflow.list_methods">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.Workflow.list_methods">[docs]</a>
     <span class="k">def</span> <span class="nf">list_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_callable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">step_fun</span><span class="p">,</span> <span class="n">step_prms</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">methods_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_prms</span>
-        <span class="p">):</span>
+        <span class="k">for</span> <span class="n">step_name</span><span class="p">,</span> <span class="p">(</span><span class="n">step_fun</span><span class="p">,</span> <span class="n">step_prms</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;step_name : </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">include_callable</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;callable : </span><span class="si">{</span><span class="n">step_fun</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -406,8 +452,35 @@
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">print_prms</span> <span class="o">=</span> <span class="s2">&quot;  - default&quot;</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">print_prms</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">print_prms</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="Workflow.update_step">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.Workflow.update_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">,</span>
+        <span class="n">step_fun</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">step_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;step not present in methods&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">step_fun</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_fun</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">[</span><span class="n">step_name</span><span class="p">]</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">step_params_old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">[</span><span class="n">step_name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">step_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_params</span> <span class="o">=</span> <span class="n">step_params_old</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step_params</span> <span class="o">=</span> <span class="n">step_params_old</span> <span class="o">|</span> <span class="n">step_params</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">[</span><span class="n">step_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">step_fun</span><span class="p">,</span> <span class="n">step_params</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Workflow.run">
+<a class="viewcode-back" href="../../../source/telegraph.methods.workflows.html#telegraph.methods.workflows.Workflow.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -424,9 +497,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="n">method_fun</span><span class="p">,</span> <span class="n">method_prms</span><span class="p">,</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_prms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_names</span>
-        <span class="p">):</span>
+        <span class="k">for</span> <span class="n">method_name</span><span class="p">,</span> <span class="p">(</span><span class="n">method_fun</span><span class="p">,</span> <span class="n">method_prms</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
@@ -442,7 +513,9 @@
                 <span class="n">input_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">return_dict</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">input_dict</span>
+            <span class="k">return</span> <span class="n">input_dict</span></div>
+</div>
+
 </pre></div>
 
            </div>

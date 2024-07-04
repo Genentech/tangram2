@@ -6,31 +6,32 @@
   <title>telegraph.diagnostics.group &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0cff9c03" />
 
-  
+
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
+
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
   <div class="wy-grid-for-nav">
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
 
-          
-          
+
+
           <a href="../../../index.html" class="icon icon-home">
             telegraph
               <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
@@ -72,7 +73,7 @@
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+
   <h1>Source code for telegraph.diagnostics.group</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span>
 
@@ -88,50 +89,11 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_utils</span> <span class="k">as</span> <span class="n">ut</span>
 
 
-<div class="viewcode-block" id="_get_X_and_labels">
-<a class="viewcode-back" href="../../../autoapi/telegraph/diagnostics/group/index.html#telegraph.diagnostics.group._get_X_and_labels">[docs]</a>
-<span class="k">def</span> <span class="nf">_get_X_and_labels</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">obsm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">):</span>
-
-    <span class="k">assert</span> <span class="nb">any</span><span class="p">([</span><span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
-
-    <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">D</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="n">group_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">group_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group_col</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">lab</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">])</span>
-
-    <span class="k">match</span> <span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">obsm</span><span class="p">):</span>
-        <span class="k">case</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">spmatrix</span><span class="p">):</span>
-                    <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">X</span>
-
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-                <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-                <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span>
-
-        <span class="k">case</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">()):</span>
-            <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="n">obsm</span><span class="p">]</span>
-
-        <span class="k">case</span> <span class="p">(</span><span class="nb">str</span><span class="p">(),</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">Xn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span></div>
-
-
-
 <div class="viewcode-block" id="plot_group_separation">
 <a class="viewcode-back" href="../../../source/telegraph.diagnostics.group.html#telegraph.diagnostics.group.plot_group_separation">[docs]</a>
 <span class="nd">@ut</span><span class="o">.</span><span class="n">easy_input</span>
 <span class="k">def</span> <span class="nf">plot_group_separation</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
     <span class="n">X_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">D_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">X_from</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -140,6 +102,8 @@
     <span class="n">target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span>
     <span class="n">group_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">group_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;discrete&quot;</span><span class="p">,</span> <span class="s2">&quot;continuous&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;discrete&quot;</span><span class="p">,</span>
+    <span class="n">subset_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">subset_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;intersection&quot;</span><span class="p">,</span> <span class="s2">&quot;union&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;intersection&quot;</span><span class="p">,</span>
     <span class="n">project_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pca&quot;</span><span class="p">,</span>
     <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Dark2</span><span class="p">,</span>
     <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -150,14 +114,20 @@
 <span class="p">):</span>
 
     <span class="n">X</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">pick_x_d</span><span class="p">(</span><span class="n">X_to</span><span class="p">,</span> <span class="n">D_to</span><span class="p">,</span> <span class="n">X_from</span><span class="p">,</span> <span class="n">D_from</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">_subset_helper</span><span class="p">(</span>
+        <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">subset_cols</span><span class="o">=</span><span class="n">subset_cols</span><span class="p">,</span> <span class="n">subset_mode</span><span class="o">=</span><span class="n">subset_mode</span>
+    <span class="p">)</span>
 
-    <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">_get_X_and_labels</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">group_col</span><span class="o">=</span><span class="n">group_col</span><span class="p">)</span>
+    <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">_get_X_and_labels</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">group_col</span><span class="o">=</span><span class="n">group_col</span><span class="p">)</span>
+    <span class="n">Xn</span> <span class="o">=</span> <span class="n">Xn</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">Xn</span> <span class="o">=</span> <span class="n">Xn</span><span class="p">[</span><span class="n">keep_idx</span><span class="p">]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">keep_idx</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">normalize_X</span><span class="p">:</span>
         <span class="n">Xn</span> <span class="o">=</span> <span class="n">Xn</span> <span class="o">/</span> <span class="n">Xn</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e4</span>
         <span class="n">Xn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">Xn</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">group_type</span> <span class="o">==</span> <span class="s2">&quot;discrete&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">group_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;dis&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">labels</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -243,6 +213,7 @@
 <a class="viewcode-back" href="../../../source/telegraph.diagnostics.group.html#telegraph.diagnostics.group.test_group_separation">[docs]</a>
 <span class="nd">@ut</span><span class="o">.</span><span class="n">easy_input</span>
 <span class="k">def</span> <span class="nf">test_group_separation</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
     <span class="n">X_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">D_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">X_from</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -250,6 +221,8 @@
     <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span>
     <span class="n">group_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">subset_cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">subset_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;intersection&quot;</span><span class="p">,</span> <span class="s2">&quot;union&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;intersection&quot;</span><span class="p">,</span>
     <span class="n">classifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;svm&quot;</span><span class="p">,</span>
     <span class="n">n_pca</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
     <span class="n">clf_params</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -265,7 +238,15 @@
 
     <span class="n">X</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">pick_x_d</span><span class="p">(</span><span class="n">X_to</span><span class="p">,</span> <span class="n">D_to</span><span class="p">,</span> <span class="n">X_from</span><span class="p">,</span> <span class="n">D_from</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
 
-    <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">_get_X_and_labels</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">group_col</span><span class="o">=</span><span class="n">group_col</span><span class="p">)</span>
+    <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">_subset_helper</span><span class="p">(</span>
+        <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">subset_cols</span><span class="o">=</span><span class="n">subset_cols</span><span class="p">,</span> <span class="n">subset_mode</span><span class="o">=</span><span class="n">subset_mode</span>
+    <span class="p">)</span>
+
+    <span class="n">Xn</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">_get_X_and_labels</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">group_col</span><span class="o">=</span><span class="n">group_col</span><span class="p">)</span>
+    <span class="n">Xn</span> <span class="o">=</span> <span class="n">Xn</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">Xn</span> <span class="o">=</span> <span class="n">Xn</span><span class="p">[</span><span class="n">keep_idx</span><span class="p">]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">keep_idx</span><span class="p">]</span>
 
     <span class="n">n_obs</span><span class="p">,</span> <span class="n">n_var</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">n_pca</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_var</span><span class="p">,</span> <span class="n">n_pca</span><span class="p">)</span>
@@ -378,7 +359,7 @@
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+
 
 </footer>
         </div>
@@ -389,7 +370,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
 
 </body>
 </html>

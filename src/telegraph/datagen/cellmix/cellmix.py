@@ -1,6 +1,6 @@
 from functools import reduce
 from random import random, shuffle
-from typing import List, Tuple
+from typing import List, Literal, Tuple
 
 import anndata as ad
 import numpy as np
@@ -11,12 +11,12 @@ from scipy.spatial import cKDTree
 from scipy.stats import multivariate_hypergeom as mhg
 
 
-def _update_adatas(ad_sc, ad_sp, x_add_sc, sc_var_names):
+def _update_adatas(ad_sc, ad_sp, x_add_sc, sc_var):
 
     ad_sc_add = ad.AnnData(
         x_add_sc,
         obs=pd.DataFrame([], index=ad_sc.obs_names),
-        var=pd.DataFrame([], index=sc_var_names),
+        var=sc_var,
     )
 
     ad_sc = ad.concat(
@@ -33,7 +33,7 @@ def _update_adatas(ad_sc, ad_sp, x_add_sc, sc_var_names):
     ad_sp_add = ad.AnnData(
         x_add_sp,
         obs=pd.DataFrame([], index=ad_sp.obs_names),
-        var=pd.DataFrame([], index=sc_var_names),
+        var=pd.DataFrame([], index=sc_var.index),
     )
 
     ad_sp = ad.concat(
@@ -41,6 +41,70 @@ def _update_adatas(ad_sc, ad_sp, x_add_sc, sc_var_names):
     )
 
     return ad_sc, ad_sp
+
+
+def _multinomial_resampling(X: np.ndarray, noise_level: float = 0):
+
+    ns = X.sum(axis=1)
+    ps = X / ns.reshape(-1, 1)
+    n_obs, n_var = X.shape
+
+    if noise_level < 0:
+        print(
+            "[WARNING] : The noise level for resampling has to be in [0,1]. You chose {} - adjusting value to 0".format(
+                noise_level
+            )
+        )
+        noise_level = 0
+    if noise_level > 1:
+        print(
+            "[WARNING] : The noise level for resampling has to be in [0,1]. You chose {} - adjusting value to 1".format(
+                noise_level
+            )
+        )
+        noise_level = 1
+
+    if noise_level > 0:
+        alpha = np.ones(n_var)
+        eps = np.random.dirichlet(alpha, size=n_obs)
+        ps = (1 - noise_level) * ps + noise_level * eps
+        ps = ps / ps.sum(axis=1, keepdims=True)
+
+    X_new = np.vstack(
+        [np.random.multinomial(ns[i], pvals=ps[i]) for i in range(len(ns))]
+    )
+
+    return X_new
+
+
+def _resample(adata: ad.AnnData, resample: List[float] | float | bool = False):
+    """resample expression using multinomial resampling. Nois can be introduced by specifying one
+    or multiple noise levels. This will perturb the proportion values in the multinomial
+    distribution.
+
+    """
+
+    if isinstance(resample, bool):
+        if not resample:
+            return adata
+        else:
+            resample = [0]
+    else:
+        resample = resample if isinstance(resample, list) else [resample]
+
+    # fast access, anndata issue
+    x_mat = adata.to_df().values
+
+    # iterate over downsampling options
+    for noise_level in resample:
+
+        x_new = _multinomial_resampling(x_mat, noise_level=noise_level)
+
+        layer_name = "resample_{}".format(noise_level)
+
+        adata.layers[layer_name] = x_new
+
+    return adata
 
 
 def _add_interactions(
@@ -55,6 +119,11 @@ def _add_interactions(
     return_names: bool = True,
     subset_features: List[str] | None = None,
     active_coef: float | Tuple[float, float] | None = None,
+    signal_effect_base: float | Tuple[float, float] | None = None,
+    direction: Literal["up", "down", "both"] = "up",
+    labels: np.ndarray | None = None,
+    signaler_names: str | List[str] | None = None,
+    receiver_names: str | List[str] | None = None,
 ):
 
     if isinstance(signal_name, str):
@@ -82,6 +151,7 @@ def _add_interactions(
         X = X.toarray()
     # get log mean count of transcripts in each cell
     log_mean_count = np.log(X.mean(axis=1)).reshape(-1, 1)
+
     # get coordinates
     crd = adata.obsm[spatial_key]
 
@@ -94,9 +164,7 @@ def _add_interactions(
     # get top quantile of mean counts (gene)
     q_t = np.quantile(mus, 0.99)
     # get high quantile of mean counts (gene)
-    q_h = np.quantile(mus, 0.95)
-    # get low quantile of mean counts (gene)
-    q_l = np.quantile(mus, 0.25)
+    q_h = np.quantile(mus, 0.75)
     # get mean counts (gene)
     q_m = np.mean(mus)
     # get log mean counts (gene)
@@ -116,12 +184,26 @@ def _add_interactions(
         np.random.uniform(active_coef[0], active_coef[1])
     )
 
+    if signal_effect_base is None:
+        q_a = np.mean(mus)
+        q_b = q_a
+    elif isinstance(signal_effect_base, (float, int)):
+        q_a = np.quantile(mus, signal_effect_base)
+        q_b = q_a
+    elif isinstance(signal_effect_base, (list, tuple, np.ndarray)):
+        a_lim = signal_effect_base[0]
+        b_lim = signal_effect_base[1]
+        if a_lim > b_lim:
+            a_lim, b_lim = b_lim, a_lim
+        q_a = np.quantile(mus, a_lim)
+        q_b = np.quantile(mus, b_lim)
+
     # intercept for S's (base level expression)
-    s_intercept = float(np.log(np.random.uniform(q_l, q_h)))
+    s_intercept = float(np.log(np.random.uniform(q_a, q_b)))
     # S active feature coefficient
     s_active_coef = sample_active_coef()
     # intercept for E's (base level expression)
-    e_intercepts = np.log(np.random.uniform(q_l, q_h, size=n_effect)).reshape(1, -1)
+    e_intercepts = np.log(np.random.uniform(q_a, q_b, size=n_effect)).reshape(1, -1)
     # E active feature coefficients
     e_active_coefs = np.array([sample_active_coef() for x in range(n_effect)])
     e_active_coefs = e_active_coefs.reshape(1, -1)
@@ -144,19 +226,38 @@ def _add_interactions(
         # randomly sample active cells
         s_active = np.random.randint(0, 2, size=n_obs).reshape(-1, 1)
 
+    if (labels is not None) and (signaler_names is not None):
+        signaler_names = (
+            [signaler_names] if isinstance(signaler_names, str) else signaler_names
+        )
+        is_signal_label = np.isin(labels, signaler_names).astype(int).reshape(-1, 1)
+        s_active = is_signal_label * s_active
+
     # get boolean representation of active cells
     s_active_bool = s_active.astype(bool).flatten()
+
     # number of sender cells
     n_active = np.sum(s_active)
-    # number of non-sender cells
-    n_inactive = n_obs - n_active
+
+    if (labels is not None) and (receiver_names is not None):
+        receiver_names = (
+            [receiver_names] if isinstance(receiver_names, str) else receiver_names
+        )
+        is_receiver_label = np.isin(labels, receiver_names).astype(int).reshape(-1, 1)
+        is_receptive = ((1 - s_active.flatten()) * is_receiver_label.flatten()).astype(
+            bool
+        )
+    else:
+        is_receptive = ~s_active_bool
+
+    n_inactive = np.sum(is_receptive)
 
     # get receptive signaling cells that are not signaling cells
     r_receptive_non_s = np.random.choice(
         [0, 1], p=[1 - p_inter, p_inter], replace=True, size=n_inactive
     )
     r_receptive = np.zeros(n_obs)
-    r_receptive[~s_active_bool] = r_receptive_non_s
+    r_receptive[is_receptive] = r_receptive_non_s
     # find average mean 2-NN distance
     kd = cKDTree(crd)
     dists, _ = kd.query(crd, k=3)
@@ -179,10 +280,28 @@ def _add_interactions(
     r_active = r_receptive * r_proximal
     r_active = r_active.reshape(-1, 1)
 
-    # log[lambda] for signal feature
-    log_lambda_s = s_intercept + s_active_coef * s_active + log_mean_count
+    match direction:
+        case "down":
+            direction_vector = -1
+        case "both":
+            direction_vector = np.random.choice(
+                [-1, 1], size=e_active_coefs.shape[1]
+            ).reshape(1, -1)
+        case _:
+            direction_vector = 1
+
+    cell_mean_count = X.mean(axis=1)  # .reshape(-1, 1)
+    cell_scaling_factor = np.log(cell_mean_count / cell_mean_count.mean()).reshape(
+        -1, 1
+    )
+
+    log_lambda_s = s_intercept + s_active_coef * s_active + cell_scaling_factor
     # log[lambda] for effect features
-    log_lambda_e = e_intercepts + e_active_coefs * r_active + log_mean_count
+    log_lambda_e = (
+        e_intercepts
+        + e_active_coefs * direction_vector * r_active
+        + cell_scaling_factor
+    )
 
     # sample signal expression [n_obs] x [1]
     x_s = np.random.poisson(np.exp(log_lambda_s))
@@ -193,15 +312,25 @@ def _add_interactions(
     x_new = np.hstack((x_s, x_e))
 
     # get names for signal and effects
-    names = ["signal{}".format(tag)] + [
-        "effect{}_{}".format(tag, x) for x in range(n_effect)
-    ]
+    signal_name = ["signal{}".format(tag)]
+    effects_names = ["effect{}_{}".format(tag, x) for x in range(n_effect)]
+    coef_col_name = "scaling_factor"
+
+    s_coef_df = pd.DataFrame([np.exp(s_active_coef)], index=signal_name)
+    if isinstance(direction_vector, np.ndarray):
+        direction_vector = direction_vector.reshape(-1, 1)
+
+    e_coef_df = pd.DataFrame(
+        np.exp(direction_vector * e_active_coefs.reshape(-1, 1)), index=effects_names
+    )
+    se_coef = pd.concat([s_coef_df, e_coef_df], axis=0)
+    se_coef.columns = [coef_col_name]
 
     out = dict(
         x=x_new,
-        var_names=names,
         is_s=s_active.flatten().astype(bool),
         is_r=r_active.flatten().astype(bool),
+        var=se_coef,
     )
 
     return out
@@ -333,7 +462,12 @@ def _cellmix_type_balanced(
     n_interactions: int | None = None,
     effect_size: int = 10,
     p_signal_spots: float = 0.5,
+    p_inter: float = 0.5,
     signal_effect_scaling: float | Tuple[float, float] | None = None,
+    signal_effect_base: float | Tuple[float, float] | None = None,
+    effect_direction: Literal["up", "down", "both"] = "up",
+    signaler_names: str | List[str] | None = None,
+    receiver_names: str | List[str] | None = None,
 ):
     """creates 'mixed' data akin to spot-based data that will have a pre-specified
     average number of cell types per spot as well as pre-defined number of cells per spot
@@ -478,7 +612,8 @@ def _cellmix_type_balanced(
     if n_interactions is not None:
 
         xs_int = list()
-        var_names_int = list()
+        # var_names_int = list()
+        var_int = list()
 
         for ii in range(n_interactions):
             int_res = _add_interactions(
@@ -486,15 +621,24 @@ def _cellmix_type_balanced(
                 n_effect=effect_size,
                 return_names=True,
                 p_active_spots=p_signal_spots,
+                p_inter=p_inter,
                 spot_data=True,
                 signal_name=str(ii),
                 active_coef=signal_effect_scaling,
+                signal_effect_base=signal_effect_base,
+                direction=effect_direction,
+                labels=ad_sc.obs[label_col].values,
+                signaler_names=signaler_names,
+                receiver_names=receiver_names,
             )
 
             x_int_i = int_res["x"]
-            var_names_int_i = int_res["var_names"]
+            # var_names_int_i = int_res["var_names"]
+            var_int_i = int_res["var"]
             xs_int.append(x_int_i)
-            var_names_int += var_names_int_i
+            # var_names_int += var_names_int_i
+            var_int.append(var_int_i)
+
             is_s, is_r = int_res["is_s"], int_res["is_r"]
             ad_sc.obs[f"signaler_{ii}"] = is_s
             ad_sc.obs[f"receiver_{ii}"] = is_r
@@ -504,8 +648,9 @@ def _cellmix_type_balanced(
             ad_sc.obs[f"S_R_{ii}"] = active_state
 
         xs_int = np.concatenate(xs_int, axis=1)
+        var_int = pd.concat(var_int, axis=0)
 
-        ad_sc, ad_sp = _update_adatas(ad_sc, ad_sp, xs_int, var_names_int)
+        ad_sc, ad_sp = _update_adatas(ad_sc, ad_sp, xs_int, var_int)
 
     return ad_sp, ad_sc
 
@@ -557,15 +702,51 @@ def cellmix(
     n_cells_per_spot: int = 10,
     n_types_per_spot: int = 3,
     label_col: str | None = None,
+    resample: List[float] | float | bool = False,
     downsample: List[float] | float | None = None,
     encode_spatial: bool = False,
     n_spatial_grad: None | int = None,
     n_interactions: bool | None = None,
     effect_size: int = 10,
     p_signal_spots: float = 0.5,
+    p_inter: float = 0.5,
     signal_effect_scaling: float | Tuple[float, float] | None = None,
+    signal_effect_base: float | Tuple[float, float] | None = None,
+    effect_direction: Literal["up", "down", "both"] = "up",
+    signaler_names: str | List[str] | None = None,
+    receiver_names: str | List[str] | None = None,
 ):
-    """pretty wrapper for cellmix"""
+    """pretty wrapper for cellmix
+
+    Args:
+        ad_sc : AnnData object containing the data to use for synthetic data generation
+        n_spots: number of spots in the synthetic data
+        n_cells_per_spot: desired average number of cells per spot
+        n_types_per_spot: desired average number of types per spot
+        label_col: column in `ad_sc.obs` that holds cell type label information
+        downsample: this downsamples the transcripts in the spatial data so it's not a perfect match
+        encode_spatial: this makes the data spatially organized. Spots with similar cell type proportion as closer to each other.
+        n_spatial_grad: this adds artificial genes that have clear spatial patterns.
+        effect_size: number of genes in each effect from a given signal
+        p_signal_spots: percentage of spots where interactions happen
+        p_inter: percentage of cells that could interact (i.e. they are not signalers, and they are proximal to a signaler cell) that actually will interact
+        signal_effect_scaling: the gene expression ratio for the effects and signals in signaling/receiving cells vs non-signaling/non-receiving cells
+        signal_effect_base: the base expression level. You specify this as a number of [0,1] which indicates which quantile you want the base level expression of the signal/effects to be in (w.r.t. to all other genes) - note base level expression is scaled by the signal_effect_scaling factor in signaling/receiving genes
+        effect_direction: up - only up-regulated genes, down - only down-regulated genes, both - 50/50 up and sown regulated genes
+
+
+    Returns:
+
+    A tuple (ad_sp,ad_sc) that contains the synthetic spatial and single cell data respectively.
+
+    Information about aritifically added genes can be found in `ad_sc.var`.
+
+    Information about signaling and receiving cells can be found in `ad_sc.obs`.
+
+    Cell type proportions and number are found in `ad_sp.obsm`.
+
+
+    """
 
     if label_col is None:
         raise NotImplementedError
@@ -581,9 +762,15 @@ def cellmix(
             n_interactions=n_interactions,
             effect_size=effect_size,
             p_signal_spots=p_signal_spots,
+            p_inter=p_inter,
             signal_effect_scaling=signal_effect_scaling,
+            signal_effect_base=signal_effect_base,
+            effect_direction=effect_direction,
+            signaler_names=signaler_names,
+            receiver_names=receiver_names,
         )
 
+        ad_sp = _resample(ad_sp, resample=resample)
         ad_sp = _downsample(ad_sp, downsample)
 
     return ad_sp, ad_sc

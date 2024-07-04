@@ -1,6 +1,13 @@
-:py:mod:`telegraph.robustness`
-==============================
+telegraph.robustness
+====================
 
 .. py:module:: telegraph.robustness
 
 
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/telegraph/robustness/robustness/index

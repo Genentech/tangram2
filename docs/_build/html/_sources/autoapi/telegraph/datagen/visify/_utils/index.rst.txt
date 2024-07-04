@@ -1,15 +1,11 @@
-:py:mod:`telegraph.datagen.visify._utils`
-=========================================
+telegraph.datagen.visify._utils
+===============================
 
 .. py:module:: telegraph.datagen.visify._utils
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -21,22 +17,17 @@ Functions
    telegraph.datagen.visify._utils.r_by_n
 
 
+Module Contents
+---------------
 
 .. py:function:: _check_vals(x: float | int | List[float] | List[int] | None, name: str = 'value', lower_bound: float | None = None, upper_bound: float | None = None) -> None
 
-
 .. py:function:: nbrs_to_coo(kdres: List[List[int]]) -> scipy.sparse.coo_matrix
-
 
 .. py:function:: plot_visify(og_ad: anndata.AnnData, vs_ad: anndata.AnnData, spatial_key: str = 'str', feature: str | None = None) -> Tuple[matplotlib.pyplot.Figure, matplotlib.pyplot.Axes]
 
-
 .. py:function:: add_mul_noise(data: numpy.ndarray, p_noise: float, return_all: bool = False) -> Dict[str, numpy.ndarray]
-
 
 .. py:function:: square_sample_crd(min_xy: numpy.ndarray, max_xy: numpy.ndarray, n_samples: int = 100)
 
-
 .. py:function:: r_by_n(crd_ref: numpy.ndarray, crd_query: numpy.ndarray, n_neighs: int, outlier_removal: bool = False)
-
-

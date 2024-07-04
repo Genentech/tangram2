@@ -1,75 +1,81 @@
-:py:mod:`telegraph.methods.save_methods`
-========================================
+telegraph.methods.save_methods
+==============================
 
 .. py:module:: telegraph.methods.save_methods
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    telegraph.methods.save_methods.StandardSaveMethods
 
 
-
+Module Contents
+---------------
 
 .. py:class:: StandardSaveMethods
 
-
    .. py:property:: standard_save_funcs
       :classmethod:
+
 
 
    .. py:method:: save_df(df: pandas.DataFrame, out_pth: str, **kwargs)
       :staticmethod:
 
 
+
    .. py:method:: _save_T(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
+
 
 
    .. py:method:: _save_S(res_dict: Dict[str, Any], obj: str, out_dir: str, **kwargs)
       :classmethod:
 
 
+
    .. py:method:: _save_S_to(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
+
 
 
    .. py:method:: _save_S_from(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
 
 
+
    .. py:method:: _save_X_pred(res_dict: Dict[str, Any], obj: str, out_dir: str, **kwargs)
       :classmethod:
+
 
 
    .. py:method:: _save_X_to_pred(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
 
 
+
    .. py:method:: _save_X_from_pred(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
+
 
 
    .. py:method:: _save_D(res_dict: Dict[str, Any], obj: str, out_dir: str, **kwargs)
       :classmethod:
 
 
+
    .. py:method:: _save_D_to(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
+
 
 
    .. py:method:: _save_D_from(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
 
 
+
    .. py:method:: _save_DEA(res_dict: Dict[str, Any], out_dir: str, **kwargs)
       :classmethod:
-
-
-

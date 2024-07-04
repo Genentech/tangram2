@@ -6,7 +6,7 @@
   <title>telegraph.methods.grp_methods &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0cff9c03" />
 
 
@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -77,16 +77,18 @@
   <h1>Source code for telegraph.methods.grp_methods</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">anndata</span> <span class="k">as</span> <span class="nn">ad</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
 
 <span class="kn">import</span> <span class="nn">telegraph.methods.policies</span> <span class="k">as</span> <span class="nn">pol</span>
 <span class="kn">from</span> <span class="nn">telegraph.methods._methods</span> <span class="kn">import</span> <span class="n">MethodClass</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_grp_utils</span> <span class="k">as</span> <span class="n">gut</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">transforms</span> <span class="k">as</span> <span class="n">tf</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">ut</span>
 
 
@@ -596,6 +598,103 @@
 
 
 
+<div class="viewcode-block" id="SpotBasedGroup">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.SpotBasedGroup">[docs]</a>
+<span class="k">class</span> <span class="nc">SpotBasedGroup</span><span class="p">(</span><span class="n">GroupMethodClass</span><span class="p">):</span>
+    <span class="n">ins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X_from&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">]</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;D_to&quot;</span><span class="p">,</span> <span class="s2">&quot;D_from&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SpotBasedGroup.run">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.SpotBasedGroup.run">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@ut</span><span class="o">.</span><span class="n">check_in_out</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">feature_name</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">p_thres</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">add_complement</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+
+        <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+        <span class="kn">from</span> <span class="nn">sklearn.mixture</span> <span class="kn">import</span> <span class="n">GaussianMixture</span> <span class="k">as</span> <span class="n">gmm</span>
+
+        <span class="n">X_from</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">X_from</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must provide X_from for SpotBaseGroup to work&quot;</span><span class="p">)</span>
+
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="n">X_from</span> <span class="o">=</span> <span class="n">X_from</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+
+        <span class="n">T</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">)</span>
+        <span class="n">cidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">n_obs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">D_from</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">[],</span>
+            <span class="n">index</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">X_from</span><span class="o">.</span><span class="n">obs_names</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">)</span> <span class="k">else</span> <span class="n">X_from</span><span class="o">.</span><span class="n">index</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_cluster_helper</span><span class="p">(</span><span class="n">_vals</span><span class="p">,</span> <span class="n">p_thres</span><span class="p">,</span> <span class="n">pca</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">_vals</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">cluster_model</span> <span class="o">=</span> <span class="n">gmm</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">pca</span><span class="p">:</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+
+            <span class="n">cluster_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+            <span class="n">clu_prob</span> <span class="o">=</span> <span class="n">cluster_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">pca</span><span class="p">:</span>
+                <span class="n">clu_weights</span> <span class="o">=</span> <span class="n">cluster_model</span><span class="o">.</span><span class="n">weights_</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="n">clu_ordr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">clu_weights</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">clu_means</span> <span class="o">=</span> <span class="n">cluster_model</span><span class="o">.</span><span class="n">means_</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="n">clu_ordr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">clu_means</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">clu_prob</span> <span class="o">=</span> <span class="n">clu_prob</span><span class="p">[:,</span> <span class="n">clu_ordr</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">clu_prob</span> <span class="o">&gt;</span> <span class="n">p_thres</span><span class="p">,</span> <span class="n">clu_prob</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p_thres</span>
+
+        <span class="k">for</span> <span class="n">feature_i</span> <span class="ow">in</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">feature_name</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+                <span class="n">fv_i</span> <span class="o">=</span> <span class="n">X_from</span><span class="o">.</span><span class="n">obs_vector</span><span class="p">(</span><span class="n">feature_i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fv_i</span> <span class="o">=</span> <span class="n">X_from</span><span class="p">[</span><span class="n">feature_i</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="n">is_high_i</span><span class="p">,</span> <span class="n">is_low_i</span> <span class="o">=</span> <span class="n">_cluster_helper</span><span class="p">(</span><span class="n">fv_i</span><span class="p">,</span> <span class="n">p_thres</span><span class="p">)</span>
+            <span class="n">idx_high_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cidx</span><span class="p">[</span><span class="n">is_high_i</span><span class="p">])</span>
+            <span class="n">in_high_spot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cidx</span><span class="p">,</span> <span class="n">idx_high_i</span><span class="p">)</span>
+            <span class="n">idx_rec_elegible_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">in_high_spot</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">is_high_i</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">indicator_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_obs</span><span class="p">)</span>
+
+            <span class="n">indicator_i</span><span class="p">[</span><span class="n">idx_rec_elegible_i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">D_from</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;adj_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indicator_i</span>
+            <span class="n">D_from</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;nadj_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="n">in_high_spot</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">D_from</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;high_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_high_i</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">D_from</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;low_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_low_i</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">D_from</span> <span class="o">=</span> <span class="n">gut</span><span class="o">.</span><span class="n">add_groups_to_old_D</span><span class="p">(</span><span class="n">D_from</span><span class="p">,</span> <span class="n">input_dict</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;from&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">D_from</span><span class="o">=</span><span class="n">D_from</span><span class="p">)</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="DistanceBasedGroup">
 <a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.DistanceBasedGroup">[docs]</a>
 <span class="k">class</span> <span class="nc">DistanceBasedGroup</span><span class="p">(</span><span class="n">GroupMethodClass</span><span class="p">):</span>
@@ -619,15 +718,18 @@
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+<div class="viewcode-block" id="DistanceBasedGroup.run">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.DistanceBasedGroup.run">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="nd">@ut</span><span class="o">.</span><span class="n">check_in_out</span>
-    <span class="nd">@gut</span><span class="o">.</span><span class="n">add_covariates</span>
+    <span class="c1"># @gut.add_covariates</span>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">feature_name</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">q_high</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
         <span class="n">add_complement</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">subset_receiver</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
@@ -662,6 +764,9 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;S_to&#39; must be given&quot;</span><span class="p">)</span>
 
         <span class="n">feature_name</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">feature_name</span><span class="p">)</span>
+
+        <span class="n">D_to_old</span> <span class="o">=</span> <span class="n">input_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;D_to&quot;</span><span class="p">)</span>
+
         <span class="n">D_to</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="p">[],</span>
             <span class="n">index</span><span class="o">=</span><span class="p">(</span>
@@ -670,6 +775,15 @@
                 <span class="k">else</span> <span class="n">X_to_obj</span><span class="o">.</span><span class="n">index</span>
             <span class="p">),</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">D_to_old</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">subset_receiver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">is_receiver</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_to_obj</span><span class="p">))</span>
+            <span class="n">subset_receiver</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">listify</span><span class="p">(</span><span class="n">subset_receiver</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subset_receiver</span><span class="p">:</span>
+                <span class="n">is_receiver</span> <span class="o">+=</span> <span class="n">D_to_old</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">is_receiver</span> <span class="o">=</span> <span class="n">is_receiver</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_receiver</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_to_obj</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">feature_i</span> <span class="ow">in</span> <span class="n">feature_name</span><span class="p">:</span>
 
@@ -680,22 +794,216 @@
 
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">S_to</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_obs</span><span class="p">,</span> <span class="s2">&quot;S_to and X_to_</span><span class="si">{pred}</span><span class="s2"> is not of the same size&quot;</span>
 
-            <span class="n">q_val_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">fv_i</span><span class="p">,</span> <span class="n">q_high</span><span class="p">)</span>
-            <span class="n">is_high_i</span> <span class="o">=</span> <span class="n">fv_i</span> <span class="o">&gt;=</span> <span class="n">q_val_i</span>
-            <span class="n">kd</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">S_to</span><span class="p">[</span><span class="o">~</span><span class="n">is_high_i</span><span class="p">])</span>
-            <span class="n">is_low_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">is_high_i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">idxs_i</span> <span class="o">=</span> <span class="n">kd</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">S_to</span><span class="p">[</span><span class="n">is_high_i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">km</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">clu_idx</span> <span class="o">=</span> <span class="n">km</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">fv_i</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
+            <span class="n">clu_cnt</span> <span class="o">=</span> <span class="n">km</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">ordr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">clu_cnt</span><span class="p">)</span>
+            <span class="n">low_clu</span> <span class="o">=</span> <span class="n">ordr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">high_clu</span> <span class="o">=</span> <span class="n">ordr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">is_high_i</span> <span class="o">=</span> <span class="n">clu_idx</span> <span class="o">==</span> <span class="n">high_clu</span>
+
+            <span class="n">is_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">is_high_i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">kd</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">S_to</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">is_target</span><span class="p">])</span>
+
+            <span class="n">_</span><span class="p">,</span> <span class="n">idxs_i</span> <span class="o">=</span> <span class="n">kd</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">S_to</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">is_high_i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
             <span class="n">idxs_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">idxs_i</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-            <span class="n">idxs_i</span> <span class="o">=</span> <span class="n">is_low_i</span><span class="p">[</span><span class="n">idxs_i</span><span class="p">]</span>
+            <span class="n">idxs_i</span> <span class="o">=</span> <span class="n">is_target</span><span class="p">[</span><span class="n">idxs_i</span><span class="p">]</span>
+            <span class="n">idxs_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">idxs_i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_receiver</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
             <span class="n">indicator_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_obs</span><span class="p">)</span>
             <span class="n">indicator_i</span><span class="p">[</span><span class="n">idxs_i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">D_to</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;adj_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indicator_i</span>
-            <span class="n">D_to</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;high_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_high_i</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">D_to</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;high_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_high_i</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">add_complement</span><span class="p">:</span>
-                <span class="n">D_to</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;nadj_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">indicator_i</span>
+                <span class="n">complement</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">indicator_i</span>
+                <span class="n">complement</span> <span class="o">*=</span> <span class="n">is_receiver</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="n">complement</span><span class="p">[</span><span class="n">is_high_i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">D_to</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;nadj_</span><span class="si">{</span><span class="n">feature_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">complement</span>
 
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">D_to</span><span class="o">=</span><span class="n">D_to</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">D_to_old</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">overlap</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">D_to</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">D_to_old</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">D_to_old</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">overlap</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">D_to_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">D_to_old</span><span class="p">,</span> <span class="n">D_to</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">D_to</span><span class="o">=</span><span class="n">D_to_new</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RandomGroup">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.RandomGroup">[docs]</a>
+<span class="k">class</span> <span class="nc">RandomGroup</span><span class="p">(</span><span class="n">GroupMethodClass</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RandomGroup._get_random_groups">
+<a class="viewcode-back" href="../../../autoapi/telegraph/methods/grp_methods/index.html#telegraph.methods.grp_methods.RandomGroup._get_random_groups">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_random_groups</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">probs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">probs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;length of probs must be same as length of groups&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">probs</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RandomGroup.run_with_adata">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.RandomGroup.run_with_adata">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">run_with_adata</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">adata</span><span class="p">:</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">,</span>
+        <span class="n">groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">subset_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;random_groups&quot;</span><span class="p">,</span>
+        <span class="n">subset_labels</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">background_label</span><span class="o">=</span><span class="s2">&quot;background&quot;</span><span class="p">,</span>
+        <span class="n">probs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="n">is_label</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_adata_subset_idx</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">subset_col</span><span class="p">,</span> <span class="n">subset_labels</span><span class="p">)</span>
+
+        <span class="n">n_obs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
+        <span class="n">n_sub_obs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_label</span><span class="p">)</span>
+
+        <span class="n">new_label_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">background_label</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+        <span class="n">new_labels</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_random_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_sub_obs</span><span class="p">,</span> <span class="n">probs</span><span class="o">=</span><span class="n">probs</span><span class="p">)</span>
+        <span class="n">new_label_array</span><span class="p">[</span><span class="n">is_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_labels</span>
+
+        <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">label_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label_array</span></div>
+
+
+<div class="viewcode-block" id="RandomGroup.run">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.RandomGroup.run">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span>
+            <span class="s2">&quot;The RanomGroup Method has not yet been implemented for the telegraph workflow&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ClusterGroup">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ClusterGroup">[docs]</a>
+<span class="k">class</span> <span class="nc">ClusterGroup</span><span class="p">(</span><span class="n">GroupMethodClass</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ClusterGroup._get_cluster_groups">
+<a class="viewcode-back" href="../../../autoapi/telegraph/methods/grp_methods/index.html#telegraph.methods.grp_methods.ClusterGroup._get_cluster_groups">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_cluster_groups</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">groups</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;kmeans&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;kmeans&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">cluster</span> <span class="k">as</span> <span class="n">clu</span>
+        <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+
+        <span class="k">if</span> <span class="n">groups</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_clusters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+            <span class="n">clu_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">g</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">groups</span><span class="p">)}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clu_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_clusters</span><span class="p">)}</span>
+
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">:</span>
+            <span class="n">E</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">E</span> <span class="o">=</span> <span class="n">X</span>
+
+        <span class="n">clu_algs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;kmeans&quot;</span><span class="p">:</span> <span class="n">clu</span><span class="o">.</span><span class="n">KMeans</span><span class="p">,</span>
+            <span class="s2">&quot;mean_shift&quot;</span><span class="p">:</span> <span class="n">clu</span><span class="o">.</span><span class="n">MeanShift</span><span class="p">,</span>
+            <span class="s2">&quot;spectral&quot;</span><span class="p">:</span> <span class="n">clu</span><span class="o">.</span><span class="n">SpectralClustering</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">clu_alg</span> <span class="o">=</span> <span class="n">clu_algs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clu_algs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;We do not support the clustering method </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">clu_idx</span> <span class="o">=</span> <span class="n">clu_alg</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+        <span class="n">clu_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">clu_map</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">clu_idx</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">clu_idx</span></div>
+
+
+<div class="viewcode-block" id="ClusterGroup.run_with_adata">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ClusterGroup.run_with_adata">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">run_with_adata</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">adata</span><span class="p">:</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">,</span>
+        <span class="n">groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">subset_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;random_groups&quot;</span><span class="p">,</span>
+        <span class="n">subset_labels</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">background_label</span><span class="o">=</span><span class="s2">&quot;background&quot;</span><span class="p">,</span>
+        <span class="n">layer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cluster_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;kmeans&quot;</span><span class="p">,</span>
+        <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="n">is_label</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">get_adata_subset_idx</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">subset_col</span><span class="p">,</span> <span class="n">subset_labels</span><span class="p">)</span>
+
+        <span class="n">n_obs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
+        <span class="n">n_sub_obs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_label</span><span class="p">)</span>
+
+        <span class="n">new_label_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">background_label</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+        <span class="n">new_labels</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_cluster_groups</span><span class="p">(</span>
+            <span class="n">adata</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">layer</span><span class="o">=</span><span class="n">layer</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">is_label</span><span class="p">],</span>
+            <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">cluster_method</span><span class="p">,</span>
+            <span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">new_label_array</span><span class="p">[</span><span class="n">is_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_labels</span>
+
+        <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">label_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label_array</span></div>
+
+
+<div class="viewcode-block" id="ClusterGroup.run">
+<a class="viewcode-back" href="../../../source/telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ClusterGroup.run">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span>
+            <span class="s2">&quot;The ClusterGroup Method has not yet been implemented for the telegraph workflow&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
 
 </pre></div>
 

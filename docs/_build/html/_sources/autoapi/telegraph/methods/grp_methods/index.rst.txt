@@ -1,14 +1,11 @@
-:py:mod:`telegraph.methods.grp_methods`
-=======================================
+telegraph.methods.grp_methods
+=============================
 
 .. py:module:: telegraph.methods.grp_methods
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -18,31 +15,37 @@ Classes
    telegraph.methods.grp_methods.QuantileGroup
    telegraph.methods.grp_methods.SpotBasedGroup
    telegraph.methods.grp_methods.DistanceBasedGroup
+   telegraph.methods.grp_methods.RandomGroup
+   telegraph.methods.grp_methods.ClusterGroup
 
 
-
+Module Contents
+---------------
 
 .. py:class:: GroupMethodClass(*args, **kwargs)
 
-
    Bases: :py:obj:`telegraph.methods._methods.MethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
+
    .. py:method:: run(input_dict: Dict[str, Any], *args, **kwargs) -> Dict[str, pandas.DataFrame]
       :classmethod:
+
       :abstractmethod:
 
 
 
 .. py:class:: ThresholdGroup(*args, **kwargs)
 
-
    Bases: :py:obj:`GroupMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_from', ('X_to_pred', 'X_to'), 'T']
@@ -61,8 +64,8 @@ Classes
 
 .. py:class:: AssociationScore(*args, **kwargs)
 
-
    Bases: :py:obj:`GroupMethodClass`
+
 
    Association Score between
 
@@ -86,6 +89,7 @@ Classes
    Q should be a pd.DataFrame object
 
 
+
    .. py:attribute:: ins
       :value: ['X_from', 'T', ('X_to', 'X_to_pred')]
 
@@ -103,11 +107,12 @@ Classes
 
 .. py:class:: QuantileGroup(*args, **kwargs)
 
-
    Bases: :py:obj:`GroupMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_from', 'X_to', 'T']
@@ -126,11 +131,12 @@ Classes
 
 .. py:class:: SpotBasedGroup(*args, **kwargs)
 
-
    Bases: :py:obj:`GroupMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_from', 'T']
@@ -149,8 +155,8 @@ Classes
 
 .. py:class:: DistanceBasedGroup(*args, **kwargs)
 
-
    Bases: :py:obj:`GroupMethodClass`
+
 
    Grouping Method based on distance between observations
 
@@ -159,6 +165,7 @@ Classes
    cells in X_to expressing that feature at a level above the quantile will be considered as a
    "high" group, cells below the quantile threshold are "low". The K nearest neighbors of each
    high cell that are not in the high group will be considered as adjacent cells to that feature.
+
 
 
    .. py:attribute:: ins
@@ -171,8 +178,9 @@ Classes
 
 
 
-   .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, q_high: float | Tuple[float, float] = 0.95, add_complement: bool = True, k=5, **kwargs) -> Dict[str, pandas.DataFrame]
+   .. py:method:: run(input_dict: Dict[str, Any], feature_name: List[str] | str, q_high: float | Tuple[float, float] = 0.95, add_complement: bool = True, subset_receiver: List[str] | str | None = None, k=5, **kwargs) -> Dict[str, pandas.DataFrame]
       :classmethod:
+
 
       :param input_dict: standard input dictionary
       :param feature_name: name of feature to base high/low groups on
@@ -181,3 +189,51 @@ Classes
       :param k: number of spatial neighbors
 
       :returns: Dictionary with design matrix for to (D_to)
+
+
+
+.. py:class:: RandomGroup(*args, **kwargs)
+
+   Bases: :py:obj:`GroupMethodClass`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: _get_random_groups(groups: List[str], size: int, probs: numpy.ndarray | None = None)
+      :classmethod:
+
+
+
+   .. py:method:: run_with_adata(adata: anndata.AnnData, groups: List[str], subset_col: str | None = None, label_col: str = 'random_groups', subset_labels: str | List[str] = None, background_label='background', probs: numpy.ndarray | None = None)
+      :classmethod:
+
+
+
+   .. py:method:: run(input_dict: Dict[str, Any], *args, **kwargs) -> Dict[str, pandas.DataFrame]
+      :classmethod:
+
+
+
+.. py:class:: ClusterGroup(*args, **kwargs)
+
+   Bases: :py:obj:`GroupMethodClass`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: _get_cluster_groups(X: numpy.ndarray, n_clusters: int = 2, groups: str | List[str] = None, method: Literal['kmeans'] = 'kmeans')
+      :classmethod:
+
+
+
+   .. py:method:: run_with_adata(adata: anndata.AnnData, groups: List[str], subset_col: str | None = None, label_col: str = 'random_groups', subset_labels: str | List[str] = None, background_label='background', layer: str | None = None, cluster_method: str = 'kmeans', n_clusters: int = 2)
+      :classmethod:
+
+
+
+   .. py:method:: run(input_dict: Dict[str, Any], *args, **kwargs) -> Dict[str, pandas.DataFrame]
+      :classmethod:

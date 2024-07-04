@@ -1,26 +1,24 @@
-:py:mod:`telegraph.evaluation`
-==============================
+telegraph.evaluation
+====================
 
 .. py:module:: telegraph.evaluation
 
 
 Subpackages
 -----------
-.. toctree::
-   :titlesonly:
-   :maxdepth: 3
 
-   tests/index.rst
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/telegraph/evaluation/tests/index
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   metrics/index.rst
-   run/index.rst
-   utils/index.rst
-
-
+   /autoapi/telegraph/evaluation/metrics/index
+   /autoapi/telegraph/evaluation/run/index
+   /autoapi/telegraph/evaluation/utils/index

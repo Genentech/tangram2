@@ -7,7 +7,7 @@
   <title>telegraph package &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0cff9c03" />
 
 
@@ -18,8 +18,9 @@
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -168,17 +169,22 @@
 <li class="toctree-l1"><a class="reference internal" href="telegraph.methods.html">telegraph.methods package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="telegraph.methods.html#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="telegraph.methods.dea_methods.html">telegraph.methods.dea_methods module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEA"><code class="docutils literal notranslate"><span class="pre">DEA</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.DEAMethodClass"><code class="docutils literal notranslate"><span class="pre">DEAMethodClass</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.GLMDEA"><code class="docutils literal notranslate"><span class="pre">GLMDEA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.HVGFeatureDEA"><code class="docutils literal notranslate"><span class="pre">HVGFeatureDEA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.LRDEA"><code class="docutils literal notranslate"><span class="pre">LRDEA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.RandomFeatureDEA"><code class="docutils literal notranslate"><span class="pre">RandomFeatureDEA</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.dea_methods.html#telegraph.methods.dea_methods.ScanpyDEA"><code class="docutils literal notranslate"><span class="pre">ScanpyDEA</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="telegraph.methods.grp_methods.html">telegraph.methods.grp_methods module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.AssociationScore"><code class="docutils literal notranslate"><span class="pre">AssociationScore</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ClusterGroup"><code class="docutils literal notranslate"><span class="pre">ClusterGroup</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.DistanceBasedGroup"><code class="docutils literal notranslate"><span class="pre">DistanceBasedGroup</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.GroupMethodClass"><code class="docutils literal notranslate"><span class="pre">GroupMethodClass</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.QuantileGroup"><code class="docutils literal notranslate"><span class="pre">QuantileGroup</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.RandomGroup"><code class="docutils literal notranslate"><span class="pre">RandomGroup</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.SpotBasedGroup"><code class="docutils literal notranslate"><span class="pre">SpotBasedGroup</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.grp_methods.html#telegraph.methods.grp_methods.ThresholdGroup"><code class="docutils literal notranslate"><span class="pre">ThresholdGroup</span></code></a></li>
 </ul>
 </li>
@@ -200,6 +206,9 @@
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.MapMethodClass"><code class="docutils literal notranslate"><span class="pre">MapMethodClass</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.MoscotMap"><code class="docutils literal notranslate"><span class="pre">MoscotMap</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.RandomMap"><code class="docutils literal notranslate"><span class="pre">RandomMap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.SimpleMap"><code class="docutils literal notranslate"><span class="pre">SimpleMap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.SimpleMapBase"><code class="docutils literal notranslate"><span class="pre">SimpleMapBase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.SimpleScaleMap"><code class="docutils literal notranslate"><span class="pre">SimpleScaleMap</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.SpaOTscMap"><code class="docutils literal notranslate"><span class="pre">SpaOTscMap</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramMap"><code class="docutils literal notranslate"><span class="pre">TangramMap</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.map_methods.html#telegraph.methods.map_methods.TangramV1Map"><code class="docutils literal notranslate"><span class="pre">TangramV1Map</span></code></a></li>
@@ -226,6 +235,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="telegraph.methods.pred_methods.html">telegraph.methods.pred_methods module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.pred_methods.html#telegraph.methods.pred_methods.MeanPred"><code class="docutils literal notranslate"><span class="pre">MeanPred</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.pred_methods.html#telegraph.methods.pred_methods.MoscotPred"><code class="docutils literal notranslate"><span class="pre">MoscotPred</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.pred_methods.html#telegraph.methods.pred_methods.PredMethodClass"><code class="docutils literal notranslate"><span class="pre">PredMethodClass</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.pred_methods.html#telegraph.methods.pred_methods.TangramPred"><code class="docutils literal notranslate"><span class="pre">TangramPred</span></code></a></li>
@@ -237,9 +247,11 @@
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.CeLEryPP"><code class="docutils literal notranslate"><span class="pre">CeLEryPP</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.FilterGenes"><code class="docutils literal notranslate"><span class="pre">FilterGenes</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.IdentityPP"><code class="docutils literal notranslate"><span class="pre">IdentityPP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.Log1p"><code class="docutils literal notranslate"><span class="pre">Log1p</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.LowercaseGenes"><code class="docutils literal notranslate"><span class="pre">LowercaseGenes</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.NormalizeTotal"><code class="docutils literal notranslate"><span class="pre">NormalizeTotal</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.PPClass"><code class="docutils literal notranslate"><span class="pre">PPClass</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.RegressType"><code class="docutils literal notranslate"><span class="pre">RegressType</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.ScanpyPCA"><code class="docutils literal notranslate"><span class="pre">ScanpyPCA</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardMoscot"><code class="docutils literal notranslate"><span class="pre">StandardMoscot</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.preprocess.html#telegraph.methods.preprocess.StandardScanpy"><code class="docutils literal notranslate"><span class="pre">StandardScanpy</span></code></a></li>
@@ -268,6 +280,7 @@
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.design_matrix_to_labels"><code class="docutils literal notranslate"><span class="pre">design_matrix_to_labels()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.df2ad"><code class="docutils literal notranslate"><span class="pre">df2ad()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.get_ad_value"><code class="docutils literal notranslate"><span class="pre">get_ad_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.get_adata_subset_idx"><code class="docutils literal notranslate"><span class="pre">get_adata_subset_idx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.get_from_dict_with_fuzzy"><code class="docutils literal notranslate"><span class="pre">get_from_dict_with_fuzzy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.get_fuzzy_key"><code class="docutils literal notranslate"><span class="pre">get_fuzzy_key()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="telegraph.methods.utils.html#telegraph.methods.utils.identity_fun"><code class="docutils literal notranslate"><span class="pre">identity_fun()</span></code></a></li>

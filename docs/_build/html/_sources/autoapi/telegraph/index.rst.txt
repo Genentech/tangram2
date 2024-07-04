@@ -1,32 +1,32 @@
-:py:mod:`telegraph`
-===================
+telegraph
+=========
 
 .. py:module:: telegraph
 
 
 Subpackages
 -----------
-.. toctree::
-   :titlesonly:
-   :maxdepth: 3
 
-   aggregate/index.rst
-   datagen/index.rst
-   diagnostics/index.rst
-   evaluation/index.rst
-   methods/index.rst
-   robustness/index.rst
-   tests/index.rst
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/telegraph/aggregate/index
+   /autoapi/telegraph/datagen/index
+   /autoapi/telegraph/dev/index
+   /autoapi/telegraph/diagnostics/index
+   /autoapi/telegraph/evaluation/index
+   /autoapi/telegraph/external/index
+   /autoapi/telegraph/methods/index
+   /autoapi/telegraph/robustness/index
+   /autoapi/telegraph/tests/index
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   _version/index.rst
-   cli/index.rst
-   constants/index.rst
-
-
+   /autoapi/telegraph/_version/index
+   /autoapi/telegraph/cli/index
+   /autoapi/telegraph/constants/index

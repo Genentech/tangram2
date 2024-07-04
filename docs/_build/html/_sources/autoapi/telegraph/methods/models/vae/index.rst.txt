@@ -1,14 +1,11 @@
-:py:mod:`telegraph.methods.models.vae`
-======================================
+telegraph.methods.models.vae
+============================
 
 .. py:module:: telegraph.methods.models.vae
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -16,12 +13,13 @@ Classes
    telegraph.methods.models.vae.VAE
 
 
-
+Module Contents
+---------------
 
 .. py:class:: VAEDataset(X)
 
-
    Bases: :py:obj:`torch.utils.data.Dataset`
+
 
    An abstract class representing a :class:`Dataset`.
 
@@ -40,17 +38,17 @@ Classes
      sampler that yields integral indices.  To make it work with a map-style
      dataset with non-integral indices/keys, a custom sampler must be provided.
 
+
    .. py:method:: __len__()
 
 
    .. py:method:: __getitem__(idx)
 
 
-
 .. py:class:: VAE(input_dim, hidden_dim, z_dim, dropout: float = 0.2)
 
-
    Bases: :py:obj:`lightning.LightningModule`
+
 
    Base class for all neural network modules.
 
@@ -83,6 +81,7 @@ Classes
                    evaluation mode.
    :vartype training: bool
 
+
    .. py:method:: encode(x)
 
 
@@ -100,6 +99,7 @@ Classes
       :param \*\*kwargs: Keyword arguments are also possible.
 
       :returns: Your model's output
+
 
 
    .. py:method:: loss(x, x_pred, mu, log_var)
@@ -162,6 +162,7 @@ Classes
          normalized by ``accumulate_grad_batches`` internally.
 
 
+
    .. py:method:: training_step(batch, batch_idx)
 
       Here you compute and return the training loss and some additional metrics for e.g. the progress bar or
@@ -214,6 +215,7 @@ Classes
 
          When ``accumulate_grad_batches`` > 1, the loss returned here will be automatically
          normalized by ``accumulate_grad_batches`` internally.
+
 
 
    .. py:method:: configure_optimizers()
@@ -305,7 +307,7 @@ Classes
       .. note::
 
          Some things to know:
-         
+
          - Lightning calls ``.backward()`` and ``.step()`` automatically in case of automatic optimization.
          - If a learning rate scheduler is specified in ``configure_optimizers()`` with key
            ``"interval"`` (default "epoch") in the scheduler configuration, Lightning will call
@@ -315,6 +317,3 @@ Classes
          - If you use multiple optimizers, you will have to switch to 'manual optimization' mode and step them
            yourself.
          - If you need to control how often the optimizer steps, override the :meth:`optimizer_step` hook.
-
-
-

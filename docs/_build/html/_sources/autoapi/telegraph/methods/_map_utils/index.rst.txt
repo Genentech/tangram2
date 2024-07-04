@@ -1,0 +1,38 @@
+telegraph.methods._map_utils
+============================
+
+.. py:module:: telegraph.methods._map_utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   telegraph.methods._map_utils.pp_adatas
+
+
+Module Contents
+---------------
+
+.. py:function:: pp_adatas(adata_sc, adata_sp, genes=None, gene_to_lowercase=True, use_filter: bool = True)
+
+   Modified from: https://github.com/broadinstitute/Tangram/blob/master/tangram/mapping_utils.py#L22
+
+
+
+
+   Pre-process AnnDatas so that they can be mapped. Specifically:
+   - Remove genes that all entries are zero
+   - Find the intersection between adata_sc, adata_sp and given marker gene list, save the intersected markers in two adatas
+   - Calculate density priors and save it with adata_sp
+
+   :param adata_sc: single cell data
+   :type adata_sc: AnnData
+   :param adata_sp: spatial expression data
+   :type adata_sp: AnnData
+   :param genes: Optional. List of genes to use. If `None`, all genes are used.
+   :type genes: List
+
+   :returns: update adata_sc by creating `uns` `training_genes` `overlap_genes` fields
+             update adata_sp by creating `uns` `training_genes` `overlap_genes` fields and creating `obs` `rna_count_based_density` & `uniform_density` field

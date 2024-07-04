@@ -1,16 +1,14 @@
-:py:mod:`telegraph.datagen`
-===========================
+telegraph.datagen
+=================
 
 .. py:module:: telegraph.datagen
 
 
 Subpackages
 -----------
+
 .. toctree::
-   :titlesonly:
-   :maxdepth: 3
+   :maxdepth: 1
 
-   cellmix/index.rst
-   visify/index.rst
-
-
+   /autoapi/telegraph/datagen/cellmix/index
+   /autoapi/telegraph/datagen/visify/index

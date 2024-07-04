@@ -1,25 +1,23 @@
-:py:mod:`telegraph.tests`
-=========================
+telegraph.tests
+===============
 
 .. py:module:: telegraph.tests
 
 
 Subpackages
 -----------
-.. toctree::
-   :titlesonly:
-   :maxdepth: 3
 
-   evaluation/index.rst
-   methods/index.rst
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/telegraph/tests/evaluation/index
+   /autoapi/telegraph/tests/methods/index
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   test_utils/index.rst
-
-
+   /autoapi/telegraph/tests/test_utils/index

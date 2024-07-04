@@ -1,15 +1,13 @@
-:py:mod:`telegraph.aggregate`
-=============================
+telegraph.aggregate
+===================
 
 .. py:module:: telegraph.aggregate
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   base/index.rst
-
-
+   /autoapi/telegraph/aggregate/base/index

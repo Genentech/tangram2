@@ -1,24 +1,21 @@
-:py:mod:`telegraph.tests.methods.test_grp_methods`
-==================================================
+telegraph.tests.methods.test_grp_methods
+========================================
 
 .. py:module:: telegraph.tests.methods.test_grp_methods
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    telegraph.tests.methods.test_grp_methods.TestThresholdGroup
 
 
-
+Module Contents
+---------------
 
 .. py:class:: TestThresholdGroup
-
 
    .. py:method:: method()
 
@@ -27,6 +24,3 @@ Classes
 
 
    .. py:method:: test_output(**kwargs)
-
-
-
