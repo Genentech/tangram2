@@ -1,15 +1,19 @@
-:py:mod:`telegraph.evaluation.utils`
-====================================
+telegraph.evaluation.utils
+==========================
 
 .. py:module:: telegraph.evaluation.utils
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   telegraph.evaluation.utils.W
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -19,28 +23,15 @@ Functions
    telegraph.evaluation.utils.list_or_path_get
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   telegraph.evaluation.utils.W
-
+Module Contents
+---------------
 
 .. py:data:: W
 
-   
-
 .. py:function:: ifnonereturn(obj, return_object: None)
-
 
 .. py:function:: read_input_object(path: str, return_array: bool = False, layer=None, return_df: bool = True, adata_key: str = None, **kwargs)
 
-
 .. py:function:: read_data(data_dict: Dict[str, str]) -> Dict[str, Any]
 
-
 .. py:function:: list_or_path_get(obj: str | None | List[str] = None)
-
-

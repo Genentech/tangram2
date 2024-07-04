@@ -7,7 +7,7 @@
   <title>telegraph.diagnostics._utils &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=0cff9c03" />
 
 
@@ -18,7 +18,7 @@
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -51,15 +51,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../../source/install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">telegraph</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../../aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../datagen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../evaluation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../methods/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.tests</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aggregate/index.html">telegraph.aggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../datagen/index.html">telegraph.datagen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dev/index.html">telegraph.dev</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">telegraph.diagnostics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../evaluation/index.html">telegraph.evaluation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../external/index.html">telegraph.external</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../methods/index.html">telegraph.methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../robustness/index.html">telegraph.robustness</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html">telegraph.tests</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
@@ -84,9 +86,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
-          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
-          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
-      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics._utils</span></code></li>
+          <li class="breadcrumb-item"><a href="../../index.html">telegraph</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">telegraph.diagnostics</a></li>
+      <li class="breadcrumb-item active">telegraph.diagnostics._utils</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../../_sources/autoapi/telegraph/diagnostics/_utils/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -97,17 +99,21 @@
            <div itemprop="articleBody">
 
   <section id="module-telegraph.diagnostics._utils">
-<span id="telegraph-diagnostics-utils"></span><h1><a class="reference internal" href="#module-telegraph.diagnostics._utils" title="telegraph.diagnostics._utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics._utils</span></code></a><a class="headerlink" href="#module-telegraph.diagnostics._utils" title="Link to this heading"></a></h1>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<span id="telegraph-diagnostics-utils"></span><h1>telegraph.diagnostics._utils<a class="headerlink" href="#module-telegraph.diagnostics._utils" title="Link to this heading"></a></h1>
 <section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.diagnostics._utils.easy_input" title="telegraph.diagnostics._utils.easy_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">easy_input</span></code></a>(func)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.diagnostics._utils.pick_x_d" title="telegraph.diagnostics._utils.pick_x_d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_x_d</span></code></a>(X_to, D_to, X_from, D_from, target)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.diagnostics._utils._get_X_and_labels" title="telegraph.diagnostics._utils._get_X_and_labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_X_and_labels</span></code></a>(X[, D, labels, layer, obsm, group_col])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.diagnostics._utils._subset_helper" title="telegraph.diagnostics._utils._subset_helper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_subset_helper</span></code></a>([D, labels, subset_cols, subset_mode])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.diagnostics._utils.pick_x_d" title="telegraph.diagnostics._utils.pick_x_d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_x_d</span></code></a>(X_to, D_to, X_from, D_from, target[, ...])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.diagnostics._utils.harmony_helper" title="telegraph.diagnostics._utils.harmony_helper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">harmony_helper</span></code></a>(X, metadata, batch_key[, ...])</p></td>
@@ -115,22 +121,34 @@
 </tr>
 </tbody>
 </table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.diagnostics._utils.easy_input">
-<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics._utils.</span></span><span class="sig-name descname"><span class="pre">easy_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.diagnostics._utils.easy_input" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics._utils.</span></span><span class="sig-name descname"><span class="pre">easy_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/_utils.html#easy_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics._utils.easy_input" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.diagnostics._utils._get_X_and_labels">
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics._utils.</span></span><span class="sig-name descname"><span class="pre">_get_X_and_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/_utils.html#_get_X_and_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics._utils._get_X_and_labels" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="telegraph.diagnostics._utils._subset_helper">
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics._utils.</span></span><span class="sig-name descname"><span class="pre">_subset_helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/_utils.html#_subset_helper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics._utils._subset_helper" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.diagnostics._utils.pick_x_d">
-<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics._utils.</span></span><span class="sig-name descname"><span class="pre">pick_x_d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.diagnostics._utils.pick_x_d" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics._utils.</span></span><span class="sig-name descname"><span class="pre">pick_x_d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_to_pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/_utils.html#pick_x_d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics._utils.pick_x_d" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.diagnostics._utils.harmony_helper">
-<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics._utils.</span></span><span class="sig-name descname"><span class="pre">harmony_helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_is_D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.diagnostics._utils.harmony_helper" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.diagnostics._utils.</span></span><span class="sig-name descname"><span class="pre">harmony_helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_is_D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/diagnostics/_utils.html#harmony_helper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.diagnostics._utils.harmony_helper" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-</section>
 </section>
 </section>
 

@@ -7,7 +7,7 @@
   <title>telegraph.evaluation.run &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=0cff9c03" />
 
 
@@ -18,7 +18,7 @@
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -51,15 +51,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../../source/install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">telegraph</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../../aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../datagen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../diagnostics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../methods/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.tests</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aggregate/index.html">telegraph.aggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../datagen/index.html">telegraph.datagen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dev/index.html">telegraph.dev</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../diagnostics/index.html">telegraph.diagnostics</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">telegraph.evaluation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../external/index.html">telegraph.external</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../methods/index.html">telegraph.methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../robustness/index.html">telegraph.robustness</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html">telegraph.tests</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
@@ -84,9 +86,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
-          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
-          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
-      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation.run</span></code></li>
+          <li class="breadcrumb-item"><a href="../../index.html">telegraph</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">telegraph.evaluation</a></li>
+      <li class="breadcrumb-item active">telegraph.evaluation.run</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../../_sources/autoapi/telegraph/evaluation/run/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -97,33 +99,9 @@
            <div itemprop="articleBody">
 
   <section id="module-telegraph.evaluation.run">
-<span id="telegraph-evaluation-run"></span><h1><a class="reference internal" href="#module-telegraph.evaluation.run" title="telegraph.evaluation.run"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation.run</span></code></a><a class="headerlink" href="#module-telegraph.evaluation.run" title="Link to this heading"></a></h1>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
-<section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.evaluation.run.preprocess_data" title="telegraph.evaluation.run.preprocess_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess_data</span></code></a>(data_dict, pp_config[, inplace])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.evaluation.run.build_workflow" title="telegraph.evaluation.run.build_workflow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_workflow</span></code></a>(recipe[, use_fuzzy_match])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.evaluation.run.evaluate_workflow" title="telegraph.evaluation.run.evaluate_workflow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate_workflow</span></code></a>(input_dict, eval_config, out_dir)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#telegraph.evaluation.run.process_experiment" title="telegraph.evaluation.run.process_experiment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_experiment</span></code></a>(exp_config[, use_fuzzy_match, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.evaluation.run.run" title="telegraph.evaluation.run.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(config[, root_dir, save_mode, use_fuzzy_match, ...])</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</section>
+<span id="telegraph-evaluation-run"></span><h1>telegraph.evaluation.run<a class="headerlink" href="#module-telegraph.evaluation.run" title="Link to this heading"></a></h1>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.evaluation.run.OBJMAP" title="telegraph.evaluation.run.OBJMAP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OBJMAP</span></code></a></p></td>
@@ -131,6 +109,31 @@
 </tr>
 </tbody>
 </table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.preprocess_data" title="telegraph.evaluation.run.preprocess_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess_data</span></code></a>(data_dict, pp_config[, inplace])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.build_workflow" title="telegraph.evaluation.run.build_workflow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_workflow</span></code></a>(recipe[, use_fuzzy_match])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.evaluate_workflow" title="telegraph.evaluation.run.evaluate_workflow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate_workflow</span></code></a>(input_dict, eval_config, out_dir)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.process_experiment" title="telegraph.evaluation.run.process_experiment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_experiment</span></code></a>(exp_config[, use_fuzzy_match, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../source/telegraph.evaluation.run.html#telegraph.evaluation.run.run" title="telegraph.evaluation.run.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(config[, root_dir, save_mode, use_fuzzy_match, ...])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="telegraph.evaluation.run.OBJMAP">
 <span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">OBJMAP</span></span><a class="headerlink" href="#telegraph.evaluation.run.OBJMAP" title="Link to this definition"></a></dt>
@@ -138,30 +141,29 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.evaluation.run.preprocess_data">
-<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">preprocess_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.evaluation.run.preprocess_data" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">preprocess_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/run.html#preprocess_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.run.preprocess_data" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.evaluation.run.build_workflow">
-<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">build_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recipe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fuzzy_match</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.evaluation.run.build_workflow" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">build_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recipe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fuzzy_match</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/run.html#build_workflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.run.build_workflow" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.evaluation.run.evaluate_workflow">
-<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">evaluate_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.evaluation.run.evaluate_workflow" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">evaluate_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/run.html#evaluate_workflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.run.evaluate_workflow" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.evaluation.run.process_experiment">
-<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">process_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fuzzy_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.evaluation.run.process_experiment" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">process_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fuzzy_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/run.html#process_experiment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.run.process_experiment" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="telegraph.evaluation.run.run">
-<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fuzzy_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.evaluation.run.run" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">telegraph.evaluation.run.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fuzzy_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/telegraph/evaluation/run.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.evaluation.run.run" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-</section>
 </section>
 </section>
 

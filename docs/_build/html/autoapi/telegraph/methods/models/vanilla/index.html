@@ -7,7 +7,7 @@
   <title>telegraph.methods.models.vanilla &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=0cff9c03" />
 
 
@@ -18,7 +18,7 @@
         <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -51,15 +51,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../../../source/install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">telegraph</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../../../aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../datagen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../diagnostics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../evaluation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.tests</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aggregate/index.html">telegraph.aggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../datagen/index.html">telegraph.datagen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dev/index.html">telegraph.dev</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../diagnostics/index.html">telegraph.diagnostics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../evaluation/index.html">telegraph.evaluation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../external/index.html">telegraph.external</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">telegraph.methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../robustness/index.html">telegraph.robustness</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tests/index.html">telegraph.tests</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../index.html#submodules">Submodules</a></li>
@@ -84,10 +86,10 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
-          <li class="breadcrumb-item"><a href="../../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
-          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
-          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.models</span></code></a></li>
-      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.models.vanilla</span></code></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">telegraph</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">telegraph.methods</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">telegraph.methods.models</a></li>
+      <li class="breadcrumb-item active">telegraph.methods.models.vanilla</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../../../_sources/autoapi/telegraph/methods/models/vanilla/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -98,11 +100,9 @@
            <div itemprop="articleBody">
 
   <section id="module-telegraph.methods.models.vanilla">
-<span id="telegraph-methods-models-vanilla"></span><h1><a class="reference internal" href="#module-telegraph.methods.models.vanilla" title="telegraph.methods.models.vanilla"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.models.vanilla</span></code></a><a class="headerlink" href="#module-telegraph.methods.models.vanilla" title="Link to this heading"></a></h1>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<span id="telegraph-methods-models-vanilla"></span><h1>telegraph.methods.models.vanilla<a class="headerlink" href="#module-telegraph.methods.models.vanilla" title="Link to this heading"></a></h1>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods.models.vanilla.MapBase" title="telegraph.methods.models.vanilla.MapBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapBase</span></code></a></p></td>
@@ -119,9 +119,12 @@
 </tr>
 </tbody>
 </table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.MapBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vanilla.</span></span><span class="sig-name descname"><span class="pre">MapBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vanilla.</span></span><span class="sig-name descname"><span class="pre">MapBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#MapBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class for all neural network modules.</p>
 <p>Your models should also subclass this class.</p>
@@ -161,29 +164,29 @@ evaluation mode.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.MapBase.transform_X">
-<span class="sig-name descname"><span class="pre">transform_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase.transform_X" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transform_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#MapBase.transform_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase.transform_X" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.MapBase.transform_Y">
-<span class="sig-name descname"><span class="pre">transform_Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase.transform_Y" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transform_Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#MapBase.transform_Y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase.transform_Y" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.MapBase.recon_loss">
-<span class="sig-name descname"><span class="pre">recon_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase.recon_loss" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">recon_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#MapBase.recon_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase.recon_loss" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.MapBase.loss">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase.loss" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#MapBase.loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.MapBase.loss" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.ScaleClass">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vanilla.</span></span><span class="sig-name descname"><span class="pre">ScaleClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.ScaleClass" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vanilla.</span></span><span class="sig-name descname"><span class="pre">ScaleClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#ScaleClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.ScaleClass" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class for all neural network modules.</p>
 <p>Your models should also subclass this class.</p>
@@ -223,19 +226,19 @@ evaluation mode.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.ScaleClass.transform_X">
-<span class="sig-name descname"><span class="pre">transform_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.ScaleClass.transform_X" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transform_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#ScaleClass.transform_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.ScaleClass.transform_X" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.ScaleClass.transform_Y">
-<span class="sig-name descname"><span class="pre">transform_Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.ScaleClass.transform_Y" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transform_Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#ScaleClass.transform_Y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.ScaleClass.transform_Y" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.SimpleMap">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vanilla.</span></span><span class="sig-name descname"><span class="pre">SimpleMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.SimpleMap" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vanilla.</span></span><span class="sig-name descname"><span class="pre">SimpleMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#SimpleMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.SimpleMap" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.models.vanilla.MapBase" title="telegraph.methods.models.vanilla.MapBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MapBase</span></code></a></p>
 <p>Base class for all neural network modules.</p>
 <p>Your models should also subclass this class.</p>
@@ -270,14 +273,14 @@ evaluation mode.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.SimpleMap.loss">
-<span class="sig-name descname"><span class="pre">loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.SimpleMap.loss" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#SimpleMap.loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.SimpleMap.loss" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.models.vanilla.SimpleScaleMap">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vanilla.</span></span><span class="sig-name descname"><span class="pre">SimpleScaleMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vanilla.SimpleScaleMap" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vanilla.</span></span><span class="sig-name descname"><span class="pre">SimpleScaleMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vanilla.html#SimpleScaleMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vanilla.SimpleScaleMap" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#telegraph.methods.models.vanilla.SimpleMap" title="telegraph.methods.models.vanilla.SimpleMap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleMap</span></code></a>, <a class="reference internal" href="#telegraph.methods.models.vanilla.ScaleClass" title="telegraph.methods.models.vanilla.ScaleClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScaleClass</span></code></a></p>
 <p>Base class for all neural network modules.</p>
 <p>Your models should also subclass this class.</p>
@@ -312,7 +315,6 @@ evaluation mode.</p>
 </dl>
 </dd></dl>
 
-</section>
 </section>
 </section>
 

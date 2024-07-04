@@ -1,14 +1,11 @@
-:py:mod:`telegraph.methods.map_methods`
-=======================================
+telegraph.methods.map_methods
+=============================
 
 .. py:module:: telegraph.methods.map_methods
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -26,29 +23,33 @@ Classes
    telegraph.methods.map_methods.SimpleScaleMap
 
 
-
+Module Contents
+---------------
 
 .. py:class:: MapMethodClass(*args, **kwargs)
 
-
    Bases: :py:obj:`telegraph.methods._methods.MethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
+
    .. py:method:: run(input_dict: Dict[str, Any], use_emb: bool = False, **kwargs) -> Dict[str, numpy.ndarray] | Dict[str, scipy.sparse.spmatrix]
       :classmethod:
+
       :abstractmethod:
 
 
 
 .. py:class:: RandomMap
 
-
    Bases: :py:obj:`MapMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
@@ -67,11 +68,12 @@ Classes
 
 .. py:class:: ArgMaxCorrMap(*args, **kwargs)
 
-
    Bases: :py:obj:`MapMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_from', 'X_to']
@@ -90,17 +92,20 @@ Classes
 
 .. py:class:: TangramMap(*args, **kwargs)
 
-
    Bases: :py:obj:`MapMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
+
    .. py:attribute:: tg
+      :value: None
 
 
 
    .. py:attribute:: version
+      :value: None
 
 
 
@@ -121,33 +126,36 @@ Classes
 
 .. py:class:: TangramV1Map(*args, **kwargs)
 
-
    Bases: :py:obj:`TangramMap`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: version
       :value: '1'
 
 
 
-
 .. py:class:: TangramV2Map(*args, **kwargs)
 
-
    Bases: :py:obj:`TangramMap`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. py:property:: custom_save_funcs
-      :type: Dict[str, Callable]
-      :classmethod:
-
 
    .. py:attribute:: version
       :value: '2'
+
+
+
+   .. py:property:: custom_save_funcs
+      :type: Dict[str, Callable]
+
+      :classmethod:
 
 
 
@@ -158,11 +166,12 @@ Classes
 
 .. py:class:: CeLEryMap(*args, **kwargs)
 
-
    Bases: :py:obj:`MapMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
@@ -181,11 +190,12 @@ Classes
 
 .. py:class:: SpaOTscMap(*args, **kwargs)
 
-
    Bases: :py:obj:`MapMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
@@ -204,11 +214,12 @@ Classes
 
 .. py:class:: MoscotMap(*args, **kwargs)
 
-
    Bases: :py:obj:`MapMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
@@ -227,11 +238,12 @@ Classes
 
 .. py:class:: SimpleMapBase
 
-
    Bases: :py:obj:`MapMethodClass`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
+
 
    .. py:attribute:: ins
       :value: ['X_to', 'X_from']
@@ -245,16 +257,21 @@ Classes
 
    .. py:method:: model()
       :classmethod:
+
       :abstractmethod:
+
 
 
    .. py:method:: get_out(*args, **kwargs)
       :classmethod:
+
       :abstractmethod:
+
 
 
    .. py:method:: _get_T(model, to_names, from_names)
       :classmethod:
+
 
 
    .. py:method:: run(input_dict: Dict[str, Any], seed: int = 1, experiment_name: str | None = None, use_emb: bool = False, num_epochs: int = 1000, verbose: bool = False, device: str = 'cuda:0', learning_rate: float = 0.001, train_genes: List[str] | None = None, normalize: bool = False, temperature: float = 0.01, **kwargs)
@@ -264,14 +281,16 @@ Classes
 
 .. py:class:: SimpleMap(*args, **kwargs)
 
-
    Bases: :py:obj:`SimpleMapBase`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
+
    .. py:method:: model(*args, **kwargs)
       :classmethod:
+
 
 
    .. py:method:: get_out(model, to_names, from_names, **kwargs)
@@ -281,14 +300,16 @@ Classes
 
 .. py:class:: SimpleScaleMap(*args, **kwargs)
 
-
    Bases: :py:obj:`SimpleMapBase`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
+
    .. py:method:: model(*args, **kwargs)
       :classmethod:
+
 
 
    .. py:method:: get_out(model, to_names, from_names, var_names, **kwargs)

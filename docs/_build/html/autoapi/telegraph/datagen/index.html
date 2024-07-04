@@ -7,7 +7,7 @@
   <title>telegraph.datagen &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0cff9c03" />
 
 
@@ -18,7 +18,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -51,15 +51,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../source/install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">telegraph</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../diagnostics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../evaluation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../methods/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.tests</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../aggregate/index.html">telegraph.aggregate</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">telegraph.datagen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dev/index.html">telegraph.dev</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../diagnostics/index.html">telegraph.diagnostics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../evaluation/index.html">telegraph.evaluation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../external/index.html">telegraph.external</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../methods/index.html">telegraph.methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../robustness/index.html">telegraph.robustness</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tests/index.html">telegraph.tests</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../index.html#submodules">Submodules</a></li>
@@ -84,8 +86,8 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">API Reference</a></li>
-          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
-      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></li>
+          <li class="breadcrumb-item"><a href="../index.html">telegraph</a></li>
+      <li class="breadcrumb-item active">telegraph.datagen</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/telegraph/datagen/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -96,22 +98,13 @@
            <div itemprop="articleBody">
 
   <section id="module-telegraph.datagen">
-<span id="telegraph-datagen"></span><h1><a class="reference internal" href="#module-telegraph.datagen" title="telegraph.datagen"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a><a class="headerlink" href="#module-telegraph.datagen" title="Link to this heading"></a></h1>
+<span id="telegraph-datagen"></span><h1>telegraph.datagen<a class="headerlink" href="#module-telegraph.datagen" title="Link to this heading"></a></h1>
 <section id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="cellmix/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen.cellmix</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cellmix/cellmix/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen.cellmix.cellmix</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="cellmix/cli/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen.cellmix.cli</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="visify/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen.visify</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="visify/_utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen.visify._utils</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="visify/cli/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen.visify.cli</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="visify/visify/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen.visify.visify</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="cellmix/index.html">telegraph.datagen.cellmix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visify/index.html">telegraph.datagen.visify</a></li>
 </ul>
 </div>
 </section>

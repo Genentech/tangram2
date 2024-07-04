@@ -1,14 +1,11 @@
-:py:mod:`telegraph.tests.evaluation.test_metrics`
-=================================================
+telegraph.tests.evaluation.test_metrics
+=======================================
 
 .. py:module:: telegraph.tests.evaluation.test_metrics
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -16,45 +13,48 @@ Classes
    telegraph.tests.evaluation.test_metrics.TestMapMetric
 
 
-
+Module Contents
+---------------
 
 .. py:class:: BaseTestMetric
 
-
    Bases: :py:obj:`abc.ABC`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
+
    .. py:method:: _make_input(*args, **kwargs) -> Tuple[Dict[str, Any], Dict[str, Any]]
       :classmethod:
+
       :abstractmethod:
+
 
 
    .. py:method:: _metric_base(metric, tmp_path, res_dict=None, ref_dict=None, **kwargs)
       :classmethod:
 
 
-   .. py:method:: test_default(**kwargs)
 
+   .. py:method:: test_default(**kwargs)
 
 
 .. py:class:: TestMapMetric
 
-
    Bases: :py:obj:`BaseTestMetric`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
+
    .. py:method:: _make_input(return_sparse=False)
       :classmethod:
+
 
 
    .. py:method:: test_run(metric_name, return_sparse, tmp_path, **kwargs)
 
 
    .. py:method:: test_output(**kwargs)
-
-
-

@@ -1,6 +1,4 @@
-:py:mod:`telegraph.evaluation.tests`
-====================================
+telegraph.evaluation.tests
+==========================
 
 .. py:module:: telegraph.evaluation.tests
-
-

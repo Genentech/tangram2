@@ -1,14 +1,11 @@
-:py:mod:`telegraph.tests.methods.test_dea_methods`
-==================================================
+telegraph.tests.methods.test_dea_methods
+========================================
 
 .. py:module:: telegraph.tests.methods.test_dea_methods
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -16,10 +13,10 @@ Classes
    telegraph.tests.methods.test_dea_methods.TestScanpyDEA
 
 
-
+Module Contents
+---------------
 
 .. py:class:: BaseTestDEAMethods
-
 
    .. py:method:: _make_base_input()
 
@@ -27,11 +24,10 @@ Classes
    .. py:method:: _method_base(method, tmp_path, res_dict=None, method_params=None)
 
 
-
 .. py:class:: TestScanpyDEA
 
-
    Bases: :py:obj:`BaseTestDEAMethods`
+
 
    .. py:method:: method()
 
@@ -43,6 +39,3 @@ Classes
 
 
    .. py:method:: test_output(**kwargs)
-
-
-

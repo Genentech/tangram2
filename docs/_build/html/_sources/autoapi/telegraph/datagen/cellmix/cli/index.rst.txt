@@ -1,22 +1,18 @@
-:py:mod:`telegraph.datagen.cellmix.cli`
-=======================================
+telegraph.datagen.cellmix.cli
+=============================
 
 .. py:module:: telegraph.datagen.cellmix.cli
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    telegraph.datagen.cellmix.cli.main
 
 
+Module Contents
+---------------
 
 .. py:function:: main()
-
-

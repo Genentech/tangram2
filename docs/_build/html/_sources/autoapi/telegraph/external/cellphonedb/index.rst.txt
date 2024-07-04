@@ -1,0 +1,26 @@
+telegraph.external.cellphonedb
+==============================
+
+.. py:module:: telegraph.external.cellphonedb
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   telegraph.external.cellphonedb.run
+
+
+Module Contents
+---------------
+
+.. py:function:: run(adata: anndata.AnnData, label_col: str, cpdb_file_path: str, counts_data: str = 'hgnc_symbol', output_dir: str | None = None, layer: str | None = None, require_receptor: bool = False, require_ligand: bool = True) -> pandas.DataFrame
+
+   Run CellPhoneDB
+
+   This function runs CellPhoneDB and returns a pandas DataFrame
+   with the following columns ['ligand','receptor','target','source','value']
+
+   where source and target indicate the cell type that acts as a source and target of the signal
+   (ligand). The value is the CellPhoneDB mean results.

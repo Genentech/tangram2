@@ -1,15 +1,19 @@
-:py:mod:`telegraph.evaluation.run`
-==================================
+telegraph.evaluation.run
+========================
 
 .. py:module:: telegraph.evaluation.run
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   telegraph.evaluation.run.OBJMAP
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -20,31 +24,17 @@ Functions
    telegraph.evaluation.run.run
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   telegraph.evaluation.run.OBJMAP
-
+Module Contents
+---------------
 
 .. py:data:: OBJMAP
 
-   
-
 .. py:function:: preprocess_data(data_dict, pp_config, inplace: bool = True)
-
 
 .. py:function:: build_workflow(recipe, use_fuzzy_match=True)
 
-
 .. py:function:: evaluate_workflow(input_dict, eval_config, out_dir)
-
 
 .. py:function:: process_experiment(exp_config: Dict[str, Any], use_fuzzy_match: bool = False, experiment_name: str = '', root_dir: str = '.', save_mode: bool = False, verbose: bool = False)
 
-
 .. py:function:: run(config: Dict[str, Any], root_dir: str = '.', save_mode: bool = False, use_fuzzy_match: bool = False, verbose: bool = False)
-
-

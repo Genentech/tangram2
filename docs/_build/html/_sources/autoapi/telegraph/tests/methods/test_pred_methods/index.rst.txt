@@ -1,14 +1,11 @@
-:py:mod:`telegraph.tests.methods.test_pred_methods`
-===================================================
+telegraph.tests.methods.test_pred_methods
+=========================================
 
 .. py:module:: telegraph.tests.methods.test_pred_methods
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -18,19 +15,18 @@ Classes
    telegraph.tests.methods.test_pred_methods.TestMoscotPred
 
 
-
+Module Contents
+---------------
 
 .. py:class:: BaseTestPredMethods
-
 
    .. py:method:: _method_base(method, tmp_path, res_dict=None, **method_params)
 
 
-
 .. py:class:: TestTangramV1Pred
 
-
    Bases: :py:obj:`BaseTestPredMethods`
+
 
    .. py:method:: method()
 
@@ -38,23 +34,21 @@ Classes
    .. py:method:: test_run_default(method, tmp_path)
 
 
-
 .. py:class:: TestTangramV1Pred
 
-
    Bases: :py:obj:`BaseTestPredMethods`
+
 
    .. py:method:: method()
 
 
    .. py:method:: test_run_default(method, tmp_path)
-
 
 
 .. py:class:: TestMoscotPred
 
-
    Bases: :py:obj:`BaseTestPredMethods`
+
 
    .. py:method:: method()
 
@@ -63,6 +57,3 @@ Classes
 
 
    .. py:method:: test_run_custom(method, tmp_path, prediction_genes)
-
-
-

@@ -1,41 +1,47 @@
-:py:mod:`telegraph.diagnostics.dea`
-===================================
+telegraph.diagnostics.dea
+=========================
 
 .. py:module:: telegraph.diagnostics.dea
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    telegraph.diagnostics.dea._parse_feature_list_or_dea_df
+   telegraph.diagnostics.dea._rank_curve
+   telegraph.diagnostics.dea._rank_score
+   telegraph.diagnostics.dea.compute_dea_score
+   telegraph.diagnostics.dea.plot_dea_auroc
    telegraph.diagnostics.dea.tabulate_dea_overlap
    telegraph.diagnostics.dea.plot_dea_overlap
    telegraph.diagnostics.dea._interpret_dea_features_gprofiler
    telegraph.diagnostics.dea.interpret_dea_features
    telegraph.diagnostics.dea.plot_top_k_enrichment_results
+   telegraph.diagnostics.dea.plot_signature_enrichment
 
 
+Module Contents
+---------------
 
 .. py:function:: _parse_feature_list_or_dea_df(obj, to_lower: bool = False)
 
+.. py:function:: _rank_curve(y_true, y_score)
+
+.. py:function:: _rank_score(y_true, y_score)
+
+.. py:function:: compute_dea_score(dea_df: pandas.DataFrame, effect: List[str], score_by: str = 'logfoldchanges', score_cutoff: float | None = None, pval_cutoff: float = None, min_overlap: int | None = None, abs_transform: bool = False, use_best_up_down: bool = False, only_use_overlap: bool = True, reverse: bool = False, name_col: str = 'names', pval_col: str = 'pvals_adj', au_type: Literal['auroc', 'aupr', 'rank'] = 'auroc')
+
+.. py:function:: plot_dea_auroc(dea_auroc_res: Dict[str, Any], side_size: float = 4, title: str = None, ax: matplotlib.pyplot.Axes | None = None, return_fig_ax: bool = False)
 
 .. py:function:: tabulate_dea_overlap(*inputs) -> pandas.DataFrame
 
-
 .. py:function:: plot_dea_overlap(*inputs, cmap=plt.cm.autumn_r)
-
 
 .. py:function:: _interpret_dea_features_gprofiler(features, **kwargs)
 
-
-.. py:function:: interpret_dea_features(input: pandas.DataFrame | List[str], method: Literal[g:Profiler] = 'g:Profiler', **kwargs)
-
+.. py:function:: interpret_dea_features(input: pandas.DataFrame | List[str], method: Literal['g:Profiler'] = 'g:Profiler', **kwargs)
 
 .. py:function:: plot_top_k_enrichment_results(*dfs, name_col='name', value_col='p_value', value_is_p_value=True, max_name_len=None, top_k=20, id_col='tg_id')
 
@@ -55,3 +61,4 @@ Functions
    :returns: Plots the top K genesets/pathways using matplotlib
 
 
+.. py:function:: plot_signature_enrichment(group_col: str = None, *, X_to=None, D_to=None, X_from=None, D_from=None, X_to_pred=None, labels=None, feature_list: List[str] = None, target: Literal['to', 'from'] = 'to', signature_score_params: Dict[str, Any] = {}, score_name: str | None = None, subset_cols: List[str] | None = None, subset_mode: Literal['intersection', 'union'] = 'intersection', hide_background: bool = False, use_pred: bool = False)

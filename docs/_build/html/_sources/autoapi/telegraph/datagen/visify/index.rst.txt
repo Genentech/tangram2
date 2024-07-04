@@ -1,17 +1,15 @@
-:py:mod:`telegraph.datagen.visify`
-==================================
+telegraph.datagen.visify
+========================
 
 .. py:module:: telegraph.datagen.visify
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   _utils/index.rst
-   cli/index.rst
-   visify/index.rst
-
-
+   /autoapi/telegraph/datagen/visify/_utils/index
+   /autoapi/telegraph/datagen/visify/cli/index
+   /autoapi/telegraph/datagen/visify/visify/index

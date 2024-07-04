@@ -1,15 +1,13 @@
-:py:mod:`telegraph.tests.evaluation`
-====================================
+telegraph.tests.evaluation
+==========================
 
 .. py:module:: telegraph.tests.evaluation
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   test_metrics/index.rst
-
-
+   /autoapi/telegraph/tests/evaluation/test_metrics/index

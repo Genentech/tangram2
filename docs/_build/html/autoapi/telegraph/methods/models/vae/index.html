@@ -7,7 +7,7 @@
   <title>telegraph.methods.models.vae &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=0cff9c03" />
 
 
@@ -18,7 +18,7 @@
         <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -51,15 +51,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../../../source/install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">telegraph</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../../../index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../../../aggregate/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.aggregate</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../datagen/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.datagen</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../diagnostics/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.diagnostics</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../evaluation/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.evaluation</span></code></a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../robustness/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.robustness</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.tests</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aggregate/index.html">telegraph.aggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../datagen/index.html">telegraph.datagen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../dev/index.html">telegraph.dev</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../diagnostics/index.html">telegraph.diagnostics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../evaluation/index.html">telegraph.evaluation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../external/index.html">telegraph.external</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html">telegraph.methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../robustness/index.html">telegraph.robustness</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tests/index.html">telegraph.tests</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../index.html#submodules">Submodules</a></li>
@@ -84,10 +86,10 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../../index.html">API Reference</a></li>
-          <li class="breadcrumb-item"><a href="../../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph</span></code></a></li>
-          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods</span></code></a></li>
-          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.models</span></code></a></li>
-      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.models.vae</span></code></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">telegraph</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">telegraph.methods</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">telegraph.methods.models</a></li>
+      <li class="breadcrumb-item active">telegraph.methods.models.vae</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../../../_sources/autoapi/telegraph/methods/models/vae/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -98,11 +100,9 @@
            <div itemprop="articleBody">
 
   <section id="module-telegraph.methods.models.vae">
-<span id="telegraph-methods-models-vae"></span><h1><a class="reference internal" href="#module-telegraph.methods.models.vae" title="telegraph.methods.models.vae"><code class="xref py py-mod docutils literal notranslate"><span class="pre">telegraph.methods.models.vae</span></code></a><a class="headerlink" href="#module-telegraph.methods.models.vae" title="Link to this heading"></a></h1>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<span id="telegraph-methods-models-vae"></span><h1>telegraph.methods.models.vae<a class="headerlink" href="#module-telegraph.methods.models.vae" title="Link to this heading"></a></h1>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#telegraph.methods.models.vae.VAEDataset" title="telegraph.methods.models.vae.VAEDataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VAEDataset</span></code></a></p></td>
@@ -113,9 +113,12 @@
 </tr>
 </tbody>
 </table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAEDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vae.</span></span><span class="sig-name descname"><span class="pre">VAEDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAEDataset" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vae.</span></span><span class="sig-name descname"><span class="pre">VAEDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAEDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAEDataset" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code></p>
 <p>An abstract class representing a <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>.</p>
 <p>All datasets that represent a map from keys to data samples should subclass
@@ -135,19 +138,19 @@ dataset with non-integral indices/keys, a custom sampler must be provided.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAEDataset.__len__">
-<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAEDataset.__len__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAEDataset.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAEDataset.__len__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAEDataset.__getitem__">
-<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAEDataset.__getitem__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAEDataset.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAEDataset.__getitem__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vae.</span></span><span class="sig-name descname"><span class="pre">VAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">telegraph.methods.models.vae.</span></span><span class="sig-name descname"><span class="pre">VAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">lightning.LightningModule</span></code></p>
 <p>Base class for all neural network modules.</p>
 <p>Your models should also subclass this class.</p>
@@ -182,22 +185,22 @@ evaluation mode.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE.encode">
-<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE.encode" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE.encode" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE.reparameterize">
-<span class="sig-name descname"><span class="pre">reparameterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE.reparameterize" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reparameterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE.reparameterize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE.reparameterize" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE.decode">
-<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE.decode" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE.decode" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE.forward" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE.forward" title="Link to this definition"></a></dt>
 <dd><p>Same as <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.nn.Module.forward()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -214,17 +217,17 @@ evaluation mode.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE.loss">
-<span class="sig-name descname"><span class="pre">loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE.loss" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE.loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE.loss" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE._step">
-<span class="sig-name descname"><span class="pre">_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE._step" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE._step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE._step" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE.training_step">
-<span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE.training_step" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE.training_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE.training_step" title="Link to this definition"></a></dt>
 <dd><p>Here you compute and return the training loss and some additional metrics for e.g. the progress bar or
 logger.</p>
 <dl class="field-list simple">
@@ -286,7 +289,7 @@ normalized by <code class="docutils literal notranslate"><span class="pre">accum
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">training_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE.training_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd><p>Here you compute and return the training loss and some additional metrics for e.g. the progress bar or
 logger.</p>
 <dl class="field-list simple">
@@ -348,7 +351,7 @@ normalized by <code class="docutils literal notranslate"><span class="pre">accum
 
 <dl class="py method">
 <dt class="sig sig-object py" id="telegraph.methods.models.vae.VAE.configure_optimizers">
-<span class="sig-name descname"><span class="pre">configure_optimizers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#telegraph.methods.models.vae.VAE.configure_optimizers" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">configure_optimizers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/telegraph/methods/models/vae.html#VAE.configure_optimizers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#telegraph.methods.models.vae.VAE.configure_optimizers" title="Link to this definition"></a></dt>
 <dd><p>Choose what optimizers and learning-rate schedulers to use in your optimization. Normally you’d need one.
 But in the case of GANs or similar you might have multiple. Optimization with multiple optimizers only works in
 the manual optimization mode.</p>
@@ -451,7 +454,6 @@ yourself.</p></li>
 
 </dd></dl>
 
-</section>
 </section>
 </section>
 

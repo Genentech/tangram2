@@ -1,15 +1,11 @@
-:py:mod:`telegraph.diagnostics.map`
-===================================
+telegraph.diagnostics.map
+=========================
 
 .. py:module:: telegraph.diagnostics.map
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -19,16 +15,13 @@ Functions
    telegraph.diagnostics.map.plot_from_feature_on_to
 
 
+Module Contents
+---------------
 
 .. py:function:: _get_T(T: pandas.DataFrame | numpy.ndarray, normalize_T: bool = True)
 
-
 .. py:function:: plot_top_k_distribution(T: pandas.DataFrame | numpy.ndarray, ks: int | List[int] = 1, bins: int = 100, ax=None, normalize_T: bool = True, plot: bool = True, alpha: float = 0.3, edgecolor=None)
-
 
 .. py:function:: plot_cells_per_spot(T: numpy.ndarray | pandas.DataFrame, bins: int | None = 25, normalize_T: bool = True, plot: bool = True, plt_kwargs: Dict[str, Any] | None = None)
 
-
 .. py:function:: plot_from_feature_on_to(S_to: numpy.ndarray | pandas.DataFrame, T: pandas.DataFrame | numpy.ndarray, features: pandas.DataFrame | pandas.Series, check_index: bool = True, n_cols: int = 4, marker_size=10)
-
-

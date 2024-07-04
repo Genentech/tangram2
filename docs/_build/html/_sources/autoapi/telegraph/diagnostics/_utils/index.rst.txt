@@ -1,30 +1,30 @@
-:py:mod:`telegraph.diagnostics._utils`
-======================================
+telegraph.diagnostics._utils
+============================
 
 .. py:module:: telegraph.diagnostics._utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   telegraph.diagnostics._utils.easy_input
+   telegraph.diagnostics._utils._get_X_and_labels
+   telegraph.diagnostics._utils._subset_helper
+   telegraph.diagnostics._utils.pick_x_d
+   telegraph.diagnostics._utils.harmony_helper
 
 
 Module Contents
 ---------------
 
-
-Functions
-~~~~~~~~~
-
-.. autoapisummary::
-
-   telegraph.diagnostics._utils.easy_input
-   telegraph.diagnostics._utils.pick_x_d
-   telegraph.diagnostics._utils.harmony_helper
-
-
-
 .. py:function:: easy_input(func)
 
+.. py:function:: _get_X_and_labels(X, D=None, labels=None, layer=None, obsm=None, group_col: str | None = None)
 
-.. py:function:: pick_x_d(X_to, D_to, X_from, D_from, target)
+.. py:function:: _subset_helper(D=None, labels=None, subset_cols=None, subset_mode=None)
 
+.. py:function:: pick_x_d(X_to, D_to, X_from, D_from, target, use_pred=False, X_to_pred=None)
 
 .. py:function:: harmony_helper(X, metadata, batch_key, metadata_is_D=True, n_components=2, normalize: bool = True)
-
-

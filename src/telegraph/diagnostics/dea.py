@@ -6,13 +6,133 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.metrics import (
+    accuracy_score,
     average_precision_score,
+    ndcg_score,
     precision_recall_curve,
     roc_auc_score,
     roc_curve,
+    top_k_accuracy_score,
 )
 
 from . import _utils as ut
+
+# def _top_k_curve(y_true,y_pred):
+#     ordr = np.argsort(y_pred)[::-1]
+#     top_k_score = np.cumsum(y_true[ordr])
+#     x_vals = np.arange(len(y_pred))
+#     top_k_score = top_k_score / np.sum(y_true)
+
+#     return x_vals, top_k_score, None
+
+
+def _precision_recall_curve(y_true, y_pred):
+    y, x, _ = precision_recall_curve(y_true, y_pred)
+    return y[1:-1], x[1:-1]
+
+
+def _get_sample_weights(y_true):
+    n_tot = len(y_true)
+    w_pos = float(n_tot / np.sum(y_true))
+
+    sample_weights = np.ones_like(y_true, dtype=float)
+    sample_weights[y_true == 1] = w_pos
+    return sample_weights.astype(float)
+
+
+def _ndcg_fun(y_true, y_pred):
+    return ndcg_score([y_true], [y_pred])
+
+
+def _hypergeom_fun(y_true, y_pred):
+    from scipy.stats import hypergeom
+
+    ordr = np.argsort(y_pred)[::-1]
+    y_true_tmp = y_true[ordr].astype(float)
+    n_pos = int(np.sum(y_true_tmp))
+    n_tot = len(y_true_tmp)
+
+    cum_sum = np.cumsum(y_true_tmp)
+    N = n_tot
+    K = n_pos
+
+    pvals = np.array([hypergeom.pmf(cum_sum[n], N, K, n + 1) for n in range(n_tot)])
+    pvals = -np.log(pvals)
+
+    return pvals
+
+
+def _top_k_fun(y_true, y_pred):
+    ordr = np.argsort(y_pred)[::-1]
+    y_true_tmp = y_true[ordr].astype(float)
+
+    return np.cumsum(y_true_tmp)
+
+
+def _top_k_score(y_true, y_pred):
+
+    score = _top_k_fun(y_true, y_pred)
+    n_pos = np.sum(y_true)
+    n_neg = len(y_true) - n_pos
+
+    max_area = n_pos**2 / 2 + n_neg * n_pos
+    obs_area = np.trapz(score)
+    res = obs_area / max_area
+
+    return res
+
+
+def _top_k_curve(y_true, y_pred):
+
+    score = _top_k_fun(y_true, y_pred)
+    score = score / np.sum(y_true)
+    x_vals = np.arange(len(score))
+
+    return x_vals, score, None
+
+
+score_types = dict(
+    auroc={
+        "score_fun": roc_auc_score,
+        "curve_fun": roc_curve,
+        "x_pos": 0,
+        "y_pos": 1,
+        "y_name": "TPR",
+        "x_name": "FPR",
+    },
+    aupr={
+        "score_fun": average_precision_score,
+        "curve_fun": _precision_recall_curve,
+        "x_pos": 1,
+        "y_pos": 0,
+        "y_name": "Precision",
+        "x_name": "Recall",
+    },
+    topk={
+        "score_fun": _top_k_score,
+        "curve_fun": _top_k_curve,
+        "x_pos": 0,
+        "y_pos": 1,
+        "x_name": "K",
+        "y_name": "Overlap",
+    },
+    ndcg={
+        "score_fun": _ndcg_fun,
+        "curve_fun": _top_k_curve,
+        "x_pos": 0,
+        "y_pos": 1,
+        "x_name": "Rank",
+        "y_name": "Overlap",
+    },
+)
+
+
+_recommended_reverse = {
+    "logfoldchanges": False,
+    "pvals_adj": True,
+    "pvals": True,
+    "score": False,
+}
 
 
 def _parse_feature_list_or_dea_df(obj, to_lower: bool = False):
@@ -48,37 +168,23 @@ def _rank_score(y_true, y_score):
     return score
 
 
-def compute_dea_score(
-    dea_df: pd.DataFrame,
-    effect: List[str],
+def _process_dea_df(
+    dedf,
     score_by: str = "logfoldchanges",
-    score_cutoff: float | None = None,
-    pval_cutoff: float = None,
-    min_overlap: int | None = None,
-    abs_transform: bool = False,
-    use_best_up_down: bool = False,
-    only_use_overlap: bool = True,
-    reverse: bool = True,
     name_col: str = "names",
     pval_col: str = "pvals_adj",
-    au_type: Literal["auroc", "aupr", "rank"] = "auroc",
+    pval_cutoff: float | None = None,
+    score_cutoff: float | None = None,
+    abs_transform: bool = False,
+    reverse: bool = False,
+    top_k: int | None = None,
 ):
 
-    au_types = dict(
-        auroc=[roc_auc_score, roc_curve],
-        aupr=[
-            average_precision_score,
-            precision_recall_curve,
-        ],
-        rank=[_rank_score, _rank_curve],
-    )
-
-    score_fun, curve_fun = au_types[au_type]
-
-    out = dict(fpr=[], tpr=[], num_effect=len(effect))
-    out[au_type] = 0
-
-    dedf = dea_df.copy()
+    if score_by in _recommended_reverse:
+        if _recommended_reverse[score_by] != reverse:
+            print(
+                f'[WARNING] : You are using "score_by={score_by}" with setting "reverse={str(reverse)}". This is not the recommended setting.'
+            )
 
     if pval_cutoff is not None:
         dedf = dedf[dedf[pval_col].values < pval_cutoff]
@@ -90,11 +196,151 @@ def compute_dea_score(
         if abs_transform:
             adj_score_key = f"abs_{score_by}"
             dedf[adj_score_key] = np.abs(dedf[score_by].values)
+            reverse = False
         else:
             adj_score_key = score_by
 
+    if reverse:
+        dedf[adj_score_key] = -dedf[adj_score_key]
+
     if score_cutoff is not None:
         dedf = dedf[dedf[score_by].values > score_cutoff]
+
+    if top_k is not None:
+        dedf = dedf.sort_values(
+            by=adj_score_key, ascending=_recomended_reverse[reverse]
+        )
+        dedf = dedf.iloc[0:top_k, :]
+
+    dedf.index = dedf[name_col]
+
+    return dedf, adj_score_key
+
+
+def compute_dea_score(
+    dea_df: pd.DataFrame,
+    effect: List[str],
+    method: Literal["auroc", "top_k_f1"],
+    score_by: str = "logfoldchanges",
+    score_cutoff: float | None = None,
+    pval_cutoff: float = None,
+    min_overlap: int | None = None,
+    abs_transform: bool = False,
+    use_best_up_down: bool = False,
+    reverse: bool = False,
+    name_col: str = "names",
+    pval_col: str = "pvals_adj",
+):
+
+    dedf = dea_df.copy()
+
+    og_names = dedf[name_col].values
+
+    dedf, adj_score_key = _process_dea_df(
+        dedf,
+        score_by=score_by,
+        name_col=name_col,
+        pval_col=pval_col,
+        score_cutoff=score_cutoff,
+        abs_transform=abs_transform,
+        reverse=reverse,
+        pval_cutoff=pval_cutoff,
+    )
+
+    pred_names = dedf[name_col].values
+
+    y_true = np.array([x in effect for x in og_names]).astype(float)
+    y_pred = np.array(
+        [
+            float(dedf.loc[x, adj_score_key]) if x in pred_names else np.nan
+            for x in og_names
+        ]
+    ).astype(float)
+
+    y_pred[np.isnan(y_pred)] = np.min(y_pred[~np.isnan(y_pred)]) - 1
+
+    score_fun, curve_fun = (
+        score_types[method]["score_fun"],
+        score_types[method]["curve_fun"],
+    )
+
+    score = score_fun(y_true, y_pred)
+    curve_res = curve_fun(y_true, y_pred)
+    curve_x, curve_y = (
+        curve_res[score_types[method]["x_pos"]],
+        curve_res[score_types[method]["y_pos"]],
+    )
+    num_effect = np.sum(y_true)
+    num_og_effect = len(effect)
+
+    return {
+        "score": score,
+        "x": curve_x,
+        "y": curve_y,
+        "num_effect_overlap": num_effect,
+        "num_effect_og": num_og_effect,
+        "score_info": {"name": method},
+    }
+
+
+def compute_dea_auroc_score(
+    dea_df: pd.DataFrame,
+    effect: List[str],
+    score_by: str = "logfoldchanges",
+    score_cutoff: float | None = None,
+    pval_cutoff: float = None,
+    min_overlap: int | None = None,
+    abs_transform: bool = False,
+    use_best_up_down: bool = False,
+    only_use_overlap: bool = True,
+    reverse: bool = False,
+    name_col: str = "names",
+    pval_col: str = "pvals_adj",
+    au_type: Literal["auroc", "aupr", "rank"] = "auroc",
+):
+
+    au_types = dict(
+        auroc={
+            "score_fun": roc_auc_score,
+            "curve_fun": roc_curve,
+            "x_pos": 0,
+            "y_pos": 1,
+            "y_name": "TPR",
+            "x_name": "FPR",
+        },
+        aupr={
+            "score_fun": average_precision_score,
+            "curve_fun": precision_recall_curve,
+            "x": 1,
+            "y": 0,
+            "y_name": "Precision",
+            "x_name": "Recall",
+        },
+        topk={
+            "score_fun": rank_score,
+            "curve_fun": rank_curve,
+            "x_pos": 0,
+            "y_pos": 1,
+            "x_name": "top K",
+            "y_name": "Correct",
+        },
+    )
+
+    score_fun, curve_fun = au_types[au_type]
+
+    out = dict(fpr=[], tpr=[], num_effect=len(effect))
+    out[au_type] = 0
+
+    dedf = dea_df.copy()
+    dedf, adj_score_key = _process_dea_df(
+        dedf,
+        score_by=score_by,
+        name_col=name_col,
+        pval_col=pval_col,
+        score_cutoff=score_cutoff,
+        abs_transform=abs_transform,
+        reverse=reverse,
+    )
 
     y_true = np.array([x in effect for x in dedf[name_col].values]).astype(int)
 
@@ -146,12 +392,14 @@ def compute_dea_score(
     return out
 
 
-def plot_dea_auroc(
-    dea_auroc_res: Dict[str, Any],
+def plot_dea_score(
+    dea_score_res: Dict[str, Any],
     side_size: float = 4,
     title: str = None,
     ax: plt.Axes | None = None,
     return_fig_ax: bool = False,
+    plot_diagonal: bool = False,
+    method: str | None = None,
 ):
 
     if ax is None:
@@ -159,14 +407,26 @@ def plot_dea_auroc(
     else:
         fig = None
 
-    au_type = [x for x in ["auroc", "aupr"] if x in dea_auroc_res][0]
+    ax.plot(dea_score_res["x"], dea_score_res["y"], ".-")
+    score = dea_score_res["score"]
+    n_effect = dea_score_res["num_effect_overlap"]
+    if method is None:
+        method = dea_score_res["score_info"]["name"]
 
-    ax.plot(dea_auroc_res["fpr"], dea_auroc_res["tpr"], ".-")
-    auroc = dea_auroc_res[au_type]
-    n_effect = dea_auroc_res["num_effect"]
+    if "score_info" in dea_score_res:
+        method = dea_score_res["score_info"]["name"]
+        x_label = score_types[method].get("x_name", "X")
+        y_label = score_types[method].get("y_name", "Y")
+    else:
+        method = "Unknown"
+        x_label = "X"
+        y_label = "Y"
 
-    ax.set_title(f"{title} \n AUROC: {auroc:0.2f} | #effect : {n_effect}")
-    ax.plot([0, 1], [0, 1], linestyle="dashed")
+    ax.set_title(f"{method}: {score:0.4f} | #effect : {n_effect}")
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    if plot_diagonal:
+        ax.plot([0, 1], [0, 1], linestyle="dashed")
 
     fig.tight_layout()
 

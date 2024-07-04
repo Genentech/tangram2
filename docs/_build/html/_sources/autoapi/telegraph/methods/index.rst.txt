@@ -1,5 +1,5 @@
-:py:mod:`telegraph.methods`
-===========================
+telegraph.methods
+=================
 
 .. py:module:: telegraph.methods
 
@@ -11,33 +11,32 @@
 
 Subpackages
 -----------
-.. toctree::
-   :titlesonly:
-   :maxdepth: 3
 
-   models/index.rst
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/telegraph/methods/models/index
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   _dea_utils/index.rst
-   _grp_utils/index.rst
-   _methods/index.rst
-   dea_methods/index.rst
-   grp_methods/index.rst
-   imp_methods/index.rst
-   info/index.rst
-   map_methods/index.rst
-   policies/index.rst
-   pred_methods/index.rst
-   preprocess/index.rst
-   save_methods/index.rst
-   transforms/index.rst
-   utils/index.rst
-   workflows/index.rst
-
-
+   /autoapi/telegraph/methods/_dea_utils/index
+   /autoapi/telegraph/methods/_grp_utils/index
+   /autoapi/telegraph/methods/_map_utils/index
+   /autoapi/telegraph/methods/_methods/index
+   /autoapi/telegraph/methods/dea_methods/index
+   /autoapi/telegraph/methods/grp_methods/index
+   /autoapi/telegraph/methods/imp_methods/index
+   /autoapi/telegraph/methods/info/index
+   /autoapi/telegraph/methods/map_methods/index
+   /autoapi/telegraph/methods/policies/index
+   /autoapi/telegraph/methods/pred_methods/index
+   /autoapi/telegraph/methods/preprocess/index
+   /autoapi/telegraph/methods/save_methods/index
+   /autoapi/telegraph/methods/transforms/index
+   /autoapi/telegraph/methods/utils/index
+   /autoapi/telegraph/methods/workflows/index

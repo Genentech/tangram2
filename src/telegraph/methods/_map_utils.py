@@ -29,7 +29,6 @@ def pp_adatas(
     # remove all-zero-valued genes
 
     if use_filter:
-        print("using filter")
         sc.pp.filter_genes(adata_sc, min_cells=1)
         sc.pp.filter_genes(adata_sp, min_cells=1)
 

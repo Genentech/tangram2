@@ -1,14 +1,11 @@
-:py:mod:`telegraph.methods.models.fcnn`
-=======================================
+telegraph.methods.models.fcnn
+=============================
 
 .. py:module:: telegraph.methods.models.fcnn
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -16,12 +13,13 @@ Classes
    telegraph.methods.models.fcnn.FCNNImp
 
 
-
+Module Contents
+---------------
 
 .. py:class:: FCNNDataset(X, y: numpy.ndarray | torch.Tensor | None = None)
 
-
    Bases: :py:obj:`torch.utils.data.Dataset`
+
 
    An abstract class representing a :class:`Dataset`.
 
@@ -40,17 +38,17 @@ Classes
      sampler that yields integral indices.  To make it work with a map-style
      dataset with non-integral indices/keys, a custom sampler must be provided.
 
+
    .. py:method:: __len__()
 
 
    .. py:method:: __getitem__(idx)
 
 
-
 .. py:class:: FCNNImp(n_input: int, n_output: int, n_hidden: List[int], layer_norm: bool = True, dropout: float = 0.2, loss_fun: Callable | None = None)
 
-
    Bases: :py:obj:`lightning.LightningModule`
+
 
    Base class for all neural network modules.
 
@@ -83,6 +81,7 @@ Classes
                    evaluation mode.
    :vartype training: bool
 
+
    .. py:method:: forward(*batch)
 
       Same as :meth:`torch.nn.Module.forward`.
@@ -91,6 +90,7 @@ Classes
       :param \*\*kwargs: Keyword arguments are also possible.
 
       :returns: Your model's output
+
 
 
    .. py:method:: _step(batch, batch_idx)
@@ -148,6 +148,7 @@ Classes
 
          When ``accumulate_grad_batches`` > 1, the loss returned here will be automatically
          normalized by ``accumulate_grad_batches`` internally.
+
 
 
    .. py:method:: validation_step(batch, batch_idx)
@@ -217,6 +218,7 @@ Classes
          When the :meth:`validation_step` is called, the model has been put in eval mode
          and PyTorch gradients have been disabled. At the end of validation,
          the model goes back to training mode and gradients are enabled.
+
 
 
    .. py:method:: configure_optimizers()
@@ -308,7 +310,7 @@ Classes
       .. note::
 
          Some things to know:
-         
+
          - Lightning calls ``.backward()`` and ``.step()`` automatically in case of automatic optimization.
          - If a learning rate scheduler is specified in ``configure_optimizers()`` with key
            ``"interval"`` (default "epoch") in the scheduler configuration, Lightning will call
@@ -318,6 +320,3 @@ Classes
          - If you use multiple optimizers, you will have to switch to 'manual optimization' mode and step them
            yourself.
          - If you need to control how often the optimizer steps, override the :meth:`optimizer_step` hook.
-
-
-

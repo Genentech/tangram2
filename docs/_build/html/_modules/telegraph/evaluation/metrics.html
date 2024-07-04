@@ -6,7 +6,8 @@
   <title>telegraph.evaluation.metrics &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0cff9c03" />
 
 
   <!--[if lt IE 9]>
@@ -16,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -536,11 +537,15 @@
 <a class="viewcode-back" href="../../../source/telegraph.evaluation.metrics.html#telegraph.evaluation.metrics.PredLeaveOutScore.score">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">res_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">ref_dict</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="n">X_to</span> <span class="o">=</span> <span class="n">res_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to&quot;</span><span class="p">)</span>
+        <span class="n">X_to</span> <span class="o">=</span> <span class="n">res_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">X_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;X_to needs to be in input dictionary&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_to</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="n">X_to</span> <span class="o">=</span> <span class="n">X_to</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
 
-        <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">res_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span>
+        <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">res_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X_to_pred&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">X_to_pred</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;X_to_pred needs to be in input dictionary&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_to_pred</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_to_pred</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
             <span class="n">X_to_pred</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
@@ -551,6 +556,10 @@
         <span class="n">train_genes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;train_genes&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">use_lowercase</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_lowercase&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">use_lowercase</span><span class="p">:</span>
+            <span class="n">X_to_pred</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="n">X_to</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X_to</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="n">test_genes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">train_genes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Input either train/test gene set&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">test_genes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -558,19 +567,21 @@
             <span class="k">if</span> <span class="n">use_lowercase</span><span class="p">:</span>
                 <span class="n">test_genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">test_genes</span><span class="p">]</span>
             <span class="n">eval_genes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-                <span class="nb">set</span><span class="p">(</span><span class="n">test_genes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">X_to</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                <span class="nb">set</span><span class="p">(</span><span class="n">test_genes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">X_to</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">train_genes</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">list_or_path_get</span><span class="p">(</span><span class="n">train_genes</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">use_lowercase</span><span class="p">:</span>
                 <span class="n">train_genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">train_genes</span><span class="p">]</span>
-            <span class="n">test_genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">X_to</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">train_genes</span><span class="p">]</span>
+            <span class="n">test_genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">X_to</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">train_genes</span><span class="p">]</span>
             <span class="n">eval_genes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">test_genes</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">X_to_pred</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
 
-        <span class="n">gex_true</span> <span class="o">=</span> <span class="n">X_to</span><span class="p">[:,</span> <span class="n">eval_genes</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+        <span class="n">gex_true</span> <span class="o">=</span> <span class="n">X_to</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">eval_genes</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">gex_pred</span> <span class="o">=</span> <span class="n">X_to_pred</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">eval_genes</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
-        <span class="n">norm_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gex_true</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gex_pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">norm_sq</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gex_true</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gex_pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-8</span>
+        <span class="p">)</span>
         <span class="n">cos_sim</span> <span class="o">=</span> <span class="p">(</span><span class="n">gex_true</span> <span class="o">*</span> <span class="n">gex_pred</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm_sq</span>
         <span class="n">mean_cos_sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">cos_sim</span><span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make_standard_out</span><span class="p">(</span><span class="n">mean_cos_sim</span><span class="p">)</span>

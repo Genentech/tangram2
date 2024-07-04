@@ -6,7 +6,7 @@
   <title>telegraph.methods.map_methods &mdash; telegraph beta-v1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0cff9c03" />
 
 
@@ -17,7 +17,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=18fb929b"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -96,6 +96,8 @@
 <span class="kn">import</span> <span class="nn">telegraph.methods.utils</span> <span class="k">as</span> <span class="nn">ut</span>
 <span class="kn">from</span> <span class="nn">telegraph.methods._methods</span> <span class="kn">import</span> <span class="n">MethodClass</span>
 <span class="kn">from</span> <span class="nn">telegraph.methods.models</span> <span class="kn">import</span> <span class="n">vanilla</span> <span class="k">as</span> <span class="n">vn</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_map_utils</span> <span class="k">as</span> <span class="n">mut</span>
 
 
 <div class="viewcode-block" id="MapMethodClass">
@@ -367,7 +369,9 @@
             <span class="n">genes</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">list_or_path_get</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span>
 
         <span class="c1"># preprocess anndata for mapping</span>
-        <span class="n">tg</span><span class="o">.</span><span class="n">pp_adatas</span><span class="p">(</span><span class="n">ad_from</span><span class="p">,</span> <span class="n">ad_to</span><span class="p">,</span> <span class="n">genes</span><span class="o">=</span><span class="n">genes</span><span class="p">)</span>
+        <span class="n">mut</span><span class="o">.</span><span class="n">pp_adatas</span><span class="p">(</span>
+            <span class="n">ad_from</span><span class="p">,</span> <span class="n">ad_to</span><span class="p">,</span> <span class="n">genes</span><span class="o">=</span><span class="n">genes</span><span class="p">,</span> <span class="n">use_filter</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_filter&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;cells&quot;</span><span class="p">)</span>
         <span class="n">wandb_config</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;wandb_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">wandb_config</span><span class="p">[</span><span class="s2">&quot;step_prefix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">experiment_name</span>
@@ -408,8 +412,7 @@
                 <span class="n">method_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
-            <span class="n">method_params</span>
-            <span class="n">method_params</span><span class="p">[</span><span class="s2">&quot;wandb_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;wandb_log&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),)</span>
+            <span class="n">method_params</span><span class="p">[</span><span class="s2">&quot;wandb_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;wandb_log&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
             <span class="n">method_params</span><span class="p">[</span><span class="s2">&quot;wandb_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wandb_config</span>
 
         <span class="c1"># map cells in &quot;from&quot; to &quot;to&quot;</span>
@@ -624,11 +627,17 @@
             <span class="n">X_from</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;X_from&quot;</span><span class="p">]</span>
             <span class="n">pol</span><span class="o">.</span><span class="n">check_values</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="s2">&quot;X_from&quot;</span><span class="p">)</span>
 
-        <span class="n">ad_to</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">df2ad</span><span class="p">(</span><span class="n">X_to</span><span class="p">)</span>
-        <span class="n">ad_from</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">df2ad</span><span class="p">(</span><span class="n">X_from</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_to</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">ad_to</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">df2ad</span><span class="p">(</span><span class="n">X_to</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_to</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="n">ad_to</span> <span class="o">=</span> <span class="n">X_to</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">ad_from</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">df2ad</span><span class="p">(</span><span class="n">X_from</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_from</span><span class="p">,</span> <span class="n">ad</span><span class="o">.</span><span class="n">AnnData</span><span class="p">):</span>
+            <span class="n">ad_from</span> <span class="o">=</span> <span class="n">X_from</span>
 
         <span class="c1"># spatial coordinates of &quot;to&quot;</span>
-        <span class="k">if</span> <span class="n">to_spatial_key</span> <span class="ow">in</span> <span class="n">ad_to</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">to_spatial_key</span> <span class="ow">in</span> <span class="n">ad_to</span><span class="o">.</span><span class="n">obsm</span><span class="p">:</span>
             <span class="n">S_to</span> <span class="o">=</span> <span class="n">ad_to</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="n">to_spatial_key</span><span class="p">]</span>
         <span class="k">elif</span> <span class="s2">&quot;S_to&quot;</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">:</span>
             <span class="n">S_to</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="s2">&quot;S_to&quot;</span><span class="p">]</span>
@@ -841,7 +850,7 @@
 
         <span class="k">if</span> <span class="n">return_T_norm</span><span class="p">:</span>
             <span class="n">T_norm</span> <span class="o">=</span> <span class="n">T_soft</span> <span class="o">/</span> <span class="n">T_soft</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># .reshape(-1, 1)</span>
-            <span class="n">out</span><span class="p">[</span><span class="s2">&quot;T_norm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_norm</span>
+            <span class="n">out</span><span class="p">[</span><span class="s2">&quot;T_norm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">array_to_sparse_df</span><span class="p">(</span><span class="n">T_norm</span><span class="p">)</span>
 
         <span class="n">T</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span>
 

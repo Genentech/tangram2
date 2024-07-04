@@ -1,42 +1,42 @@
-:py:mod:`telegraph.methods._methods`
-====================================
+telegraph.methods._methods
+==========================
 
 .. py:module:: telegraph.methods._methods
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    telegraph.methods._methods.MethodClass
 
 
-
+Module Contents
+---------------
 
 .. py:class:: MethodClass(*args, **kwargs)
 
-
    Bases: :py:obj:`abc.ABC`
+
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
+
    .. py:property:: custom_save_funcs
       :type: Dict[str, Callable]
+
       :classmethod:
+
 
 
    .. py:method:: run(input_dict: Dict[str, Any], **kwargs) -> Dict[str, Any]
       :classmethod:
+
       :abstractmethod:
+
 
 
    .. py:method:: save(res_dict: Dict[str, Any], out_dir: str, save_keys: List[str] | str | None = None, verbose: bool = False, **kwargs) -> None
       :classmethod:
-
-
-
