@@ -137,7 +137,15 @@ class ScanpyDEA(DEAMethodClass):
                 adata = dut.anndata_from_X_and_D(X, D_new)
                 labels = adata.obs["label"].values
 
-                if (grp_1 in labels) and ((grp_2 in labels) or (grp_2 == "rest")):
+                n_grp_1 = np.sum(labels == grp_1)
+
+                if grp_2 == "rest":
+                    n_grp_2 = min_group_obs + 1
+                else:
+                    n_grp_2 = np.sum(labels == grp_2)
+
+                if (n_grp_1 >= min_group_obs) and (n_grp_2 >= min_group_obs):
+
                     # execute DE test
                     sc.tl.rank_genes_groups(
                         adata,
@@ -166,6 +174,9 @@ class ScanpyDEA(DEAMethodClass):
                     )
 
                 else:
+                    print(
+                        f"[WARNING] : Both groups must have more than {min_group_obs}  members; returning empty dataframe.\n Current count {grp_1} : {n_grp_1} and {grp_2} : {n_grp_1}"
+                    )
                     dedf = dut.get_empty_dea_df()
 
                 name = f"{obj_name}_{grp_1}_vs_{grp_2}"
