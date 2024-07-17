@@ -188,7 +188,6 @@ def _process_dea_df(
         if abs_transform:
             adj_score_key = f"abs_{score_by}"
             dedf[adj_score_key] = np.abs(dedf[score_by].values)
-            reverse = False
         else:
             adj_score_key = score_by
 
