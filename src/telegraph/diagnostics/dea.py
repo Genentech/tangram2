@@ -423,7 +423,8 @@ def plot_dea_score(
     if plot_diagonal:
         ax.plot([0, 1], [0, 1], linestyle="dashed")
 
-    fig.tight_layout()
+    if fig is not None:
+        fig.tight_layout()
 
     if return_fig_ax:
         return fig, ax
