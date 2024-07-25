@@ -17,14 +17,6 @@ from sklearn.metrics import (
 
 from . import _utils as ut
 
-# def _top_k_curve(y_true,y_pred):
-#     ordr = np.argsort(y_pred)[::-1]
-#     top_k_score = np.cumsum(y_true[ordr])
-#     x_vals = np.arange(len(y_pred))
-#     top_k_score = top_k_score / np.sum(y_true)
-
-#     return x_vals, top_k_score, None
-
 
 def _precision_recall_curve(y_true, y_pred):
     y, x, _ = precision_recall_curve(y_true, y_pred)
@@ -196,7 +188,6 @@ def _process_dea_df(
         if abs_transform:
             adj_score_key = f"abs_{score_by}"
             dedf[adj_score_key] = np.abs(dedf[score_by].values)
-            reverse = False
         else:
             adj_score_key = score_by
 
@@ -298,6 +289,10 @@ def compute_dea_auroc_score(
     pval_col: str = "pvals_adj",
     au_type: Literal["auroc", "aupr", "rank"] = "auroc",
 ):
+
+    print(
+        '[WARNING] : This function is depracated. Please use "compute_dea_score" instead with "method = auroc".'
+    )
 
     au_types = dict(
         auroc={
@@ -428,7 +423,8 @@ def plot_dea_score(
     if plot_diagonal:
         ax.plot([0, 1], [0, 1], linestyle="dashed")
 
-    fig.tight_layout()
+    if fig is not None:
+        fig.tight_layout()
 
     if return_fig_ax:
         return fig, ax

@@ -46,7 +46,7 @@ def _update_adatas(ad_sc, ad_sp, x_add_sc, sc_var):
 def _multinomial_resampling(X: np.ndarray, noise_level: float = 0):
 
     ns = X.sum(axis=1)
-    ps = X / ns.reshape(-1, 1)
+    ps = X.astype(np.float64) / ns.reshape(-1, 1)
     n_obs, n_var = X.shape
 
     if noise_level < 0:
@@ -56,6 +56,7 @@ def _multinomial_resampling(X: np.ndarray, noise_level: float = 0):
             )
         )
         noise_level = 0
+
     if noise_level > 1:
         print(
             "[WARNING] : The noise level for resampling has to be in [0,1]. You chose {} - adjusting value to 1".format(

@@ -57,8 +57,16 @@ def plot_pred_vs_obs(
             val_ordr = np.argsort(val)[::-1]
 
             og_sc = ax[row, col].scatter(
-                S_to.values[val_ordr, 0],
-                S_to.values[val_ordr, 1],
+                (
+                    S_to.values[val_ordr, 0]
+                    if isinstance(S_to, pd.DataFrame)
+                    else S_to[val_ordr, 0]
+                ),
+                (
+                    S_to.values[val_ordr, 1]
+                    if isinstance(S_to, pd.DataFrame)
+                    else S_to[val_ordr, 1]
+                ),
                 c=val[val_ordr],
                 cmap=cmap,
                 s=marker_size,
