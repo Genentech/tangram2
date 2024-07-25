@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scanpy as sc
+import seaborn as sns
 from scipy.sparse import spmatrix
 from sklearn.decomposition import PCA
 from sklearn.manifold import MDS, TSNE, Isomap
@@ -258,3 +259,57 @@ def plot_separation_confusion_matrix(
         plt.show()
     else:
         return fig, ax
+
+
+@ut.easy_input
+def get_group_silhouette_score(
+    *,
+    X_to=None,
+    D_to=None,
+    X_from=None,
+    D_from=None,
+    labels=None,
+    groups=None,
+    target: str = "from",
+):
+
+    from sklearn.metrics import silhouette_score as SC
+
+    X, D = ut.pick_x_d(X_to, D_to, X_from, D_from, target)
+
+    scores = dict()
+
+    if isinstance(groups[0], str):
+        groups = [groups]
+
+    for group in groups:
+        grp_1, grp_2 = group
+
+        idx_1 = D[grp_1].values == 1
+        idx_2 = D[grp_2].values == 1
+
+        if isinstance(X, ad.AnnData):
+            x_1 = X.to_df().values[idx_1]
+            x_2 = X.to_df().values[idx_2]
+        elif isinstance(X, pd.DataFrame):
+            x_1 = X.values[idx_1]
+            x_2 = X.values[idx_2]
+
+        x = np.vstack((x_1, x_2))
+        y = np.zeros(len(x_1) + len(x_2))
+
+        y[0 : len(x_1)] = 1
+
+        score = SC(x, y)
+        scores[f"{grp_1}_vs_{grp_2}"] = score
+
+    return pd.DataFrame(pd.Series(scores), columns=["silhouette_score"])
+
+
+def plot_group_silhouette_score(score_df):
+
+    sns.barplot(
+        score_df.sort_values("silhouette_score", ascending=False).T, edgecolor="black"
+    )
+    plt.ylabel("silhouette score")
+    plt.xticks(rotation=90)
