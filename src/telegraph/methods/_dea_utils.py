@@ -44,7 +44,9 @@ def scanpy_dea_labels_from_D(D: pd.DataFrame, group_pair, new_col_name="label"):
         grp_i_l = ut.listify(grp_i)
         grp_i_fl = [x for x in grp_i_l if x in col_names]
         if len(grp_i_fl) < 1:
-            raise ValueError("group covariates are not in design matrix")
+            # raise ValueError("group covariates are not in design matrix")
+            print(f"[WARNING] : {grp_i} not in covariates. Returning None.")
+            return labels, None
         is_grp_i = np.all(D[grp_i_fl].values, axis=1)
         grp_i_name = "_".join(grp_i_fl)
         labels[is_grp_i] = grp_i_name

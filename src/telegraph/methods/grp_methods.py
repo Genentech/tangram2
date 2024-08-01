@@ -206,6 +206,100 @@ class ThresholdGroup(GroupMethodClass):
         )
 
 
+class InteractionScore(GroupMethodClass):
+    ins = [
+        "X_from",
+        "T",
+        ("X_to", "X_to_pred"),
+        "D_from",
+    ]
+    outs = ["D_from"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    @ut.check_in_out
+    @gut.add_covariates
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        ligand_receptor_target_sender: (
+            List[Tuple[str, str, str]] | Tuple[str, str, str]
+        ),
+        **kwargs,
+    ) -> pd.DataFrame:
+
+        X_from = input_dict.get("X_from")
+        assert X_from is not None, "X_from needs to be an object"
+        # get dataframe of "X_to_pred"
+        X_to_use = input_dict.get("X_to_pred")
+
+        if X_to_use is None:
+            X_to_use = input_dict.get("X_to")
+            if X_to_use is None:
+                raise ValueError("Must provide 'X_to' or 'X_to_pred'")
+            print("Operating with X_to")
+
+        if isinstance(X_to_use, ad.AnnData):
+            X_to_pred = X_to_use.to_df()
+
+        # get map (T) : [n_to] x [n_from]
+        T = input_dict.get("T")
+        if T is None:
+            raise ValueError("T is needed")
+
+        D_from = input_dict.get("D_from")
+        if D_from is None:
+            raise ValueError("D_from is needed")
+
+        n_to, n_from = T.shape
+
+        if isinstance(ligand_receptor_target_sender[0], str):
+            ligand_target_sender = [ligand_receptor_target_sender]
+
+        score_dict = dict()
+
+        for ligand, receptor, target, sender in ligand_receptor_target_sender:
+
+            from_score = np.ones(n_from) * np.nan
+
+            if ligand == "nan":
+                val_ligand = np.ones(n_to)
+            else:
+                val_ligand = X_to_use[ligand.lower()].values
+
+            if receptor == "nan":
+                val_receptor = np.ones(n_to)
+            else:
+                val_receptor = X_to_use[receptor.lower()].values
+
+            target_idx = D_from[target].values == 1
+            sender_idx = D_from[sender].values == 1
+
+            # target_score = T.values[:,target_idx].mean(axis=1)
+            sender_score = T.values[:, sender_idx].mean(axis=1)
+
+            to_score = sender_score * val_ligand * val_receptor
+            to_score = to_score / (val_ligand.mean() * val_receptor.mean())
+
+            from_score[target_idx] = np.dot(
+                T.values[:, target_idx].T, to_score[:, None]
+            ).flatten()
+
+            score_dict[f"{ligand}_{receptor}_{target}_{sender}"] = from_score
+
+        score_dict = pd.DataFrame(score_dict, index=D_from.index)
+
+        D_from = gut.add_groups_to_old_D(score_dict, input_dict, target="from")
+
+        return dict(D_from=D_from)
+
+
 class AssociationScore(GroupMethodClass):
     """Association Score between
 
@@ -362,33 +456,6 @@ class QuantileGroup(GroupMethodClass):
         to_index = (
             X_to_use.obs.index if isinstance(X_to_use, ad.AnnData) else X_to_use.index
         )
-
-        # if subset_covs is not None:
-        # subset_names = dict()
-        # for target, covs in subset_covs.items():
-        #     D_old = input_dict.get("D_{}".format(target))
-        #     subset_names[target] = []
-        #     if D_old is not None:
-        #         subset_idx = subset_idxs.pop(target)
-        #         for cov in covs:
-        #             if cov in D_old.columns:
-        #                 subset_idx *= D_old[cov].values.astype(bool)
-        #                 subset_names[target].append(cov)
-        #         subset_idxs[target] = subset_idx
-        # if "to" in subset_names:
-        #     to_prefix += "_".join(subset_names["to"])
-        #     if len(to_prefix) > 0:
-        #         to_predix += "_"
-        #     X_to_use = X_to_use[subset_idxs["to"]]
-
-        # if "from" in subset_names:
-        #     from_prefix += "_".join(subset_names["from"])
-        #     if len(from_prefix) > 0:
-        #         from_prefix += "_"
-        #     X_from = X_from[subset_idxs["from"]]
-
-        # make sure feature_name is in list format
-        feature_name = ut.listify(feature_name)
 
         Ds_from, Ds_to = [], []
 
@@ -901,4 +968,220 @@ class ClusterGroup(GroupMethodClass):
     ) -> Dict[str, pd.DataFrame]:
         raise NotImplemented(
             "The ClusterGroup Method has not yet been implemented for the telegraph workflow",
+        )
+
+
+class QuantileClusterGroup(GroupMethodClass):
+
+    ins = ["X_from", "X_to", "T"]
+    outs = ["D_to", "D_from"]
+
+    @classmethod
+    @ut.check_in_out
+    @gut.add_covariates
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        feature_name: List[str] | str,
+        q_t: float | Tuple[float, float] = 0.25,
+        log_vals: bool = False,
+        subset_covs: Dict[str, List[str]] | None = None,
+        **kwargs,
+    ) -> pd.DataFrame:
+        from sklearn.mixture import GaussianMixture as GMM
+
+        # anndata for predict to data
+        X_to_use = input_dict.get("X_to_pred")
+        if X_to_use is None:
+            X_to_use = input_dict.get("X_to")
+            X_to_use_name = "X_to"
+        else:
+            X_to_use_name = "X_to_pred"
+
+        pol.check_values(X_to_use, X_to_use_name)
+        pol.check_type(X_to_use, X_to_use_name)
+
+        # anndata object that we map _from_
+        X_from = input_dict["X_from"]
+        pol.check_values(X_from, "X_from")
+        pol.check_type(X_from, "X_from")
+
+        if isinstance(X_to_use, ad.AnnData):
+            X_to_use = X_to_use.to_df()
+
+        # get map (T) : [n_to] x [n_from]
+        T = input_dict["T"]
+
+        n_to = X_to_use.shape[0]
+        n_from = X_from.shape[0]
+
+        pol.check_type(T, "T")
+        pol.check_values(T, "T")
+        pol.check_dimensions(T, "T", (n_to, n_from))
+
+        to_prefix = ""
+        from_prefix = ""
+        subset_idxs = {
+            "to": np.ones(X_to_use.shape[0]).astype(bool),
+            "from": np.ones(X_from.shape[0]).astype(bool),
+        }
+
+        from_index = (
+            X_from.obs.index if isinstance(X_from, ad.AnnData) else X_from.index
+        )
+
+        to_index = (
+            X_to_use.obs.index if isinstance(X_to_use, ad.AnnData) else X_to_use.index
+        )
+
+        Ds_from, Ds_to = [], []
+
+        # set feature names in X_to_use to lowercase
+        # this is to match names with specified features
+        X_to_use.columns = X_to_use.columns.str.lower()
+
+        tix = np.where(subset_idxs["to"])[0]
+        fix = np.where(subset_idxs["from"])[0]
+
+        T = T.values[tix, :][:, fix]
+
+        criteria = [
+            feature if isinstance(feature, (list, tuple)) else (feature, None)
+            for feature in feature_name
+        ]
+
+        # iterate over all features
+        for criterion in criteria:
+
+            feature, subset = criterion[0], criterion[1::]
+
+            subset_name = ""
+            if subset[0] is not None:
+                D_from_old = input_dict.get("D_from")
+                if D_from_old is not None:
+                    is_criteria = np.all(D_from_old.loc[:, subset].values == 1, axis=1)
+                    use_from_idx = np.where(is_criteria)[0]
+                    subset_name = "_" + "_".join(subset)
+                else:
+                    raise ValueError("Subset not in D_from")
+            else:
+                use_from_idx = np.arange(T.shape[1])
+
+            # get feature expression, numpy format
+            # feature to lowercase to avoid
+            # case-mismatch
+            val = X_to_use[feature.lower()].values
+            if log_vals:
+                val = np.log1p(val)
+
+            gmm_1 = GMM(n_components=1)
+            gmm_2 = GMM(n_components=2)
+
+            gmm_1.fit(val[:, None])
+            gmm_2.fit(val[:, None])
+
+            bic_1 = gmm_1.bic(val[:, None])
+            bic_2 = gmm_2.bic(val[:, None])
+
+            model_mode = "single_mode" if bic_2 >= bic_1 else "dual_mode"
+
+            if model_mode == "single_mode":
+                continue
+            else:
+                means = gmm_2.means_.flatten()
+                x_thrs = np.max(means)
+                x_high = val >= np.max(means)
+                x_low = val <= np.min(means)
+
+            # create blank "to" design matrix
+            D_to = np.zeros((n_to, 2))
+            # update "to" design matrix according to
+            # high/low assignments
+            D_to[tix, :][x_low, 0] = 1
+            D_to[tix, :][x_high, 1] = 1
+
+            # converts design matrix to data frame
+            to_cols = [f"{to_prefix}low_{feature}", f"{to_prefix}high_{feature}"]
+
+            D_to = pd.DataFrame(
+                D_to.astype(int),
+                columns=to_cols,
+                index=to_index,
+            )
+
+            # instantiate "from" design matrix
+            D_from = np.zeros((n_from, 2))
+
+            # get observations in "from" with a mass higher
+            # that thres_t_high assigned to the "high" observations
+            # in "to"
+
+            if np.sum(x_high) > 0:
+                T_high_sum = T[x_high, :][:, use_from_idx].sum(axis=0).flatten()
+                q_t_high = np.quantile(T_high_sum, 1 - q_t)
+                t_high = T_high_sum >= q_t_high
+            else:
+                t_high = np.zeros(T.shape[1]).astype(bool)
+
+            if np.sum(x_low) > 0:
+                T_low_sum = T[x_low, :][:, use_from_idx].sum(axis=0).flatten()
+                q_t_low = np.quantile(T_low_sum, 1 - q_t)
+                t_low = T_low_sum >= q_t_low
+            else:
+                t_low = np.zeros(T.shape[1]).astype(bool)
+
+            is_both = np.where(t_low & t_high)[0].astype(int)
+            is_both = use_from_idx[is_both]
+
+            # update "from" design matrix
+            t_low = np.where(t_low)[0]
+            t_low = use_from_idx[t_low]
+            t_high = np.where(t_high)[0]
+            t_high = use_from_idx[t_high]
+
+            D_from[fix[t_low], 0] = 1
+            D_from[fix[t_high], 1] = 1
+
+            D_from[fix[is_both], 0] = 0
+            D_from[fix[is_both], 1] = 0
+
+            from_cols = [
+                f"{from_prefix}nadj_{feature}{subset_name}",
+                f"{from_prefix}adj_{feature}{subset_name}",
+            ]
+            # convert "from" design matrix to data frame
+
+            D_from = pd.DataFrame(
+                D_from.astype(int),
+                columns=from_cols,
+                index=from_index,
+            )
+
+            # save feature specific design matrix
+            Ds_from.append(D_from)
+            Ds_to.append(D_to)
+
+        # join indicators from all features to create single design matrix
+        Ds_from = pd.concat(Ds_from, axis=1)
+        Ds_to = pd.concat(Ds_to, axis=1)
+
+        # Ds_to is in [n_to] x [2 x n_features]
+        pol.check_values(D_to, "D_to")
+        pol.check_type(D_to, "D_to")
+        pol.check_dimensions(D_to, "D_to", (n_to, None))
+
+        # Ds_from is [n_from] x [2 x n_features]
+        pol.check_values(D_from, "D_from")
+        pol.check_type(D_from, "D_from")
+        pol.check_dimensions(D_from, "D_from", (n_from, None))
+
+        # Note: if we specify add covariates
+        # additional covariates will be appended to the design matrix
+
+        D_to = gut.add_groups_to_old_D(Ds_to, input_dict, target="to")
+        D_from = gut.add_groups_to_old_D(Ds_from, input_dict, target="from")
+
+        return dict(
+            D_to=D_to,
+            D_from=D_from,
         )
