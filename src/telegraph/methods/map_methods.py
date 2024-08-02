@@ -273,7 +273,7 @@ class TangramMap(MapMethodClass):
         mut.pp_adatas(
             ad_from, ad_to, genes=genes, use_filter=kwargs.get("use_filter", True)
         )
-        mode = kwargs.pop("mode", "cells")
+        mode = kwargs.pop("mode", "hejin_workflow")
         wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name
 
@@ -283,13 +283,26 @@ class TangramMap(MapMethodClass):
             if random_state is None:
                 random_state = 42
 
+        if (cls.version == "2") and (mode == "hejin_workflow"):
+            cluster_label = kwargs.pop("cluster_label", None)
+            if (cluster_label is None) and ("D_from" in input_dict):
+                D_from = input_dict["D_from"]
+                subset_cols = kwargs.get("subset_labels", D_from.columns)
+                if np.sum([x not in D_from.columns for x in subset_cols]) > 0:
+                    raise ValueError("subset labels were not in design matrix")
+                label_values = D_from.idxmax(axis=1)
+                ad_from.obs["__label"] = label_values
+                cluster_label = "__label"
+            elif cluster_label is None:
+                raise ValueError("Can't use workflow without cluster_label")
+
         method_params = dict(
             adata_sc=ad_from,
             adata_sp=ad_to,
             mode=mode,
             device=("cuda:0" if is_available() else "cpu"),
             num_epochs=num_epochs,
-            cluster_label=kwargs.pop("cluster_label", None),
+            cluster_label=cluster_label,
             random_state=random_state,
         )
 
@@ -321,17 +334,22 @@ class TangramMap(MapMethodClass):
             **method_params,
         )
 
+        if cluster_label == "__label":
+            del ad_from.obs["__label"]
+
         # depending on mode and version, treat output differently
         if (cls.version == "2") and (mode == "hejin_workflow"):
             # hejin_workflow mode in tg2 returns a tuple
             # the map (T) and the re-scaled "from" data
             ad_map, X_from_scaled = tg_out
+            w = ad_map.uns["coefficient"]
         elif (cls.version == "1") or (cls.version == "2"):
             # all other modes and versions return a single values
             # the map (T)
             ad_map = tg_out
             # set scaled to None for later
             X_from_scaled = None
+            w = None
         else:
             NotImplementedError
 
@@ -365,6 +383,8 @@ class TangramMap(MapMethodClass):
         pol.check_type(T, "T")
         pol.check_values(T, "T")
         pol.check_dimensions(T, "T", (n_rows, n_cols))
+
+        out["w"] = w
 
         return out
 

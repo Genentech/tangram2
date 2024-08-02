@@ -57,6 +57,7 @@ class TangramPred(PredMethodClass):
         *args,
         spatial_key_to: str = "spatial",
         spatial_key_from: str = "spatial",
+        rescale: bool = False,
         **kwargs,
     ) -> Dict[str, pd.DataFrame]:
         # Tangram Prediction Baseclass
@@ -125,6 +126,9 @@ class TangramPred(PredMethodClass):
 
         # get data frame of projected genes
         X_to_pred = ad_ge.to_df()
+
+        if rescale:
+            pass
 
         # get names for "to_pred" objects
         to_pred_names = X_to_pred.index.values.tolist()
