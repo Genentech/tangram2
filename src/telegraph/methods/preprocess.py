@@ -56,10 +56,14 @@ class NormalizeTotal(PPClass):
 
     @staticmethod
     def pp(obj, obj_name=None, **kwargs):
-        target_sum = kwargs.get("target_sum", None)
-        if target_sum is not None:
-            target_sum = float(target_sum)
-        sc.pp.normalize_total(obj, target_sum=target_sum)
+        target_sum = kwargs.get("target_sum", 1e4)
+        if isinstance(obj, ad.AnnData):
+            if target_sum is not None:
+                target_sum = float(target_sum)
+            sc.pp.normalize_total(obj, target_sum=target_sum)
+        else:
+            obj = obj / (obj.values.sum(axis=1, keepdims=True) + 1e-7) * 1e4
+            return obj
 
 
 class Log1p(PPClass):
@@ -101,18 +105,9 @@ class StandardScanpy(PPClass):
 
     @staticmethod
     def pp(obj, obj_name=None, **kwargs):
-        if isinstance(obj.X, spmatrix):
-            obj.X = obj.X.toarray()
-            # change dtype to float32
-        obj.X = obj.X.astype(np.float32)
-        # normalize total
-        target_sum = kwargs.get("target_sum", 1e4)
-
-        if target_sum is not None:
-            target_sum = float(target_sum)
-        sc.pp.normalize_total(obj, target_sum=target_sum)
-        # log1p transform
-        sc.pp.log1p(obj)
+        obj = NormalizeTotal.pp(obj, obj_name, **kwargs)
+        obj = Log1p.pp(obj, obj_name, **kwargs)
+        return obj
 
 
 class RegressType(PPClass):

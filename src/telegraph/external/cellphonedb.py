@@ -30,7 +30,7 @@ def run(
 
     if layer is not None:
         adata.layers["_old"] = adata.X.copy()
-        adata.X = adata[layer].copy()
+        adata.X = adata.layers[layer].copy()
 
     with tempfile.TemporaryDirectory() as tmpdir:
         df = adata.obs[[label_col]].copy()

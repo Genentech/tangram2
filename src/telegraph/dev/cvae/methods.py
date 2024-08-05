@@ -107,6 +107,7 @@ class CVAEVanilla(MethodClass):
         source_label: str = None,
         signal_name: str = "signal",
         min_group_count: int = 20,
+        n_neighs: int = 5,
         **kwargs,
     ):
 
@@ -137,7 +138,7 @@ class CVAEVanilla(MethodClass):
 
         Z = embedding
         kd = cKDTree(Z[is_target])
-        _, high_idxs = kd.query(Z[is_high], k=5)
+        _, high_idxs = kd.query(Z[is_high], k=n_neighs)
         high_idxs = np.unique(high_idxs.flatten())
         high_idxs = is_target[high_idxs]
 
@@ -161,6 +162,7 @@ class CVAEVanilla(MethodClass):
         emb_key: str = "X_cvae",
         min_group_count: int = 20,
         inter_key: str = "ixn",
+        n_neighs: int = 5,
         **kwargs,
     ):
 
@@ -207,6 +209,7 @@ class CVAEVanilla(MethodClass):
                     target_label=target_label,
                     source_label=source_label,
                     signal_name=signal_name,
+                    n_neighs=n_neighs,
                 )
                 if source_label is None:
                     obs_col_name = f"ixn_{signal_name}_{target_label}_any"

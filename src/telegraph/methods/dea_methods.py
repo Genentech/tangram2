@@ -7,6 +7,8 @@ import anndata as ad
 import numpy as np
 import pandas as pd
 import scanpy as sc
+from scipy.stats import pearsonr, spearmanr
+from statsmodels.stats.multitest import multipletests
 
 from . import _dea_utils as dut
 from . import policies as pol
@@ -133,6 +135,9 @@ class ScanpyDEA(DEAMethodClass):
             for group_pair in _groups:
 
                 D_new, grp_1, grp_2 = dut.scanpy_dea_labels_from_D(D, group_pair)
+
+                if (grp_1 is None) and (grp_2 is None):
+                    continue
 
                 adata = dut.anndata_from_X_and_D(X, D_new)
                 labels = adata.obs["label"].values
@@ -656,3 +661,91 @@ class HVGFeatureDEA(DEAMethodClass):
         raise NotImplemented(
             "The RandomFeatureDEA  method has not been implemented for telegraph workflow use yet"
         )
+
+
+class CorrelationDEA(DEAMethodClass):
+    # Scanpy DEA Method class
+    # allows you to execute scanpy.tl.rank_genes
+    # using a design matrix and input data
+    ins = ["D_from", "D_to", "X_from", "X_to_pred"]
+    outs = ["DEA"]
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__()
+
+    @classmethod
+    def compute_correlations_pval(cls, X, Y, method="pearson"):
+
+        if method == "pearson":
+            corr_fun = pearsonr
+        elif method == "spearmanr":
+            corr_fun = spearmanr
+
+        n_features = Y.shape[1]
+        correlations = np.zeros(n_features)
+        p_values = np.zeros(n_features)
+
+        for i in range(n_features):
+            correlations[i], p_values[i] = corr_fun(X, Y[:, i])
+
+        corrected_p_values = multipletests(p_values, method="bonferroni")[1]
+
+        return correlations, corrected_p_values
+
+    @classmethod
+    # @ut.check_in_out
+    def run(
+        cls,
+        input_dict: Dict[str, Any],
+        covariates: List[str] | str,
+        target: List[str] | str = "both",
+        **kwargs,
+    ) -> Dict[str, Dict[str, pd.DataFrame]]:
+
+        if target == "both":
+            _target = ["to", "from"]
+        else:
+            _target = ut.listify(target)
+
+        if isinstance(covariates, str):
+            covariates = [covariates]
+        if isinstance(covariates, (tuple, list)):
+            covariates = {"from": covariates, "to": covariates}
+
+        out = dict()
+
+        for obj in _target:
+            D = input_dict.get(f"D_{obj}")
+            X = input_dict.get(f"X_{obj}")
+            if isinstance(X, ad.AnnData):
+                X = X.to_df()
+
+            if (X is None) or (D is None):
+                raise ValueError(f"D_{obj} and X_{obj} must be provided")
+
+            for cov in covariates[obj]:
+                print(cov)
+                y = D[cov].values
+                skip_obs = np.isnan(y)
+                x = X.values[~skip_obs, :].copy()
+                y = y[~skip_obs]
+
+                x_var_sum = x.sum(axis=0).flatten()
+                keep_var = x_var_sum > 0
+                x = x[:, keep_var]
+
+                corrs, pvals = cls.compute_correlations_pval(y, x)
+                corrs = pd.DataFrame(
+                    corrs.T, index=X.columns[keep_var], columns=["corr"]
+                )
+
+                corrs["names"] = corrs.index
+                corrs["pvals_adj"] = pvals
+
+                out[f"{obj}_{cov}"] = corrs
+
+        return dict(DEA=out)
