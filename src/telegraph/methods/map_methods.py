@@ -283,6 +283,7 @@ class TangramMap(MapMethodClass):
             if random_state is None:
                 random_state = 42
 
+        cluster_label, mode = None, "cells"
         if (cls.version == "2") and (mode == "hejin_workflow"):
             cluster_label = kwargs.pop("cluster_label", None)
             if (cluster_label is None) and ("D_from" in input_dict):

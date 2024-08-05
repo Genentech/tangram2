@@ -1,1 +1,1 @@
-from . import cvae
+from . import cvae, imod
