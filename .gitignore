@@ -14,3 +14,4 @@ src/cccv/evaluation/_old_run.py
 rsc_local/
 *.el
 rsc_local/
+analysis/
