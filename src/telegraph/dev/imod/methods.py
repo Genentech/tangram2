@@ -61,7 +61,9 @@ class InteractionModel(MethodClass):
             learning_rate=learning_rate,
         )
 
-        trainer = pl.Trainer(max_epochs=n_epochs)
+        device = "gpu" if torch.cuda.is_available() else "cpu"
+
+        trainer = pl.Trainer(max_epochs=n_epochs, accelerator=device)
         trainer.fit(model, dataloader)
 
         beta = np.dot(model.beta.detach().cpu().numpy(), V)
