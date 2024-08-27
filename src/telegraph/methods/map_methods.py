@@ -274,7 +274,7 @@ class TangramMap(MapMethodClass):
             ad_from, ad_to, genes=genes, use_filter=kwargs.get("use_filter", True)
         )
 
-        default_mode = "hejin_workflow" if cls.tg == "2" else "cells"
+        default_mode = "hejin_workflow" if cls.version == "2" else "cells"
         mode = kwargs.pop("mode", default_mode)
         wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name
