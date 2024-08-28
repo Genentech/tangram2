@@ -5,7 +5,10 @@ import tempfile
 import anndata as ad
 import numpy as np
 import pandas as pd
-from cellphonedb.src.core.methods import cpdb_analysis_method
+from cellphonedb.src.core.methods import (
+    cpdb_analysis_method,
+    cpdb_statistical_analysis_method,
+)
 
 
 def run(
@@ -17,6 +20,8 @@ def run(
     layer: str | None = None,
     require_receptor: bool = False,
     require_ligand: bool = True,
+    only_return_signficant: bool = True,
+    method: str = "statistical",
 ) -> pd.DataFrame:
     """Run CellPhoneDB
 
@@ -39,19 +44,33 @@ def run(
         df.to_csv(meta_path)
         os.listdir(tmpdir)
 
-        cpdb_results = cpdb_analysis_method.call(
-            cpdb_file_path=cpdb_file_path,
-            meta_file_path=meta_path,
-            counts_file_path=adata,
-            counts_data=counts_data,
-            output_path=output_dir if output_dir is not None else tmpdir,
-        )
+        if method == "statistical":
+            cpdb_results = cpdb_statistical_analysis_method.call(
+                cpdb_file_path=cpdb_file_path,
+                meta_file_path=meta_path,
+                counts_file_path=adata,
+                counts_data=counts_data,
+                output_path=output_dir if output_dir is not None else tmpdir,
+            )
+            cpdb = cpdb_results["means"]
+            pvals = cpdb_results["pvalues"]
+
+        else:
+            cpdb_results = cpdb_analysis_method.call(
+                cpdb_file_path=cpdb_file_path,
+                meta_file_path=meta_path,
+                counts_file_path=adata,
+                counts_data=counts_data,
+                output_path=output_dir if output_dir is not None else tmpdir,
+            )
+            cpdb = cpdb_results["significant_means_result"]
+            pvals = None
+
+        sub_col = ["gene_a", "gene_b"] + [x for x in cpdb.columns if "|" in x]
+        sub_cpdb = cpdb[sub_col]
 
     if layer is not None:
         adata.X = adata.layers["_old"].copy()
-
-    cpdb = cpdb_results["significant_means_result"]
-    sub_cpdb = cpdb[["gene_a", "gene_b"] + [x for x in cpdb.columns if "|" in x]]
 
     signal_and_label = []
     for k, row in sub_cpdb.iterrows():
@@ -59,13 +78,16 @@ def run(
         gene_b = str(row.gene_b)
         inters = row[2::]
         for inter, val in inters.items():
-            if not np.isnan(val):
-                source, target = inter.split("|")
-                signal_and_label.append((gene_a, gene_b, target, source, val))
+            source, target = inter.split("|")
+            if pvals is not None:
+                pval = float(pvals.loc[k, inter])
+            else:
+                pval = ~np.isnan(val)
+            signal_and_label.append((gene_a, gene_b, target, source, val, pval))
 
     out = pd.DataFrame(
         signal_and_label,
-        columns=["ligand", "receptor", "target", "source", "value"],
+        columns=["ligand", "receptor", "target", "source", "value", "pval"],
     )
 
     out["_uni_col"] = out["ligand"] + "_" + out["target"] + "_" + out["source"]
