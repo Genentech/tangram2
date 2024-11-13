@@ -43,11 +43,25 @@ def _update_adatas(ad_sc, ad_sp, x_add_sc, sc_var):
     return ad_sc, ad_sp
 
 
-def _multinomial_resampling(X: np.ndarray, noise_level: float = 0):
+def _multinomial_resampling(
+    X: np.ndarray, noise_level: float = 0, m: float | Tuple[float, float] = 1
+):
 
     ns = X.sum(axis=1)
     ps = X.astype(np.float64) / ns.reshape(-1, 1)
     n_obs, n_var = X.shape
+
+    if isinstance(m, list, tuple):
+        if m[0] > m[1]:
+            b, a = m
+        else:
+            a, b = m
+    else:
+        a = m
+        b = m
+
+    multiplier = np.random.uniform(a, b, size=n_obs)
+    ns = np.round(multiplier * ns).astype(int)
 
     if noise_level < 0:
         print(
@@ -78,7 +92,11 @@ def _multinomial_resampling(X: np.ndarray, noise_level: float = 0):
     return X_new
 
 
-def _resample(adata: ad.AnnData, resample: List[float] | float | bool = False):
+def _resample(
+    adata: ad.AnnData,
+    resample: List[float] | float | bool = False,
+    m: float | Tuple[float, float] = 1,
+):
     """resample expression using multinomial resampling. Nois can be introduced by specifying one
     or multiple noise levels. This will perturb the proportion values in the multinomial
     distribution.
@@ -99,7 +117,7 @@ def _resample(adata: ad.AnnData, resample: List[float] | float | bool = False):
     # iterate over downsampling options
     for noise_level in resample:
 
-        x_new = _multinomial_resampling(x_mat, noise_level=noise_level)
+        x_new = _multinomial_resampling(x_mat, noise_level=noise_level, m=m)
 
         layer_name = "resample_{}".format(noise_level)
 
@@ -716,6 +734,7 @@ def cellmix(
     effect_direction: Literal["up", "down", "both"] = "up",
     signaler_names: str | List[str] | None = None,
     receiver_names: str | List[str] | None = None,
+    resample_multiplier: float | Tuple[float, float] = 1,
 ):
     """pretty wrapper for cellmix
 
@@ -771,7 +790,7 @@ def cellmix(
             receiver_names=receiver_names,
         )
 
-        ad_sp = _resample(ad_sp, resample=resample)
+        ad_sp = _resample(ad_sp, resample=resample, m=resample_multiplier)
         ad_sp = _downsample(ad_sp, downsample)
 
     return ad_sp, ad_sc
