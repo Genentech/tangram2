@@ -132,6 +132,7 @@ class InteractionModel(MethodClass):
         input_dict: Dict[str, Any],
         seed: int = 42,
         verbose: bool = True,
+        return_neighborhood: bool = False,
         **kwargs,
     ) -> xr.Dataset:
 
@@ -168,5 +169,8 @@ class InteractionModel(MethodClass):
         res = cls.train(X_use, D_from, P, seed=seed, verbose=verbose, **kwargs)
 
         res = cls.format_output(res, feature_names, prop_names)
+
+        if return_neighborhood:
+            return res, P
 
         return res
