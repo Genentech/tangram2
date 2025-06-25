@@ -1,16 +1,17 @@
 [tool.poetry]
 
-name = 'telegraph'
+name = 'tangram2'
 version = '0.1'
 authors = [
-    "Aicha BenTaieb <bentaiea@gene.com>",
     "Alma Andersson <andera29@gene.com>",
+    "Hejin Huang <huang.hejin@gene.com>",
+    "Aicha BenTaieb <bentaiea@gene.com>",
     "Kam Hon Hoi <kamhoi@gene.com>",
     "Shreya Gaddam <gaddams@gene.com>",
 ]
 
-repository = "https://code.roche.com/rb-aiml-cv-spatial/cci-explore/validation/pipeline"
-description = "Cell Cell Communication Validation Framework"
+repository = "<TBD>"
+description = "Tangram 2"
 keywords = ["ccc", "interaction","cell cell communication"]
 license = "BSD-3-Clause"
 classifiers = [
@@ -81,6 +82,3 @@ black = "^24.1.1"
 isort = "^5.13.2"
 scvi-tools = "^1.1.2"
 loompy = "^3.0.7"
-
-[tool.poetry.scripts]
-telegraph = 'telegraph.cli:cli'
