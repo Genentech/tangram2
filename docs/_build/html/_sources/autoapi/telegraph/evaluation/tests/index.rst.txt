@@ -1,4 +1,0 @@
-telegraph.evaluation.tests
-==========================
-
-.. py:module:: telegraph.evaluation.tests
