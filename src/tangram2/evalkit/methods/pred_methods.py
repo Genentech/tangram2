@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import spmatrix
 
-import telegraph.methods.policies as pol
-import telegraph.methods.utils as ut
-from telegraph.methods._methods import MethodClass
+import tangram2.evalkit.methods.policies as pol
+import tangram2.evalkit.methods.utils as ut
+from tangram2.evalkit.methods._methods import MethodClass
 
 
 class PredMethodClass(MethodClass):
@@ -64,7 +64,7 @@ class TangramPred(PredMethodClass):
         if cls.version == "1":
             import tangram as tg
         elif cls.version == "2":
-            import tangram2 as tg
+            import tangram2.mapping as tg
         else:
             raise NotImplementedError
 
@@ -74,7 +74,6 @@ class TangramPred(PredMethodClass):
         X_from = input_dict["X_from"]
         # get "scaled from" anndata, this is necessary
         # due to the adjustment of the "from" data
-        # in tg2-hejin_workflow. Is None for all other tg outputs.
         # If not None [n_from] x [n_from_features]
         X_from_scaled = input_dict.get("X_from_scaled")
         # get map : [n_to] x [n_from]
@@ -149,7 +148,7 @@ class TangramPred(PredMethodClass):
         return out
 
 
-class TangramV1Pred(TangramPred):
+class Tangram1Pred(TangramPred):
     # Tangram v1 Prediction Method class
     version = "1"
 
@@ -162,7 +161,7 @@ class TangramV1Pred(TangramPred):
         pass
 
 
-class TangramV2Pred(TangramPred):
+class Tangram2Pred(TangramPred):
     # Tangram v2 Prediction Method class
     version = "2"
 

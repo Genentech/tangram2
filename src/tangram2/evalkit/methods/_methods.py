@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List
 
-from telegraph.methods.save_methods import StandardSaveMethods
+from tangram2.evalkit.methods.save_methods import StandardSaveMethods
 
 from . import utils as ut
 

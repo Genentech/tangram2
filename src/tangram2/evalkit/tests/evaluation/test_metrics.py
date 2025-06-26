@@ -6,8 +6,8 @@ import anndata as ad
 import numpy as np
 import pytest
 
-import telegraph.constants as C
-from telegraph.tests import test_utils as ut
+import tangram2.evalkit.constants as C
+from tangram2.evalkit.tests import test_utils as ut
 
 
 class BaseTestMetric(ABC):

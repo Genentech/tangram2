@@ -10,8 +10,8 @@ from scipy.spatial import cKDTree
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
-import telegraph.methods.map_methods as mmet
-import telegraph.methods.transforms as tf
+import tangram2.evalkit.methods.map_methods as mmet
+import tangram2.evalkit.methods.transforms as tf
 
 from . import utils as ut
 

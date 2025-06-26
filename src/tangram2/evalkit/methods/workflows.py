@@ -3,9 +3,9 @@ from abc import ABC
 from collections import OrderedDict
 from typing import Any, Callable, Dict, List
 
-import telegraph.constants as C
-import telegraph.methods.utils as ut
-from telegraph.methods._methods import MethodClass
+import tangram2.evalkit.constants as C
+import tangram2.evalkit.methods.utils as ut
+from tangram2.evalkit.methods._methods import MethodClass
 
 
 def flatten_het_list(input_list):

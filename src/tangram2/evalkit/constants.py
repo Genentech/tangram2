@@ -1,13 +1,10 @@
 from enum import Enum
 
-import telegraph.methods.dea_methods as dmet
-import telegraph.methods.grp_methods as gmet
-import telegraph.methods.imp_methods as imet
-import telegraph.methods.map_methods as mmet
-import telegraph.methods.pred_methods as pmet
-from telegraph.evaluation import metrics as mtx
-from telegraph.methods import preprocess as pp
-from telegraph.methods import save_methods as sm
+import tangram2.evalkit.methods.map_methods as mmet
+import tangram2.evalkit.methods.pred_methods as pmet
+from tangram2.evalkit.evaluation import metrics as mtx
+from tangram2.evalkit.methods import preprocess as pp
+from tangram2.evalkit.methods import save_methods as sm
 
 
 class CONF(Enum):
@@ -25,9 +22,6 @@ class PREFIX(Enum):
     # prefixes for each method
     mapping = "map"
     pred = "prd"
-    dea = "dea"
-    group = "grp"
-    imputation = "imp"
     workflow = "wf"
 
 
@@ -44,8 +38,8 @@ class METHODS(EnumCustom):
     _MAP_METHODS = dict(
         random=mmet.RandomMap,
         max_corr=mmet.ArgMaxCorrMap,
-        tangram_v1=mmet.TangramV1Map,
-        tangram_v2=mmet.TangramV2Map,
+        tangram_v1=mmet.Tangram1Map,
+        tangram_v2=mmet.Tangram2Map,
         celery=mmet.CeLEryMap,
         spaotsc=mmet.SpaOTscMap,
         moscot=mmet.MoscotMap,
@@ -68,37 +62,8 @@ class METHODS(EnumCustom):
         PREFIX.pred.value + "_" + key: val for key, val in _PRD_METHODS.items()
     }
 
-    _IMP_METHODS = dict(
-        mean=imet.MeanImputation,
-        knn=imet.KNNImputation,
-        fcnn=imet.FCNNImputation,
-        vaeknn=imet.VAEKNNImputation,
-        gimvi=imet.gimVIImputation,
-        spage=imet.SpaGEImputation,
-    )
-
-    IMP_METHODS = {
-        PREFIX.imputation.value + "_" + key: val for key, val in _IMP_METHODS.items()
-    }
-
-    # raw names of group methods
-    _GRP_METHODS = dict(threshold=gmet.ThresholdGroup)
-
-    # "prefixed" names of group methods
-    GRP_METHODS = {
-        PREFIX.group.value + "_" + key: val for key, val in _GRP_METHODS.items()
-    }
-
-    # raw names of DEA methods
-    _DEA_METHODS = dict(scanpy=dmet.ScanpyDEA)
-
-    # prefixed names of DEA methods
-    DEA_METHODS = {
-        PREFIX.dea.value + "_" + key: val for key, val in _DEA_METHODS.items()
-    }
-
     # all available methods
-    OPTIONS = MAP_METHODS | PRD_METHODS | IMP_METHODS | GRP_METHODS | DEA_METHODS
+    OPTIONS = MAP_METHODS | PRD_METHODS 
 
 
 class METRICS(EnumCustom):
@@ -126,22 +91,11 @@ class METRICS(EnumCustom):
         PREFIX.pred.value + "_" + key: val for key, val in _PRD_METRICS.items()
     }
 
-    # raw dea metrics names
-    _DEA_METRICS = dict(
-        hypergeom=mtx.DEAHyperGeom,
-        auc=mtx.DEAAuc,
-    )
-
-    # "prefixed" dea metrics names
-    DEA_METRICS = {
-        PREFIX.dea.value + "_" + key: val for key, val in _DEA_METRICS.items()
-    }
-
     # metrics to use in development
     DEV_METRICS = dict(dev_print=mtx.PrintMetric)
 
     # all available metrics
-    OPTIONS = MAP_METRICS | PRD_METRICS | DEV_METRICS | DEA_METRICS
+    OPTIONS = MAP_METRICS | PRD_METRICS | DEV_METRICS 
 
 
 class PREPROCESS(EnumCustom):
@@ -150,10 +104,8 @@ class PREPROCESS(EnumCustom):
         standard_scanpy=pp.StandardScanpy,
         normalize_total=pp.NormalizeTotal,
         celery=pp.CeLEryPP,
-        tangramv1=pp.StandardTangramV1,
-        tangramv2=pp.StandardTangramV2,
+        tangram1=pp.StandardTangram1,
+        tangram2=pp.StandardTangram2,
         spaotsc=pp.StandardSpaOTsc,
         moscot=pp.StandardMoscot,
-        spage=pp.StandardSpaGE,
-        gimvi=pp.gimVIPP,
     )

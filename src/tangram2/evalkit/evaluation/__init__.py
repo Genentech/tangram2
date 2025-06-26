@@ -1,2 +1,2 @@
-import telegraph.evaluation.metrics as mtx
-import telegraph.evaluation.run as run
+import tangram2.evalkit.evaluation.metrics as mtx
+import tangram2.evalkit.evaluation.run as run

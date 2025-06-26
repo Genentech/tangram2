@@ -12,15 +12,15 @@ from . import preprocess as pp
 from . import transforms as tf
 from . import workflows as wf
 
-# import telegraph.methods._methods as _methods
-# import telegraph.methods.dea_methods as dea
-# import telegraph.methods.grp_methods as grp
-# import telegraph.methods.imp_methods as imp
-# import telegraph.methods.info as info
-# import telegraph.methods.map_methods as mm
-# import telegraph.methods.models as models
-# import telegraph.methods.pred_methods
-# import telegraph.methods.preprocess as pp
-# import telegraph.methods.transforms as tf
-# import telegraph.methods.utils as ut
-# import telegraph.methods.workflows as wf
+# import tangram2.evalkit.methods._methods as _methods
+# import tangram2.evalkit.methods.dea_methods as dea
+# import tangram2.evalkit.methods.grp_methods as grp
+# import tangram2.evalkit.methods.imp_methods as imp
+# import tangram2.evalkit.methods.info as info
+# import tangram2.evalkit.methods.map_methods as mm
+# import tangram2.evalkit.methods.models as models
+# import tangram2.evalkit.methods.pred_methods
+# import tangram2.evalkit.methods.preprocess as pp
+# import tangram2.evalkit.methods.transforms as tf
+# import tangram2.evalkit.methods.utils as ut
+# import tangram2.evalkit.methods.workflows as wf

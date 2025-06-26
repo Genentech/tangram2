@@ -14,11 +14,11 @@ from scipy.spatial.distance import cdist
 from scipy.special import softmax
 from torch.cuda import is_available
 
-import telegraph.methods.policies as pol
-import telegraph.methods.transforms as tf
-import telegraph.methods.utils as ut
-from telegraph.methods._methods import MethodClass
-from telegraph.methods.models import vanilla as vn
+import tangram2.evalkit.methods.policies as pol
+import tangram2.evalkit.methods.transforms as tf
+import tangram2.evalkit.methods.utils as ut
+from tangram2.evalkit.methods._methods import MethodClass
+from tangram2.evalkit.methods.models import vanilla as vn
 
 from . import _map_utils as mut
 
@@ -241,7 +241,7 @@ class TangramMap(MapMethodClass):
         if cls.version == "1":
             import tangram as tg
         elif cls.version == "2":
-            import tangram2 as tg
+            import tangram2.mapping as tg
         else:
             raise NotImplementedError
 
@@ -392,7 +392,7 @@ class TangramMap(MapMethodClass):
         return out
 
 
-class TangramV1Map(TangramMap):
+class Tangram1Map(TangramMap):
     # Method class for TangramV1
     version = "1"
 
@@ -405,7 +405,7 @@ class TangramV1Map(TangramMap):
         pass
 
 
-class TangramV2Map(TangramMap):
+class Tangram2Map(TangramMap):
     # Method class for TangramV2
     version = "2"
 

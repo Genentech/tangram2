@@ -14,7 +14,7 @@ from ...methods._methods import MethodClass
 from .models import InteractionModel as IM
 
 
-class InteractionModel(MethodClass):
+class TangramCCC(MethodClass):
     ins = ["X_from", "D_from"]
     outs = ["D_from"]
 
@@ -139,10 +139,6 @@ class InteractionModel(MethodClass):
         T = input_dict.get("T", None)
         D_from = input_dict.get("D_from", None)
         X_use = input_dict.get("X_from", None)
-
-        # if X_use is None:
-        #     print("using X_to")
-        #     X_use = input_dict.get("X_to", None)
 
         for name, obj in zip(["T", "D_from", "X_to/X_to_pred"], [T, D_from, X_use]):
             if obj is None:

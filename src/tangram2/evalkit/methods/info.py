@@ -1,4 +1,4 @@
-# from telegraph.methods.workflows import WorkFlowClass
+# from tangram2.evalkit.methods.workflows import WorkFlowClass
 
 # from . import constants as C
 

@@ -5,9 +5,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from telegraph.methods import dea_methods as dm
-from telegraph.methods.utils import design_matrix_to_labels
-from telegraph.tests import test_utils as ut
+from tangram2.evalkit.methods import dea_methods as dm
+from tangram2.evalkit.methods.utils import design_matrix_to_labels
+from tangram2.evalkit.tests import test_utils as ut
 
 
 class BaseTestDEAMethods:
