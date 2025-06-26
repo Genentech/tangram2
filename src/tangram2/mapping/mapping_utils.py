@@ -222,12 +222,12 @@ def map_cells_to_space(
     if lambda_d > 0 and density_prior is None:
         raise ValueError("When lambda_d is set, please define the density_prior.")
 
-    if mode not in ["clusters", "cells", "constrained", "hejin_workflow"]:
+    if mode not in ["clusters", "cells", "constrained", "integrate"]:
         raise ValueError(
-            'Argument "mode" must be "cells", "clusters", "constrained" or "hejin_workflow"'
+            'Argument "mode" must be "cells", "clusters", "constrained" or "integrate"'
         )
 
-    if mode in ["clusters", "hejin_workflow"] and cluster_label is None:
+    if mode in ["clusters", "integrate"] and cluster_label is None:
         raise ValueError("A cluster_label must be specified if mode is 'clusters'.")
 
     if mode == "constrained" and not all([target_count, lambda_f_reg, lambda_count]):
@@ -264,7 +264,7 @@ def map_cells_to_space(
             )
 
 
-    if mode == "hejin_workflow":
+    if mode == "integrate":
 
         S_full = adata_sc.X.copy()
         if isinstance(S_full,spmatrix):
@@ -334,13 +334,13 @@ def map_cells_to_space(
     elif density_prior == "uniform":
         density_prior = adata_sp.obs["uniform_density"]
 
-    if mode in ["cells", "hejin_workflow"]:
+    if mode in ["cells", "integrate"]:
         d = density_prior
 
     if mode in ["clusters"]:
         d_source = np.array(adata_sc.obs["cluster_density"])
 
-    if mode in ["clusters", "hejin_workflow"]:
+    if mode in ["clusters", "integrate"]:
         coeff = np.ones(S.shape[0]) * 0.01
         coeff = torch.tensor(
             coeff, device=device, requires_grad=True, dtype=torch.float32
@@ -432,8 +432,8 @@ def map_cells_to_space(
             print_each=print_each,
         )
 
-    # Hejin Worklfow
-    elif mode == "hejin_workflow":
+    # Integrate Worklfow
+    elif mode == "integrate":
         hyperparameters = {
             "lambda_d": lambda_d,  # KL (ie density) term
             "lambda_g1": lambda_g1,  # gene-voxel cos sim
@@ -451,26 +451,26 @@ def map_cells_to_space(
         )
 
 
-        if 'project_name' not in wandb_config:
-            wandb_config['project_name'] = 'tg2-' + ut.random_tag()
+#         if 'project_name' not in wandb_config:
+#             wandb_config['project_name'] = 'tg2-' + ut.random_tag()
 
-        _step = 1
+#         _step = 1
 
-        if 'group' not in wandb_config:
-            _wandb_group = wandb_config.get('version',ut.timestamp())
-        else:
-            _wandb_group = wandb_config('group')
+#         if 'group' not in wandb_config:
+#             _wandb_group = wandb_config.get('version',ut.timestamp())
+#         else:
+#             _wandb_group = wandb_config('group')
 
-        wandb_config['group'] = _wandb_group + '_step{}'.format(_step)
+#         wandb_config['group'] = _wandb_group + '_step{}'.format(_step)
 
-        step_prefix = wandb_config.get('step_prefix',None)
+#         step_prefix = wandb_config.get('step_prefix',None)
 
-        if step_prefix is None:
-            step_prefix = ''
-        else:
-            step_prefix = step_prefix + '_'
+#         if step_prefix is None:
+#             step_prefix = ''
+#         else:
+#             step_prefix = step_prefix + '_'
 
-        wandb_config['name'] = step_prefix + 'step{}'.format(_step)
+#         wandb_config['name'] = step_prefix + 'step{}'.format(_step)
 
         mapper = mo.Mapper(
             S=S,
@@ -511,9 +511,9 @@ def map_cells_to_space(
             )
         )
 
-        _step = 2
-        wandb_config['group'] = _wandb_group + '_step{}'.format(_step)
-        wandb_config['name'] = step_prefix + 'step{}'.format(_step)
+#         _step = 2
+#         wandb_config['group'] = _wandb_group + '_step{}'.format(_step)
+#         wandb_config['name'] = step_prefix + 'step{}'.format(_step)
 
         mapper = mo.Mapper(
             S=S,
@@ -572,7 +572,7 @@ def map_cells_to_space(
             print_each=print_each,
         )
 
-    if mode == "hejin_workflow":
+    if mode == "integrate":
         logging.info("Saving results..")
         adata_map = sc.AnnData(
             X=mapping_matrix,
@@ -593,7 +593,7 @@ def map_cells_to_space(
     if mode == "clusters":
         adata_map.obs["coefficient"] = coefficient
 
-    if mode == "hejin_workflow":
+    if mode == "integrate":
         adata_map.uns["coefficient"] = pd.DataFrame(
             {"cell_type": uni_labels, "coefficient": w}
         )
@@ -625,7 +625,7 @@ def map_cells_to_space(
 
     adata_map.uns["training_history"] = training_history
     
-    if mode == "hejin_workflow":
+    if mode == "integrate":
         return adata_map, adata_sc_corrected
     else:
         return adata_map
