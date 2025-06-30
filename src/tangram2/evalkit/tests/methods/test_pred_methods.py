@@ -4,8 +4,8 @@ from typing import Any, Dict, Tuple
 
 import pytest
 
-from telegraph.methods import pred_methods as pm
-from telegraph.tests import test_utils as ut
+from tangram2.evalkit.methods import pred_methods as pm
+from tangram2.evalkit.tests import test_utils as ut
 
 
 class BaseTestPredMethods:
@@ -13,7 +13,7 @@ class BaseTestPredMethods:
         if res_dict is None:
             res_dict = ut.make_fake_X()
             res_dict = ut.make_fake_T(res_dict=res_dict)
-            if method == pm.TangramV2Pred:
+            if method == pm.Tangram2Pred:
                 res_dict["X_from_scaled"] = res_dict["X_from"].copy()
 
         out = method.run(res_dict, **method_params)
@@ -39,12 +39,12 @@ class BaseTestPredMethods:
         method.save(res_dict, tmp_path)
 
 
-class TestTangramV1Pred(BaseTestPredMethods):
+class TestTangram1Pred(BaseTestPredMethods):
     @pytest.fixture(autouse=True)
     def method(
         self,
     ):
-        return pm.TangramV1Pred
+        return pm.Tangram1Pred
 
     def test_run_default(self, method, tmp_path):
         # test that structure and dims of output is correct
@@ -53,12 +53,12 @@ class TestTangramV1Pred(BaseTestPredMethods):
         self._method_base(method, tmp_path)
 
 
-class TestTangramV1Pred(BaseTestPredMethods):
+class TestTangram2Pred(BaseTestPredMethods):
     @pytest.fixture(autouse=True)
     def method(
         self,
     ):
-        return pm.TangramV2Pred
+        return pm.Tangram2Pred
 
     def test_run_default(self, method, tmp_path):
         # test that structure and dims of output is correct

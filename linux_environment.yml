@@ -1,0 +1,42 @@
+name: tangram2
+channels:
+- conda-forge
+dependencies:
+- _libgcc_mutex
+- _openmp_mutex
+- binutils_impl_linux-64
+- bzip2
+- ca-certificates
+- cddlib
+- conda-gcc-specs
+- gcc
+- gcc_impl_linux-64
+- gmp
+- kernel-headers_linux-64
+- ld_impl_linux-64
+- libexpat
+- libffi
+- libgcc
+- libgcc-devel_linux-64
+- libgcc-ng
+- libgomp
+- liblzma
+- libnsl
+- libsanitizer
+- libsqlite
+- libstdcxx
+- libstdcxx-ng
+- libuuid
+- libxcrypt
+- libzlib
+- ncurses
+- openssl
+- pip
+- python
+- readline
+- setuptools
+- sysroot_linux-64
+- tk
+- tzdata
+- wheel
+

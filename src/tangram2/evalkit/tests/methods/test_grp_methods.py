@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from telegraph.methods import grp_methods as gm
-from telegraph.tests import test_utils as ut
+from tangram2.evalkit.methods import grp_methods as gm
+from tangram2.evalkit.tests import test_utils as ut
 
 
 class TestThresholdGroup:

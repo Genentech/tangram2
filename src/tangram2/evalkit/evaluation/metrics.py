@@ -10,8 +10,7 @@ from scipy.spatial import cKDTree
 from scipy.stats import hypergeom
 from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 
-import telegraph.methods.map_methods as mmet
-import telegraph.methods.transforms as tf
+import tangram2.evalkit.utils.transforms as tf
 
 from . import utils as ut
 
@@ -224,22 +223,6 @@ class HardMapMetricClass(MapMetricClass):
             T_use = "T"
         return T_use
 
-    # DEAD CODE?
-    # @classmethod
-    # def get_gt(cls, input_dict: Dict[Any, str], key: str | None = None, **kwargs):
-    #     # we get the ground truth from the original
-    #     # data (X_from)
-    #     X_from = input_dict["X_from"]
-    #     obj_map = ut.get_ad_value(X_from, key)
-    #     row_idx = obj_map["row_self"]
-    #     col_idx = obj_map["row_target"]
-    #     n_rows, n_cols = obj_map["shape"]
-    #
-    #     T = coo_matrix((np.ones(n_rows), (row_idx, col_idx)), shape=(n_rows, n_cols))
-    #
-    #     return dict(true=T.T)
-
-
 class MapJaccardDist(HardMapMetricClass):
     metric_name = "jaccard"
 
@@ -439,97 +422,3 @@ class PredLeaveOutScore(PredMetricClass):
         return out
 
 
-class DEAHyperGeom(DEAMetricClass):
-    """Hypergeometric Test for DEA result"""
-
-    # define name
-    metric_name = "hypergeom"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    @classmethod
-    def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
-    ) -> float:
-        # TODO: I don't like the dependency on X_from
-        population = set(res["X_from"].var.index.values)
-        pop_size = len(population)
-
-        def _hg_test(true_set, pred_set):
-            # number of genes in ground truth
-            tot_success = len(set(population).intersection(true_set))
-            # number of genes predicted in DEA
-            sample_size = len(pred_set)
-            # number of drawn successes
-            drawn_success = len(set(true_set).intersection(pred_set))
-
-            # cdf = hypergeom.cdf(drawn_success, pop_size, tot_success, sample_size)
-            sf = hypergeom.sf(drawn_success - 1, pop_size, tot_success, sample_size)
-            return sf
-
-        DEA_pred = res_dict["DEA"]
-        DEA_true = ref_dict["DEA"]
-
-        group_names = list(DEA_pred.keys())
-        sfs = dict()
-        for group_name in group_names:
-            true_set = DEA_true.get(group_name, {})
-            pred_set = DEA_pred.get(group_name, {})
-            if (len(true_set) < 0) or (len(pred_set) < 0):
-                continue
-            true_set = set(true_set[group_name]["names"].values)
-            pred_set = set(pred_set[group_name]["names"].values)
-
-            sf = _hg_test(true_set, pred_set)
-            sfs[group_name] = sf
-
-        out = cls.make_standard_out(sfs)
-
-        return out
-
-
-class DEAAuc(DEAMetricClass):
-    """AUC for DEA result"""
-
-    metric_name = "AU"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    @classmethod
-    def score(
-        cls, res_dict: Dict[str, Any], ref_dict: Dict[str, Any], *args, **kwargs
-    ) -> float:
-        # TODO: again, don't like dependence on X_from
-        genes = res["X_from"].var.index.values
-
-        def _aupr():
-            true_lbl = np.isin(true_set, genes).astype(int)
-            pred_lbl = np.isin(pred_set, genes).astype(int)
-            # AUC
-            auroc = roc_auc_score(true_lbl, pred_lbl)
-            # AUPR
-            precision, recall, _ = precision_recall_curve(true_lbl, pred_lbl)
-            aupr = auc(precision, recall)
-            return aupr, auroc
-
-        DEA_pred = res_dict["DEA"]
-        DEA_true = ref_dict["DEA"]
-
-        group_names = list(DEA_pred.keys())
-        out_res = dict()
-        for group_name in group_names:
-            true_set = DEA_true.get(group_name, {})
-            pred_set = DEA_pred.get(group_name, {})
-            if (len(true_set) < 0) or (len(pred_set) < 0):
-                continue
-
-            true_set = true_set[group_name]["names"].values
-            pred_set = pred_set[group_name]["names"].values
-
-            aupr, auroc = _aupr(true_set, pred_set)
-            out_res[group_name + "_PR"] = aupr
-            out_res[group_name + "_ROC"] = auroc
-
-        out = cls.make_a
