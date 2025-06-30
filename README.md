@@ -12,7 +12,7 @@ To install `tangram2`, you can use the following command:
 git clone git@ssh.code.roche.com:andera29/tangram2.git
 # Change to the tangram2 directory
 cd tangram2
-# Create the environment using conda/mamba/microma
+# Create the environment using conda/mamba/micromamba
 micromamba env create --file envs/{x}_environment.yaml
 # Activate the environment
 micromamba activate tangram2
