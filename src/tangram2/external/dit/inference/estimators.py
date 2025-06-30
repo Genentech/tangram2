@@ -1,0 +1,105 @@
+"""
+Various methods for estimating information quantities from samples.
+"""
+
+import numpy as np
+from scipy.special import digamma
+
+from .counts import get_counts
+
+
+__all__ = (
+    'entropy_0',
+    'entropy_1',
+    'entropy_2',
+)
+
+
+def entropy_0(data, length=1):
+    """
+    Estimate the entropy of length `length` subsequences in `data`.
+
+    Parameters
+    ----------
+    data : iterable
+        An iterable of samples.
+    length : int
+        The length to group samples into.
+
+    Returns
+    -------
+    h0 : float
+        An estimate of the entropy.
+
+    Notes
+    -----
+    This returns the naive estimate of the entropy.
+    """
+    counts = get_counts(data, length)
+    probs = counts / counts.sum()
+    h0 = -np.nansum(probs * np.log2(probs))
+    return h0
+
+
+def entropy_1(data, length=1):
+    """
+    Estimate the entropy of length `length` subsequences in `data`.
+
+    Parameters
+    ----------
+    data : iterable
+        An iterable of samples.
+    length : int
+        The length to group samples into.
+
+    Returns
+    -------
+    h1 : float
+        An estimate of the entropy.
+
+    Notes
+    -----
+    If M is the alphabet size and N is the number of samples, then the bias of this estimator is:
+        B ~ M/N
+    """
+    counts = get_counts(data, length)
+    total = counts.sum()
+    digamma_N = digamma(total)
+
+    h1 = np.log2(np.e) * (counts / total * (digamma_N - digamma(counts))).sum()
+
+    return h1
+
+
+def entropy_2(data, length=1):
+    """
+    Estimate the entropy of length `length` subsequences in `data`.
+
+    Parameters
+    ----------
+    data : iterable
+        An iterable of samples.
+    length : int
+        The length to group samples into.
+
+    Returns
+    -------
+    h2 : float
+        An estimate of the entropy.
+
+    Notes
+    -----
+    If M is the alphabet size and N is the number of samples, then the bias of this estimator is:
+        B ~ (M+1)/(2N)
+    """
+    counts = get_counts(data, length)
+    total = counts.sum()
+    digamma_N = digamma(total)
+    log2 = np.log(2)
+    jss = [np.arange(1, count) for count in counts]
+
+    alt_terms = np.array([(((-1)**js) / js).sum() for js in jss])
+
+    h2 = np.log2(np.e) * (counts / total * (digamma_N - digamma(counts) + log2 + alt_terms)).sum()
+
+    return h2
