@@ -1,0 +1,91 @@
+import copy
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Tuple
+
+import pytest
+
+from tangram2.evalkit.methods import pred_methods as pm
+from tangram2.evalkit.tests import test_utils as ut
+
+
+class BaseTestPredMethods:
+    def _method_base(self, method, tmp_path, res_dict=None, **method_params):
+        if res_dict is None:
+            res_dict = ut.make_fake_X()
+            res_dict = ut.make_fake_T(res_dict=res_dict)
+            if method == pm.Tangram2Pred:
+                res_dict["X_from_scaled"] = res_dict["X_from"].copy()
+
+        out = method.run(res_dict, **method_params)
+        res_dict.update(out)
+
+        assert all([x in res_dict for x in method.outs])
+        if (method == pm.MoscotPred) and (
+            method_params.get("prediction_genes") is not None
+        ):
+            X_to_pred_row, X_to_pred_col = res_dict["X_to_pred"].shape
+            assert (X_to_pred_row == res_dict["X_to"].shape[0]) and (
+                X_to_pred_col == len(method_params["prediction_genes"])
+            )
+        else:
+            X_to_pred_row, X_to_pred_col = res_dict["X_to_pred"].shape
+            assert (X_to_pred_row == res_dict["X_to"].shape[0]) and (
+                X_to_pred_col == res_dict["X_from"].shape[1]
+            )
+
+        if "X_from_pred" in res_dict:
+            assert res_dict["X_from_pred"] is None
+
+        method.save(res_dict, tmp_path)
+
+
+class TestTangram1Pred(BaseTestPredMethods):
+    @pytest.fixture(autouse=True)
+    def method(
+        self,
+    ):
+        return pm.Tangram1Pred
+
+    def test_run_default(self, method, tmp_path):
+        # test that structure and dims of output is correct
+        # checks default params case
+
+        self._method_base(method, tmp_path)
+
+
+class TestTangram2Pred(BaseTestPredMethods):
+    @pytest.fixture(autouse=True)
+    def method(
+        self,
+    ):
+        return pm.Tangram2Pred
+
+    def test_run_default(self, method, tmp_path):
+        # test that structure and dims of output is correct
+        # checks default params case
+
+        self._method_base(method, tmp_path)
+
+
+class TestMoscotPred(BaseTestPredMethods):
+    @pytest.fixture(autouse=True)
+    def method(
+        self,
+    ):
+        return pm.MoscotPred
+
+    def test_run_default(self, method, tmp_path):
+        # test that structure and dims of output is correct
+        # checks default params case
+
+        self._method_base(method, tmp_path)
+
+    @pytest.mark.parametrize(
+        "prediction_genes",
+        [["feature_2"], ["feature_1", "feature_4"]],
+    )
+    def test_run_custom(self, method, tmp_path, prediction_genes):
+        # test that structure and dims of output is correct
+        # checks custom params case
+
+        self._method_base(method, tmp_path, prediction_genes=prediction_genes)

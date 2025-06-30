@@ -18,10 +18,12 @@ import tangram2.evalkit.methods.policies as pol
 import tangram2.evalkit.utils.transforms as tf
 import tangram2.evalkit.methods.utils as ut
 from tangram2.evalkit.methods._methods import MethodClass
-# from tangram2.core._methods import MethodClass
 from tangram2.evalkit.methods.models import vanilla as vn
 
 from . import _map_utils as mut
+
+__all__ = ['RandomMap', 'ArgMaxCorrMap', 'Tangram1Map', 'Tangram2Map',
+           'SpaOTscMap', 'MoscotMap' ]
 
 
 class MapMethodClass(MethodClass):

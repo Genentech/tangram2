@@ -13,6 +13,9 @@ from torch.utils.data import DataLoader, TensorDataset
 from .models import InteractionModel as IM
 from .base import MethodClass
 
+__all__ = ["TangramCCC"]
+
+
 
 class TangramCCC(MethodClass):
     ins = ["X_from", "D_from"]

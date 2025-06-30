@@ -191,7 +191,6 @@ statsmodels==0.14.4
 sympy==1.14.0
 tabmat==4.1.1
 tangram-sc==1.0.4
--e git+ssh://git@ssh.code.roche.com/andera29/tangram2.git@77a887891188a59ed9fc4596a56690ee88f69a17#egg=tangram2
 tensorboard==2.19.0
 tensorboard-data-server==0.7.2
 tensorstore==0.1.75
