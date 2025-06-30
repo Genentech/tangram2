@@ -1,7 +1,7 @@
 import re
 import time
-from cellphonedb.utils import db_utils
-from cellphonedb.utils.file_utils import dbg
+from tangram2.external.cellphonedb.cpdb.utils import db_utils
+from tangram2.external.cellphonedb.cpdb.utils.file_utils import dbg
 import pandas as pd
 
 SIMPLE_PFX = "simple:"

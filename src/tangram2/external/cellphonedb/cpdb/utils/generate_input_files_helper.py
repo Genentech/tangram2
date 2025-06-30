@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 from json import JSONDecodeError
-from cellphonedb.utils import file_utils
+from tangram2.external.cellphonedb.cpdb.utils import file_utils
 
 import pandas as pd
 

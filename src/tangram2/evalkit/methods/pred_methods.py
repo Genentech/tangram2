@@ -85,10 +85,6 @@ class TangramPred(PredMethodClass):
 
         T_soft = T.values
 
-        # create anndata object of map
-        # tangram functions expects map to be [n_from] x [n_to]
-        # hence the transpose
-        # TODO : potentially change this to var,obs based on T
         ad_map = ad.AnnData(
             T_soft.T,
             var=X_to.obs,

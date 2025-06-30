@@ -1,4 +1,4 @@
-from cellphonedb.src.exceptions.NoReleasesException import NoReleasesException
+from tangram2.external.cellphonedb.cpdb.src.exceptions.NoReleasesException import NoReleasesException
 from typing import Union
 import requests
 

@@ -15,9 +15,10 @@ from scipy.special import softmax
 from torch.cuda import is_available
 
 import tangram2.evalkit.methods.policies as pol
-import tangram2.evalkit.methods.transforms as tf
+import tangram2.evalkit.utils.transforms as tf
 import tangram2.evalkit.methods.utils as ut
 from tangram2.evalkit.methods._methods import MethodClass
+# from tangram2.core._methods import MethodClass
 from tangram2.evalkit.methods.models import vanilla as vn
 
 from . import _map_utils as mut
@@ -429,66 +430,6 @@ class Tangram2Map(TangramMap):
         # save method for the 'w'
         pass
 
-
-class CeLEryMap(MapMethodClass):
-    import CeLEry as cel
-
-    # Method class for CeLEry
-    # github: https://github.com/QihuangZhang/CeLEry
-    ins = ["X_to", "X_from"]
-    outs = ["S_from"]
-
-    def __init__(
-        self,
-        *args,
-        **kwargs,
-    ):
-        super().__init__()
-
-    @classmethod
-    def run(
-        cls,
-        input_dict: Dict[str, Any],
-        hidden_dims: List[int] = [30, 25, 15],
-        num_epochs_max: int = 100,
-        spatial_key: str = "spatial",
-        **kwargs,
-    ) -> Dict[str, np.ndarray]:
-        # anndata of "to" object
-        X_to = input_dict["X_to"]
-        # anndata of "from" object
-        X_from = input_dict["X_from"]
-        # add necessary columns for to .obs for method to work
-        # CeLEry will look for "x_pixel" and "y_pixel" in .obs
-
-        X_to.obs[["x_pixel", "y_pixel"]] = X_to.obsm[spatial_key]
-
-        # CeLEry saves output that we don't care about
-        # pipe this to a tempdir to avoid junk files
-        with TemporaryDirectory() as tmpdir:
-            # fit model using "to" data
-            model_train = cel.Fit_cord(
-                data_train=X_to,
-                hidden_dims=hidden_dims,
-                num_epochs_max=num_epochs_max,
-                path=tmpdir,
-                filename="celery_model",
-            )
-
-            # predict coordinates of "from"
-            pred_cord = cel.Predict_cord(
-                data_test=X_from, path=tmpdir, filename="celery_model"
-            )
-
-        # Note: this method does not give a map (T)
-        # only predicted coordinates for "from" (S_from)
-
-        # create out dict
-        out = dict(model=model_train, T=None, S_from=pred_cord)
-
-        return out
-
-
 class SpaOTscMap(MapMethodClass):
 
     # SpaOTsc class
@@ -516,7 +457,7 @@ class SpaOTscMap(MapMethodClass):
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
 
-        from spaotsc import SpaOTsc
+        from tangram2.external.spaotsc import SpaOTsc
 
         if use_emb:
             X_to = input_dict.get("Z_to")

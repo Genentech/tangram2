@@ -1,6 +1,6 @@
 import pandas as pd
 
-from cellphonedb.src.core.exceptions.ProcessMetaException import ProcessMetaException
+from tangram2.external.cellphonedb.cpdb.src.core.exceptions.ProcessMetaException import ProcessMetaException
 
 
 def meta_preprocessor(meta_raw: pd.DataFrame) -> pd.DataFrame:

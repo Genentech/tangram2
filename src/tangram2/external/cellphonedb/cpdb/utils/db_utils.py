@@ -8,13 +8,13 @@ import time
 import zipfile
 import itertools
 import pathlib
-from cellphonedb.utils.file_utils import dbg
-from cellphonedb.utils import file_utils, unique_id_generator
+from tangram2.external.cellphonedb.cpdb.utils.file_utils import dbg
+from tangram2.external.cellphonedb.cpdb.utils import file_utils, unique_id_generator
 import urllib.request
 import urllib.error
 import urllib.parse
 from zipfile import ZipFile
-from cellphonedb.src.core.exceptions.DatabaseCreationException import DatabaseCreationException
+from tangram2.external.cellphonedb.cpdb.src.core.exceptions.DatabaseCreationException import DatabaseCreationException
 
 MULTIDATA_TABLE_BOOLEAN_COLS = ['receptor', 'other', 'secreted_highlight',
                                 'transmembrane', 'secreted', 'peripheral', 'integrin', 'is_complex']

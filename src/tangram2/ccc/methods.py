@@ -10,8 +10,8 @@ from pytorch_lightning import loggers as pl_loggers
 from sklearn.decomposition import PCA
 from torch.utils.data import DataLoader, TensorDataset
 
-from ...methods._methods import MethodClass
 from .models import InteractionModel as IM
+from .base import MethodClass
 
 
 class TangramCCC(MethodClass):

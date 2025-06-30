@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from cellphonedb.src.core.exceptions.ParseCountsException import ParseCountsException
+from tangram2.external.cellphonedb.cpdb.src.core.exceptions.ParseCountsException import ParseCountsException
 
 
 def counts_preprocessor(counts: pd.DataFrame, meta: pd.DataFrame) -> pd.DataFrame:

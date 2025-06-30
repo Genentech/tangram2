@@ -5,8 +5,8 @@ from multiprocessing.pool import Pool
 import pandas as pd
 import numpy as np
 import numpy_groupies as npg
-from cellphonedb.src.core.core_logger import core_logger
-from cellphonedb.src.core.models.complex import complex_helper
+from tangram2.external.cellphonedb.cpdb.src.core.core_logger import core_logger
+from tangram2.external.cellphonedb.cpdb.src.core.models.complex import complex_helper
 from tqdm.std import tqdm
 
 warnings.simplefilter("ignore", UserWarning)

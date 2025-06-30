@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from cellphonedb.utils import db_utils
+from tangram2.external.cellphonedb.cpdb.utils import db_utils
 from sklearn.preprocessing import MinMaxScaler
-from cellphonedb.src.core.core_logger import core_logger
+from tangram2.external.cellphonedb.cpdb.src.core.core_logger import core_logger
 from collections import ChainMap
 
 from functools import partial

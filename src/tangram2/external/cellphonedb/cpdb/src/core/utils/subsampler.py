@@ -3,7 +3,7 @@ import pandas as pd
 from fbpca import pca
 import warnings
 from geosketch import gs
-from cellphonedb.src.core.core_logger import core_logger
+from tangram2.external.cellphonedb.cpdb.src.core.core_logger import core_logger
 
 warnings.simplefilter("ignore", FutureWarning)
 

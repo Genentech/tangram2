@@ -5,11 +5,11 @@ import numpy as np
 import pandas as pd
 import pathlib
 
-from cellphonedb.src.core.generators.complex_generator import complex_generator
-from cellphonedb.src.core.generators.gene_generator import gene_generator
-from cellphonedb.src.core.generators.protein_generator import protein_generator
-from cellphonedb.utils import file_utils, generate_input_files_helper, db_utils
-from cellphonedb.utils.file_utils import _get_separator, write_to_file
+from tangram2.external.cellphonedb.cpdb.src.core.generators.complex_generator import complex_generator
+from tangram2.external.cellphonedb.cpdb.src.core.generators.gene_generator import gene_generator
+from tangram2.external.cellphonedb.cpdb.src.core.generators.protein_generator import protein_generator
+from tangram2.external.cellphonedb.cpdb.utils import file_utils, generate_input_files_helper, db_utils
+from tangram2.external.cellphonedb.cpdb.utils.file_utils import _get_separator, write_to_file
 
 # Note that this module is no longer used, but is left in place - in case we need to add parts of its functionality
 # to e.g. db_utils.create_db() method

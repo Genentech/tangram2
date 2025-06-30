@@ -1,13 +1,13 @@
 import pickle
 import pandas as pd
 
-from cellphonedb.src.core.core_logger import core_logger
-from cellphonedb.src.core.exceptions.AllCountsFilteredException import AllCountsFilteredException
-from cellphonedb.src.core.exceptions.MissingRequiredArgumentsException import MissingRequiredArgumentsException
-from cellphonedb.src.core.methods import cpdb_statistical_analysis_helper, cpdb_statistical_analysis_complex_method
-from cellphonedb.src.core.models.complex import complex_helper
-from cellphonedb.utils import db_utils, file_utils, scoring_utils
-from cellphonedb.src.core.utils import cellsign
+from tangram2.external.cellphonedb.cpdb.src.core.core_logger import core_logger
+from tangram2.external.cellphonedb.cpdb.src.core.exceptions.AllCountsFilteredException import AllCountsFilteredException
+from tangram2.external.cellphonedb.cpdb.src.core.exceptions.MissingRequiredArgumentsException import MissingRequiredArgumentsException
+from tangram2.external.cellphonedb.cpdb.src.core.methods import cpdb_statistical_analysis_helper, cpdb_statistical_analysis_complex_method
+from tangram2.external.cellphonedb.cpdb.src.core.models.complex import complex_helper
+from tangram2.external.cellphonedb.cpdb.utils import db_utils, file_utils, scoring_utils
+from tangram2.external.cellphonedb.cpdb.src.core.utils import cellsign
 
 
 def call(cpdb_file_path: str = None,

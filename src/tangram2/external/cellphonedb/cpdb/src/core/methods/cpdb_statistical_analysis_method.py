@@ -1,8 +1,8 @@
-from cellphonedb.src.core.exceptions.AllCountsFilteredException import AllCountsFilteredException
-from cellphonedb.src.core.methods import cpdb_statistical_analysis_complex_method, cpdb_statistical_analysis_helper
-from cellphonedb.src.core.exceptions.MissingRequiredArgumentsException import MissingRequiredArgumentsException
-from cellphonedb.utils import db_utils, file_utils, scoring_utils
-from cellphonedb.src.core.utils import subsampler
+from tangram2.external.cellphonedb.cpdb.src.core.exceptions.AllCountsFilteredException import AllCountsFilteredException
+from tangram2.external.cellphonedb.cpdb.src.core.methods import cpdb_statistical_analysis_complex_method, cpdb_statistical_analysis_helper
+from tangram2.external.cellphonedb.cpdb.src.core.exceptions.MissingRequiredArgumentsException import MissingRequiredArgumentsException
+from tangram2.external.cellphonedb.cpdb.utils import db_utils, file_utils, scoring_utils
+from tangram2.external.cellphonedb.cpdb.src.core.utils import subsampler
 
 
 def call(cpdb_file_path: str = None,

@@ -9,10 +9,10 @@ import zipfile
 from anndata import read_h5ad, AnnData
 import pandas as pd
 
-from cellphonedb.src.exceptions.NotADataFrameException import NotADataFrameException
-from cellphonedb.src.exceptions.ReadFileException import ReadFileException
-from cellphonedb.src.exceptions.ReadFromPickleException import ReadFromPickleException
-from cellphonedb.src.core.preprocessors import method_preprocessors, counts_preprocessors
+from tangram2.external.cellphonedb.cpdb.src.exceptions.NotADataFrameException import NotADataFrameException
+from tangram2.external.cellphonedb.cpdb.src.exceptions.ReadFileException import ReadFileException
+from tangram2.external.cellphonedb.cpdb.src.exceptions.ReadFromPickleException import ReadFromPickleException
+from tangram2.external.cellphonedb.cpdb.src.core.preprocessors import method_preprocessors, counts_preprocessors
 
 DEBUG = False
 

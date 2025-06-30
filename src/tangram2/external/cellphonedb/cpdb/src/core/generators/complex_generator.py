@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from cellphonedb.src.core import core_logger
-from cellphonedb.src.core.generators.generator_helper import set_defaults
-from cellphonedb.src.exceptions.MissingRequiredColumns import MissingRequiredColumns
+from tangram2.external.cellphonedb.cpdb.src.core import core_logger
+from tangram2.external.cellphonedb.cpdb.src.core.generators.generator_helper import set_defaults
+from tangram2.external.cellphonedb.cpdb.src.exceptions.MissingRequiredColumns import MissingRequiredColumns
 
 
 def complex_generator(curated_complex: pd.DataFrame, user_complex: pd.DataFrame, log_path: str) -> pd.DataFrame:

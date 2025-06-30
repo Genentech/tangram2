@@ -5,7 +5,6 @@ from typing import Dict
 import anndata as ad
 import numpy as np
 import pandas as pd
-from harmony import harmonize
 from scipy.sparse import spmatrix
 from sklearn.decomposition import PCA
 from torch.cuda import is_available
@@ -139,51 +138,3 @@ def pick_x_d(X_to, D_to, X_from, D_from, target, use_pred=False, X_to_pred=None)
             raise ValueError("One of X_to/X_from has to be provided.")
     return X, D
 
-
-def harmony_helper(
-    X,
-    metadata,
-    batch_key,
-    metadata_is_D=True,
-    n_components=2,
-    normalize: bool = True,
-):
-
-    if isinstance(X, np.ndarray):
-        X_n = X.copy()
-    elif isinstance(X, pd.DataFrame):
-        X_n = X.values.copy()
-    elif isinstance(X, ad.AnnData):
-        X_n = X.X.copy()
-    else:
-        raise ValueError(
-            "X in wrong format. Provide X as either of {np.ndarray,pd.DataFrame,ad.AnnData}"
-        )
-
-    _n_components = min(X_n.shape[1], n_components)
-
-    pca = PCA(n_components=_n_components)
-
-    X_n = pca.fit_transform(X_n)
-
-    labels = metadata[batch_key]
-    if metadata_is_D:
-        labels = pd.DataFrame(
-            labels.apply(
-                lambda row: "_".join(
-                    [labels.columns[i] for i in range(len(row)) if row[i] == 1]
-                ),
-                axis=1,
-            )
-        )
-        labels.columns = ["batch"]
-        batch_key = "batch"
-
-    if is_available():
-        use_gpu = True
-    else:
-        use_gpu = False
-
-    Z = harmonize(X_n, labels, batch_key=batch_key, use_gpu=use_gpu)
-
-    return Z[:, 0:n_components]

@@ -3,8 +3,8 @@ import os
 import fnmatch
 import re
 import zipfile
-from cellphonedb.utils import search_utils, db_utils, db_releases_utils
-from cellphonedb.src.core.methods import cpdb_analysis_method, cpdb_statistical_analysis_method, cpdb_degs_analysis_method
+from tangram2.external.cellphonedb.cpdb.utils import search_utils, db_utils, db_releases_utils
+from tangram2.external.cellphonedb.cpdb.src.core.methods import cpdb_analysis_method, cpdb_statistical_analysis_method, cpdb_degs_analysis_method
 
 RELEASED_VERSION = "v4.1.0"
 # Ready for v5.0.0 data release: RELEASED_VERSION = "v5.0.0"

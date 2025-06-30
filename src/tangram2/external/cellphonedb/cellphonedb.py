@@ -5,7 +5,7 @@ import tempfile
 import anndata as ad
 import numpy as np
 import pandas as pd
-from cellphonedb.src.core.methods import (
+from .cpdb.src.core.methods import (
     cpdb_analysis_method,
     cpdb_statistical_analysis_method,
 )

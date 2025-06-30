@@ -1,10 +1,7 @@
 from enum import Enum
-
 import tangram2.evalkit.methods.map_methods as mmet
 import tangram2.evalkit.methods.pred_methods as pmet
-from tangram2.evalkit.evaluation import metrics as mtx
 from tangram2.evalkit.methods import preprocess as pp
-from tangram2.evalkit.methods import save_methods as sm
 
 
 class CONF(Enum):
@@ -38,9 +35,8 @@ class METHODS(EnumCustom):
     _MAP_METHODS = dict(
         random=mmet.RandomMap,
         max_corr=mmet.ArgMaxCorrMap,
-        tangram_v1=mmet.Tangram1Map,
-        tangram_v2=mmet.Tangram2Map,
-        celery=mmet.CeLEryMap,
+        tangram1=mmet.Tangram1Map,
+        tangram2=mmet.Tangram2Map,
         spaotsc=mmet.SpaOTscMap,
         moscot=mmet.MoscotMap,
     )
@@ -52,8 +48,8 @@ class METHODS(EnumCustom):
 
     # raw names of prediction methods
     _PRD_METHODS = dict(
-        tangram_v1=pmet.TangramV1Pred,
-        tangram_v2=pmet.TangramV2Pred,
+        tangram1=pmet.Tangram1Pred,
+        tangram2=pmet.Tangram2Pred,
         moscot=pmet.MoscotPred,
     )
 
@@ -67,7 +63,7 @@ class METHODS(EnumCustom):
 
 
 class METRICS(EnumCustom):
-
+    from tangram2.evalkit.evaluation import metrics as mtx
     # raw map metrics names
     _MAP_METRICS = dict(
         jaccard=mtx.MapJaccardDist,
@@ -103,7 +99,6 @@ class PREPROCESS(EnumCustom):
     OPTIONS = dict(
         standard_scanpy=pp.StandardScanpy,
         normalize_total=pp.NormalizeTotal,
-        celery=pp.CeLEryPP,
         tangram1=pp.StandardTangram1,
         tangram2=pp.StandardTangram2,
         spaotsc=pp.StandardSpaOTsc,
