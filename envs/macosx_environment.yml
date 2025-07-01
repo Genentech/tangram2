@@ -24,5 +24,3 @@ dependencies:
   - pip:
     - tangram2==0.0.0
     - uv==0.7.17
-
-prefix: "/Users/andera29/micromamba/envs/tangram2"
