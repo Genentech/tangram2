@@ -297,9 +297,7 @@ class TangramMap(MapMethodClass):
 
         Parameters
         ----------
-        input_dict: Dict[str :
-
-        Any] :
+        input_dict: Dict[str,Any]:
 
         to_spatial_key: str :
              (Default value = "spatial")

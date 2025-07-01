@@ -10,12 +10,12 @@ import scanpy as sc
 from scipy.stats import pearsonr, spearmanr
 from statsmodels.stats.multitest import multipletests
 
+from tangram2.evalkit.methods._methods import MethodClass
+
 from . import _dea_utils as dut
 from . import policies as pol
 from . import utils as ut
 from ._dea_utils import DEA
-from tangram2.evalkit.methods._methods import MethodClass
-
 
 
 class DEAMethodClass(MethodClass):
@@ -68,8 +68,6 @@ class ScanpyDEA(DEAMethodClass):
         target: List[str] | str = "both",
         **kwargs,
     ) -> Dict[str, Dict[str, pd.DataFrame]]:
-
-        # groups = [ ('group_1,group_2)]
 
         if target == "both":
             _target = ["to", "from"]
