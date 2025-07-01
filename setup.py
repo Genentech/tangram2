@@ -5,5 +5,6 @@ def parse_requirements(filename):
         return [line.strip() for line in f if line.strip() and not line.startswith("#")]
 
 setup(
-    install_requires=parse_requirements("requirements.txt")
+    install_requires=parse_requirements("reqs/requirements.txt"),
+    extras_requires ={'cuda':parse_requirements("reqs/cuda-requirements.txt")},
 )

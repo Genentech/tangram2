@@ -154,20 +154,6 @@ numexpr==2.11.0
 numpy==2.2.6
 numpy-groupies==0.11.3
 numpyro==0.18.0
-nvidia-cublas-cu12==12.6.4.1
-nvidia-cuda-cupti-cu12==12.6.80
-nvidia-cuda-nvrtc-cu12==12.6.77
-nvidia-cuda-runtime-cu12==12.6.77
-nvidia-cudnn-cu12==9.5.1.17
-nvidia-cufft-cu12==11.3.0.4
-nvidia-cufile-cu12==1.11.1.6
-nvidia-curand-cu12==10.3.7.77
-nvidia-cusolver-cu12==11.7.1.2
-nvidia-cusparse-cu12==12.5.4.2
-nvidia-cusparselt-cu12==0.6.3
-nvidia-nccl-cu12==2.26.2
-nvidia-nvjitlink-cu12==12.6.85
-nvidia-nvtx-cu12==12.6.77
 opt_einsum==3.4.0
 optax==0.2.5
 orbax-checkpoint==0.11.16
@@ -197,7 +183,6 @@ protobuf==6.31.1
 psutil==7.0.0
 ptyprocess==0.7.0
 pure_eval==0.2.3
-pycddlib==3.0.2
 pycparser==2.22
 pydantic==2.11.7
 pydantic_core==2.33.2
@@ -247,7 +232,6 @@ statsmodels==0.14.4
 sympy==1.14.0
 tabmat==4.1.1
 tangram-sc==1.0.4
--e git+ssh://git@ssh.code.roche.com/andera29/tangram2.git@741249594e2ca446499f541dc1923a21d367d196#egg=tangram2
 tensorboard==2.19.0
 tensorboard-data-server==0.7.2
 tensorstore==0.1.75
@@ -260,15 +244,10 @@ tinycss2==1.4.0
 tomli==1.2.3
 tomlkit==0.13.3
 toolz==1.0.0
-torch==2.7.1
-torchaudio==2.7.1
-torchmetrics==1.7.3
-torchvision==0.22.1
 tornado==6.5.1
 tqdm==4.67.1
 traitlets==5.14.3
 treescope==0.1.9
-triton==3.3.1
 trove-classifiers==2025.5.9.12
 types-python-dateutil==2.9.0.20250516
 typing-inspection==0.4.1
@@ -291,3 +270,4 @@ xarray==2025.6.1
 yarl==1.20.1
 zipp==3.23.0
 zstandard==0.23.0
+torch

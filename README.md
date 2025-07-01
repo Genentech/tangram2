@@ -17,10 +17,11 @@ micromamba env create --file envs/{x}_environment.yaml
 # Activate the environment
 micromamba activate tangram2
 # Install the package
-pip install .
+pip install .[cuda]
 ```
+If you're on a machine that doesn't support CUDA (e.g., MacOSX) replace the last line with `pip install .` and you'll have a reduced set of dependencies.
 
-Here the `X` prefix represents the OS you are using, e.g., `linux`, `macos`, or `windows`.
+For the environment, the `X` prefix represents the OS you are using, e.g., `linux`, `macos`, or `windows`.
 
 
 ### Tangram2 Paper
