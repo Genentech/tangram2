@@ -1,7 +1,7 @@
 import os.path as osp
 from abc import ABC, abstractmethod
 from tempfile import TemporaryDirectory
-from typing import Any, Callable, Dict, List, Literal
+from typing import Any, Callable, Dict, List, Literal, Tuple
 
 import anndata as ad
 import numpy as np
@@ -15,18 +15,26 @@ from scipy.special import softmax
 from torch.cuda import is_available
 
 import tangram2.evalkit.methods.policies as pol
-import tangram2.evalkit.utils.transforms as tf
 import tangram2.evalkit.methods.utils as ut
+import tangram2.evalkit.utils.transforms as tf
 from tangram2.evalkit.methods._methods import MethodClass
 from tangram2.evalkit.methods.models import vanilla as vn
 
 from . import _map_utils as mut
 
-__all__ = ['RandomMap', 'ArgMaxCorrMap', 'Tangram1Map', 'Tangram2Map',
-           'SpaOTscMap', 'MoscotMap' ]
+__all__ = [
+    "RandomMap",
+    "ArgMaxCorrMap",
+    "Tangram1Map",
+    "Tangram2Map",
+    "SpaOTscMap",
+    "MoscotMap",
+]
 
 
 class MapMethodClass(MethodClass):
+    """Mapping method base class"""
+
     # Base Class for MapMethods
     def __init__(
         self,
@@ -43,12 +51,25 @@ class MapMethodClass(MethodClass):
         use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        """Run the mapping method.
+
+        Parameters
+        ----------
+        input_dict: Dict[str, Any] - input dictionary
+        use_emb: bool :
+             (Default value = False)
+
+        Returns
+        -------
+        Output Dictionary
+
+        """
+
         pass
 
 
 class RandomMap(MapMethodClass):
-    # class that randomly maps object in "from"
-    # to locations in "to"
+    """Random Mapping Class"""
 
     ins = ["X_to", "X_from"]
     outs = ["T"]
@@ -68,6 +89,24 @@ class RandomMap(MapMethodClass):
         use_emb: bool = False,
         **kwargs,
     ):
+        """Method that randomly maps observations in 'from' to observations in 'to'.
+
+        Parameters
+        ----------
+        input_dict: Dict[str, Any] :
+        seed: int :
+             (Default value = 1)
+        experiment_name: str | None :
+             (Default value = None)
+        use_emb: bool :
+             (Default value = False)
+        **kwargs :
+
+        Returns
+        -------
+        Output Dictionary
+
+        """
         # set random seed for reproducibility
         rng = np.random.default_rng(seed)
 
@@ -121,9 +160,8 @@ class RandomMap(MapMethodClass):
 
 
 class ArgMaxCorrMap(MapMethodClass):
-    # Method that assigns each observation in "from"
-    # to the observation in "to" that it has the highest
-    # correlation with, w.r.t. feature expression
+    """Pearson Argmax Mapping class"""
+
     ins = ["X_from", "X_to"]
     outs = ["T"]
 
@@ -143,6 +181,21 @@ class ArgMaxCorrMap(MapMethodClass):
         use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        """
+
+        Parameters
+        ----------
+        input_dict: Dict[str, Any] :
+        experiment_name: str | None :
+             (Default value = None)
+        use_emb: bool :
+             (Default value = False)
+
+        Returns
+        -------
+        Output Dictionary with T object
+
+        """
 
         if use_emb:
             # get embedding to
@@ -210,8 +263,8 @@ class ArgMaxCorrMap(MapMethodClass):
 
 
 class TangramMap(MapMethodClass):
-    # TangramMap Baseclass
-    # tangram module to use
+    """Tangram Mapping General Class"""
+
     tg = None
     # version number
     version = None
@@ -240,6 +293,31 @@ class TangramMap(MapMethodClass):
         use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        """
+
+        Parameters
+        ----------
+        input_dict: Dict[str,Any]:
+
+        to_spatial_key: str :
+             (Default value = "spatial")
+        from_spatial_key: str :
+             (Default value = "spatial")
+        num_epochs: int :
+             (Default value = 1000)
+        genes: List[str] | str | None :
+             (Default value = None)
+        experiment_name: str | None :
+             (Default value = None)
+        use_emb: bool :
+             (Default value = False)
+        **kwargs :
+
+
+        Returns
+        -------
+
+        """
 
         if cls.version == "1":
             import tangram as tg
@@ -396,6 +474,8 @@ class TangramMap(MapMethodClass):
 
 
 class Tangram1Map(TangramMap):
+    """Tangram1 Mapping"""
+
     # Method class for TangramV1
     version = "1"
 
@@ -409,7 +489,8 @@ class Tangram1Map(TangramMap):
 
 
 class Tangram2Map(TangramMap):
-    # Method class for TangramV2
+    """Tangram2 Mapping Class"""
+
     version = "2"
 
     def __init__(
@@ -423,16 +504,20 @@ class Tangram2Map(TangramMap):
     @classmethod
     @property
     def custom_save_funcs(cls) -> Dict[str, Callable]:
+        """ """
         _funcs = dict(w=cls._save_w)
         return _funcs
 
     @classmethod
     def _save_w(cls, res_dict: Dict[str, Any], out_dir: str, **kwargs):
-        # update this function to add
-        # save method for the 'w'
+        """
+        save method for w
+        """
         pass
 
+
 class SpaOTscMap(MapMethodClass):
+    """SpaOTsc Mapping class"""
 
     # SpaOTsc class
     # Expected Inputs and Outputs
@@ -458,6 +543,26 @@ class SpaOTscMap(MapMethodClass):
         use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray] | Dict[str, spmatrix]:
+        """
+
+        Parameters
+        ----------
+        input_dict: Dict[str,Any] :
+        to_spatial_key: str :
+             (Default value = "spatial")
+        experiment_name: str | None :
+             (Default value = None)
+        seed: int | None :
+             (Default value = None)
+        use_emb: bool :
+             (Default value = False)
+        **kwargs :
+
+        Returns
+        -------
+        Output Dictionary with T object
+
+        """
 
         from tangram2.external.spaotsc import SpaOTsc
 
@@ -592,9 +697,10 @@ class SpaOTscMap(MapMethodClass):
 
 
 class MoscotMap(MapMethodClass):
+    """ """
 
     # Method class for moscot
-    # github: https://github.com/theislab/moscot
+    # wrapper around: https://github.com/theislab/moscot
     ins = ["X_to", "X_from"]
     outs = ["T", "moscot_solution"]
 
@@ -616,6 +722,27 @@ class MoscotMap(MapMethodClass):
         use_emb: bool = False,
         **kwargs,
     ) -> Dict[str, np.ndarray]:
+        """
+
+        Parameters
+        ----------
+        input_dict: Dict[str, Any] :
+        genes: List[str] | str | None :
+             (Default value = None)
+        experiment_name: str | None :
+             (Default value = None)
+        return_T_norm: bool :
+             (Default value = True)
+        seed: int | None :
+             (Default value = None)
+        use_emb: bool :
+             (Default value = False)
+
+        Returns
+        -------
+        Output Dictionary with T object
+
+        """
 
         from moscot.problems.space import MappingProblem
 
@@ -647,7 +774,6 @@ class MoscotMap(MapMethodClass):
             in_to = set(genes).intersection(set(X_to.var_names))
             genes = list(in_from.intersection(in_to))
 
-        # TODO: this does not run
         prep_kwargs = kwargs.get("prepare", {})
 
         if not prep_kwargs:
@@ -703,37 +829,6 @@ class MoscotMap(MapMethodClass):
 
         return out
 
-
-class SimpleMapBase(MapMethodClass):
-    # class that randomly maps object in "from"
-    # to locations in "to"
-
-    ins = ["X_to", "X_from"]
-    outs = ["T"]
-
-    def __init__(
-        self,
-    ):
-        super().__init__()
-
-    @classmethod
-    @abstractmethod
-    def model(
-        cls,
-    ):
-        pass
-
-    @classmethod
-    @abstractmethod
-    def get_out(cls, *args, **kwargs):
-        pass
-
-    @classmethod
-    def _get_T(cls, model, to_names, from_names):
-        T = model.T
-        T = ut.array_to_sparse_df(T, index=to_names, columns=from_names)
-        return T
-
     @classmethod
     @ut.check_in_out
     def run(
@@ -751,6 +846,37 @@ class SimpleMapBase(MapMethodClass):
         temperature: float = 1e-2,
         **kwargs,
     ):
+        """
+
+        Parameters
+        ----------
+        input_dict: Dict[str, Any] :
+        seed: int :
+             (Default value = 1)
+        experiment_name: str | None :
+             (Default value = None)
+        use_emb: bool :
+             (Default value = False)
+        num_epochs: int :
+             (Default value = 1000)
+        verbose: bool :
+             (Default value = False)
+        device: str :
+             (Default value = "cuda:0")
+        learning_rate: float :
+             (Default value = 0.001)
+        train_genes: List[str] | None :
+             (Default value = None)
+        normalize: bool :
+             (Default value = False)
+        temperature: float :
+             (Default value = 1e-2)
+
+        Returns
+        -------
+        Output Dictionary with T object
+
+        """
         if verbose:
             import tqdm
 
@@ -813,42 +939,5 @@ class SimpleMapBase(MapMethodClass):
         out = cls.get_out(
             model, to_names=to_names, from_names=from_names, var_names=inter
         )
-
-        return out
-
-
-class SimpleMap(SimpleMapBase):
-    def __init__(self, *args, **kwargs):
-        super().__init__()
-
-    @classmethod
-    def model(cls, *args, **kwargs):
-        return vn.SimpleMap(*args, **kwargs)
-
-    @classmethod
-    def get_out(cls, model, to_names, from_names, **kwargs):
-        T = cls._get_T(model, to_names, from_names)
-        out = dict(
-            T=T,
-        )
-        return out
-
-
-class SimpleScaleMap(SimpleMapBase):
-    def __init__(self, *args, **kwargs):
-        super().__init__()
-
-    @classmethod
-    def model(cls, *args, **kwargs):
-        return vn.SimpleScaleMap(*args, **kwargs)
-
-    @classmethod
-    def get_out(cls, model, to_names, from_names, var_names, **kwargs):
-
-        T = cls._get_T(model, to_names, from_names)
-        W = model.W
-        W = pd.DataFrame(W.flatten(), index=var_names, columns=["coef"])
-
-        out = dict(T=T, gene_coef=W)
 
         return out
