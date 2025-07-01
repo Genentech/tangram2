@@ -10,14 +10,15 @@ from pytorch_lightning import loggers as pl_loggers
 from sklearn.decomposition import PCA
 from torch.utils.data import DataLoader, TensorDataset
 
-from .models import InteractionModel as IM
 from .base import MethodClass
+from .models import InteractionModel as IM
 
 __all__ = ["TangramCCC"]
 
 
-
 class TangramCCC(MethodClass):
+    """Tangram Cell-Cell Communication (CCC) method for cell-cell interaction analysis."""
+
     ins = ["X_from", "D_from"]
     outs = ["D_from"]
 
@@ -42,6 +43,24 @@ class TangramCCC(MethodClass):
         verbose: bool = True,
         **kwargs,
     ) -> Dict[str, Any]:
+        """
+        Train the TangramCCC model on input feature data, interaction matrix, and property matrix.
+
+        Args:
+            X (np.ndarray): Feature matrix of shape (n_obs, n_features).
+            D (np.ndarray): Interaction matrix of shape (n_obs, n_obs).
+            P (np.ndarray): Property matrix of shape (n_obs, n_properties).
+            n_epochs (int): Number of training epochs. Default is 1000.
+            learning_rate (float): Learning rate for optimizer. Default is 0.001.
+            batch_size (int): Batch size for training. Default is 256.
+            n_components (int): Number of PCA components to use. Default is 500.
+            seed (int): Random seed for reproducibility. Default is 42.
+            verbose (bool): Whether to display training progress. Default is True.
+            **kwargs: Additional keyword arguments for customization.
+
+        Returns:
+            Dict[str, Any]: Dictionary containing learned matrices 'alpha', 'beta', and 'gamma'.
+        """
 
         n_obs, n_var = X.shape
         n_prop = P.shape[1]
@@ -83,6 +102,17 @@ class TangramCCC(MethodClass):
 
     @classmethod
     def format_output(cls, res: Dict[str, Any], feature_names, prop_names):
+        """
+        Format model outputs into an xarray.Dataset with labeled dimensions.
+
+        Args:
+            res (Dict[str, Any]): Dictionary containing 'alpha', 'beta', and 'gamma' arrays.
+            feature_names (List[str]): Names of the input features.
+            prop_names (List[str]): Names of the predicted properties.
+
+        Returns:
+            xr.Dataset: Structured dataset with coordinates and dimensions.
+        """
 
         coords = {
             "features": feature_names,
@@ -119,6 +149,22 @@ class TangramCCC(MethodClass):
         verbose: bool = True,
         **kwargs,
     ):
+        """
+        Run the TangramCCC method using an AnnData object and a property matrix.
+
+        Args:
+            adata (ad.AnnData): Annotated data matrix with gene expression values.
+            P (pd.DataFrame): Property matrix with cell type proportions.
+            label_col (str): Column name indicating cell type labels.
+            layer (str | None): Optional layer in AnnData to use for expression. Defaults to None.
+            seed (int): Random seed for reproducibility. Default is 42.
+            verbose (bool): Whether to display progress. Default is True.
+            **kwargs: Additional arguments passed to the training method.
+
+        Returns:
+            xr.Dataset: Dataset containing formatted alpha, beta, and gamma matrices.
+        """
+
         X = adata.to_df(layer=layer).values
         prop_names = P.columns.tolist()
         feature_names = X.columns.tolist()
@@ -138,7 +184,22 @@ class TangramCCC(MethodClass):
         return_neighborhood: bool = False,
         **kwargs,
     ) -> xr.Dataset:
+        """
+        Run the TangramCCC method using an AnnData object and a property matrix.
 
+        Args:
+            adata (ad.AnnData): Annotated data matrix with gene expression values.
+            P (pd.DataFrame): Property matrix with cell type proportions.
+            label_col (str): Column name indicating cell type labels.
+            layer (str | None): Optional layer in AnnData to use for expression. Defaults to None.
+            seed (int): Random seed for reproducibility. Default is 42.
+            verbose (bool): Whether to display progress. Default is True.
+            **kwargs: Additional arguments passed to the training method.
+
+        Returns:
+        xr.Dataset: Dataset containing formatted alpha, beta, and gamma matrices.
+
+        """
         T = input_dict.get("T", None)
         D_from = input_dict.get("D_from", None)
         X_use = input_dict.get("X_from", None)
