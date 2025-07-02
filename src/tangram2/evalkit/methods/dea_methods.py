@@ -14,10 +14,8 @@ from . import _dea_utils as dut
 from . import policies as pol
 from . import utils as ut
 from ._dea_utils import DEA
-from ._methods import MethodClass
+from tangram2.evalkit.methods._methods import MethodClass
 
-# import telegraph.methods.policies as pol
-# from telegraph.methods._methods import MethodClass
 
 
 class DEAMethodClass(MethodClass):

@@ -4,9 +4,9 @@ from typing import Any, Dict
 
 import anndata as ad
 
-import telegraph.constants as C
-from telegraph.evaluation import utils as ut
-from telegraph.methods import workflows as wf
+import tangram2.evalkit.constants as C
+from tangram2.evalkit.evaluation import utils as ut
+from tangram2.evalkit.methods import workflows as wf
 
 OBJMAP = dict(
     sc="X_from",

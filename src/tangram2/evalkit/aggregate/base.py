@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 from scipy.stats import beta, cauchy
 
-from telegraph.methods.dea_methods import DEA
 
 
 def _collate_results(*dea_res):

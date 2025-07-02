@@ -164,7 +164,7 @@ class CeLEryPP(PPClass):
         return obj
 
 
-class StandardTangramV1(PPClass):
+class StandardTangram1(PPClass):
     # Tangram v1 recommended normalization
 
     @classmethod
@@ -180,7 +180,7 @@ class StandardTangramV1(PPClass):
                 NormalizeTotal.pp(obj, **kwargs)
 
 
-class StandardTangramV2(PPClass):
+class StandardTangram2(PPClass):
     # Tangram v2 recommended normalization
     @staticmethod
     def pp(obj, obj_name=None, **kwargs):
