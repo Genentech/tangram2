@@ -450,28 +450,6 @@ def map_cells_to_space(
             )
         )
 
-
-#         if 'project_name' not in wandb_config:
-#             wandb_config['project_name'] = 'tg2-' + ut.random_tag()
-
-#         _step = 1
-
-#         if 'group' not in wandb_config:
-#             _wandb_group = wandb_config.get('version',ut.timestamp())
-#         else:
-#             _wandb_group = wandb_config('group')
-
-#         wandb_config['group'] = _wandb_group + '_step{}'.format(_step)
-
-#         step_prefix = wandb_config.get('step_prefix',None)
-
-#         if step_prefix is None:
-#             step_prefix = ''
-#         else:
-#             step_prefix = step_prefix + '_'
-
-#         wandb_config['name'] = step_prefix + 'step{}'.format(_step)
-
         mapper = mo.Mapper(
             S=S,
             G=G,
