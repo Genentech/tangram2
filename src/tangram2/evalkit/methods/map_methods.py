@@ -277,7 +277,7 @@ class TangramMap(MapMethodClass):
             ad_from, ad_to, genes=genes, use_filter=kwargs.get("use_filter", True)
         )
 
-        default_mode = "hejin_workflow" if cls.version == "2" else "cells"
+        default_mode = "integrate" if cls.version == "2" else "cells"
         mode = kwargs.pop("mode", default_mode)
         wandb_config = kwargs.pop("wandb_config", {})
         wandb_config["step_prefix"] = experiment_name
@@ -289,7 +289,7 @@ class TangramMap(MapMethodClass):
                 random_state = 42
 
         cluster_label = None
-        if (cls.version == "2") and (mode == "hejin_workflow"):
+        if (cls.version == "2") and (mode == "integrate"):
             cluster_label = kwargs.pop("cluster_label", None)
             if (cluster_label is None) and ("D_from" in input_dict):
                 D_from = input_dict["D_from"]
@@ -344,8 +344,8 @@ class TangramMap(MapMethodClass):
             del ad_from.obs["__label"]
 
         # depending on mode and version, treat output differently
-        if (cls.version == "2") and (mode == "hejin_workflow"):
-            # hejin_workflow mode in tg2 returns a tuple
+        if (cls.version == "2") and (mode == "integrate"):
+            # integrate mode in tg2 returns a tuple
             # the map (T) and the re-scaled "from" data
             ad_map, X_from_scaled = tg_out
             w = ad_map.uns["coefficient"]

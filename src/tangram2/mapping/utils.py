@@ -174,7 +174,7 @@ def one_hot_encoding(l, keep_aggregate=False):
 
 
 def project_cell_annotations(
-    adata_map, adata_sp, annotation="cell_type", threshold=0.5
+    adata_map, adata_sp, annotation="cell_type", threshold=0.5, coefficient = None,
 ):
     """
     Transfer `annotation` from single cell data onto space. 
@@ -193,6 +193,20 @@ def project_cell_annotations(
     df = one_hot_encoding(adata_map.obs[annotation])
     if "F_out" in adata_map.obs.keys():
         df_ct_prob = adata_map[adata_map.obs["F_out"] > threshold]
+        
+    if "coefficient" in adata_map.uns.keys():
+        if coefficient is None:
+            coefficient = adata_map.uns['coefficient']
+            coefficient.index = coefficient['cell_type']
+        if set(coefficient.index) == set(df.columns):
+            df = df.multiply(coefficient.loc[df.columns, 'coefficient'])
+            sc_coeff = pd.DataFrame(adata_map.obs[annotation].value_counts(normalize=True))
+            df = df.divide(sc_coeff.loc[df.columns, 'proportion'])
+
+        else:
+            raise ValueError(
+            "Missing cell type coefficient information in the input. Please make sure index of the Dataframe is the cell type, and it alighs with the annotation. "
+        )
 
     df_ct_prob = adata_map.X.T @ df
     df_ct_prob.index = adata_map.var.index
