@@ -18,6 +18,19 @@ import logging
 import matplotlib as mpl
 from matplotlib.gridspec import GridSpec
 
+__all__ = [
+    "plot_training_scores",
+    "plot_gene_sparsity",
+    "plot_cell_annotation_sc",
+    "plot_cell_annotation",
+    "plot_genes_sc",
+    "plot_genes",
+    "quick_plot_gene",
+    "plot_annotation_entropy",
+    "plot_test_scores",
+    "plot_auc",
+]
+
 
 def q_value(data, perc):
     """
