@@ -200,7 +200,9 @@ def project_cell_annotations(
             coefficient.index = coefficient['cell_type']
         if set(coefficient.index) == set(df.columns):
             df = df.multiply(coefficient.loc[df.columns, 'coefficient'])
-            sc_coeff = pd.DataFrame(adata_map.obs[annotation].value_counts(normalize=True))
+            proportion = adata_map.obs[annotation].value_counts(normalize=True)
+            proportion.name = 'proportion'
+            sc_coeff = pd.DataFrame(proportion)
             df = df.divide(sc_coeff.loc[df.columns, 'proportion'])
 
         else:
