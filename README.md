@@ -10,16 +10,21 @@ To install `tangram2`, you can use the following command:
 ```bash
 # Clone the repository
 git clone git@ssh.code.roche.com:andera29/tangram2.git
+
 # Change to the tangram2 directory
 cd tangram2
+
 # Create the environment using conda/mamba/micromamba
-micromamba env create --file envs/{x}_environment.yaml
+# Substitute {x} with your environment (eg macosx, linux, windows)
+micromamba env create --file envs/{x}_environment.yml
+
 # Activate the environment
 micromamba activate tangram2
+
 # Install the package
 pip install .[cuda]
 ```
-If you're on a machine that doesn't support CUDA (e.g., MacOSX) replace the last line with `pip install .` and you'll have a reduced set of dependencies.
+<!--  If you're on a machine that doesn't support CUDA (e.g., MacOSX) replace the last line with `pip install .` and you'll have a reduced set of dependencies. -->
 
 For the environment, the `X` prefix represents the OS you are using, e.g., `linux`, `macos`, or `windows`.
 
