@@ -16,6 +16,11 @@ from torch.nn.functional import cosine_similarity, softmax
 
 from . import utils as ut
 
+__all__ = [
+    "Mapper",
+    "MapperConstrained",
+]
+
 
 class Mapper:
     """

@@ -21,6 +21,12 @@ from . import utils as ut
 
 logging.getLogger().setLevel(logging.INFO)
 
+__all__ = [
+    "pp_adatas",
+    "adata_to_cluster_expression",
+    "map_cells_to_space",
+]
+
 
 def pp_adatas(adata_sc, adata_sp, genes=None):
     """
