@@ -29,6 +29,7 @@ __all__ = [
     "plot_annotation_entropy",
     "plot_test_scores",
     "plot_auc",
+    "construct_obs_plot"
 ]
 
 
