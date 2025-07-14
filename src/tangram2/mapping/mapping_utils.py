@@ -245,7 +245,7 @@ def map_cells_to_space(
         adata_sc = adata_to_cluster_expression(
             adata_sc,
             cluster_label,
-            scale,
+            scale = False,
             add_density=True,
         )
 
@@ -340,11 +340,11 @@ def map_cells_to_space(
     elif density_prior == "uniform":
         density_prior = adata_sp.obs["uniform_density"]
 
-    if mode in ["cells", "integrate"]:
+    if mode in ["cells", "integrate", "clusters"]:
         d = density_prior
 
-    if mode in ["clusters"]:
-        d_source = np.array(adata_sc.obs["cluster_density"])
+    # if mode in ["clusters"]:
+    #     d_source = np.array(adata_sc.obs["cluster_density"])
 
     if mode in ["clusters", "integrate"]:
         coeff = np.ones(S.shape[0]) * 0.01
@@ -352,7 +352,7 @@ def map_cells_to_space(
             coeff, device=device, requires_grad=True, dtype=torch.float32
         )
 
-    if mode in ["clusters", "constrained"]:
+    if mode in [ "constrained"]: #"clusters",
         if density_prior is None:
             d = adata_sp.obs["uniform_density"]
             d_str = "uniform"
