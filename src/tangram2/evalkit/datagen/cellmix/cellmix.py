@@ -51,7 +51,7 @@ def _multinomial_resampling(
     ps = X.astype(np.float64) / ns.reshape(-1, 1)
     n_obs, n_var = X.shape
 
-    if isinstance(m, list, tuple):
+    if isinstance(m, (list, tuple)):
         if m[0] > m[1]:
             b, a = m
         else:
