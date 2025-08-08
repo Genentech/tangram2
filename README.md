@@ -34,9 +34,8 @@ You can find all the notebooks used to generate the figures in the paper in the 
 
 
 ### Contributing/Developing
-We appreciate any contributions to the `tangram2` project. If you would like to contribute, please push any edits as a merge request.
 
-Also, please make sure to use `pre-commit` when committing your changes. You can install `pre-commit` using the following command:
+Please make sure to use `pre-commit` when committing your changes. You can install `pre-commit` using the following command:
 
 ```bash
 pip install pre-commit
