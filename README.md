@@ -9,7 +9,7 @@ To install `tangram2`, you can use the following command:
 
 ```bash
 # Clone the repository
-git clone git@ssh.code.roche.com:andera29/tangram2.git
+git clone https://github.com/Genentech/tangram2.git
 
 # Change to the tangram2 directory
 cd tangram2
