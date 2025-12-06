@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+name = 'tangram2'
+version = '0.1'
+authors = [
+    "Alma Andersson <andera29@gene.com>",
+    "Hejin Huang <huang.hejin@gene.com>",
+    "Aicha BenTaieb <bentaiea@gene.com>",
+    "Kam Hon Hoi <kamhoi@gene.com>",
+    "Shreya Gaddam <gaddams@gene.com>",
+]
+
+description = "Tangram 2"
+keywords = ["ccc", "interaction","cell cell communication"]
+license = "BSD-3-Clause"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+]
+

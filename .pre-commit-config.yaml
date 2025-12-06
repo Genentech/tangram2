@@ -1,0 +1,29 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.1.1
+    hooks:
+    -   id: black
+        exclude: ^docs/
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+    -   id: isort
+        exclude: ^docs/
+        args: ["--profile", "black"]
+-   repo: local
+    hooks:
+      - id: build-sphinx-docs
+        name: Build Sphinx Documentation
+        entry: ./dev/build_docs.sh
+        language: script
+        files: 'docs/|src/'
+        stages: [manual]
+
+
+
