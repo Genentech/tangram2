@@ -28,6 +28,8 @@ pip install .[cuda]
 
 For the environment, the `X` prefix represents the OS you are using, e.g., `linux`, `macos`, or `windows`.
 
+Setting up the conda environment and completing the installation typically takes less than 10 minutes on a desktop computer.
+
 
 ### Tangram2 Paper
 You can find all the notebooks used to generate the figures in the paper in the `analysis` directory. The notebooks are organized by figure number, and each notebook contains the code used to generate the corresponding figure in the paper.
