@@ -803,7 +803,7 @@ def eval_metric(df_all_genes, test_genes=None):
     
     parameters, covariance = curve_fit(log_function, xs, ys, p0=[-10.0,10.0, 10.0])#, sigma = [x+0.05 for x in xs])
     
-    print(parameters)
+
     
     #pol_deg = 1
     #pol_cs = np.polyfit(xs, [10**x for x in ys], pol_deg)  # polynomial coefficients
@@ -813,8 +813,6 @@ def eval_metric(df_all_genes, test_genes=None):
     #pol_ys = [np.log10(pol(x)) for x in pol_xs]  # compute polys
     pol_ys = [log_function(x, parameters[0], parameters[1], parameters[2]) for x in pol_xs]
     
-    print(pol_ys)
-    #print(pol)
     
     for i in range(len(pol_ys)):
         if pol_ys[i] > 1:
