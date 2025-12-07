@@ -186,20 +186,44 @@ def construct_obs_plot(df_plot, adata, perc=0, suffix=None):
     adata.obs = pd.concat([adata.obs, df_plot], axis=1)
 
 
-def plot_cell_annotation_sc(adata_sp, annotation_list, perc=0):
-
+def plot_cell_annotation_sc(
+    adata_sp, 
+    annotation_list, 
+    x="x", 
+    y="y", 
+    spot_size=None, 
+    scale_factor=None, 
+    perc=0,
+    alpha_img=1.0,
+    bw=False,
+    ax=None
+):
+        
     # remove previous df_plot in obs
     adata_sp.obs.drop(annotation_list, inplace=True, errors="ignore", axis=1)
 
     # construct df_plot
     df = adata_sp.obsm["tangram_ct_pred"][annotation_list]
     construct_obs_plot(df, adata_sp, perc=perc)
-
+    
+    #non visium data 
+    if 'spatial' not in adata_sp.obsm.keys():
+        #add spatial coordinates to obsm of spatial data 
+        coords = [[x,y] for x,y in zip(adata_sp.obs[x].values,adata_sp.obs[y].values)]
+        adata_sp.obsm['spatial'] = np.array(coords)
+    
+    if 'spatial' not in adata_sp.uns.keys() and spot_size == None and scale_factor == None:
+        raise ValueError("Spot Size and Scale Factor cannot be None when ad_sp.uns['spatial'] does not exist")
+    
+    #REVIEW
+    if 'spatial' in adata_sp.uns.keys() and spot_size != None and scale_factor != None:
+        raise ValueError("Spot Size and Scale Factor should be None when ad_sp.uns['spatial'] exists")
+    
     sc.pl.spatial(
-        adata_sp, color=annotation_list, cmap="viridis", show=False, frameon=False,
+        adata_sp, color=annotation_list, cmap="viridis", show=False, frameon=False, spot_size=spot_size,
+        scale_factor=scale_factor, alpha_img=alpha_img, bw=bw, ax=ax
     )
 
-    # remove df_plot in obs
     adata_sp.obs.drop(annotation_list, inplace=True, errors="ignore", axis=1)
 
 
